@@ -1,0 +1,23 @@
+server:
+  port: ${SERVER_PORT:8085}
+
+spring:
+  application:
+    name: dashboard-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:dashboard_db}
+    username: ${DB_USER:smartrecruit}
+    password: ${DB_PASSWORD:smartrecruit}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

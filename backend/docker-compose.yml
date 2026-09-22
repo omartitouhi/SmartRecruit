@@ -1,0 +1,127 @@
+name: smartrecruit
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: smartrecruit
+      POSTGRES_PASSWORD: smartrecruit
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartrecruit"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: auth_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+      JWT_SECRET: dev-only-secret-change-in-production
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: user_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  job-service:
+    build: ./job-service
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: job_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  application-service:
+    build: ./application-service
+    ports:
+      - "8084:8084"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: application_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  dashboard-service:
+    build: ./dashboard-service
+    ports:
+      - "8085:8085"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: dashboard_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ai-service:
+    build: ../ia
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: ai_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      AUTH_SERVICE_URI: http://auth-service:8081
+      USER_SERVICE_URI: http://user-service:8082
+      JOB_SERVICE_URI: http://job-service:8083
+      APPLICATION_SERVICE_URI: http://application-service:8084
+      DASHBOARD_SERVICE_URI: http://dashboard-service:8085
+      AI_SERVICE_URI: http://ai-service:8000
+    depends_on:
+      - auth-service
+      - user-service
+      - job-service
+      - application-service
+      - dashboard-service
+      - ai-service
+
+  frontend:
+    build: ../frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  postgres_data:

@@ -1,0 +1,26 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: api-gateway
+
+services:
+  auth-service:
+    uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+  user-service:
+    uri: ${USER_SERVICE_URI:http://localhost:8082}
+  job-service:
+    uri: ${JOB_SERVICE_URI:http://localhost:8083}
+  application-service:
+    uri: ${APPLICATION_SERVICE_URI:http://localhost:8084}
+  dashboard-service:
+    uri: ${DASHBOARD_SERVICE_URI:http://localhost:8085}
+  ai-service:
+    uri: ${AI_SERVICE_URI:http://localhost:8000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
