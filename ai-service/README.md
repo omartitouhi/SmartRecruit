@@ -27,7 +27,7 @@ uvicorn app.main:app --reload
 ```
 
 Nécessite une instance PostgreSQL avec l'extension `pgvector` (voir
-`docker-compose.yml` du dépôt `backend` pour lancer toute la stack).
+`docker-compose.yml` du dépôt `smartrecruit-backend` pour lancer toute la stack).
 
 ## Tests
 
