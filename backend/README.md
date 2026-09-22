@@ -6,20 +6,20 @@ toute la stack (backend + frontend + service IA + base de données).
 
 ## Prérequis
 
-Ce dépôt suppose que `frontend/` et `ia/` sont clonés **à côté** de `backend/` (mêmes
-parent) :
+Ce dépôt suppose que `smartrecruit-frontend/` et `smartrecruit-ia/` sont clonés **à côté**
+de `smartrecruit-backend/` (même parent) :
 
 ```
 Recruitement/
-  backend/     <- ce dépôt
-  frontend/
-  ia/
+  smartrecruit-backend/     <- ce dépôt
+  smartrecruit-frontend/
+  smartrecruit-ia/
 ```
 
 ## Lancer toute la stack
 
 ```bash
-cd backend
+cd smartrecruit-backend
 docker compose up --build
 ```
 
@@ -27,7 +27,7 @@ docker compose up --build
 
 ```
                     ┌──────────────┐
-                    │   Frontend    │  React SPA (:5173)        [repo frontend/]
+                    │   Frontend    │  React SPA (:5173)        [repo smartrecruit-frontend/]
                     └──────┬───────┘
                            │
                     ┌──────▼───────┐
@@ -37,7 +37,7 @@ docker compose up --build
         ▼          ▼       ▼       ▼           ▼           ▼
    auth-service user-service job-service application- dashboard-  ai-service
       :8081       :8082    :8083   service:8084  service:8085   :8000 (FastAPI)
-        │          │        │         │             │        [repo ia/]
+        │          │        │         │             │        [repo smartrecruit-ia/]
         └──────────┴────────┴─────────┴─────────────┴─────────────┘
                                    │
                           PostgreSQL + pgvector (:5432)

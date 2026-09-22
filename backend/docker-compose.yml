@@ -85,7 +85,7 @@ services:
         condition: service_healthy
 
   ai-service:
-    build: ../ia
+    build: ../smartrecruit-ia
     ports:
       - "8000:8000"
     environment:
@@ -117,7 +117,7 @@ services:
       - ai-service
 
   frontend:
-    build: ../frontend
+    build: ../smartrecruit-frontend
     ports:
       - "5173:80"
     depends_on:
