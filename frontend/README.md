@@ -1,6 +1,6 @@
 # SmartRecruit — Frontend
 
-SPA React consommant l'API via le gateway du dépôt `backend` (`api-gateway`).
+SPA React consommant l'API via le gateway du dépôt `smartrecruit-backend` (`api-gateway`).
 
 ## Stack
 - React 19, TypeScript, Vite
