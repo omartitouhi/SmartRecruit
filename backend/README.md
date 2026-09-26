@@ -4,6 +4,11 @@ Backend applicatif de SmartRecruit : un microservice Spring Boot par module fonc
 routés via un API Gateway. Ce dépôt contient également l'orchestration Docker Compose de
 toute la stack (backend + frontend + service IA + base de données).
 
+> **Avant de coder un endpoint ou un champ, lisez [DATA_MODEL.md](DATA_MODEL.md)** — c'est
+> la référence commune aux 3 dépôts (backend, frontend, ia) pour les structures de données,
+> les enums et les contrats API partagés (notamment `MatchScore`, l'objet qui porte le score
+> de compatibilité expliqué).
+
 ## Prérequis
 
 Ce dépôt suppose que `smartrecruit-frontend/` et `smartrecruit-ia/` sont clonés **à côté**
