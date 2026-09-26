@@ -2,6 +2,10 @@
 
 SPA React consommant l'API via le gateway du dépôt `smartrecruit-backend` (`api-gateway`).
 
+> **Structures de données partagées :** avant de créer un type TypeScript pour une entité
+> ou une réponse API, consultez `DATA_MODEL.md` dans `smartrecruit-backend` — c'est la
+> référence commune aux 3 dépôts (noms de champs, enums, contrats IA comme `MatchScore`).
+
 ## Stack
 - React 19, TypeScript, Vite
 - React Router
