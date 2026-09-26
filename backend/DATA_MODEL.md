@@ -204,3 +204,19 @@ Pydantic et dans le DTO Java de `application-service`.
 
 En cas de doute sur un nom de champ, ce fichier fait autorité — pas le code existant
 (qui peut être en retard sur une décision d'équipe).
+
+---
+
+## 6. Où trouver les structures déjà codées
+
+Les entités, enums et contrats ci-dessus existent déjà en code, prêts à être utilisés
+(complétez-les, ne les redéfinissez pas ailleurs) :
+
+| Repo | Emplacement |
+|---|---|
+| `smartrecruit-backend` | Un package `model/` (entités JPA + enums) et `dto/` (réponses API) par microservice, ex. `auth-service/src/main/java/com/smartrecruit/auth/model/Account.java` |
+| `smartrecruit-frontend` | `src/types/enums.ts`, `src/types/entities.ts`, `src/types/contracts.ts`, `src/types/api.ts` — tout réexporté depuis `src/types/index.ts` |
+| `smartrecruit-ia` | `app/schemas/enums.py` (enums partagés) et `app/schemas/common.py` (`MatchScore`, `CVParsingResult`, `JobAnalysisResult`, `SkillGapResult`) — sérialisés en camelCase via `CamelModel` |
+
+Les routers `cv_parsing`, `job_analysis`, `matching`, `skill_gap` du service IA déclarent
+déjà leur `response_model` avec ces schémas.
