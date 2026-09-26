@@ -11,6 +11,10 @@ IA-04 (Recommandation) · IA-05 (Skill Gap)
 finale de recrutement (human-in-the-loop). Les résultats de matching doivent être validés
 par un schéma JSON strict et rester explicables.
 
+> **Structures de données partagées :** les schémas Pydantic (`app/schemas/`) doivent rester
+> synchronisés avec `DATA_MODEL.md` dans `smartrecruit-backend` — c'est la référence commune
+> aux 3 dépôts pour `MatchScore`, `CVParsingResult`, `JobAnalysisResult`, etc.
+
 ## Stack
 - Python 3.12, FastAPI, Uvicorn
 - PostgreSQL + `pgvector` (stockage des embeddings)
