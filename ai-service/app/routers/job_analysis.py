@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 
+from app.schemas.common import JobAnalysisResult
+
 router = APIRouter(prefix="/job-analysis", tags=["IA-02 · Job Analysis"])
 
 
@@ -9,7 +11,7 @@ class JobAnalysisRequest(BaseModel):
     description: str
 
 
-@router.post("/analyze")
+@router.post("/analyze", response_model=JobAnalysisResult)
 async def analyze_job(payload: JobAnalysisRequest):
     """Offre -> compétences requises, expérience, niveau (IA-02)."""
     raise HTTPException(
