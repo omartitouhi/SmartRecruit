@@ -1,0 +1,74 @@
+/* Design tokens — direction « Le dossier » (taste-skill minimalist-ui).
+   Warm monochrome, colour reserved for status. Everything downstream references these. */
+:root {
+  /* Surfaces */
+  --canvas: #f7f6f3;
+  --paper: #ffffff;
+  --paper-soft: #fbfbfa;
+  --sunken: #f1f0ec;
+  --line: #eaeaea;
+  --line-strong: #dddcd7;
+
+  /* Ink */
+  --strong: #111111;
+  --ink: #2f3437;
+  --muted: #6b6a66; /* 4.7:1 or more on every surface (WCAG AA) */
+  --faint: #a5a49f;
+
+  /* Status pastels (background / text) */
+  --red: #fdebec;
+  --red-ink: #9f2f2d;
+  --blue: #e1f3fe;
+  --blue-ink: #1f6c9f;
+  --green: #edf3ec;
+  --green-ink: #346538;
+  --yellow: #fbf3db;
+  --yellow-ink: #956400;
+  --grey: #f1f1ef;
+  --grey-ink: #6b6a66;
+
+  /* Type */
+  --font-ui: 'Geist', 'Helvetica Neue', system-ui, sans-serif;
+  --font-serif: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  --text-xs: 0.8125rem; /* 13px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-md: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --title-sm: 1.5rem;
+  --title-md: clamp(1.9rem, 1.4rem + 1.6vw, 2.6rem);
+  --title-lg: clamp(2.6rem, 1.6rem + 3.4vw, 4.6rem);
+
+  /* Space & shape */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+  --space-9: 96px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --page-max: 1180px;
+  --doc-max: 820px;
+  --gutter: 32px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur: 220ms;
+  --dur-slow: 600ms;
+
+  /* Layers */
+  --z-bar: 10;
+  --z-menu: 20;
+  --z-toast: 30;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --gutter: 16px;
+  }
+}
