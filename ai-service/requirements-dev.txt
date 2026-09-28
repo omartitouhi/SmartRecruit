@@ -2,3 +2,4 @@
 pytest==8.3.3
 httpx==0.27.2
 ruff==0.6.9
+reportlab==4.2.5                # génère des PDF de test (AI-CV-01)
