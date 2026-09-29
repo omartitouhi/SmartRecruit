@@ -1,7 +1,9 @@
 package com.smartrecruit.auth.controller;
 
 import com.smartrecruit.auth.dto.AccountResponse;
+import com.smartrecruit.auth.dto.LoginRequest;
 import com.smartrecruit.auth.dto.RegisterRequest;
+import com.smartrecruit.auth.dto.TokenResponse;
 import com.smartrecruit.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +25,10 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public AccountResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
+    }
+
+    @PostMapping("/login")
+    public TokenResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 }

@@ -52,6 +52,17 @@ public class Account {
 
     private Instant updatedAt;
 
+    // Brute-force protection state (BE-AUTH-02), internal to auth_db and never exposed.
+    private int failedLoginAttempts;
+
+    private Instant firstFailedLoginAt;
+
+    private Instant lockedUntil;
+
+    public boolean isLocked(Instant now) {
+        return lockedUntil != null && lockedUntil.isAfter(now);
+    }
+
     @PrePersist
     void onCreate() {
         if (id == null) {

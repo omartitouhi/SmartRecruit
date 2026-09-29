@@ -192,6 +192,23 @@ Pydantic et dans le DTO Java de `application-service`.
 }
 ```
 
+### 4.5 `TokenResponse` — réponse de `POST /api/v1/auth/login` et `POST /api/v1/auth/refresh`
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+  "refreshToken": "q3V0b2tlbi1vcGFxdWUtYmFzZTY0dXJs",
+  "tokenType": "Bearer",
+  "expiresIn": 3600
+}
+```
+- `accessToken` : JWT HS256 (`sub` = accountId, `role`, `iat`, `exp`), valide 1 h.
+- `refreshToken` : jeton opaque (pas un JWT), valide 7 jours, stocké haché (SHA-256) côté `auth-service`.
+- `expiresIn` : durée de vie de l'`accessToken` en secondes.
+
+Identifiants invalides → `401` avec un message générique (pas de distinction email / mot de passe).
+5 échecs en 15 min sur le même compte → compte bloqué 15 min, `429`.
+
 ---
 
 ## 5. Où modifier quoi

@@ -8,6 +8,12 @@ spring:
     hibernate:
       ddl-auto: create-drop
 
-jwt:
-  secret: test-only-secret-key-that-is-long-enough-for-hs256
-  expiration-ms: 3600000
+auth:
+  jwt:
+    secret: test-only-secret-key-that-is-long-enough-for-hs256
+    access-token-ttl: 1h
+    refresh-token-ttl: 7d
+  lockout:
+    max-attempts: 5
+    window: 15m
+    duration: 15m
