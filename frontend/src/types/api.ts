@@ -14,4 +14,6 @@ export interface ApiError {
   error: string;
   message: string;
   path: string;
+  /** Présent uniquement sur les erreurs de validation (400) : champ → message. */
+  fieldErrors?: Record<string, string>;
 }

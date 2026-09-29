@@ -40,6 +40,8 @@ export interface CandidateProfile {
   id: string;
   firstName: string;
   lastName: string;
+  /** Email de contact (visible par les recruteurs), pas forcément celui du compte. */
+  email: string;
   phone: string | null;
   location: string | null;
   skills: string[];
@@ -48,7 +50,19 @@ export interface CandidateProfile {
   languages: string[];
   cvUrl: string | null;
   cvParsedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deleted: false;
 }
+
+/** Réponse renvoyée à la place d'un profil après exercice du droit à l'oubli (BE-USER-04). */
+export interface DeletedCandidate {
+  id: string;
+  deleted: true;
+}
+
+/** Profil tel que vu par un recruteur ou un admin : il peut avoir été supprimé. */
+export type CandidateView = CandidateProfile | DeletedCandidate;
 
 export interface Company {
   id: string;
