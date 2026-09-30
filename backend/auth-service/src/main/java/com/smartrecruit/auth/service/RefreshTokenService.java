@@ -11,8 +11,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -46,6 +48,21 @@ public class RefreshTokenService {
                 .expiresAt(clock.instant().plus(refreshTokenTtl))
                 .build());
         return rawToken;
+    }
+
+    /**
+     * Single-use exchange: the token is revoked as soon as it is consumed (rotation).
+     *
+     * @return the owning account id, or empty if the token is unknown, expired or revoked
+     */
+    public Optional<UUID> consume(String rawToken) {
+        Instant now = clock.instant();
+        return refreshTokenRepository.findByTokenHash(hash(rawToken))
+                .filter(token -> token.isActive(now))
+                .map(token -> {
+                    token.setRevokedAt(now);
+                    return token.getAccountId();
+                });
     }
 
     static String hash(String rawToken) {

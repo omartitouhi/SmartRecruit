@@ -2,6 +2,7 @@ package com.smartrecruit.auth.controller;
 
 import com.smartrecruit.auth.dto.AccountResponse;
 import com.smartrecruit.auth.dto.LoginRequest;
+import com.smartrecruit.auth.dto.RefreshTokenRequest;
 import com.smartrecruit.auth.dto.RegisterRequest;
 import com.smartrecruit.auth.dto.TokenResponse;
 import com.smartrecruit.auth.service.AuthService;
@@ -30,5 +31,10 @@ public class AuthController {
     @PostMapping("/login")
     public TokenResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
+    }
+
+    @PostMapping("/refresh")
+    public TokenResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return authService.refresh(request);
     }
 }

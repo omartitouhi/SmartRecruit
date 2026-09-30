@@ -3,6 +3,7 @@ package com.smartrecruit.auth.service;
 import com.smartrecruit.auth.config.AuthProperties;
 import com.smartrecruit.auth.dto.AccountResponse;
 import com.smartrecruit.auth.dto.LoginRequest;
+import com.smartrecruit.auth.dto.RefreshTokenRequest;
 import com.smartrecruit.auth.dto.RegisterRequest;
 import com.smartrecruit.auth.dto.TokenResponse;
 import com.smartrecruit.auth.exception.ApiException;
@@ -91,6 +92,19 @@ public class AuthService {
         account.setFailedLoginAttempts(0);
         account.setFirstFailedLoginAt(null);
         account.setLockedUntil(null);
+        return issueTokens(account);
+    }
+
+    /**
+     * Exchanges a refresh token for a new access token and a new refresh token (rotation).
+     */
+    @Transactional(noRollbackFor = ApiException.class)
+    public TokenResponse refresh(RefreshTokenRequest request) {
+        Account account = refreshTokenService.consume(request.refreshToken())
+                .flatMap(accountRepository::findById)
+                .filter(found -> found.getStatus() == AccountStatus.ACTIVE)
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED,
+                        "Refresh token invalide, expiré ou révoqué. Veuillez vous reconnecter."));
         return issueTokens(account);
     }
 

@@ -204,6 +204,7 @@ Pydantic et dans le DTO Java de `application-service`.
 ```
 - `accessToken` : JWT HS256 (`sub` = accountId, `role`, `iat`, `exp`), valide 1 h.
 - `refreshToken` : jeton opaque (pas un JWT), valide 7 jours, stocké haché (SHA-256) côté `auth-service`.
+  Usage unique : `/refresh` le révoque et renvoie une nouvelle paire (rotation). Expiré / révoqué → `401`.
 - `expiresIn` : durée de vie de l'`accessToken` en secondes.
 
 Identifiants invalides → `401` avec un message générique (pas de distinction email / mot de passe).
