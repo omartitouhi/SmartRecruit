@@ -65,6 +65,14 @@ public class RefreshTokenService {
                 });
     }
 
+    /** Revokes the token if it is still active; unknown tokens are ignored. */
+    public void revoke(String rawToken) {
+        Instant now = clock.instant();
+        refreshTokenRepository.findByTokenHash(hash(rawToken))
+                .filter(token -> token.getRevokedAt() == null)
+                .ifPresent(token -> token.setRevokedAt(now));
+    }
+
     static String hash(String rawToken) {
         try {
             byte[] digest = MessageDigest.getInstance("SHA-256").digest(rawToken.getBytes(StandardCharsets.UTF_8));

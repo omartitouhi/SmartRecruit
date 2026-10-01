@@ -37,4 +37,11 @@ public class AuthController {
     public TokenResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
         return authService.refresh(request);
     }
+
+    /** Idempotent: always 204, even for an unknown or already revoked token. */
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(@Valid @RequestBody RefreshTokenRequest request) {
+        authService.logout(request);
+    }
 }

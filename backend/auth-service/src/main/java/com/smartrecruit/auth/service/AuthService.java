@@ -108,6 +108,11 @@ public class AuthService {
         return issueTokens(account);
     }
 
+    @Transactional
+    public void logout(RefreshTokenRequest request) {
+        refreshTokenService.revoke(request.refreshToken());
+    }
+
     TokenResponse issueTokens(Account account) {
         String accessToken = jwtService.generateAccessToken(account);
         String refreshToken = refreshTokenService.issue(account.getId());
