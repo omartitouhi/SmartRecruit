@@ -21,6 +21,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -64,6 +65,13 @@ public class AuthService {
                 .status(AccountStatus.ACTIVE)
                 .build();
         return AccountResponse.from(accountRepository.save(account));
+    }
+
+    @Transactional(readOnly = true)
+    public AccountResponse getAccount(UUID accountId) {
+        return accountRepository.findById(accountId)
+                .map(AccountResponse::from)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Compte introuvable"));
     }
 
     /**

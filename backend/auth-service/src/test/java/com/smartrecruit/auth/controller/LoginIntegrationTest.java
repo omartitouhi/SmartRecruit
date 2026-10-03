@@ -24,6 +24,7 @@ import static com.smartrecruit.auth.support.AuthTestHelper.json;
 import static com.smartrecruit.auth.support.AuthTestHelper.login;
 import static com.smartrecruit.auth.support.AuthTestHelper.register;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -133,6 +134,17 @@ class LoginIntegrationTest {
         login(mockMvc, EMAIL, "WrongPass1").andExpect(status().isUnauthorized());
 
         login(mockMvc, EMAIL, PASSWORD).andExpect(status().isOk());
+    }
+
+    @Test
+    void accessTokenFromLoginAuthenticatesMeEndpoint() throws Exception {
+        String accessToken = json(login(mockMvc, EMAIL, PASSWORD), "$.accessToken");
+
+        mockMvc.perform(get("/api/v1/auth/me").header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(EMAIL))
+                .andExpect(jsonPath("$.role").value("RECRUITER"));
+        mockMvc.perform(get("/api/v1/auth/me")).andExpect(status().isUnauthorized());
     }
 
     @Test

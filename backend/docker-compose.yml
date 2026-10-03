@@ -41,6 +41,7 @@ services:
       DB_NAME: user_db
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
+      JWT_SECRET: dev-only-secret-change-in-production
     depends_on:
       postgres:
         condition: service_healthy
@@ -54,6 +55,7 @@ services:
       DB_NAME: job_db
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
+      JWT_SECRET: dev-only-secret-change-in-production
     depends_on:
       postgres:
         condition: service_healthy
@@ -67,6 +69,7 @@ services:
       DB_NAME: application_db
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
+      JWT_SECRET: dev-only-secret-change-in-production
     depends_on:
       postgres:
         condition: service_healthy
@@ -80,6 +83,7 @@ services:
       DB_NAME: dashboard_db
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
+      JWT_SECRET: dev-only-secret-change-in-production
     depends_on:
       postgres:
         condition: service_healthy

@@ -7,11 +7,14 @@ import com.smartrecruit.auth.dto.RefreshTokenRequest;
 import com.smartrecruit.auth.dto.RegisterRequest;
 import com.smartrecruit.auth.dto.ResetPasswordRequest;
 import com.smartrecruit.auth.dto.TokenResponse;
+import com.smartrecruit.auth.security.AuthenticatedUser;
 import com.smartrecruit.auth.service.AuthService;
 import com.smartrecruit.auth.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +33,12 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public AccountResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
+    }
+
+    /** Account of the caller, identified by the access token. */
+    @GetMapping("/me")
+    public AccountResponse me(@AuthenticationPrincipal AuthenticatedUser user) {
+        return authService.getAccount(user.id());
     }
 
     @PostMapping("/login")
