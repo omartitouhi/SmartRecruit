@@ -17,3 +17,6 @@ auth:
     max-attempts: 5
     window: 15m
     duration: 15m
+  password-reset:
+    token-ttl: 30m
+    link-base-url: http://localhost:5173/reset-password

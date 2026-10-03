@@ -1,11 +1,14 @@
 package com.smartrecruit.auth.controller;
 
 import com.smartrecruit.auth.dto.AccountResponse;
+import com.smartrecruit.auth.dto.ForgotPasswordRequest;
 import com.smartrecruit.auth.dto.LoginRequest;
 import com.smartrecruit.auth.dto.RefreshTokenRequest;
 import com.smartrecruit.auth.dto.RegisterRequest;
+import com.smartrecruit.auth.dto.ResetPasswordRequest;
 import com.smartrecruit.auth.dto.TokenResponse;
 import com.smartrecruit.auth.service.AuthService;
+import com.smartrecruit.auth.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,5 +47,18 @@ public class AuthController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(@Valid @RequestBody RefreshTokenRequest request) {
         authService.logout(request);
+    }
+
+    /** Always 202, whether or not the email matches an account (anti-enumeration). */
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        passwordResetService.requestReset(request);
+    }
+
+    @PostMapping("/reset-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        passwordResetService.resetPassword(request);
     }
 }

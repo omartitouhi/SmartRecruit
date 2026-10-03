@@ -8,7 +8,7 @@ import java.time.Duration;
  * Tunables of the authentication module, bound from the {@code auth.*} keys of application.yml.
  */
 @ConfigurationProperties(prefix = "auth")
-public record AuthProperties(Jwt jwt, Lockout lockout) {
+public record AuthProperties(Jwt jwt, Lockout lockout, PasswordReset passwordReset) {
 
     /**
      * @param secret              HMAC key used to sign access tokens (>= 32 bytes)
@@ -26,5 +26,12 @@ public record AuthProperties(Jwt jwt, Lockout lockout) {
      * @param duration    how long the account stays locked
      */
     public record Lockout(int maxAttempts, Duration window, Duration duration) {
+    }
+
+    /**
+     * @param tokenTtl    validity of a reset link (BE-AUTH-06)
+     * @param linkBaseUrl frontend page receiving the token as {@code ?token=...}
+     */
+    public record PasswordReset(Duration tokenTtl, String linkBaseUrl) {
     }
 }
