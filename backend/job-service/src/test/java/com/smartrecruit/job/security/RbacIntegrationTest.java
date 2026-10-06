@@ -1,10 +1,7 @@
 package com.smartrecruit.job.security;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -14,12 +11,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,7 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * BE-AUTH-04 acceptance criteria, exercised on test-only endpoints protected like real ones.
+ * BE-AUTH-04 / BE-SEC-04 acceptance criteria, exercised on test-only endpoints protected like real
+ * ones. Requests carry the signed identity headers the api-gateway adds after validating the JWT.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -66,30 +63,30 @@ class RbacIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Value("${auth.jwt.secret}")
-    private String secret;
+    @Autowired
+    private InternalIdentityVerifier verifier;
 
-    private String token(UUID userId, String role, Instant expiresAt, String signingSecret) {
-        return Jwts.builder()
-                .subject(userId.toString())
-                .claim("role", role)
-                .issuedAt(new Date())
-                .expiration(Date.from(expiresAt))
-                .signWith(Keys.hmacShaKeyFor(signingSecret.getBytes(StandardCharsets.UTF_8)))
-                .compact();
+    private MockHttpServletRequestBuilder as(MockHttpServletRequestBuilder request, UUID userId, String role,
+                                             long timestamp, String signature) {
+        return request
+                .header(InternalIdentityVerifier.USER_ID, userId.toString())
+                .header(InternalIdentityVerifier.USER_ROLE, role)
+                .header(InternalIdentityVerifier.TIMESTAMP, Long.toString(timestamp))
+                .header(InternalIdentityVerifier.SIGNATURE, signature);
     }
 
-    private String token(String role) {
-        return token(UUID.randomUUID(), role, Instant.now().plusSeconds(3600), secret);
+    private ResultActions call(String path, UUID userId, String role) throws Exception {
+        long now = Instant.now().getEpochSecond();
+        return mockMvc.perform(as(get(path), userId, role, now, verifier.sign(userId.toString(), role, now)));
     }
 
-    private ResultActions call(String path, String jwt) throws Exception {
-        return mockMvc.perform(get(path).header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt));
+    private ResultActions call(String path, String role) throws Exception {
+        return call(path, UUID.randomUUID(), role);
     }
 
     @Test
     void candidateCallingRecruiterEndpointGets403() throws Exception {
-        call("/api/v1/rbac-test/recruiter", token("CANDIDATE"))
+        call("/api/v1/rbac-test/recruiter", "CANDIDATE")
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.status").value(403))
                 .andExpect(jsonPath("$.path").value("/api/v1/rbac-test/recruiter"));
@@ -97,17 +94,17 @@ class RbacIntegrationTest {
 
     @Test
     void candidateCallingAdminEndpointGets403() throws Exception {
-        call("/api/v1/rbac-test/admin", token("CANDIDATE")).andExpect(status().isForbidden());
+        call("/api/v1/rbac-test/admin", "CANDIDATE").andExpect(status().isForbidden());
     }
 
     @Test
     void recruiterCallingCandidateEndpointGets403() throws Exception {
-        call("/api/v1/rbac-test/candidate", token("RECRUITER")).andExpect(status().isForbidden());
+        call("/api/v1/rbac-test/candidate", "RECRUITER").andExpect(status().isForbidden());
     }
 
     @Test
     void adminCallingAdminEndpointIsAllowed() throws Exception {
-        call("/api/v1/rbac-test/admin", token("ADMIN"))
+        call("/api/v1/rbac-test/admin", "ADMIN")
                 .andExpect(status().isOk())
                 .andExpect(content().string("admin"));
     }
@@ -115,40 +112,52 @@ class RbacIntegrationTest {
     @Test
     void matchingRoleIsAllowedAndPrincipalIsExposed() throws Exception {
         UUID userId = UUID.randomUUID();
-        call("/api/v1/rbac-test/candidate", token(userId, "CANDIDATE", Instant.now().plusSeconds(60), secret))
+        call("/api/v1/rbac-test/candidate", userId, "CANDIDATE")
                 .andExpect(status().isOk())
                 .andExpect(content().string(userId.toString()));
-        call("/api/v1/rbac-test/recruiter", token("RECRUITER")).andExpect(status().isOk());
+        call("/api/v1/rbac-test/recruiter", "RECRUITER").andExpect(status().isOk());
     }
 
     @Test
-    void missingTokenGets401() throws Exception {
+    void missingIdentityGets401() throws Exception {
         mockMvc.perform(get("/api/v1/rbac-test/any"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value(401));
     }
 
     @Test
-    void malformedTokenGets401() throws Exception {
-        call("/api/v1/rbac-test/any", "not-a-jwt").andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void expiredTokenGets401() throws Exception {
-        call("/api/v1/rbac-test/any", token(UUID.randomUUID(), "ADMIN", Instant.now().minusSeconds(60), secret))
+    void rawJwtWithoutGatewayHeadersGets401() throws Exception {
+        mockMvc.perform(get("/api/v1/rbac-test/any").header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiJ9.e30.x"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void tokenSignedWithAnotherSecretGets401() throws Exception {
-        String forged = token(UUID.randomUUID(), "ADMIN", Instant.now().plusSeconds(60),
-                "another-secret-key-that-is-long-enough-for-hs256");
-        call("/api/v1/rbac-test/admin", forged).andExpect(status().isUnauthorized());
+    void forgedSignatureGets401() throws Exception {
+        long now = Instant.now().getEpochSecond();
+        mockMvc.perform(as(get("/api/v1/rbac-test/admin"), UUID.randomUUID(), "ADMIN", now, "forged-signature"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void escalatedRoleWithSignatureOfAnotherRoleGets401() throws Exception {
+        UUID userId = UUID.randomUUID();
+        long now = Instant.now().getEpochSecond();
+        String candidateSignature = verifier.sign(userId.toString(), "CANDIDATE", now);
+        mockMvc.perform(as(get("/api/v1/rbac-test/admin"), userId, "ADMIN", now, candidateSignature))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void staleHeadersGet401() throws Exception {
+        UUID userId = UUID.randomUUID();
+        long old = Instant.now().minus(InternalIdentityVerifier.MAX_AGE).getEpochSecond() - 5;
+        mockMvc.perform(as(get("/api/v1/rbac-test/any"), userId, "ADMIN", old, verifier.sign(userId.toString(), "ADMIN", old)))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     void unknownRoleGets401() throws Exception {
-        call("/api/v1/rbac-test/any", token("SUPERUSER")).andExpect(status().isUnauthorized());
+        call("/api/v1/rbac-test/any", "SUPERUSER").andExpect(status().isUnauthorized());
     }
 
     @Test

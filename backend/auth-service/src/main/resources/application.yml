@@ -34,3 +34,7 @@ auth:
   password-reset:
     token-ttl: 30m
     link-base-url: ${PASSWORD_RESET_LINK_BASE_URL:http://localhost:5173/reset-password}
+
+internal-auth:
+  # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
+  secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}

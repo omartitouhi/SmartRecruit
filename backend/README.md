@@ -82,9 +82,16 @@ l'architecture distribuée. Points d'attention :
   d'environnement / noms Docker Compose (voir `docker-compose.yml`).
 - Chaque service a sa propre base logique (isolation des données), mais partage la même
   instance PostgreSQL en local pour simplifier le développement.
-- La validation JWT est dupliquée dans chaque service pour l'instant (TODO dans
-  `auth-service/src/.../config/SecurityConfig.java`) — à centraliser au niveau du gateway
-  si le temps le permet.
+- La validation JWT est **centralisée au niveau du gateway** (`BE-SEC-04`) : une requête
+  `/api/**` sans JWT valide est rejetée en `401` par le gateway (sauf les routes publiques
+  d'authentification). Pour un JWT valide, le gateway transmet l'identité aux microservices
+  dans des headers internes signés (HMAC-SHA256, secret `INTERNAL_AUTH_SECRET`) :
+  `X-Auth-User-Id`, `X-Auth-User-Role`, `X-Auth-Timestamp`, `X-Auth-Signature`. Les headers
+  `X-Auth-*` envoyés par un client sont écrasés.
+- Chaque microservice vérifie seulement cette signature (`security/InternalIdentityVerifier`)
+  et applique le RBAC (`BE-AUTH-04`) avec `@PreAuthorize("hasRole('RECRUITER')")`.
+  L'utilisateur courant s'obtient avec `@AuthenticationPrincipal AuthenticatedUser user`.
+  Un appel direct à un service (sans passer par le gateway) est rejeté en `401`.
 
 ## CI
 

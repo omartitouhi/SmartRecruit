@@ -22,7 +22,6 @@ management:
       exposure:
         include: health,info
 
-auth:
-  jwt:
-    # Same secret as auth-service: used to verify access tokens (BE-AUTH-04).
-    secret: ${JWT_SECRET:change-me-in-production-this-is-a-dev-only-secret-key}
+internal-auth:
+  # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
+  secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}

@@ -4,6 +4,7 @@ import com.smartrecruit.auth.model.Account;
 import com.smartrecruit.auth.model.AccountStatus;
 import com.smartrecruit.auth.repository.AccountRepository;
 import com.smartrecruit.auth.repository.RefreshTokenRepository;
+import com.smartrecruit.auth.security.InternalIdentityVerifier;
 import com.smartrecruit.auth.service.JwtService;
 import com.smartrecruit.auth.support.MutableClock;
 import com.smartrecruit.auth.support.MutableClockConfig;
@@ -50,6 +51,9 @@ class LoginIntegrationTest {
 
     @Autowired
     private MutableClock clock;
+
+    @Autowired
+    private InternalIdentityVerifier identityVerifier;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -137,10 +141,17 @@ class LoginIntegrationTest {
     }
 
     @Test
-    void accessTokenFromLoginAuthenticatesMeEndpoint() throws Exception {
-        String accessToken = json(login(mockMvc, EMAIL, PASSWORD), "$.accessToken");
+    void meEndpointReturnsAccountOfIdentityForwardedByGateway() throws Exception {
+        // Simulates what the api-gateway forwards after validating the access token (BE-SEC-04).
+        Claims claims = jwtService.parse(json(login(mockMvc, EMAIL, PASSWORD), "$.accessToken"));
+        String role = claims.get(JwtService.ROLE_CLAIM, String.class);
+        long now = clock.instant().getEpochSecond();
 
-        mockMvc.perform(get("/api/v1/auth/me").header("Authorization", "Bearer " + accessToken))
+        mockMvc.perform(get("/api/v1/auth/me")
+                        .header(InternalIdentityVerifier.USER_ID, claims.getSubject())
+                        .header(InternalIdentityVerifier.USER_ROLE, role)
+                        .header(InternalIdentityVerifier.TIMESTAMP, Long.toString(now))
+                        .header(InternalIdentityVerifier.SIGNATURE, identityVerifier.sign(claims.getSubject(), role, now)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value(EMAIL))
                 .andExpect(jsonPath("$.role").value("RECRUITER"));

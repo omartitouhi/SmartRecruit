@@ -8,6 +8,5 @@ spring:
     hibernate:
       ddl-auto: create-drop
 
-auth:
-  jwt:
-    secret: test-only-secret-key-that-is-long-enough-for-hs256
+internal-auth:
+  secret: test-only-internal-auth-secret

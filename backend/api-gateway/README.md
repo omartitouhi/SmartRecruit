@@ -27,6 +27,19 @@ variables d'environnement / noms de services Docker Compose).
 
 Voir `docker-compose.yml` à la racine de ce dépôt pour lancer toute la stack (gateway + microservices + DB).
 
+## Authentification (BE-SEC-04)
+
+`security/JwtAuthenticationGatewayFilter` valide le JWT une seule fois pour toute la plateforme :
+- routes publiques (`security.public-paths` : register, login, refresh, logout,
+  forgot-password, reset-password) et requêtes `OPTIONS` : laissées passer ;
+- toute autre requête `/api/**` sans JWT valide : `401` renvoyé par le gateway, le
+  microservice n'est pas appelé ;
+- JWT valide : l'identité est transmise dans des headers signés (HMAC-SHA256 avec
+  `INTERNAL_AUTH_SECRET`) : `X-Auth-User-Id`, `X-Auth-User-Role`, `X-Auth-Timestamp`,
+  `X-Auth-Signature`. Les headers `X-Auth-*` fournis par le client sont toujours écrasés.
+
+Variables d'environnement : `JWT_SECRET` (identique à auth-service) et `INTERNAL_AUTH_SECRET`
+(identique à tous les microservices).
+
 ## À faire (prochains sprints)
-- Validation JWT au niveau du gateway (filtre `before`) pour éviter de dupliquer la logique d'auth dans chaque service.
 - Rate limiting / CORS centralisé.

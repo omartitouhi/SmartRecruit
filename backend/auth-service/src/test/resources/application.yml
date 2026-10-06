@@ -20,3 +20,6 @@ auth:
   password-reset:
     token-ttl: 30m
     link-base-url: http://localhost:5173/reset-password
+
+internal-auth:
+  secret: test-only-internal-auth-secret
