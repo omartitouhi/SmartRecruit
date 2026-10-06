@@ -41,5 +41,22 @@ Voir `docker-compose.yml` à la racine de ce dépôt pour lancer toute la stack 
 Variables d'environnement : `JWT_SECRET` (identique à auth-service) et `INTERNAL_AUTH_SECRET`
 (identique à tous les microservices).
 
+## Rate limiting (BE-SEC-05)
+
+`security/RateLimitingFilter` limite les endpoints sensibles (`security.rate-limit.paths` :
+login, register, refresh, forgot-password, reset-password) à `max-requests` appels par IP et
+par endpoint sur une fenêtre glissante `window` (défaut : 10 en 5 min). Au-delà : `429` avec
+le header `Retry-After` (secondes), sans appel au microservice.
+
+| Variable | Défaut | Rôle |
+| --- | --- | --- |
+| `RATE_LIMIT_MAX_REQUESTS` | `10` | appels autorisés par fenêtre |
+| `RATE_LIMIT_WINDOW` | `5m` | durée de la fenêtre glissante |
+| `RATE_LIMIT_TRUST_FORWARDED_FOR` | `false` | utiliser `X-Forwarded-For` comme IP client (seulement derrière un reverse proxy de confiance) |
+
+Compteurs en mémoire : suffisant pour une instance unique du gateway, un stockage partagé
+(Redis) serait nécessaire avec plusieurs instances. Ce filtre complète le verrouillage par
+compte de l'auth-service (5 échecs en 15 min, `BE-AUTH-02`).
+
 ## À faire (prochains sprints)
-- Rate limiting / CORS centralisé.
+- CORS centralisé.
