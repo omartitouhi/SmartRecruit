@@ -31,5 +31,6 @@ public class Experience {
     @Column(name = "end_date")
     private YearMonth endDate;
 
+    @Column(length = 2000)
     private String description;
 }

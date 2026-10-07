@@ -25,6 +25,7 @@ public class CandidateProfileResponse {
     private UUID id;
     private String firstName;
     private String lastName;
+    private String email;
     private String phone;
     private String location;
     private List<String> skills;
@@ -33,20 +34,25 @@ public class CandidateProfileResponse {
     private List<String> languages;
     private String cvUrl;
     private Instant cvParsedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     public static CandidateProfileResponse from(CandidateProfile profile) {
         return CandidateProfileResponse.builder()
                 .id(profile.getId())
                 .firstName(profile.getFirstName())
                 .lastName(profile.getLastName())
+                .email(profile.getEmail())
                 .phone(profile.getPhone())
                 .location(profile.getLocation())
-                .skills(profile.getSkills())
-                .experiences(profile.getExperiences())
-                .education(profile.getEducation())
-                .languages(profile.getLanguages())
+                .skills(List.copyOf(profile.getSkills()))
+                .experiences(List.copyOf(profile.getExperiences()))
+                .education(List.copyOf(profile.getEducation()))
+                .languages(List.copyOf(profile.getLanguages()))
                 .cvUrl(profile.getCvUrl())
                 .cvParsedAt(profile.getCvParsedAt())
+                .createdAt(profile.getCreatedAt())
+                .updatedAt(profile.getUpdatedAt())
                 .build();
     }
 }

@@ -65,7 +65,8 @@ Transitions autorisées pour `ApplicationStatus` (cf. `BE-APP-04`) :
 | Champ | Type | Notes |
 |---|---|---|
 | id | UUID | = accountId (1:1 avec Account) |
-| firstName, lastName | string | |
+| firstName, lastName | string | obligatoires |
+| email | string | obligatoire — email de contact du candidat (visible par les recruteurs), pas forcément celui du compte |
 | phone | string \| null | |
 | location | string \| null | ville, pour le filtre de recherche d'offres |
 | skills | string[] | déclaratif, complété par l'extraction IA (`AI-CV-02`) |
@@ -74,6 +75,7 @@ Transitions autorisées pour `ApplicationStatus` (cf. `BE-APP-04`) :
 | languages | string[] | |
 | cvUrl | string \| null | référence au fichier stocké (chiffré, cf. `BE-SEC-01`), jamais l'URL brute du stockage |
 | cvParsedAt | datetime \| null | horodatage de la dernière analyse IA réussie |
+| createdAt / updatedAt | datetime | |
 
 **Company**
 | Champ | Type | Notes |
