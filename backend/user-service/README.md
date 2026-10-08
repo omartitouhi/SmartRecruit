@@ -32,6 +32,8 @@ src/main/java/com/smartrecruit/user/
 
 ## Endpoints
 
+- `GET /api/v1/users/candidates/me` — (CANDIDATE) profil du candidat connecté, `404` s'il n'existe pas encore (BE-USER-03)
+- `PATCH /api/v1/users/candidates/me` — (CANDIDATE) mise à jour partielle façon JSON Merge Patch : champ absent = inchangé, `null` = effacé (interdit pour firstName / lastName / email), valeur = remplacée ; `updatedAt` est mis à jour (BE-USER-03)
 - `PUT /api/v1/users/candidates/me` — (CANDIDATE) crée (`201`) ou remplace entièrement (`200`) le profil du candidat connecté (BE-USER-01)
 - `GET /api/v1/ping` — health check applicatif
 - `GET /actuator/health` — health check Spring Boot Actuator

@@ -1,12 +1,15 @@
 package com.smartrecruit.user.service;
 
+import com.smartrecruit.user.dto.CandidateProfilePatchRequest;
 import com.smartrecruit.user.dto.CandidateProfileRequest;
 import com.smartrecruit.user.dto.CandidateProfileResponse;
 import com.smartrecruit.user.dto.EducationRequest;
 import com.smartrecruit.user.dto.ExperienceRequest;
+import com.smartrecruit.user.exception.ApiException;
 import com.smartrecruit.user.model.CandidateProfile;
 import com.smartrecruit.user.repository.CandidateProfileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +51,57 @@ public class CandidateProfileService {
 
         CandidateProfile saved = profileRepository.saveAndFlush(profile);
         return new SaveResult(CandidateProfileResponse.from(saved), created);
+    }
+
+    @Transactional(readOnly = true)
+    public CandidateProfileResponse get(UUID accountId) {
+        return CandidateProfileResponse.from(findOrThrow(accountId));
+    }
+
+    /**
+     * Partial update (BE-USER-03): only the fields present in the request body are modified.
+     * {@code updatedAt} is refreshed by the entity's {@code @PreUpdate} hook.
+     */
+    @Transactional
+    public CandidateProfileResponse patch(UUID accountId, CandidateProfilePatchRequest request) {
+        CandidateProfile profile = findOrThrow(accountId);
+
+        if (request.has("firstName")) {
+            profile.setFirstName(request.firstName().trim());
+        }
+        if (request.has("lastName")) {
+            profile.setLastName(request.lastName().trim());
+        }
+        if (request.has("email")) {
+            profile.setEmail(request.email().trim().toLowerCase(Locale.ROOT));
+        }
+        if (request.has("phone")) {
+            profile.setPhone(blankToNull(request.phone()));
+        }
+        if (request.has("location")) {
+            profile.setLocation(blankToNull(request.location()));
+        }
+        if (request.has("skills")) {
+            CandidateProfile.replace(profile.getSkills(), trimDistinct(request.skills()));
+        }
+        if (request.has("languages")) {
+            CandidateProfile.replace(profile.getLanguages(), trimDistinct(request.languages()));
+        }
+        if (request.has("experiences")) {
+            CandidateProfile.replace(profile.getExperiences(),
+                    nullToEmpty(request.experiences()).stream().map(ExperienceRequest::toEntity).toList());
+        }
+        if (request.has("education")) {
+            CandidateProfile.replace(profile.getEducation(),
+                    nullToEmpty(request.education()).stream().map(EducationRequest::toEntity).toList());
+        }
+        return CandidateProfileResponse.from(profileRepository.saveAndFlush(profile));
+    }
+
+    private CandidateProfile findOrThrow(UUID accountId) {
+        return profileRepository.findById(accountId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND,
+                        "Profil candidat introuvable : créez-le d'abord avec PUT /api/v1/users/candidates/me"));
     }
 
     static String blankToNull(String value) {

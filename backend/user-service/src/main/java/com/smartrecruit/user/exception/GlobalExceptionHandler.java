@@ -29,6 +29,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "La requête contient des champs invalides", request, fieldErrors);
     }
 
+    @ExceptionHandler(RequestValidationException.class)
+    public ResponseEntity<ApiError> handleRequestValidation(RequestValidationException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request, ex.getFieldErrors());
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiError> handleUnreadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Corps de requête illisible ou mal formé", request, null);
