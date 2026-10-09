@@ -78,13 +78,22 @@ def test_parse_cv_returns_explicit_error_for_scanned_pdf():
     assert response.json()["detail"]
 
 
-def test_parse_cv_extracts_text_then_reports_structured_parsing_pending():
+def test_parse_cv_returns_structured_camelcase_json():
+    buffer = io.BytesIO()
+    pdf = canvas.Canvas(buffer)
+    lines = ["Competences", "Java, Docker", "Experience", "Dev - Acme (2022-01 - Present)",
+             "Formation", "Master GL - ESPRIT, 2025", "Langues", "Francais, Anglais"]
+    for i, line in enumerate(lines):
+        pdf.drawString(100, 750 - 20 * i, line)
+    pdf.save()
+
     response = client.post(
         "/api/v1/ai/cv-parsing/parse",
-        files={"file": ("cv.pdf", _text_pdf_bytes(), "application/pdf")},
+        files={"file": ("cv.pdf", buffer.getvalue(), "application/pdf")},
     )
-    # AI-CV-01 (extraction de texte) réussit ; AI-CV-02 (structuration) n'est pas
-    # encore implémentée — l'endpoint le signale explicitement plutôt que de
-    # renvoyer un CVParsingResult inventé.
-    assert response.status_code == 501
-    assert "AI-CV-02" in response.json()["detail"]
+    assert response.status_code == 200
+    body = response.json()
+    assert body["skills"] == ["Java", "Docker"]
+    assert body["experiences"][0]["startDate"] == "2022-01-01"
+    assert body["education"][0]["year"] == 2025
+    assert body["languages"] == ["Français", "Anglais"]

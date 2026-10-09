@@ -6,18 +6,17 @@ from app.services.cv_parsing_service import (
     CVTextExtractionError,
     extract_text_from_pdf,
 )
+from app.services.cv_structuring_service import parse_cv_text
 
 router = APIRouter(prefix="/cv-parsing", tags=["IA-01 · CV Parsing"])
 
 
 @router.post("/parse", response_model=CVParsingResult)
 async def parse_cv(file: UploadFile):
-    """PDF -> compétences, expériences, diplômes, langues (IA-01/IA-02).
+    """PDF -> compétences, expériences, diplômes, langues (AI-CV-01 + AI-CV-02).
 
-    IA-01 (extraction de texte brut) est implémentée : le fichier est validé
-    (type, taille) puis son texte est extrait, avec une erreur explicite en cas
-    d'échec (PDF corrompu, protégé, ou sans couche de texte — ex. un scan/image).
-    L'extraction structurée (compétences/expériences/diplômes) arrive avec IA-02.
+    Le fichier est validé (type, taille), son texte extrait (erreur 422 explicite
+    en cas d'échec), puis structuré et validé contre le schéma strict CVParsingResult.
     """
     if file.content_type != "application/pdf":
         raise HTTPException(
@@ -33,17 +32,11 @@ async def parse_cv(file: UploadFile):
         )
 
     try:
-        extract_text_from_pdf(data)
+        text = extract_text_from_pdf(data)
     except CVTextExtractionError as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=str(exc),
         ) from exc
 
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail=(
-            "Extraction de texte OK (AI-CV-01) — l'extraction structurée "
-            "(compétences, expériences, diplômes, langues) arrive avec AI-CV-02."
-        ),
-    )
+    return parse_cv_text(text)
