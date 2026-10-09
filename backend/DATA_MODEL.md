@@ -73,7 +73,7 @@ Transitions autorisées pour `ApplicationStatus` (cf. `BE-APP-04`) :
 | experiences | Experience[] | `{ title, company, startDate, endDate\|null, description }` |
 | education | Education[] | `{ degree, institution, year }` |
 | languages | string[] | |
-| cvUrl | string \| null | référence au fichier stocké (chiffré, cf. `BE-SEC-01`), jamais l'URL brute du stockage |
+| cvUrl | string \| null | référence au fichier stocké (chiffré, cf. `BE-SEC-01`), jamais l'URL brute du stockage : endpoint de téléchargement `/api/v1/users/candidates/{id}/cv` |
 | cvParsedAt | datetime \| null | horodatage de la dernière analyse IA réussie |
 | createdAt / updatedAt | datetime | |
 

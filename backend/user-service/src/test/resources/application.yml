@@ -10,3 +10,6 @@ spring:
 
 internal-auth:
   secret: test-only-internal-auth-secret
+
+cv-storage:
+  directory: target/test-cvs

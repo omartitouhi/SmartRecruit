@@ -15,6 +15,8 @@ Profils Candidat et Recruteur, gestion des entreprises.
 ./mvnw spring-boot:run
 ```
 
+Les CV sont stockés dans `CV_STORAGE_DIR` (défaut `./data/cvs`, volume `cv_data` en Docker).
+
 Nécessite une instance PostgreSQL locale (voir `docker-compose.yml` à la racine de ce dépôt pour lancer toute la stack).
 
 ## Structure
@@ -35,6 +37,8 @@ src/main/java/com/smartrecruit/user/
 - `GET /api/v1/users/candidates/me` — (CANDIDATE) profil du candidat connecté, `404` s'il n'existe pas encore (BE-USER-03)
 - `PATCH /api/v1/users/candidates/me` — (CANDIDATE) mise à jour partielle façon JSON Merge Patch : champ absent = inchangé, `null` = effacé (interdit pour firstName / lastName / email), valeur = remplacée ; `updatedAt` est mis à jour (BE-USER-03)
 - `PUT /api/v1/users/candidates/me` — (CANDIDATE) crée (`201`) ou remplace entièrement (`200`) le profil du candidat connecté (BE-USER-01)
+- `POST /api/v1/users/candidates/me/cv` — (CANDIDATE) upload du CV en `multipart/form-data`, champ `file`, PDF uniquement (type + signature `%PDF-` vérifiés), 5 Mo max ; remplace le CV précédent (BE-USER-02)
+- `GET /api/v1/users/candidates/{id}/cv` — téléchargement du CV (cible de `cvUrl`) : le candidat lui-même, RECRUITER ou ADMIN
 - `GET /api/v1/ping` — health check applicatif
 - `GET /actuator/health` — health check Spring Boot Actuator
 

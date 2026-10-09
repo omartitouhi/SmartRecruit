@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: user-service
+  servlet:
+    multipart:
+      # BE-USER-02: CV limited to 5 MB; the request limit leaves room for the multipart envelope.
+      max-file-size: 5MB
+      max-request-size: 6MB
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:user_db}
     username: ${DB_USER:smartrecruit}
@@ -25,3 +30,6 @@ management:
 internal-auth:
   # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
   secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}
+
+cv-storage:
+  directory: ${CV_STORAGE_DIR:./data/cvs}

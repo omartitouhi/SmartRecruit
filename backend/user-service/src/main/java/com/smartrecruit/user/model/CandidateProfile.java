@@ -80,6 +80,9 @@ public class CandidateProfile {
     /** Référence au fichier stocké (chiffré, cf. BE-SEC-01) — jamais l'URL brute du stockage. */
     private String cvUrl;
 
+    /** Clé interne du fichier dans {@code CvStorage} — jamais exposée dans l'API. */
+    private String cvStorageKey;
+
     /** Horodatage de la dernière analyse IA réussie (AI-CV-02). */
     private Instant cvParsedAt;
 

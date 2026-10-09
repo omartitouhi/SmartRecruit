@@ -43,6 +43,9 @@ services:
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
       INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      CV_STORAGE_DIR: /data/cvs
+    volumes:
+      - cv_data:/data/cvs
     depends_on:
       postgres:
         condition: service_healthy
@@ -132,3 +135,4 @@ services:
 
 volumes:
   postgres_data:
+  cv_data:
