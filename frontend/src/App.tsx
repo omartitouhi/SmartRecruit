@@ -5,6 +5,7 @@ import { AppLayout } from "./components/layout/AppLayout";
 import { PublicLayout } from "./components/layout/PublicLayout";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 import { LoginPage } from "./pages/auth/LoginPage";
+import { ForgotPasswordPage, ResetPasswordPage } from "./pages/auth/PasswordPages";
 import { RegisterPage } from "./pages/auth/RegisterPage";
 import { CandidateProfilePage } from "./pages/candidate/CandidateProfilePage";
 import { JobSearchPage } from "./pages/candidate/JobSearchPage";
@@ -30,6 +31,8 @@ function App() {
           <Route index element={<Navigate to="/login" replace />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
         </Route>
 
         <Route element={<RequireRole roles={["CANDIDATE"]}><AppLayout /></RequireRole>}>
