@@ -8,6 +8,7 @@ import com.smartrecruit.user.storage.CvStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
@@ -34,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * BE-USER-02 — POST /api/v1/users/candidates/me/cv and download through cvUrl.
+ * BE-SEC-01 — CVs are encrypted at rest and only decrypted for an authorized download.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -52,6 +56,9 @@ class CandidateCvIntegrationTest {
 
     @Autowired
     private CvStorage cvStorage;
+
+    @Value("${cv-storage.directory}")
+    private String storageDirectory;
 
     private final UUID candidateId = UUID.randomUUID();
 
@@ -83,6 +90,34 @@ class CandidateCvIntegrationTest {
         CandidateProfile profile = repository.findById(candidateId).orElseThrow();
         assertThat(profile.getCvStorageKey()).isNotBlank();
         assertThat(cvStorage.load(profile.getCvStorageKey())).isEqualTo(PDF);
+    }
+
+    @Test
+    void cvIsEncryptedOnDiskAndDecryptedOnAuthorizedDownload() throws Exception {
+        upload(candidateId, pdf(PDF)).andExpect(status().isOk());
+        String key = repository.findById(candidateId).orElseThrow().getCvStorageKey();
+
+        byte[] onDisk = Files.readAllBytes(Path.of(storageDirectory, key + ".cv"));
+        assertThat(onDisk).isNotEqualTo(PDF);
+        assertThat(new String(onDisk, StandardCharsets.ISO_8859_1)).doesNotContain("%PDF");
+
+        mockMvc.perform(get("/api/v1/users/candidates/{id}/cv", candidateId).with(as(verifier, candidateId, "CANDIDATE")))
+                .andExpect(status().isOk())
+                .andExpect(content().bytes(PDF));
+    }
+
+    @Test
+    void tamperedFileIsNotServed() throws Exception {
+        upload(candidateId, pdf(PDF)).andExpect(status().isOk());
+        String key = repository.findById(candidateId).orElseThrow().getCvStorageKey();
+        Path file = Path.of(storageDirectory, key + ".cv");
+        byte[] onDisk = Files.readAllBytes(file);
+        onDisk[onDisk.length - 1] ^= 0x01;
+        Files.write(file, onDisk);
+
+        mockMvc.perform(get("/api/v1/users/candidates/{id}/cv", candidateId).with(as(verifier, candidateId, "CANDIDATE")))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("Le CV stocké est illisible"));
     }
 
     @Test

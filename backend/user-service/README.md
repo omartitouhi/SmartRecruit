@@ -15,7 +15,11 @@ Profils Candidat et Recruteur, gestion des entreprises.
 ./mvnw spring-boot:run
 ```
 
-Les CV sont stockés dans `CV_STORAGE_DIR` (défaut `./data/cvs`, volume `cv_data` en Docker).
+Les CV sont stockés dans `CV_STORAGE_DIR` (défaut `./data/cvs`, volume `cv_data` en Docker),
+**chiffrés au repos en AES-256-GCM** (BE-SEC-01) avec la clé `CV_ENCRYPTION_KEY` (32 octets en
+base64, à générer avec `openssl rand -base64 32` ; la valeur par défaut ne sert qu'au dev local).
+Le service refuse de démarrer sans clé valide. Les CV ne sont déchiffrés que lors d'un
+téléchargement autorisé ; un fichier altéré est détecté (tag GCM) et n'est pas servi.
 
 Nécessite une instance PostgreSQL locale (voir `docker-compose.yml` à la racine de ce dépôt pour lancer toute la stack).
 

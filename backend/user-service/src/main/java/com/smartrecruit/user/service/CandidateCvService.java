@@ -4,9 +4,11 @@ import com.smartrecruit.user.dto.CandidateProfileResponse;
 import com.smartrecruit.user.exception.ApiException;
 import com.smartrecruit.user.model.CandidateProfile;
 import com.smartrecruit.user.repository.CandidateProfileRepository;
+import com.smartrecruit.user.storage.CorruptedCvException;
 import com.smartrecruit.user.storage.CvNotFoundException;
 import com.smartrecruit.user.storage.CvStorage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +23,10 @@ import java.util.Arrays;
 import java.util.UUID;
 
 /**
- * CV upload and download (BE-USER-02).
+ * CV upload and download (BE-USER-02). Files are encrypted at rest by the {@link CvStorage}
+ * bean (BE-SEC-01) and only decrypted here, for an authorized download.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CandidateCvService {
@@ -68,6 +72,9 @@ public class CandidateCvService {
             return cvStorage.load(profile.getCvStorageKey());
         } catch (CvNotFoundException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Aucun CV pour ce candidat");
+        } catch (CorruptedCvException e) {
+            log.error("CV du candidat {} indéchiffrable (fichier altéré ou mauvaise clé)", candidateId);
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Le CV stocké est illisible");
         }
     }
 

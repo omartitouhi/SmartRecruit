@@ -13,3 +13,4 @@ internal-auth:
 
 cv-storage:
   directory: target/test-cvs
+  encryption-key: c21hcnRyZWNydWl0LXRlc3Qtb25seS1jdmtleS0zMmI=

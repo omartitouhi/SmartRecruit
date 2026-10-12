@@ -33,3 +33,6 @@ internal-auth:
 
 cv-storage:
   directory: ${CV_STORAGE_DIR:./data/cvs}
+  # BE-SEC-01: AES-256 key (32 bytes, base64) used to encrypt CVs at rest.
+  # The default is for local development only: generate a real one with `openssl rand -base64 32`.
+  encryption-key: ${CV_ENCRYPTION_KEY:c21hcnRyZWNydWl0LWRldi1vbmx5LWN2LWtleS0zMmI=}

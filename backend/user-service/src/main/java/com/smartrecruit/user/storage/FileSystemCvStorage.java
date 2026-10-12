@@ -1,8 +1,5 @@
 package com.smartrecruit.user.storage;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -13,13 +10,13 @@ import java.util.UUID;
 /**
  * Stores each CV as a file named after a random UUID in {@code cv-storage.directory}.
  * Keys are validated as UUIDs so they can never be used for path traversal.
+ * Wrapped by {@link EncryptingCvStorage}, see {@code CvStorageConfig}.
  */
-@Component
 public class FileSystemCvStorage implements CvStorage {
 
     private final Path directory;
 
-    public FileSystemCvStorage(@Value("${cv-storage.directory}") Path directory) {
+    public FileSystemCvStorage(Path directory) {
         this.directory = directory.toAbsolutePath().normalize();
     }
 
