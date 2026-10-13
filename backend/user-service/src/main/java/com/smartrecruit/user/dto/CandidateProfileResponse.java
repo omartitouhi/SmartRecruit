@@ -15,6 +15,7 @@ import java.util.UUID;
 /**
  * Public shape of {@link CandidateProfile}, as consumed by the frontend
  * (see {@code src/types/entities.ts} in {@code smartrecruit-frontend}).
+ * Never exposes the internal {@code cvStorageKey}.
  */
 @Getter
 @NoArgsConstructor
@@ -36,6 +37,14 @@ public class CandidateProfileResponse {
     private Instant cvParsedAt;
     private Instant createdAt;
     private Instant updatedAt;
+
+    /** true when the candidate exercised the right to be forgotten: every personal field is then null. */
+    private boolean deleted;
+
+    /** Placeholder shown instead of a deleted profile (BE-USER-04): no personal data at all. */
+    public static CandidateProfileResponse deletedAccount(UUID id) {
+        return CandidateProfileResponse.builder().id(id).deleted(true).build();
+    }
 
     public static CandidateProfileResponse from(CandidateProfile profile) {
         return CandidateProfileResponse.builder()

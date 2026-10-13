@@ -22,6 +22,7 @@ import java.util.UUID;
 public class CandidateProfileService {
 
     private final CandidateProfileRepository profileRepository;
+    private final DeletedAccountGuard deletionGuard;
 
     /** Result of a create-or-replace, so the controller can answer 201 or 200. */
     public record SaveResult(CandidateProfileResponse profile, boolean created) {
@@ -33,6 +34,7 @@ public class CandidateProfileService {
      */
     @Transactional
     public SaveResult createOrReplace(UUID accountId, CandidateProfileRequest request) {
+        deletionGuard.ensureNotDeleted(accountId);
         CandidateProfile existing = profileRepository.findById(accountId).orElse(null);
         boolean created = existing == null;
         CandidateProfile profile = created ? CandidateProfile.builder().id(accountId).build() : existing;

@@ -36,6 +36,7 @@ public class CandidateCvService {
 
     private final CandidateProfileRepository profileRepository;
     private final CvStorage cvStorage;
+    private final DeletedAccountGuard deletionGuard;
 
     /** Public reference stored in {@code cvUrl}: the download endpoint, never the storage location. */
     public static String cvUrlOf(UUID candidateId) {
@@ -49,6 +50,7 @@ public class CandidateCvService {
     @Transactional
     public CandidateProfileResponse upload(UUID candidateId, MultipartFile file) {
         byte[] content = validatePdf(file);
+        deletionGuard.ensureNotDeleted(candidateId);
         CandidateProfile profile = profileRepository.findById(candidateId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND,
                         "Profil candidat introuvable : créez-le avant d'envoyer un CV"));
@@ -76,6 +78,23 @@ public class CandidateCvService {
             log.error("CV du candidat {} indéchiffrable (fichier altéré ou mauvaise clé)", candidateId);
             throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Le CV stocké est illisible");
         }
+    }
+
+    /** Removes a CV file once the surrounding transaction has committed (account deletion). */
+    public void deleteFileAfterCommit(String key) {
+        if (key == null) {
+            return;
+        }
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            cvStorage.delete(key);
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                cvStorage.delete(key);
+            }
+        });
     }
 
     private static byte[] validatePdf(MultipartFile file) {

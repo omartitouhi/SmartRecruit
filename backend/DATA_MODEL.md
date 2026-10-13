@@ -76,6 +76,7 @@ Transitions autorisées pour `ApplicationStatus` (cf. `BE-APP-04`) :
 | cvUrl | string \| null | référence au fichier stocké (chiffré, cf. `BE-SEC-01`), jamais l'URL brute du stockage : endpoint de téléchargement `/api/v1/users/candidates/{id}/cv` |
 | cvParsedAt | datetime \| null | horodatage de la dernière analyse IA réussie |
 | createdAt / updatedAt | datetime | |
+| deleted | boolean | réponse API uniquement : `true` si le candidat a supprimé son compte (`BE-USER-04`) ; tous les champs personnels sont alors `null` (afficher « Compte supprimé ») |
 
 **Company**
 | Champ | Type | Notes |

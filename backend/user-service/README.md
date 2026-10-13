@@ -43,6 +43,8 @@ src/main/java/com/smartrecruit/user/
 - `PUT /api/v1/users/candidates/me` — (CANDIDATE) crée (`201`) ou remplace entièrement (`200`) le profil du candidat connecté (BE-USER-01)
 - `POST /api/v1/users/candidates/me/cv` — (CANDIDATE) upload du CV en `multipart/form-data`, champ `file`, PDF uniquement (type + signature `%PDF-` vérifiés), 5 Mo max ; remplace le CV précédent (BE-USER-02)
 - `GET /api/v1/users/candidates/{id}/cv` — téléchargement du CV (cible de `cvUrl`) : le candidat lui-même, RECRUITER ou ADMIN
+- `DELETE /api/v1/users/candidates/me?confirm=true` — (CANDIDATE) droit à l'oubli : profil et CV supprimés immédiatement, seul un marqueur sans donnée personnelle est conservé ; toute réécriture ultérieure renvoie `410` (BE-USER-04)
+- `GET /api/v1/users/candidates/{id}` — (RECRUITER, ADMIN) profil d'un candidat ; pour un compte supprimé : `{"id": ..., "deleted": true}` sans aucune donnée personnelle
 - `GET /api/v1/ping` — health check applicatif
 - `GET /actuator/health` — health check Spring Boot Actuator
 
