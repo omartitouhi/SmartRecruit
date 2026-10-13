@@ -7,6 +7,7 @@ import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage, ResetPasswordPage } from "./pages/auth/PasswordPages";
 import { RegisterPage } from "./pages/auth/RegisterPage";
+import { ApplicationsPage } from "./pages/candidate/ApplicationsPage";
 import { CandidateProfilePage } from "./pages/candidate/CandidateProfilePage";
 import { JobSearchPage } from "./pages/candidate/JobSearchPage";
 import { MatchScorePage } from "./pages/candidate/MatchScorePage";
@@ -38,6 +39,7 @@ function App() {
         <Route element={<RequireRole roles={["CANDIDATE"]}><AppLayout /></RequireRole>}>
           <Route path="candidate/profile" element={<CandidateProfilePage />} />
           <Route path="candidate/jobs" element={<JobSearchPage />} />
+          <Route path="candidate/applications" element={<ApplicationsPage />} />
           <Route path="candidate/match/:jobId" element={<MatchScorePage />} />
         </Route>
 
