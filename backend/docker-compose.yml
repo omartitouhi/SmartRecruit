@@ -44,6 +44,8 @@ services:
       DB_PASSWORD: smartrecruit
       INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
       CV_STORAGE_DIR: /data/cvs
+      AUTH_SERVICE_URI: http://auth-service:8081
+      AI_SERVICE_URI: http://ai-service:8000
       CV_ENCRYPTION_KEY: c21hcnRyZWNydWl0LWRldi1vbmx5LWN2LWtleS0zMmI=
     volumes:
       - cv_data:/data/cvs

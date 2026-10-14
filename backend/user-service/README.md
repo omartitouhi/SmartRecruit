@@ -36,6 +36,22 @@ src/main/java/com/smartrecruit/user/
   exception/    # gestion des erreurs
 ```
 
+## Effacement RGPD (BE-SEC-02)
+
+Après une suppression de compte (`BE-USER-04`), `gdpr/PersonalDataErasureProcessor` propage
+l'effacement aux services qui détiennent encore des données du candidat :
+
+| Service | Appel | Effet |
+| --- | --- | --- |
+| auth-service | `DELETE /internal/v1/accounts/{id}` | compte anonymisé (`DELETED`), sessions révoquées |
+| ai-service | `DELETE /api/v1/ai/candidates/{id}/data` | résultats d'analyse IA supprimés (contrat : `DATA_MODEL.md` §4.6) |
+
+Premier essai juste après la suppression, puis nouvel essai toutes les
+`GDPR_ERASURE_RETRY_INTERVAL` (5 min) jusqu'à confirmation des deux services. Chaque étape
+réussie n'est pas rejouée. Le suivi (`deleted_candidates`) conserve la date limite légale
+(suppression + 30 jours) ; une suppression encore incomplète après cette date est journalisée
+en `ERROR`. Variables : `AUTH_SERVICE_URI`, `AI_SERVICE_URI`.
+
 ## Endpoints
 
 - `GET /api/v1/users/candidates/me` — (CANDIDATE) profil du candidat connecté, `404` s'il n'existe pas encore (BE-USER-03)

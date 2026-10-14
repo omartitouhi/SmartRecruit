@@ -36,3 +36,13 @@ cv-storage:
   # BE-SEC-01: AES-256 key (32 bytes, base64) used to encrypt CVs at rest.
   # The default is for local development only: generate a real one with `openssl rand -base64 32`.
   encryption-key: ${CV_ENCRYPTION_KEY:c21hcnRyZWNydWl0LWRldi1vbmx5LWN2LWtleS0zMmI=}
+
+gdpr:
+  erasure:
+    # BE-SEC-02: a deleted account must be erased from every service within 30 days.
+    deadline: 30d
+    retry-interval: ${GDPR_ERASURE_RETRY_INTERVAL:5m}
+    scheduler-enabled: true
+    immediate: true
+    auth-service-uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+    ai-service-uri: ${AI_SERVICE_URI:http://localhost:8000}

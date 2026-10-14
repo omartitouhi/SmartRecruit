@@ -213,6 +213,21 @@ Pydantic et dans le DTO Java de `application-service`.
 Identifiants invalides → `401` avec un message générique (pas de distinction email / mot de passe).
 5 échecs en 15 min sur le même compte → compte bloqué 15 min, `429`.
 
+### 4.6 Effacement RGPD — `DELETE /api/v1/ai/candidates/{candidateId}/data` (`BE-SEC-02`)
+
+Appelé par `user-service` après la suppression d'un compte candidat (`BE-USER-04`). Le
+service IA doit supprimer **toutes** les données liées au candidat (résultats de parsing du CV,
+embeddings `pgvector`, scores et recommandations en cache).
+
+- Réponse attendue : `204` (ou tout `2xx`), y compris si aucune donnée n'existe (idempotent).
+- Toute autre réponse est considérée comme un échec : `user-service` réessaie toutes les 5 min.
+  Au-delà de 30 jours après la demande, l'échec est journalisé en erreur (`RGPD : effacement ... incomplet`).
+- Appel de service à service (pas via le gateway), headers signés `X-Auth-User-Role: SERVICE`
+  (cf. `README.md`, section sécurité).
+
+L'équivalent côté `auth-service` est `DELETE /internal/v1/accounts/{accountId}` : le compte passe
+en `DELETED`, email et mot de passe sont remplacés, toutes les sessions sont révoquées.
+
 ---
 
 ## 5. Où modifier quoi
