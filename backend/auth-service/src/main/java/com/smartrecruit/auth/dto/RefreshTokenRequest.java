@@ -1,5 +1,6 @@
 package com.smartrecruit.auth.dto;
 
+import com.smartrecruit.auth.security.RawText;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
  */
 public record RefreshTokenRequest(
         @NotBlank(message = "Le refresh token est obligatoire")
+        @RawText
         String refreshToken
 ) {
 }

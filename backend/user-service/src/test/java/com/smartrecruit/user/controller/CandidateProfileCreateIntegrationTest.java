@@ -166,6 +166,39 @@ class CandidateProfileCreateIntegrationTest {
     }
 
     @Test
+    void htmlInFreeTextIsSanitizedBeforeStorage() throws Exception {
+        putProfile(candidateId, "CANDIDATE", """
+                {"firstName": "<b>Alice</b>", "lastName": "Martin<script>alert(1)</script>", "email": "a@b.com",
+                 "skills": ["<img src=x onerror=alert(1)>Java"],
+                 "experiences": [{"title": "Dev", "company": "Acme", "startDate": "2022-01",
+                                  "description": "APIs <a href=\\"javascript:alert(1)\\">REST</a>\\nR&D"}]}
+                """)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.firstName").value("Alice"))
+                .andExpect(jsonPath("$.lastName").value("Martin"))
+                .andExpect(jsonPath("$.skills[0]").value("Java"))
+                .andExpect(jsonPath("$.experiences[0].description").value("APIs REST\nR&D"));
+
+        transactionTemplate.executeWithoutResult(status ->
+                assertThat(repository.findById(candidateId).orElseThrow().getExperiences().getFirst().getDescription())
+                        .isEqualTo("APIs REST\nR&D"));
+    }
+
+    @Test
+    void sqlInjectionPayloadIsStoredAsPlainText() throws Exception {
+        String payload = "Robert'); DROP TABLE candidate_profiles; --";
+
+        putProfile(candidateId, "CANDIDATE", """
+                {"firstName": "Bobby", "lastName": "%s", "email": "bobby@example.com"}
+                """.formatted(payload))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.lastName").value(payload));
+
+        assertThat(repository.count()).isEqualTo(1);
+        assertThat(repository.findById(candidateId).orElseThrow().getLastName()).isEqualTo(payload);
+    }
+
+    @Test
     void recruiterCannotCreateACandidateProfile() throws Exception {
         putProfile(candidateId, "RECRUITER", FULL_PROFILE).andExpect(status().isForbidden());
     }

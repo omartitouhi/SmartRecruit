@@ -92,6 +92,17 @@ l'architecture distribuée. Points d'attention :
   et applique le RBAC (`BE-AUTH-04`) avec `@PreAuthorize("hasRole('RECRUITER')")`.
   L'utilisateur courant s'obtient avec `@AuthenticationPrincipal AuthenticatedUser user`.
   Un appel direct à un service (sans passer par le gateway) est rejeté en `401`.
+- Protection des entrées (`BE-SEC-03`), active dans chaque service :
+  - **XSS** : toutes les chaînes des corps JSON sont converties en texte brut avant d'atteindre
+    les contrôleurs (`security/SanitizingStringDeserializer`, jsoup) : balises, scripts et
+    attributs `on*` supprimés, texte et retours à la ligne conservés. Les nouveaux endpoints sont
+    protégés automatiquement. Seuls les champs annotés `@RawText` (mots de passe, tokens) sont
+    exclus. Les réponses portent `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'`,
+    `X-Content-Type-Options: nosniff` et `X-Frame-Options: DENY`.
+  - **CSRF** : non applicable, l'authentification passe par le header `Authorization` (jamais
+    un cookie) et aucune session n'est créée ; la protection CSRF de Spring est donc désactivée.
+  - **Injection SQL** : accès aux données exclusivement via Spring Data JPA / JPQL avec
+    paramètres liés (requêtes préparées). Ne jamais construire de requête par concaténation.
 
 ## CI
 

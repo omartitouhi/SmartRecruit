@@ -1,6 +1,7 @@
 package com.smartrecruit.auth.dto;
 
 import com.smartrecruit.auth.model.Role;
+import com.smartrecruit.auth.security.RawText;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ public record RegisterRequest(
 
         @NotBlank(message = "Le mot de passe est obligatoire")
         @Size(min = 8, max = 72, message = "Le mot de passe doit contenir entre 8 et 72 caractères")
+        @RawText
         String password,
 
         @NotNull(message = "Le rôle est obligatoire (CANDIDATE ou RECRUITER)")

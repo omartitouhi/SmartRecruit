@@ -23,8 +23,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, GatewayIdentityFilter gatewayIdentityFilter,
                                                    SecurityErrorHandler securityErrorHandler) throws Exception {
         http
+                // CSRF does not apply (BE-SEC-03): the identity travels in headers set by the gateway from
+                // the Authorization header, never in a cookie, and no session is created.
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // BE-SEC-03: JSON-only API, nothing may be rendered or framed from its responses.
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'none'; frame-ancestors 'none'"))
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/ping", "/actuator/**", "/error").permitAll()
                         .anyRequest().authenticated()
