@@ -63,6 +63,8 @@ services:
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
       INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      AI_SERVICE_URI: http://ai-service:8000
+      USER_SERVICE_URI: http://user-service:8082
     depends_on:
       postgres:
         condition: service_healthy

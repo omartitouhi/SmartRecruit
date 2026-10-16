@@ -30,8 +30,18 @@ src/main/java/com/smartrecruit/job/
   exception/    # gestion des erreurs
 ```
 
+## Services appelés
+
+| Service | Appel | Variable |
+| --- | --- | --- |
+| ai-service | `GET /api/v1/ai/recommendation/candidates/{id}/jobs` | `AI_SERVICE_URI` |
+| user-service | `GET /internal/v1/companies?ids=...` (noms des entreprises) | `USER_SERVICE_URI` |
+
+Appels directs (hors gateway) avec l'identité signée `SERVICE`.
+
 ## Endpoints
 
+- `GET /api/v1/jobs/recommendations?limit=10` — (CANDIDATE) offres recommandées par l'IA, enrichies (titre, entreprise, lieu, contrat, niveau) et triées par score (BE-REC-01, contrat : `DATA_MODEL.md` §4.7). `503` si l'ai-service est indisponible.
 - `GET /api/v1/ping` — health check applicatif
 - `GET /actuator/health` — health check Spring Boot Actuator
 

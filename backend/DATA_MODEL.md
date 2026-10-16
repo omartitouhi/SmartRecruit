@@ -228,6 +228,42 @@ embeddings `pgvector`, scores et recommandations en cache).
 L'équivalent côté `auth-service` est `DELETE /internal/v1/accounts/{accountId}` : le compte passe
 en `DELETED`, email et mot de passe sont remplacés, toutes les sessions sont révoquées.
 
+### 4.7 Recommandations (`AI-REC-01` → `BE-REC-01`)
+
+**Réponse attendue de l'IA** — `GET /api/v1/ai/recommendation/candidates/{candidateId}/jobs`
+(appelé par `job-service`, pas via le gateway) :
+
+```json
+{
+  "recommendations": [
+    { "jobId": "7b0c...-uuid", "score": 91.0 },
+    { "jobId": "1f3a...-uuid", "score": 72.5 }
+  ]
+}
+```
+`score` sur 100, même échelle que `MatchScore.score` (§4.1). Toute réponse non `2xx` est traitée
+comme une indisponibilité (le frontend reçoit `503`).
+
+**Réponse exposée au frontend** — `GET /api/v1/jobs/recommendations?limit=10` (rôle CANDIDATE) :
+
+```json
+[
+  {
+    "jobId": "7b0c...-uuid",
+    "title": "Data Engineer",
+    "companyId": "c41d...-uuid",
+    "companyName": "Globex",
+    "location": "Tunis",
+    "contractType": "CDI",
+    "experienceLevel": "SENIOR",
+    "publishedAt": "2026-10-01T09:00:00Z",
+    "score": 91.0
+  }
+]
+```
+Triée par score décroissant, uniquement les offres `PUBLISHED`, `limit` entre 1 et 50 (défaut 10).
+`companyName` vaut `null` si `user-service` est momentanément indisponible.
+
 ---
 
 ## 5. Où modifier quoi

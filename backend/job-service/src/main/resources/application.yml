@@ -25,3 +25,8 @@ management:
 internal-auth:
   # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
   secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}
+
+services:
+  # BE-REC-01: AI recommendations, enriched with company names from user-service.
+  ai-service-uri: ${AI_SERVICE_URI:http://localhost:8000}
+  user-service-uri: ${USER_SERVICE_URI:http://localhost:8082}

@@ -61,6 +61,7 @@ en `ERROR`. Variables : `AUTH_SERVICE_URI`, `AI_SERVICE_URI`.
 - `GET /api/v1/users/candidates/{id}/cv` — téléchargement du CV (cible de `cvUrl`) : le candidat lui-même, RECRUITER ou ADMIN
 - `DELETE /api/v1/users/candidates/me?confirm=true` — (CANDIDATE) droit à l'oubli : profil et CV supprimés immédiatement, seul un marqueur sans donnée personnelle est conservé ; toute réécriture ultérieure renvoie `410` (BE-USER-04)
 - `GET /api/v1/users/candidates/{id}` — (RECRUITER, ADMIN) profil d'un candidat ; pour un compte supprimé : `{"id": ..., "deleted": true}` sans aucune donnée personnelle
+- `GET /internal/v1/companies?ids=...` — (SERVICE, non routé par le gateway) nom et logo d'entreprises, utilisé par job-service pour les recommandations (BE-REC-01)
 - `GET /api/v1/ping` — health check applicatif
 - `GET /actuator/health` — health check Spring Boot Actuator
 
