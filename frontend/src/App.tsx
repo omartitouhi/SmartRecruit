@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { RequireRole } from "./auth/RequireRole";
 import { AppLayout } from "./components/layout/AppLayout";
 import { PublicLayout } from "./components/layout/PublicLayout";
@@ -11,6 +11,8 @@ import { ApplicationsPage } from "./pages/candidate/ApplicationsPage";
 import { CandidateProfilePage } from "./pages/candidate/CandidateProfilePage";
 import { JobSearchPage } from "./pages/candidate/JobSearchPage";
 import { MatchScorePage } from "./pages/candidate/MatchScorePage";
+import { LandingPage } from "./pages/LandingPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 import { CandidateRankingPage } from "./pages/recruiter/CandidateRankingPage";
 import { CompanyProfilePage } from "./pages/recruiter/CompanyProfilePage";
 import { NewJobPage } from "./pages/recruiter/NewJobPage";
@@ -30,11 +32,12 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route element={<PublicLayout />}>
-          <Route index element={<Navigate to="/login" replace />} />
+          <Route index element={<LandingPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
 
         <Route element={<RequireRole roles={["CANDIDATE"]}><AppLayout /></RequireRole>}>
