@@ -2,14 +2,26 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: ['**']
   pull_request:
     branches: [main, develop]
 
+# A new push on the same branch cancels the run still in progress.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   build:
+    name: build (${{ matrix.service }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
+      # Every service is reported even when another one fails.
+      fail-fast: false
       matrix:
         service:
           - api-gateway
@@ -19,8 +31,8 @@ jobs:
           - application-service
           - dashboard-service
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
@@ -28,4 +40,14 @@ jobs:
           cache-dependency-path: ${{ matrix.service }}/pom.xml
       - name: Build and test ${{ matrix.service }}
         working-directory: ${{ matrix.service }}
-        run: ./mvnw -B verify
+        # chmod: guard in case a wrapper loses its executable bit again (commits from Windows).
+        run: |
+          chmod +x mvnw
+          ./mvnw -B -ntp verify
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports-${{ matrix.service }}
+          path: ${{ matrix.service }}/target/surefire-reports/
+          if-no-files-found: ignore
