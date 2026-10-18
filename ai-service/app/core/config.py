@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     openrouter_model: str = "anthropic/claude-haiku-5.5"
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
     llm_timeout_seconds: float = 9.0
+    # Le scoring (AI-MATCH-04) doit répondre sous 15 s, latence du LLM comprise.
+    matching_timeout_seconds: float = 14.0
 
     @property
     def database_url(self) -> str:

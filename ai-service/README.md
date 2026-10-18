@@ -42,6 +42,7 @@ Nécessite une instance PostgreSQL avec l'extension `pgvector` (voir
 | `OPENROUTER_MODEL` | `anthropic/claude-haiku-5.5` | modèle utilisé pour toutes les tâches |
 | `OPENROUTER_BASE_URL` | `https://openrouter.ai/api/v1` | |
 | `LLM_TIMEOUT_SECONDS` | `9` | délai max d'un appel LLM |
+| `MATCHING_TIMEOUT_SECONDS` | `14` | délai max de l'évaluation LLM du matching (réponse sous 15 s) |
 
 Garde-fous anti-hallucination appliqués à **toute** sortie du LLM :
 - la réponse doit être un JSON conforme à un schéma Pydantic strict (champs inconnus refusés),
