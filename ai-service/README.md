@@ -81,7 +81,10 @@ tests/
 - `POST /api/v1/ai/job-analysis/analyze` — IA-02 : `{ "jobId", "title"?, "description" }` ->
   `JobAnalysisResult` extrait par le LLM. Le résultat est stocké (table `job_analyses`) pour le
   matching, la recommandation et le skill gap : à appeler à chaque publication / modification d'offre.
-- `POST /api/v1/ai/matching/score` — IA-03
+- `POST /api/v1/ai/matching/score` — IA-03 : `{ "cvId", "jobId" }` (`cvId` = identifiant du candidat
+  dont le CV est stocké) -> `MatchScore`. Le LLM note chaque critère, le code calcule le score
+  pondéré (compétences 0,5 · expérience 0,3 · formation 0,2) et les contributions. `404` si le CV ou
+  l'offre n'a pas été analysé, `422` si aucun critère n'est évaluable, `502`/`503` côté LLM.
 - `GET /api/v1/ai/recommendation/candidates/{id}/jobs` — IA-04
 - `GET /api/v1/ai/skill-gap/candidates/{id}/jobs/{job_id}` — IA-05
 
