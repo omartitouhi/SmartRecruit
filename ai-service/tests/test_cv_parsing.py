@@ -10,6 +10,7 @@ from app.services.cv_parsing_service import (
     CVTextExtractionError,
     extract_text_from_pdf,
 )
+from app.services.llm_client import LLMError, LLMNotConfiguredError
 
 client = TestClient(app)
 
@@ -78,7 +79,7 @@ def test_parse_cv_returns_explicit_error_for_scanned_pdf():
     assert response.json()["detail"]
 
 
-def test_parse_cv_returns_structured_camelcase_json():
+def _cv_pdf_bytes() -> bytes:
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer)
     lines = ["Competences", "Java, Docker", "Experience", "Dev - Acme (2022-01 - Present)",
@@ -86,14 +87,42 @@ def test_parse_cv_returns_structured_camelcase_json():
     for i, line in enumerate(lines):
         pdf.drawString(100, 750 - 20 * i, line)
     pdf.save()
+    return buffer.getvalue()
 
-    response = client.post(
+
+def _post_cv():
+    return client.post(
         "/api/v1/ai/cv-parsing/parse",
-        files={"file": ("cv.pdf", buffer.getvalue(), "application/pdf")},
+        files={"file": ("cv.pdf", _cv_pdf_bytes(), "application/pdf")},
     )
+
+
+def test_parse_cv_returns_structured_camelcase_json(stub_llm):
+    stub_llm.reply({
+        "skills": ["Java", "Docker"],
+        "experiences": [{"title": "Dev", "company": "Acme", "startDate": "2022-01-01", "endDate": None,
+                         "description": ""}],
+        "education": [{"degree": "Master GL", "institution": "ESPRIT", "year": 2025}],
+        "languages": ["Français", "Anglais"],
+    })
+
+    response = _post_cv()
     assert response.status_code == 200
     body = response.json()
     assert body["skills"] == ["Java", "Docker"]
     assert body["experiences"][0]["startDate"] == "2022-01-01"
     assert body["education"][0]["year"] == 2025
     assert body["languages"] == ["Français", "Anglais"]
+    assert "Acme" in stub_llm.calls[0]["user"]
+
+
+def test_parse_cv_returns_503_when_llm_is_not_configured(stub_llm):
+    stub_llm.error = LLMNotConfiguredError("Service LLM non configuré")
+    response = _post_cv()
+    assert response.status_code == 503
+
+
+def test_parse_cv_returns_502_when_llm_fails(stub_llm):
+    stub_llm.error = LLMError("OpenRouter a répondu 500.")
+    response = _post_cv()
+    assert response.status_code == 502

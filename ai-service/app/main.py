@@ -1,9 +1,11 @@
 from datetime import datetime, timezone
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.routers import cv_parsing, job_analysis, matching, recommendation, skill_gap
+from app.services.llm_client import LLMError, LLMNotConfiguredError
 
 app = FastAPI(
     title="SmartRecruit AI Service",
@@ -18,6 +20,16 @@ app.include_router(job_analysis.router, prefix=API_PREFIX)
 app.include_router(matching.router, prefix=API_PREFIX)
 app.include_router(recommendation.router, prefix=API_PREFIX)
 app.include_router(skill_gap.router, prefix=API_PREFIX)
+
+
+@app.exception_handler(LLMNotConfiguredError)
+async def llm_not_configured(_: Request, exc: LLMNotConfiguredError):
+    return JSONResponse(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, content={"detail": str(exc)})
+
+
+@app.exception_handler(LLMError)
+async def llm_failed(_: Request, exc: LLMError):
+    return JSONResponse(status_code=status.HTTP_502_BAD_GATEWAY, content={"detail": str(exc)})
 
 
 @app.get(f"{API_PREFIX}/ping")

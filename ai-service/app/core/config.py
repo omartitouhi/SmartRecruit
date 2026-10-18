@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     db_user: str = "smartrecruit"
     db_password: str = "smartrecruit"
 
+    # LLM via OpenRouter (structuration CV, analyse d'offre, matching, recommandation, skill gap).
+    # Sans clé, les endpoints qui en dépendent répondent 503.
+    openrouter_api_key: str | None = None
+    openrouter_model: str = "anthropic/claude-haiku-5.5"
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    llm_timeout_seconds: float = 9.0
+
     @property
     def database_url(self) -> str:
         return (

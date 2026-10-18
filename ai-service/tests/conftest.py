@@ -1,0 +1,35 @@
+import json
+
+import pytest
+
+from app.main import app
+from app.services.llm_client import get_llm_client, parse_llm_json
+
+
+class StubLLM:
+    """Remplace OpenRouter : renvoie des réponses JSON préparées, validées par le même
+    chemin que le vrai client (`parse_llm_json`), et garde la trace des prompts reçus."""
+
+    def __init__(self):
+        self.responses: list = []
+        self.error: Exception | None = None
+        self.calls: list[dict] = []
+
+    def reply(self, *responses):
+        self.responses.extend(responses)
+        return self
+
+    async def complete_json(self, system, user, schema, timeout_seconds=None):
+        self.calls.append({"system": system, "user": user, "schema": schema})
+        if self.error:
+            raise self.error
+        response = self.responses.pop(0)
+        return parse_llm_json(response if isinstance(response, str) else json.dumps(response), schema)
+
+
+@pytest.fixture
+def stub_llm():
+    stub = StubLLM()
+    app.dependency_overrides[get_llm_client] = lambda: stub
+    yield stub
+    app.dependency_overrides.pop(get_llm_client, None)

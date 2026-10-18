@@ -1,6 +1,6 @@
 # SmartRecruit — AI Service
 
-Service IA dédié : CV Parsing, Job Analysis, Matching (embeddings + similarité sémantique),
+Service IA dédié : CV Parsing, Job Analysis, Matching (évaluation sémantique par LLM),
 Recommandation, Skill Gap. Chaque score de compatibilité est toujours accompagné d'une
 explication critère par critère (voir slide 7 du dossier — Explicabilité).
 
@@ -17,6 +17,7 @@ par un schéma JSON strict et rester explicables.
 
 ## Stack
 - Python 3.12, FastAPI, Uvicorn
+- LLM via [OpenRouter](https://openrouter.ai) (API compatible OpenAI, modèle configurable)
 - PostgreSQL + `pgvector` (stockage des embeddings)
 - Port par défaut : `8000`
 
@@ -32,6 +33,21 @@ uvicorn app.main:app --reload
 
 Nécessite une instance PostgreSQL avec l'extension `pgvector` (voir
 `docker-compose.yml` du dépôt `smartrecruit-backend` pour lancer toute la stack).
+
+## LLM (OpenRouter)
+
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `OPENROUTER_API_KEY` | _(vide)_ | clé OpenRouter ; sans clé, les endpoints IA répondent `503` |
+| `OPENROUTER_MODEL` | `anthropic/claude-haiku-5.5` | modèle utilisé pour toutes les tâches |
+| `OPENROUTER_BASE_URL` | `https://openrouter.ai/api/v1` | |
+| `LLM_TIMEOUT_SECONDS` | `9` | délai max d'un appel LLM |
+
+Garde-fous anti-hallucination appliqués à **toute** sortie du LLM :
+- la réponse doit être un JSON conforme à un schéma Pydantic strict (champs inconnus refusés),
+  sinon `502` — aucune valeur de repli n'est inventée ;
+- les valeurs extraites sont confrontées à la source (une compétence, une entreprise ou un
+  établissement absent du texte du CV est écarté).
 
 ## Tests
 

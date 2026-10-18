@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 
 from app.schemas.common import CVParsingResult
 from app.services.cv_parsing_service import (
@@ -7,16 +7,18 @@ from app.services.cv_parsing_service import (
     extract_text_from_pdf,
 )
 from app.services.cv_structuring_service import parse_cv_text
+from app.services.llm_client import OpenRouterClient, get_llm_client
 
 router = APIRouter(prefix="/cv-parsing", tags=["IA-01 · CV Parsing"])
 
 
 @router.post("/parse", response_model=CVParsingResult)
-async def parse_cv(file: UploadFile):
+async def parse_cv(file: UploadFile, llm: OpenRouterClient = Depends(get_llm_client)):
     """PDF -> compétences, expériences, diplômes, langues (AI-CV-01 + AI-CV-02).
 
     Le fichier est validé (type, taille), son texte extrait (erreur 422 explicite
-    en cas d'échec), puis structuré et validé contre le schéma strict CVParsingResult.
+    en cas d'échec), puis structuré par le LLM et validé contre le schéma strict
+    CVParsingResult. 503 si le LLM n'est pas configuré, 502 s'il échoue.
     """
     if file.content_type != "application/pdf":
         raise HTTPException(
@@ -39,4 +41,4 @@ async def parse_cv(file: UploadFile):
             detail=str(exc),
         ) from exc
 
-    return parse_cv_text(text)
+    return await parse_cv_text(text, llm)
