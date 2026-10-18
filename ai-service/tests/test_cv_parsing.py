@@ -53,12 +53,22 @@ def test_extract_text_from_corrupt_pdf_raises_explicit_error():
 # --- POST /api/v1/ai/cv-parsing/parse (endpoint) --------------------------------
 
 
+def _assert_invalid_file(response, message_part: str):
+    assert response.status_code == 422
+    body = response.json()
+    assert body["status"] == 422
+    assert body["error"] == "Unprocessable Entity"
+    assert body["path"] == "/api/v1/ai/cv-parsing/parse"
+    assert body["timestamp"]
+    assert message_part in body["message"]
+
+
 def test_parse_cv_rejects_non_pdf_content_type():
     response = client.post(
         "/api/v1/ai/cv-parsing/parse",
         files={"file": ("cv.txt", b"hello", "text/plain")},
     )
-    assert response.status_code == 415
+    _assert_invalid_file(response, "PDF")
 
 
 def test_parse_cv_rejects_oversized_file():
@@ -67,7 +77,36 @@ def test_parse_cv_rejects_oversized_file():
         "/api/v1/ai/cv-parsing/parse",
         files={"file": ("cv.pdf", oversized, "application/pdf")},
     )
-    assert response.status_code == 413
+    _assert_invalid_file(response, "5 Mo")
+
+
+def test_parse_cv_rejects_empty_file():
+    response = client.post(
+        "/api/v1/ai/cv-parsing/parse",
+        files={"file": ("cv.pdf", b"", "application/pdf")},
+    )
+    _assert_invalid_file(response, "vide")
+
+
+def test_parse_cv_rejects_file_that_is_not_really_a_pdf():
+    response = client.post(
+        "/api/v1/ai/cv-parsing/parse",
+        files={"file": ("cv.pdf", b"<html>pas un pdf</html>", "application/pdf")},
+    )
+    _assert_invalid_file(response, "pas un PDF valide")
+
+
+def test_parse_cv_rejects_corrupt_pdf():
+    response = client.post(
+        "/api/v1/ai/cv-parsing/parse",
+        files={"file": ("cv.pdf", b"%PDF-1.4 tronque", "application/pdf")},
+    )
+    _assert_invalid_file(response, "PDF")
+
+
+def test_parse_cv_without_file_returns_422():
+    response = client.post("/api/v1/ai/cv-parsing/parse")
+    _assert_invalid_file(response, "file")
 
 
 def test_parse_cv_returns_explicit_error_for_scanned_pdf():
@@ -75,8 +114,7 @@ def test_parse_cv_returns_explicit_error_for_scanned_pdf():
         "/api/v1/ai/cv-parsing/parse",
         files={"file": ("cv.pdf", _blank_pdf_bytes(), "application/pdf")},
     )
-    assert response.status_code == 422
-    assert response.json()["detail"]
+    _assert_invalid_file(response, "scan")
 
 
 def _cv_pdf_bytes() -> bytes:
@@ -120,9 +158,11 @@ def test_parse_cv_returns_503_when_llm_is_not_configured(stub_llm):
     stub_llm.error = LLMNotConfiguredError("Service LLM non configuré")
     response = _post_cv()
     assert response.status_code == 503
+    assert response.json()["message"] == "Service LLM non configuré"
 
 
 def test_parse_cv_returns_502_when_llm_fails(stub_llm):
     stub_llm.error = LLMError("OpenRouter a répondu 500.")
     response = _post_cv()
     assert response.status_code == 502
+    assert response.json()["error"] == "Bad Gateway"

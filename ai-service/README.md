@@ -70,11 +70,15 @@ tests/
 ## Endpoints
 
 - `GET /api/v1/ai/ping` — health check
-- `POST /api/v1/ai/cv-parsing/parse` — IA-01
+- `POST /api/v1/ai/cv-parsing/parse` — IA-01 : multipart, champ `file` (PDF, 5 Mo max) ->
+  `CVParsingResult`. Fichier invalide (type, vide, trop gros, corrompu, scanné sans texte) -> `422`.
 - `POST /api/v1/ai/job-analysis/analyze` — IA-02
 - `POST /api/v1/ai/matching/score` — IA-03
 - `GET /api/v1/ai/recommendation/candidates/{id}/jobs` — IA-04
 - `GET /api/v1/ai/skill-gap/candidates/{id}/jobs/{job_id}` — IA-05
+
+Les erreurs suivent le format commun aux 3 dépôts (`DATA_MODEL.md` §1) :
+`{ "timestamp", "status", "error", "message", "path" }`.
 
 _Toutes les routes métier renvoient 501 pour l'instant — à implémenter au fil des sprints
 (voir Roadmap, Sprint 4-5 : Matching, score, recommandations)._
