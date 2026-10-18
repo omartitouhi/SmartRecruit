@@ -18,7 +18,7 @@ par un schéma JSON strict et rester explicables.
 ## Stack
 - Python 3.12, FastAPI, Uvicorn
 - LLM via [OpenRouter](https://openrouter.ai) (API compatible OpenAI, modèle configurable)
-- PostgreSQL + `pgvector` (stockage des embeddings)
+- PostgreSQL `ai_db` (CV parsés, offres analysées — tables créées au démarrage)
 - Port par défaut : `8000`
 
 ## Lancer en local
@@ -31,7 +31,7 @@ cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
-Nécessite une instance PostgreSQL avec l'extension `pgvector` (voir
+Nécessite une instance PostgreSQL (voir
 `docker-compose.yml` du dépôt `smartrecruit-backend` pour lancer toute la stack).
 
 ## LLM (OpenRouter)
@@ -89,10 +89,10 @@ tests/
   (`DATA_MODEL.md` §4.7), 10 offres au plus classées par le LLM parmi les offres analysées
   (présélection des 40 meilleures par recouvrement de compétences). Tout `jobId` inconnu renvoyé
   par le LLM est rejeté. Liste vide si le candidat n'a pas de CV analysé.
-- `GET /api/v1/ai/skill-gap/candidates/{id}/jobs/{job_id}` — IA-05
+- `GET /api/v1/ai/skill-gap/candidates/{id}/jobs/{job_id}` — IA-05 : `{ "missingSkills": [...] }`,
+  compétences requises par l'offre absentes du profil, selon le LLM (équivalences prises en compte,
+  ex. Postgres = PostgreSQL). Toute compétence qui ne figure pas dans l'offre est rejetée.
 
 Les erreurs suivent le format commun aux 3 dépôts (`DATA_MODEL.md` §1) :
 `{ "timestamp", "status", "error", "message", "path" }`.
 
-_Toutes les routes métier renvoient 501 pour l'instant — à implémenter au fil des sprints
-(voir Roadmap, Sprint 4-5 : Matching, score, recommandations)._
