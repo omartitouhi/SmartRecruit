@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, DateTime, String, Uuid
+from sqlalchemy import JSON, DateTime, String, Text, Uuid
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -23,3 +23,16 @@ class ParsedCV(Base):
     file_sha256: Mapped[str] = mapped_column(String(64))
     result: Mapped[dict] = mapped_column(_JSON)
     parsed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class JobAnalysis(Base):
+    """Analyse LLM d'une offre (AI-JOB-01), réutilisée par le matching, la
+    recommandation et le skill gap. Remplacée à chaque nouvelle analyse de l'offre."""
+
+    __tablename__ = "job_analyses"
+
+    job_id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    title: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    description: Mapped[str] = mapped_column(Text)
+    result: Mapped[dict] = mapped_column(_JSON)
+    analyzed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

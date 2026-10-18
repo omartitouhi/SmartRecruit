@@ -77,7 +77,9 @@ tests/
 - `GET /api/v1/ai/cv-parsing/candidates/{id}` — dernier CV analysé du candidat (`404` sinon)
 - `DELETE /api/v1/ai/candidates/{id}/data` — effacement RGPD de toutes les données IA du candidat
   (`204`, idempotent — `DATA_MODEL.md` §4.6)
-- `POST /api/v1/ai/job-analysis/analyze` — IA-02
+- `POST /api/v1/ai/job-analysis/analyze` — IA-02 : `{ "jobId", "title"?, "description" }` ->
+  `JobAnalysisResult` extrait par le LLM. Le résultat est stocké (table `job_analyses`) pour le
+  matching, la recommandation et le skill gap : à appeler à chaque publication / modification d'offre.
 - `POST /api/v1/ai/matching/score` — IA-03
 - `GET /api/v1/ai/recommendation/candidates/{id}/jobs` — IA-04
 - `GET /api/v1/ai/skill-gap/candidates/{id}/jobs/{job_id}` — IA-05
