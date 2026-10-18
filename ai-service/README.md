@@ -85,7 +85,10 @@ tests/
   dont le CV est stocké) -> `MatchScore`. Le LLM note chaque critère, le code calcule le score
   pondéré (compétences 0,5 · expérience 0,3 · formation 0,2) et les contributions. `404` si le CV ou
   l'offre n'a pas été analysé, `422` si aucun critère n'est évaluable, `502`/`503` côté LLM.
-- `GET /api/v1/ai/recommendation/candidates/{id}/jobs` — IA-04
+- `GET /api/v1/ai/recommendation/candidates/{id}/jobs` — IA-04 : `{ "recommendations": [{ "jobId", "score" }] }`
+  (`DATA_MODEL.md` §4.7), 10 offres au plus classées par le LLM parmi les offres analysées
+  (présélection des 40 meilleures par recouvrement de compétences). Tout `jobId` inconnu renvoyé
+  par le LLM est rejeté. Liste vide si le candidat n'a pas de CV analysé.
 - `GET /api/v1/ai/skill-gap/candidates/{id}/jobs/{job_id}` — IA-05
 
 Les erreurs suivent le format commun aux 3 dépôts (`DATA_MODEL.md` §1) :

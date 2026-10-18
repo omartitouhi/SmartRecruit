@@ -1,4 +1,5 @@
 from datetime import date
+from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 from app.schemas.enums import ExperienceLevel
@@ -65,3 +66,14 @@ class SkillGapResult(CamelModel):
     """Réponse de GET /api/v1/ai/skill-gap/candidates/{id}/jobs/{jobId} — DATA_MODEL.md §4.4."""
 
     missing_skills: list[str]
+
+
+class Recommendation(CamelModel):
+    job_id: UUID
+    score: float
+
+
+class RecommendationResult(CamelModel):
+    """Réponse de GET /api/v1/ai/recommendation/candidates/{id}/jobs — DATA_MODEL.md §4.7."""
+
+    recommendations: list[Recommendation]
