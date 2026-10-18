@@ -1,7 +1,11 @@
 import json
 
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
+from app.core.database import get_session, init_db
 from app.main import app
 from app.services.llm_client import get_llm_client, parse_llm_json
 
@@ -33,3 +37,18 @@ def stub_llm():
     app.dependency_overrides[get_llm_client] = lambda: stub
     yield stub
     app.dependency_overrides.pop(get_llm_client, None)
+
+
+@pytest.fixture(autouse=True)
+def db_session():
+    """Base SQLite en mémoire à la place de PostgreSQL (ai_db), recréée à chaque test."""
+    engine = create_engine(
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+    )
+    init_db(engine)
+    session = sessionmaker(bind=engine, expire_on_commit=False)()
+    app.dependency_overrides[get_session] = lambda: session
+    yield session
+    app.dependency_overrides.pop(get_session, None)
+    session.close()
+    engine.dispose()

@@ -72,6 +72,11 @@ tests/
 - `GET /api/v1/ai/ping` — health check
 - `POST /api/v1/ai/cv-parsing/parse` — IA-01 : multipart, champ `file` (PDF, 5 Mo max) ->
   `CVParsingResult`. Fichier invalide (type, vide, trop gros, corrompu, scanné sans texte) -> `422`.
+  Champ optionnel `candidateId` : le résultat est stocké dans `ai_db` (table `parsed_cvs`) et lié au
+  candidat ; un PDF identique (SHA-256) déjà analysé est renvoyé sans nouvel appel au LLM.
+- `GET /api/v1/ai/cv-parsing/candidates/{id}` — dernier CV analysé du candidat (`404` sinon)
+- `DELETE /api/v1/ai/candidates/{id}/data` — effacement RGPD de toutes les données IA du candidat
+  (`204`, idempotent — `DATA_MODEL.md` §4.6)
 - `POST /api/v1/ai/job-analysis/analyze` — IA-02
 - `POST /api/v1/ai/matching/score` — IA-03
 - `GET /api/v1/ai/recommendation/candidates/{id}/jobs` — IA-04

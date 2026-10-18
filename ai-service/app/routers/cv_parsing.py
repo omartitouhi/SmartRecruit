@@ -1,12 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
-from fastapi.concurrency import run_in_threadpool
+import uuid
 
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
+from fastapi.concurrency import run_in_threadpool
+from sqlalchemy.orm import Session
+
+from app.core.database import get_session
 from app.schemas.common import CVParsingResult
 from app.services.cv_parsing_service import (
     MAX_CV_SIZE_BYTES,
     CVTextExtractionError,
     extract_text_from_pdf,
 )
+from app.services.cv_store import file_fingerprint, find_cached_result, find_parsed_cv, save_parsed_cv
 from app.services.cv_structuring_service import parse_cv_text
 from app.services.llm_client import OpenRouterClient, get_llm_client
 
@@ -44,17 +49,46 @@ async def _read_pdf(file: UploadFile) -> bytes:
         503: {"description": "LLM non configuré"},
     },
 )
-async def parse_cv(file: UploadFile, llm: OpenRouterClient = Depends(get_llm_client)):
+async def parse_cv(
+    file: UploadFile,
+    candidate_id: uuid.UUID | None = Form(None, alias="candidateId"),
+    llm: OpenRouterClient = Depends(get_llm_client),
+    session: Session = Depends(get_session),
+):
     """PDF (multipart, champ `file`) -> compétences, expériences, diplômes, langues.
 
     Le texte est extrait (AI-CV-01) puis structuré par le LLM et validé contre le
     schéma strict CVParsingResult (AI-CV-02). Le délai du LLM (LLM_TIMEOUT_SECONDS,
     9 s par défaut) garantit une réponse sous 10 secondes.
+
+    Avec le champ `candidateId`, le résultat est stocké dans ai_db et lié au candidat
+    (AI-CV-04) ; un fichier identique déjà analysé est renvoyé sans nouvel appel au LLM.
     """
     data = await _read_pdf(file)
+    fingerprint = file_fingerprint(data)
+    if candidate_id:
+        cached = await run_in_threadpool(find_cached_result, session, candidate_id, fingerprint)
+        if cached:
+            return cached
+
     try:
         text = await run_in_threadpool(extract_text_from_pdf, data)
     except CVTextExtractionError as exc:
         raise _invalid_file(str(exc)) from exc
 
-    return await parse_cv_text(text, llm)
+    result = await parse_cv_text(text, llm)
+    if candidate_id:
+        await run_in_threadpool(save_parsed_cv, session, candidate_id, fingerprint, result)
+    return result
+
+
+@router.get("/candidates/{candidate_id}", response_model=CVParsingResult)
+def get_parsed_cv(candidate_id: uuid.UUID, session: Session = Depends(get_session)):
+    """Dernier résultat de parsing stocké pour le candidat (AI-CV-04), 404 si aucun."""
+    result = find_parsed_cv(session, candidate_id)
+    if result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Aucun CV analysé pour ce candidat.",
+        )
+    return result
