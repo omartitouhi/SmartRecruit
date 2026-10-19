@@ -2,7 +2,7 @@ name: smartrecruit
 
 services:
   postgres:
-    image: pgvector/pgvector:pg16
+    image: postgres:16
     environment:
       POSTGRES_USER: smartrecruit
       POSTGRES_PASSWORD: smartrecruit
@@ -137,7 +137,7 @@ services:
   frontend:
     build: ../smartrecruit-frontend
     ports:
-      - "5173:80"
+      - "${FRONTEND_HOST_PORT:-5173}:80"
     depends_on:
       - api-gateway
 
