@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: smartrecruit
       POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres-init:/docker-entrypoint-initdb.d
@@ -100,12 +100,14 @@ services:
   ai-service:
     build: ../smartrecruit-ia
     ports:
-      - "8000:8000"
+      - "${AI_HOST_PORT:-8000}:8000"
     environment:
       DB_HOST: postgres
       DB_NAME: ai_db
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-haiku-5.5}
     depends_on:
       postgres:
         condition: service_healthy
@@ -123,6 +125,7 @@ services:
       AI_SERVICE_URI: http://ai-service:8000
       JWT_SECRET: dev-only-secret-change-in-production
       INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-10}
     depends_on:
       - auth-service
       - user-service
