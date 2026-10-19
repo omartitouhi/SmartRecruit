@@ -1,5 +1,6 @@
 package com.smartrecruit.user.service;
 
+import com.smartrecruit.user.ai.CvAnalysisJob;
 import com.smartrecruit.user.dto.CandidateProfileResponse;
 import com.smartrecruit.user.exception.ApiException;
 import com.smartrecruit.user.model.CandidateProfile;
@@ -37,6 +38,7 @@ public class CandidateCvService {
     private final CandidateProfileRepository profileRepository;
     private final CvStorage cvStorage;
     private final DeletedAccountGuard deletionGuard;
+    private final CvAnalysisJob analysisJob;
 
     /** Public reference stored in {@code cvUrl}: the download endpoint, never the storage location. */
     public static String cvUrlOf(UUID candidateId) {
@@ -45,7 +47,8 @@ public class CandidateCvService {
 
     /**
      * Stores the PDF and links it to the profile. A previous CV is deleted once the new one is
-     * committed, and {@code cvParsedAt} is reset since the new file has not been analysed yet.
+     * committed, and {@code cvParsedAt} is reset since the new file has not been analysed yet. Once
+     * committed, the AI analysis starts asynchronously (BE-CV-01).
      */
     @Transactional
     public CandidateProfileResponse upload(UUID candidateId, MultipartFile file) {
@@ -57,7 +60,7 @@ public class CandidateCvService {
 
         String previousKey = profile.getCvStorageKey();
         String newKey = cvStorage.store(content);
-        afterTransaction(previousKey, newKey);
+        afterTransaction(previousKey, newKey, candidateId, content);
 
         profile.setCvStorageKey(newKey);
         profile.setCvUrl(cvUrlOf(candidateId));
@@ -120,11 +123,16 @@ public class CandidateCvService {
     }
 
     /** Keeps storage consistent with the database whatever the transaction outcome. */
-    private void afterTransaction(String previousKey, String newKey) {
+    private void afterTransaction(String previousKey, String newKey, UUID candidateId, byte[] content) {
         if (!TransactionSynchronizationManager.isSynchronizationActive()) {
             return;
         }
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                analysisJob.analyse(candidateId, newKey, content);
+            }
+
             @Override
             public void afterCompletion(int status) {
                 if (status == STATUS_COMMITTED && previousKey != null) {

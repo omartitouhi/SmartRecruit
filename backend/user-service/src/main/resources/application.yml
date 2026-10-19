@@ -46,3 +46,7 @@ gdpr:
     immediate: true
     auth-service-uri: ${AUTH_SERVICE_URI:http://localhost:8081}
     ai-service-uri: ${AI_SERVICE_URI:http://localhost:8000}
+
+cv-analysis:
+  # BE-CV-01: call ai-service after each CV upload (asynchronous, best-effort).
+  enabled: ${CV_ANALYSIS_ENABLED:true}

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.net.http.HttpClient;
-import java.time.Clock;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -17,23 +16,17 @@ import java.util.UUID;
 @Component
 public class ErasureClient {
 
-    /** Fixed identity of backend-to-backend calls. */
-    static final UUID SERVICE_ID = new UUID(0, 0);
-    static final String SERVICE_ROLE = "SERVICE";
-
     private final RestClient authService;
     private final RestClient aiService;
     private final InternalIdentityVerifier signer;
-    private final Clock clock;
 
-    public ErasureClient(GdprErasureProperties properties, InternalIdentityVerifier signer, Clock clock) {
+    public ErasureClient(GdprErasureProperties properties, InternalIdentityVerifier signer) {
         HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
         requestFactory.setReadTimeout(Duration.ofSeconds(10));
         this.authService = RestClient.builder().baseUrl(properties.authServiceUri()).requestFactory(requestFactory).build();
         this.aiService = RestClient.builder().baseUrl(properties.aiServiceUri()).requestFactory(requestFactory).build();
         this.signer = signer;
-        this.clock = clock;
     }
 
     /** Anonymizes the account in auth-service. Any non-2xx answer throws. */
@@ -50,13 +43,9 @@ public class ErasureClient {
     }
 
     private void delete(RestClient client, String path, UUID id) {
-        long now = clock.instant().getEpochSecond();
         client.delete()
                 .uri(path, id)
-                .header(InternalIdentityVerifier.USER_ID, SERVICE_ID.toString())
-                .header(InternalIdentityVerifier.USER_ROLE, SERVICE_ROLE)
-                .header(InternalIdentityVerifier.TIMESTAMP, Long.toString(now))
-                .header(InternalIdentityVerifier.SIGNATURE, signer.sign(SERVICE_ID.toString(), SERVICE_ROLE, now))
+                .headers(signer::addServiceIdentity)
                 .retrieve()
                 .toBodilessEntity();
     }

@@ -2,6 +2,7 @@ package com.smartrecruit.user.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
@@ -67,6 +68,16 @@ public class InternalIdentityVerifier {
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
+    }
+
+    /** Adds the signed {@code SERVICE} identity used by backend-to-backend calls (BE-SEC-02, BE-CV-01). */
+    public void addServiceIdentity(HttpHeaders headers) {
+        String serviceId = new UUID(0, 0).toString();
+        long now = clock.instant().getEpochSecond();
+        headers.set(USER_ID, serviceId);
+        headers.set(USER_ROLE, "SERVICE");
+        headers.set(TIMESTAMP, Long.toString(now));
+        headers.set(SIGNATURE, sign(serviceId, "SERVICE", now));
     }
 
     /** Same algorithm as {@code InternalIdentityHeaders.sign} in the api-gateway. */
