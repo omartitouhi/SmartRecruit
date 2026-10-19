@@ -90,7 +90,7 @@ Les endpoints suivants n'existent pas encore. Le frontend les appelle avec les c
 | `POST /jobs` (`JobCreateRequest`, DTO existant) · `PATCH /jobs/{id}/status` `{ status }` | nouvelle offre, publier / clôturer |
 | `GET /users/companies/me` · `PUT /users/companies/me` | entreprise du recruteur |
 | `POST /applications` `{ jobId }` · `GET /applications/me` · `GET /applications?jobId=` · `PATCH /applications/{id}/status` `{ status }` | candidatures |
-| `POST /ai/matching/score` `{ candidateId, jobId }` → `MatchScore` (corps à confirmer) | score avant de postuler |
+| `POST /ai/matching/score` `{ cvId, jobId }` (`cvId` = id du candidat) → `MatchScore` | score avant de postuler |
 | `GET /dashboard/stats` → `DashboardStats` (forme proposée dans `src/api/dashboard.ts`) · `GET /dashboard/audit-logs?page=&size=` | tableau de bord |
 
 ## Crédits

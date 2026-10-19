@@ -27,9 +27,9 @@ const httpApplicationsApi: ApplicationsApi = {
   async updateStatus(applicationId, status) {
     return (await apiClient.patch<Application>(`/applications/${applicationId}/status`, { status })).data;
   },
-  // ai-service — DATA_MODEL.md §4.1 (corps de requête à confirmer) et §4.4.
+  // ai-service — DATA_MODEL.md §4.1 et §4.4. `cvId` désigne l'identifiant du candidat dont le CV est analysé.
   async matchPreview(candidateId, jobId) {
-    return (await apiClient.post<MatchScore>('/ai/matching/score', { candidateId, jobId })).data;
+    return (await apiClient.post<MatchScore>('/ai/matching/score', { cvId: candidateId, jobId })).data;
   },
   async skillGap(candidateId, jobId) {
     return (await apiClient.get<SkillGapResult>(`/ai/skill-gap/candidates/${candidateId}/jobs/${jobId}`)).data;
