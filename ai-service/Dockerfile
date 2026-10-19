@@ -2,8 +2,13 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+# Réseau lent ou instable : timeout long, réessais pip et cache pip conservé même si le build échoue.
 COPY requirements.txt .
-RUN pip install --no-cache-dir --default-timeout=120 --retries=5 -r requirements.txt
+RUN --mount=type=cache,id=smartrecruit-pip,target=/root/.cache/pip \
+    for i in 1 2 3 4 5; do \
+      pip install --default-timeout=120 --retries=5 -r requirements.txt && exit 0; \
+      echo "pip a échoué (essai $i/5), nouvelle tentative..."; sleep 10; \
+    done; exit 1
 
 COPY app ./app
 
