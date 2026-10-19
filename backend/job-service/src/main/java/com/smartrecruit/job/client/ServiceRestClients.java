@@ -22,7 +22,7 @@ final class ServiceRestClients {
     }
 
     static RestClient create(String baseUri, InternalIdentityVerifier signer, Clock clock) {
-        HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
+        HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(Duration.ofSeconds(3)).build();
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
         requestFactory.setReadTimeout(Duration.ofSeconds(10));
         return RestClient.builder()

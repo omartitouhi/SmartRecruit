@@ -49,6 +49,8 @@ class CvAnalysisIntegrationTest {
 
     private static final HttpServer AI;
     private static final List<String> BODIES = new CopyOnWriteArrayList<>();
+    /** Requests carrying h2c upgrade headers: uvicorn (the real ai-service) cannot handle them with a body. */
+    private static final List<String> H2C_UPGRADES = new CopyOnWriteArrayList<>();
     private static volatile Behaviour behaviour = call -> 200;
 
     static {
@@ -63,6 +65,10 @@ class CvAnalysisIntegrationTest {
 
     private static void handle(HttpExchange exchange) throws IOException {
         try (exchange) {
+            if (exchange.getRequestHeaders().containsKey("Upgrade")
+                    || exchange.getRequestHeaders().containsKey("HTTP2-Settings")) {
+                H2C_UPGRADES.add(exchange.getRequestMethod() + " " + exchange.getRequestHeaders());
+            }
             String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.ISO_8859_1);
             BODIES.add(exchange.getRequestMethod() + " " + exchange.getRequestHeaders().getFirst("Content-Type")
                     + " " + exchange.getRequestHeaders().getFirst(InternalIdentityVerifier.USER_ROLE) + "\n" + body);
@@ -101,6 +107,7 @@ class CvAnalysisIntegrationTest {
     @BeforeEach
     void setUp() throws Exception {
         BODIES.clear();
+        H2C_UPGRADES.clear();
         behaviour = call -> 200;
         mockMvc.perform(put("/api/v1/users/candidates/me").with(as(verifier, candidateId, "CANDIDATE"))
                         .contentType(MediaType.APPLICATION_JSON).content(FULL_PROFILE))
@@ -133,6 +140,7 @@ class CvAnalysisIntegrationTest {
 
         assertThat(await(this::parsed)).isTrue();
         assertThat(BODIES).hasSize(1);
+        assertThat(H2C_UPGRADES).as("HTTP/1.1 only: no h2c upgrade towards uvicorn").isEmpty();
         String request = BODIES.get(0);
         assertThat(request).startsWith("POST multipart/form-data;boundary=");
         assertThat(request).contains(" SERVICE\n");

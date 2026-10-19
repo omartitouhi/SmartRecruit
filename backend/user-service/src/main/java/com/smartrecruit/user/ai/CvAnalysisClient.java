@@ -27,7 +27,7 @@ public class CvAnalysisClient {
     private final InternalIdentityVerifier signer;
 
     public CvAnalysisClient(GdprErasureProperties properties, InternalIdentityVerifier signer) {
-        HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+        HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(Duration.ofSeconds(5)).build();
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
         requestFactory.setReadTimeout(Duration.ofSeconds(20)); // LLM call: typically 3-10 s
         this.aiService = RestClient.builder().baseUrl(properties.aiServiceUri()).requestFactory(requestFactory).build();

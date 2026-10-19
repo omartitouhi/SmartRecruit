@@ -39,7 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class PersonalDataErasureIntegrationTest {
 
-    record Call(String method, String path, String role, String userId, String timestamp, String signature) {
+    record Call(String method, String path, String role, String userId, String timestamp, String signature,
+                boolean h2cUpgrade) {
     }
 
     private static final HttpServer SERVICES;
@@ -57,7 +58,8 @@ class PersonalDataErasureIntegrationTest {
             String path = exchange.getRequestURI().getPath();
             CALLS.add(new Call(exchange.getRequestMethod(), path, headers.getFirst("X-Auth-User-Role"),
                     headers.getFirst("X-Auth-User-Id"), headers.getFirst("X-Auth-Timestamp"),
-                    headers.getFirst("X-Auth-Signature")));
+                    headers.getFirst("X-Auth-Signature"),
+                    headers.containsKey("Upgrade") || headers.containsKey("HTTP2-Settings")));
             int status = STATUS_BY_PREFIX.entrySet().stream()
                     .filter(entry -> path.startsWith(entry.getKey()))
                     .map(Map.Entry::getValue)
@@ -125,6 +127,7 @@ class PersonalDataErasureIntegrationTest {
                 org.assertj.core.groups.Tuple.tuple("DELETE", "/internal/v1/accounts/" + candidateId),
                 org.assertj.core.groups.Tuple.tuple("DELETE", "/api/v1/ai/candidates/" + candidateId + "/data"));
         for (Call call : CALLS) {
+            assertThat(call.h2cUpgrade()).as("HTTP/1.1 only: no h2c upgrade towards uvicorn").isFalse();
             assertThat(call.role()).isEqualTo("SERVICE");
             assertThat(call.signature())
                     .isEqualTo(verifier.sign(call.userId(), "SERVICE", Long.parseLong(call.timestamp())));

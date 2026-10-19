@@ -21,7 +21,7 @@ public class ErasureClient {
     private final InternalIdentityVerifier signer;
 
     public ErasureClient(GdprErasureProperties properties, InternalIdentityVerifier signer) {
-        HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+        HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(Duration.ofSeconds(5)).build();
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
         requestFactory.setReadTimeout(Duration.ofSeconds(10));
         this.authService = RestClient.builder().baseUrl(properties.authServiceUri()).requestFactory(requestFactory).build();

@@ -49,6 +49,8 @@ class RecommendationIntegrationTest {
     private static final Map<String, Response> RESPONSES = new ConcurrentHashMap<>();
     private static final List<String> CALLS = new CopyOnWriteArrayList<>();
     private static final Map<String, String> LAST_ROLE_BY_PREFIX = new ConcurrentHashMap<>();
+    /** Requests carrying h2c upgrade headers: uvicorn (the real ai-service) cannot handle them. */
+    private static final List<String> H2C_UPGRADES = new CopyOnWriteArrayList<>();
 
     static {
         try {
@@ -64,6 +66,10 @@ class RecommendationIntegrationTest {
         String path = exchange.getRequestURI().getPath();
         String query = exchange.getRequestURI().getQuery();
         CALLS.add(path + (query == null ? "" : "?" + query));
+        if (exchange.getRequestHeaders().containsKey("Upgrade")
+                || exchange.getRequestHeaders().containsKey("HTTP2-Settings")) {
+            H2C_UPGRADES.add(path);
+        }
         String prefix = path.startsWith("/internal/") ? "user" : "ai";
         LAST_ROLE_BY_PREFIX.put(prefix, String.valueOf(exchange.getRequestHeaders().getFirst("X-Auth-User-Role")));
         Response response = RESPONSES.getOrDefault(prefix, new Response(404, ""));
@@ -112,6 +118,7 @@ class RecommendationIntegrationTest {
         RESPONSES.clear();
         CALLS.clear();
         LAST_ROLE_BY_PREFIX.clear();
+        H2C_UPGRADES.clear();
         jobRepository.deleteAll();
         javaJob = saveJob("Développeur Java", acme, JobStatus.PUBLISHED);
         dataJob = saveJob("Data Engineer", globex, JobStatus.PUBLISHED);
@@ -175,6 +182,7 @@ class RecommendationIntegrationTest {
 
         assertThat(CALLS).contains("/api/v1/ai/recommendation/candidates/" + candidateId + "/jobs");
         assertThat(LAST_ROLE_BY_PREFIX).containsEntry("ai", "SERVICE").containsEntry("user", "SERVICE");
+        assertThat(H2C_UPGRADES).as("HTTP/1.1 only: no h2c upgrade towards uvicorn").isEmpty();
     }
 
     @Test
