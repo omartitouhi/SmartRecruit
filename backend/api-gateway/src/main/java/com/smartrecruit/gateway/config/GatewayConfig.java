@@ -1,10 +1,14 @@
 package com.smartrecruit.gateway.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.http.client.JdkClientHttpRequestFactoryBuilder;
+import org.springframework.boot.http.client.autoconfigure.ClientHttpRequestFactoryBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
+
+import java.net.http.HttpClient;
 
 import static org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFunctions.uri;
 import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
@@ -36,6 +40,15 @@ public class GatewayConfig {
 
     @Value("${services.ai-service.uri}")
     private String aiServiceUri;
+
+    /**
+     * Proxy to the backends over plain HTTP/1.1. The JDK client's default cleartext h2c upgrade
+     * (Upgrade/HTTP2-Settings headers) breaks uvicorn on requests with a body.
+     */
+    @Bean
+    public ClientHttpRequestFactoryBuilderCustomizer<JdkClientHttpRequestFactoryBuilder> http11ProxyClient() {
+        return builder -> builder.withHttpClientCustomizer(client -> client.version(HttpClient.Version.HTTP_1_1));
+    }
 
     @Bean
     public RouterFunction<ServerResponse> authRoute() {
