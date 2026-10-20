@@ -22,6 +22,12 @@ management:
       exposure:
         include: health,info
 
+services:
+  auth-service-uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+  user-service-uri: ${USER_SERVICE_URI:http://localhost:8082}
+  job-service-uri: ${JOB_SERVICE_URI:http://localhost:8083}
+  application-service-uri: ${APPLICATION_SERVICE_URI:http://localhost:8084}
+
 internal-auth:
   # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
   secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}
