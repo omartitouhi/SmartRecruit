@@ -14,7 +14,7 @@ export function RequireRole({ roles, children }: { roles: Role[]; children: Reac
     const next = encodeURIComponent(location.pathname + location.search);
     return <Navigate to={`/login?next=${next}`} replace />;
   }
-  if (!roles.includes(account.role)) return <Navigate to={HOME_BY_ROLE[account.role]} replace />;
+  if (!roles.includes(account.role)) return <Navigate to="/forbidden" replace />;
   return children;
 }
 
