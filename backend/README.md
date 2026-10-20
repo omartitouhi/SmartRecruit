@@ -31,6 +31,27 @@ cd smartrecruit-backend
 docker compose up --build
 ```
 
+Copier `.env.example` en `.env` et renseigner `OPENROUTER_API_KEY` (sans clé, les fonctions IA répondent 503).
+Interface : http://localhost:5173 (ou `FRONTEND_HOST_PORT`), API : http://localhost:8080. Un compte administrateur de
+développement est créé au démarrage (`ADMIN_EMAIL` / `ADMIN_PASSWORD`, voir `.env.example`).
+
+## Kubernetes
+
+Manifestes Kustomize, cluster local kind et overlay de production : voir [k8s/README.md](k8s/README.md)
+(`k8s/scripts/dev.sh up`).
+
+## Tests
+
+- **Par service** : `mvn test` dans chaque module (H2 en mémoire, services voisins simulés).
+- **De bout en bout** (environ 100 vérifications sur la stack démarrée : comptes, entreprises, offres, candidatures,
+  matching, tableau de bord, administration, audit, contrôle d'accès) :
+
+```bash
+pip install -r e2e/requirements.txt
+python e2e/e2e_full.py                  # docker compose
+E2E_TARGET=k8s python e2e/e2e_full.py   # cluster kind
+```
+
 ## Architecture
 
 ```
