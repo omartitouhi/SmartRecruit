@@ -19,7 +19,7 @@ export interface AuthApi {
 }
 
 // auth-service — AuthController (BE-AUTH-01 → 06).
-const httpAuthApi: AuthApi = {
+export const httpAuthApi: AuthApi = {
   async register(request) {
     return (await apiClient.post<Account>('/auth/register', request)).data;
   },
