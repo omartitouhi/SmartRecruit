@@ -1,5 +1,6 @@
 package com.smartrecruit.user.service;
 
+import com.smartrecruit.user.dto.CompanyResponse;
 import com.smartrecruit.user.dto.InvitationRequest;
 import com.smartrecruit.user.dto.InvitationResponse;
 import com.smartrecruit.user.exception.ApiException;
@@ -7,7 +8,9 @@ import com.smartrecruit.user.model.Company;
 import com.smartrecruit.user.model.CompanyInvitation;
 import com.smartrecruit.user.model.InvitationStatus;
 import com.smartrecruit.user.repository.CompanyInvitationRepository;
+import com.smartrecruit.user.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,7 @@ import java.util.UUID;
 public class CompanyInvitationService {
 
     private final CompanyInvitationRepository invitationRepository;
+    private final CompanyRepository companyRepository;
     private final CompanyService companyService;
     private final CompanyInvitationNotifier notifier;
     private final CompanyInvitationProperties properties;
@@ -58,6 +62,36 @@ public class CompanyInvitationService {
                 .toUriString();
         notifier.sendInvitation(email, company.getName(), link);
         return InvitationResponse.from(invitation, now);
+    }
+
+    /**
+     * Attaches the connected recruiter to the inviting company. 400 for an unknown token, 410 for an
+     * expired or already used one, 409 if the recruiter already belongs to a company. The token alone
+     * proves the invitation: recruiter emails are not known to user-service, so it is not compared.
+     */
+    @Transactional
+    public CompanyResponse accept(UUID accountId, String token) {
+        CompanyInvitation invitation = invitationRepository.findByTokenHash(InvitationTokens.hash(token.trim()))
+                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "Jeton d'invitation invalide"));
+        switch (invitation.statusAt(clock.instant())) {
+            case ACCEPTED -> throw new ApiException(HttpStatus.GONE, "Cette invitation a déjà été utilisée");
+            case EXPIRED -> throw new ApiException(HttpStatus.GONE, "Cette invitation a expiré");
+            default -> { }
+        }
+        if (companyRepository.findByMember(accountId).isPresent()) {
+            throw new ApiException(HttpStatus.CONFLICT, CompanyService.ALREADY_IN_COMPANY);
+        }
+        Company company = companyRepository.findById(invitation.getCompanyId())
+                .orElseThrow(() -> new ApiException(HttpStatus.GONE, "L'entreprise de cette invitation n'existe plus"));
+        if (invitationRepository.markAccepted(invitation.getId()) == 0) {
+            throw new ApiException(HttpStatus.GONE, "Cette invitation a déjà été utilisée");
+        }
+        company.getMembers().add(accountId);
+        try {
+            return CompanyResponse.from(companyRepository.saveAndFlush(company));
+        } catch (DataIntegrityViolationException e) {
+            throw new ApiException(HttpStatus.CONFLICT, CompanyService.ALREADY_IN_COMPANY);
+        }
     }
 
     @Transactional(readOnly = true)
