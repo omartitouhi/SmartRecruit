@@ -90,6 +90,7 @@ src/
 | Tableau de bord recruteur | `/recruiter` | recruteur | FE-DASH-02 |
 | Mes offres | `/recruiter/jobs` | recruteur | FE-JOB-04 |
 | Nouvelle offre | `/recruiter/jobs/new` | recruteur | FE-JOB-01 |
+| Modifier une offre (brouillon ou publiée) | `/recruiter/jobs/:jobId/edit` | recruteur | FE-JOB-01 |
 | Candidatures reçues, classées par score | `/recruiter/jobs/:jobId/candidates` | recruteur | FE-APP-03, FE-MATCH-02 |
 | Entreprise | `/recruiter/company` | recruteur | FE-COMP-01 |
 | Équipe et invitations | `/recruiter/team` | recruteur | FE-COMP-02 |
