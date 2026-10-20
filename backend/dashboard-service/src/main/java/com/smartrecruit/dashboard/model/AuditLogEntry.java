@@ -1,7 +1,9 @@
 package com.smartrecruit.dashboard.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,11 +33,20 @@ public class AuditLogEntry {
 
     private UUID actorId;
 
+    @Column(nullable = false, length = 64)
     private String action;
 
+    @Column(nullable = false, length = 64)
     private String resourceType;
 
     private UUID resourceId;
 
     private Instant timestamp;
+
+    @PrePersist
+    void onCreate() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
+    }
 }
