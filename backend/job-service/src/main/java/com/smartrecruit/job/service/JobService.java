@@ -6,7 +6,9 @@ import com.smartrecruit.job.model.Job;
 import com.smartrecruit.job.model.JobStatus;
 import com.smartrecruit.job.repository.JobRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -23,12 +25,14 @@ public class JobService {
     private final JobRepository jobRepository;
     private final RecruiterCompanies recruiterCompanies;
     private final Clock clock;
+    private final TransactionTemplate transaction;
+    private final ApplicationEventPublisher events;
 
     /** Publishes an offer for the recruiter's company straight away. */
     public JobResponse publish(UUID recruiterId, JobCreateRequest request) {
         UUID companyId = recruiterCompanies.requireCompanyId(recruiterId);
         Instant now = clock.instant();
-        Job job = jobRepository.save(Job.builder()
+        Job job = Job.builder()
                 .id(UUID.randomUUID())
                 .companyId(companyId)
                 .title(request.getTitle())
@@ -40,7 +44,12 @@ public class JobService {
                 .status(JobStatus.PUBLISHED)
                 .publishedAt(now)
                 .updatedAt(now)
-                .build());
-        return JobResponse.from(job);
+                .build();
+        // The company lookup above is a remote call: keep it outside the transaction.
+        return transaction.execute(status -> {
+            jobRepository.save(job);
+            events.publishEvent(new JobAnalysisRequested(job.getId(), job.getTitle(), job.getDescription()));
+            return JobResponse.from(job);
+        });
     }
 }
