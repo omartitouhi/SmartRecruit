@@ -1,5 +1,5 @@
 import type { CandidateProfile, CandidateView, Education, Experience } from '../types';
-import { apiClient, USE_MOCKS } from './client';
+import { apiClient, isMocked } from './client';
 import { mockCandidatesApi } from './mock/handlers';
 
 /** Corps de PUT /users/candidates/me — cvUrl et cvParsedAt sont gérés par l'upload et l'IA. */
@@ -52,7 +52,7 @@ const httpCandidatesApi: CandidatesApi = {
   },
 };
 
-export const candidatesApi: CandidatesApi = USE_MOCKS ? mockCandidatesApi : httpCandidatesApi;
+export const candidatesApi: CandidatesApi = isMocked('candidates') ? mockCandidatesApi : httpCandidatesApi;
 
 export function fullName(candidate: CandidateView) {
   return candidate.deleted ? 'Compte supprimé' : `${candidate.firstName} ${candidate.lastName}`;

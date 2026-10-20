@@ -1,5 +1,5 @@
 import type { Account, Role, TokenResponse } from '../types';
-import { apiClient, USE_MOCKS } from './client';
+import { apiClient, isMocked } from './client';
 import { mockAuthApi } from './mock/handlers';
 
 export interface RegisterRequest {
@@ -40,4 +40,4 @@ const httpAuthApi: AuthApi = {
   },
 };
 
-export const authApi: AuthApi = USE_MOCKS ? mockAuthApi : httpAuthApi;
+export const authApi: AuthApi = isMocked('auth') ? mockAuthApi : httpAuthApi;

@@ -1,5 +1,5 @@
 import type { ApplicationStatus, AuditLogEntry, PaginatedResponse, Role } from '../types';
-import { apiClient, USE_MOCKS } from './client';
+import { apiClient, isMocked } from './client';
 import { mockDashboardApi } from './mock/handlers';
 
 /**
@@ -31,4 +31,4 @@ const httpDashboardApi: DashboardApi = {
   },
 };
 
-export const dashboardApi: DashboardApi = USE_MOCKS ? mockDashboardApi : httpDashboardApi;
+export const dashboardApi: DashboardApi = isMocked('dashboard') ? mockDashboardApi : httpDashboardApi;

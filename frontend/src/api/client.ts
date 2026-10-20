@@ -4,8 +4,23 @@ import type { TokenResponse } from '../types';
 // Same-origin by default: Vite (dev) and nginx (Docker) proxy /api to the gateway, so no CORS is needed.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
 
-/** true → toutes les données viennent de src/api/mock (aucun backend requis). */
-export const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === 'true';
+export const MOCK_MODULES = ['auth', 'candidates', 'companies', 'jobs', 'applications', 'dashboard'] as const;
+export type MockModule = (typeof MOCK_MODULES)[number];
+
+/** `all` (VITE_USE_MOCKS=true) simule tous les modules ; sinon la liste de VITE_MOCK_MODULES, ex. « jobs,applications ». */
+export function parseMockModules(all: string | undefined, list: string | undefined): ReadonlySet<MockModule> {
+  if (all === 'true') return new Set(MOCK_MODULES);
+  const wanted = (list ?? '').split(',').map((m) => m.trim());
+  return new Set(MOCK_MODULES.filter((m) => wanted.includes(m)));
+}
+
+const mocked = parseMockModules(import.meta.env.VITE_USE_MOCKS, import.meta.env.VITE_MOCK_MODULES);
+
+/** true → ce module répond depuis src/api/mock au lieu du backend. */
+export const isMocked = (module: MockModule) => mocked.has(module);
+
+/** true dès qu'un module est simulé : affiche le bandeau de démonstration. */
+export const USE_MOCKS = mocked.size > 0;
 
 const ACCESS_KEY = 'smartrecruit_token';
 const REFRESH_KEY = 'smartrecruit_refresh_token';

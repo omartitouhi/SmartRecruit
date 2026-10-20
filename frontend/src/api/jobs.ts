@@ -7,7 +7,7 @@ import type {
   PaginatedResponse,
   RecommendedJob,
 } from '../types';
-import { apiClient, USE_MOCKS } from './client';
+import { apiClient, isMocked } from './client';
 import { mockCompaniesApi, mockJobsApi } from './mock/handlers';
 
 /**
@@ -73,7 +73,7 @@ const httpJobsApi: JobsApi = {
   },
 };
 
-export const jobsApi: JobsApi = USE_MOCKS ? mockJobsApi : httpJobsApi;
+export const jobsApi: JobsApi = isMocked('jobs') ? mockJobsApi : httpJobsApi;
 
 export type CompanyRequest = Pick<Company, 'name' | 'sector' | 'description' | 'logoUrl'>;
 
@@ -93,4 +93,4 @@ const httpCompaniesApi: CompaniesApi = {
   },
 };
 
-export const companiesApi: CompaniesApi = USE_MOCKS ? mockCompaniesApi : httpCompaniesApi;
+export const companiesApi: CompaniesApi = isMocked('companies') ? mockCompaniesApi : httpCompaniesApi;

@@ -1,5 +1,5 @@
 import type { Application, ApplicationStatus, MatchScore, SkillGapResult } from '../types';
-import { apiClient, USE_MOCKS } from './client';
+import { apiClient, isMocked } from './client';
 import { mockApplicationsApi } from './mock/handlers';
 
 export interface ApplicationsApi {
@@ -36,4 +36,4 @@ const httpApplicationsApi: ApplicationsApi = {
   },
 };
 
-export const applicationsApi: ApplicationsApi = USE_MOCKS ? mockApplicationsApi : httpApplicationsApi;
+export const applicationsApi: ApplicationsApi = isMocked('applications') ? mockApplicationsApi : httpApplicationsApi;

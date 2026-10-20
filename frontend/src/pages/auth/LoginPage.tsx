@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { USE_MOCKS } from '../../api/client';
+import { isMocked } from '../../api/client';
 import { DEMO_ACCOUNTS, DEMO_PASSWORD } from '../../api/mock/seed';
 import { HOME_BY_ROLE, useAuth } from '../../auth/context';
 import { GuestOnly } from '../../auth/RequireRole';
@@ -93,7 +93,7 @@ export function LoginPage() {
           </Button>
         </form>
 
-        {USE_MOCKS && (
+        {isMocked('auth') && (
           <div className="demo-accounts">
             <p className="muted">Comptes de démonstration</p>
             <div className="demo-accounts__list">
