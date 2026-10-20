@@ -98,7 +98,7 @@ export function CvPanel({ profile, onChange }: { profile: CandidateProfile | nul
           )}
           {status === 'DONE' && (
             <Alert tone="success" title="CV analysé">
-              Dernière analyse le {formatDateTime(profile?.cvParsedAt)}. Les données extraites sont proposées ci-contre.
+              Dernière analyse le {formatDateTime(profile?.cvParsedAt)}. Les données extraites sont proposées en haut de page.
             </Alert>
           )}
           {status === 'FAILED' && (
