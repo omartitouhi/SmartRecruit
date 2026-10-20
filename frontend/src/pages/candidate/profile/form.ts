@@ -1,5 +1,5 @@
 import type { CandidateProfileRequest } from '../../../api/candidates';
-import type { CandidateProfile } from '../../../types';
+import type { CandidateProfile, CVParsingResult, Education, Experience } from '../../../types';
 
 export const EMPTY: CandidateProfileRequest = {
   firstName: '',
@@ -43,4 +43,31 @@ export function validate(form: CandidateProfileRequest) {
     if (!x.year || x.year < 1950 || x.year > 2100) e[`education[${i}].year`] = 'Année entre 1950 et 2100.';
   });
   return e;
+}
+
+const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
+const experienceKey = (x: Experience) => `${x.title}|${x.company}|${x.startDate}`.toLowerCase();
+const educationKey = (x: Education) => `${x.degree}|${x.institution}|${x.year}`.toLowerCase();
+
+/** What the CV analysis found that the profile does not contain yet. */
+export function newSuggestions(form: CandidateProfileRequest, found: CVParsingResult): CVParsingResult {
+  const unique = (items: string[], known: string[]) =>
+    items.filter((v, i) => !known.some((k) => same(k, v)) && items.findIndex((x) => same(x, v)) === i);
+  return {
+    skills: unique(found.skills, form.skills),
+    languages: unique(found.languages, form.languages),
+    experiences: found.experiences.filter((x) => !form.experiences.some((y) => experienceKey(y) === experienceKey(x))),
+    education: found.education.filter((x) => !form.education.some((y) => educationKey(y) === educationKey(x))),
+  };
+}
+
+/** Appends the parts the candidate accepted; the form keeps everything they already had. */
+export function applySuggestions(form: CandidateProfileRequest, picked: CVParsingResult): CandidateProfileRequest {
+  return {
+    ...form,
+    skills: [...form.skills, ...picked.skills],
+    languages: [...form.languages, ...picked.languages],
+    experiences: [...form.experiences, ...picked.experiences],
+    education: [...form.education, ...picked.education],
+  };
 }

@@ -9,11 +9,13 @@ import { useToast } from '../../components/ui/toast';
 import { toUiError } from '../../lib/errors';
 import { formatDate } from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
-import type { CandidateProfile } from '../../types';
+import { storage } from '../../lib/storage';
+import type { CandidateProfile, CVParsingResult } from '../../types';
 import { CvPanel } from './profile/CvPanel';
 import { DeleteAccountPanel } from './profile/DeleteAccountPanel';
+import { CvSuggestions } from './profile/CvSuggestions';
 import { EducationEditor, ExperienceEditor } from './profile/Editors';
-import { EMPTY, toForm, validate } from './profile/form';
+import { applySuggestions, EMPTY, newSuggestions, toForm, validate } from './profile/form';
 
 export function CandidateProfilePage() {
   useDocumentTitle('Mon profil');
@@ -48,10 +50,9 @@ function ProfileEditor({ existing, onSaved }: {
   const set = <K extends keyof CandidateProfileRequest>(key: K, value: CandidateProfileRequest[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
 
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
+  async function persist(next: CandidateProfileRequest, message: string) {
     setFormError(null);
-    const found = validate(form);
+    const found = validate(next);
     setErrors(found);
     if (Object.keys(found).length) {
       setFormError('Certains champs sont à corriger.');
@@ -60,12 +61,12 @@ function ProfileEditor({ existing, onSaved }: {
     setSaving(true);
     try {
       const saved = await candidatesApi.saveMyProfile({
-        ...form,
-        phone: form.phone?.trim() || null,
-        location: form.location?.trim() || null,
+        ...next,
+        phone: next.phone?.trim() || null,
+        location: next.location?.trim() || null,
       });
       onSaved(saved);
-      notify(existing ? 'Profil enregistré.' : 'Profil créé. Vous pouvez maintenant déposer votre CV.');
+      notify(message);
     } catch (err) {
       const ui = toUiError(err);
       setErrors(ui.fieldErrors);
@@ -73,6 +74,37 @@ function ProfileEditor({ existing, onSaved }: {
     } finally {
       setSaving(false);
     }
+  }
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    return persist(form, existing ? 'Profil enregistré.' : 'Profil créé. Vous pouvez maintenant déposer votre CV.');
+  }
+
+  // The AI's reading of the CV, offered for validation once the analysis is DONE.
+  const analysed = existing?.cvAnalysisStatus === 'DONE';
+  const suggestions = useAsync(
+    () =>
+      analysed
+        ? candidatesApi.cvSuggestions().catch((e) => (toUiError(e).status === 404 ? null : Promise.reject(e)))
+        : Promise.resolve(null),
+    [analysed, existing?.cvParsedAt],
+  );
+  const dismissKey = `smartrecruit_cv_suggestions_dismissed:${existing?.cvParsedAt}`;
+  const [dismissedNow, setDismissedNow] = useState<string | null>(null);
+  const dismissed = dismissedNow === dismissKey || storage.get(dismissKey) === '1';
+  const found = suggestions.data ? newSuggestions(form, suggestions.data) : null;
+  const hasNew = found !== null && Object.values(found).some((items) => items.length > 0);
+
+  async function applyPicked(picked: CVParsingResult) {
+    const merged = applySuggestions(form, picked);
+    setForm(merged);
+    await persist(merged, 'Données du CV ajoutées à votre profil.');
+  }
+
+  function dismissSuggestions() {
+    storage.set(dismissKey, '1');
+    setDismissedNow(dismissKey);
   }
 
   const fieldError = (key: string) => errors[key];
@@ -95,6 +127,20 @@ function ProfileEditor({ existing, onSaved }: {
             Commencez par votre identité et vos compétences, puis déposez votre CV : l’analyse complétera votre profil.
           </Alert>
         </div>
+      )}
+
+      {suggestions.error ? (
+        <div style={{ marginBottom: 'var(--space-6)' }}>
+          <ErrorState error={suggestions.error} onRetry={suggestions.reload} />
+        </div>
+      ) : (
+        found &&
+        hasNew &&
+        !dismissed && (
+          <div style={{ marginBottom: 'var(--space-6)' }}>
+            <CvSuggestions found={found} busy={saving} onApply={applyPicked} onDismiss={dismissSuggestions} />
+          </div>
+        )
       )}
 
       <div className="split">

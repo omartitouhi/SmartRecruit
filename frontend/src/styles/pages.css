@@ -449,6 +449,29 @@ aside .alert {
   background: var(--paper-soft);
 }
 
+.suggestions {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.suggestions__group {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.suggestions__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.suggestions__list .check {
+  align-items: flex-start;
+}
+
 /* ───── Admin ───── */
 .tiles {
   display: grid;
