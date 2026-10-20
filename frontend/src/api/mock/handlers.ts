@@ -61,8 +61,24 @@ const now = () => new Date().toISOString();
 const uuid = () => crypto.randomUUID();
 const clone = <T>(v: T): T => structuredClone(v);
 
+/** With VITE_MOCK_MODULES the auth module may be real: its JWT then identifies the caller (sub, role). */
+function accountFromJwt(token: string): Account | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))) as { sub?: string; role?: Role };
+    if (!payload.sub || !payload.role) return null;
+    const stamp = now();
+    return { id: payload.sub, email: '', role: payload.role, status: 'ACTIVE', createdAt: stamp, updatedAt: stamp };
+  } catch {
+    return null;
+  }
+}
+
 function currentAccount(): Account {
   const token = tokenStore.access;
+  if (token && !token.startsWith('mock.')) {
+    const real = accountFromJwt(token);
+    if (real) return real;
+  }
   const id = token?.startsWith('mock.') ? token.slice(5) : null;
   const found = db.accounts.find((a) => a.id === id && a.status === 'ACTIVE');
   if (!found) throw new HttpError(401, 'Session invalide ou expirée.');
