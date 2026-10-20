@@ -1,5 +1,6 @@
 package com.smartrecruit.user.controller;
 
+import com.smartrecruit.user.model.CvAnalysisStatus;
 import com.smartrecruit.user.repository.CandidateProfileRepository;
 import com.smartrecruit.user.security.InternalIdentityVerifier;
 import com.sun.net.httpserver.HttpExchange;
@@ -29,6 +30,7 @@ import java.util.function.BooleanSupplier;
 import static com.smartrecruit.user.controller.CandidateProfileCreateIntegrationTest.FULL_PROFILE;
 import static com.smartrecruit.user.support.GatewayIdentity.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -119,11 +121,22 @@ class CvAnalysisIntegrationTest {
                         .file(new MockMultipartFile("file", "cv.pdf", MediaType.APPLICATION_PDF_VALUE, content))
                         .with(as(verifier, candidateId, "CANDIDATE")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.cvParsedAt").doesNotExist());
+                .andExpect(jsonPath("$.cvParsedAt").doesNotExist())
+                .andExpect(jsonPath("$.cvAnalysisStatus").value("PENDING"));
     }
 
     private boolean parsed() {
         return repository.findById(candidateId).orElseThrow().getCvParsedAt() != null;
+    }
+
+    private CvAnalysisStatus storedStatus() {
+        return repository.findById(candidateId).orElseThrow().analysisStatus();
+    }
+
+    private String statusInApi() throws Exception {
+        String body = mockMvc.perform(get("/api/v1/users/candidates/me").with(as(verifier, candidateId, "CANDIDATE")))
+                .andReturn().getResponse().getContentAsString();
+        return com.jayway.jsonpath.JsonPath.read(body, "$.cvAnalysisStatus");
     }
 
     private static boolean await(BooleanSupplier condition) throws InterruptedException {
@@ -135,10 +148,17 @@ class CvAnalysisIntegrationTest {
     }
 
     @Test
+    void aProfileWithoutCvHasNoAnalysisStatus() throws Exception {
+        assertThat(statusInApi()).isEqualTo("NONE");
+    }
+
+    @Test
     void uploadTriggersTheAiAndMarksTheCvAsParsed() throws Exception {
         upload(PDF);
 
         assertThat(await(this::parsed)).isTrue();
+        assertThat(storedStatus()).isEqualTo(CvAnalysisStatus.DONE);
+        assertThat(statusInApi()).isEqualTo("DONE");
         assertThat(BODIES).hasSize(1);
         assertThat(H2C_UPGRADES).as("HTTP/1.1 only: no h2c upgrade towards uvicorn").isEmpty();
         String request = BODIES.get(0);
@@ -155,7 +175,8 @@ class CvAnalysisIntegrationTest {
         upload(PDF);
 
         assertThat(await(() -> !BODIES.isEmpty())).isTrue();
-        Thread.sleep(300);
+        assertThat(await(() -> storedStatus() == CvAnalysisStatus.FAILED)).isTrue();
+        assertThat(statusInApi()).isEqualTo("FAILED");
         assertThat(parsed()).isFalse();
         assertThat(repository.findById(candidateId).orElseThrow().getCvStorageKey()).isNotBlank();
     }
@@ -177,7 +198,48 @@ class CvAnalysisIntegrationTest {
         assertThat(await(() -> BODIES.size() == 2)).isTrue();
 
         release.countDown();
+        assertThat(await(() -> storedStatus() == CvAnalysisStatus.FAILED)).isTrue();
         Thread.sleep(500);
         assertThat(parsed()).isFalse();
+        assertThat(storedStatus()).isEqualTo(CvAnalysisStatus.FAILED);
+    }
+
+    @Test
+    void failureOfAReplacedCvDoesNotOverrideTheResultOfTheNewOne() throws Exception {
+        CountDownLatch release = new CountDownLatch(1);
+        behaviour = call -> {
+            if (call == 1) {
+                release.await(10, TimeUnit.SECONDS);
+                return 500; // the stale analysis fails late
+            }
+            return 200;
+        };
+
+        upload(PDF);
+        assertThat(await(() -> BODIES.size() == 1)).isTrue();
+        upload("%PDF-1.4 second version".getBytes(StandardCharsets.US_ASCII));
+        assertThat(await(this::parsed)).isTrue();
+
+        release.countDown();
+        Thread.sleep(500);
+        assertThat(storedStatus()).isEqualTo(CvAnalysisStatus.DONE);
+    }
+
+    @Test
+    void aNewUploadPutsTheStatusBackToPending() throws Exception {
+        upload(PDF);
+        assertThat(await(() -> storedStatus() == CvAnalysisStatus.DONE)).isTrue();
+        behaviour = call -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return 200;
+        };
+
+        upload("%PDF-1.4 second version".getBytes(StandardCharsets.US_ASCII));
+
+        assertThat(statusInApi()).isEqualTo("PENDING");
     }
 }
