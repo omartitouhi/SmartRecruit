@@ -9,6 +9,9 @@ toute la stack (backend + frontend + service IA + base de données).
 > les enums et les contrats API partagés (notamment `MatchScore`, l'objet qui porte le score
 > de compatibilité expliqué).
 
+> Contrats d'API entre services et vers le frontend (entreprises, offres, candidatures, tableau de bord) :
+> [API_CONTRACTS.md](API_CONTRACTS.md).
+
 ## Prérequis
 
 Ce dépôt suppose que `smartrecruit-frontend/` et `smartrecruit-ia/` sont clonés **à côté**
