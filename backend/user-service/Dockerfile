@@ -17,6 +17,11 @@ RUN --mount=type=cache,id=smartrecruit-m2,target=/root/.m2,sharing=locked \
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+# Sans privilèges, UID fixe (requis par runAsNonRoot sous Kubernetes).
+RUN addgroup -S -g 10001 app && adduser -S -u 10001 -G app app
+RUN mkdir -p /data/cvs && chown app:app /data/cvs
+COPY --from=build --chown=app:app /app/target/*.jar app.jar
+USER 10001:10001
 EXPOSE 8082
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Le JVM utilise 75 % de la mémoire du conteneur (25 % par défaut).
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "app.jar"]
