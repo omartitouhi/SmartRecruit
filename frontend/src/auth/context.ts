@@ -23,7 +23,7 @@ export function useAuth() {
 
 /** Page d'arrivée après connexion, selon le rôle. */
 export const HOME_BY_ROLE: Record<Role, string> = {
-  CANDIDATE: '/candidate/jobs',
+  CANDIDATE: '/candidate',
   RECRUITER: '/recruiter/company',
   ADMIN: '/admin',
 };

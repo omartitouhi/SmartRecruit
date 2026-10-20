@@ -523,6 +523,10 @@ aside .alert {
   gap: var(--space-3);
 }
 
+.tiles--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .tile__label {
   font-size: var(--text-sm);
   color: var(--muted);

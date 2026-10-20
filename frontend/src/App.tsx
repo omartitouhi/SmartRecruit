@@ -8,10 +8,12 @@ import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage, ResetPasswordPage } from "./pages/auth/PasswordPages";
 import { RegisterPage } from "./pages/auth/RegisterPage";
 import { ApplicationsPage } from "./pages/candidate/ApplicationsPage";
+import { CandidateDashboardPage } from "./pages/candidate/CandidateDashboardPage";
 import { CandidateProfilePage } from "./pages/candidate/CandidateProfilePage";
 import { JobDetailPage } from "./pages/candidate/JobDetailPage";
 import { JobSearchPage } from "./pages/candidate/JobSearchPage";
 import { MatchScorePage } from "./pages/candidate/MatchScorePage";
+import { RecommendationsPage } from "./pages/candidate/RecommendationsPage";
 import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { LandingPage } from "./pages/LandingPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -44,6 +46,8 @@ function App() {
         </Route>
 
         <Route element={<RequireRole roles={["CANDIDATE"]}><AppLayout /></RequireRole>}>
+          <Route path="candidate" element={<CandidateDashboardPage />} />
+          <Route path="candidate/recommendations" element={<RecommendationsPage />} />
           <Route path="candidate/profile" element={<CandidateProfilePage />} />
           <Route path="candidate/jobs" element={<JobSearchPage />} />
           <Route path="candidate/jobs/:jobId" element={<JobDetailPage />} />
