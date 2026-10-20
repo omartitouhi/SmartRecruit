@@ -101,7 +101,9 @@ class LoginIntegrationTest {
         account.setStatus(AccountStatus.DISABLED);
         accountRepository.save(account);
 
-        login(mockMvc, EMAIL, PASSWORD).andExpect(status().isUnauthorized());
+        String body = login(mockMvc, EMAIL, PASSWORD).andExpect(status().isUnauthorized())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(body).contains("désactivé");
     }
 
     @Test

@@ -121,7 +121,8 @@ class RefreshIntegrationTest {
         account.setStatus(AccountStatus.DISABLED);
         accountRepository.save(account);
 
-        refresh(refreshToken).andExpect(status().isUnauthorized());
+        refresh(refreshToken).andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("désactivé")));
     }
 
     @Test

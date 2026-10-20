@@ -27,6 +27,7 @@ import java.util.UUID;
 public class AuthService {
 
     static final String INVALID_CREDENTIALS = "Identifiants invalides";
+    static final String ACCOUNT_DISABLED = "Ce compte est désactivé. Contactez un administrateur.";
     static final String ACCOUNT_LOCKED = "Trop de tentatives échouées, compte temporairement bloqué. Réessayez plus tard.";
 
     private final AccountRepository accountRepository;
@@ -94,6 +95,9 @@ public class AuthService {
             registerFailedAttempt(account, now);
             throw invalidCredentials();
         }
+        if (account.getStatus() == AccountStatus.DISABLED) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, ACCOUNT_DISABLED);
+        }
         if (account.getStatus() != AccountStatus.ACTIVE) {
             throw invalidCredentials();
         }
@@ -110,9 +114,11 @@ public class AuthService {
     public TokenResponse refresh(RefreshTokenRequest request) {
         Account account = refreshTokenService.consume(request.refreshToken())
                 .flatMap(accountRepository::findById)
-                .filter(found -> found.getStatus() == AccountStatus.ACTIVE)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED,
                         "Refresh token invalide, expiré ou révoqué. Veuillez vous reconnecter."));
+        if (account.getStatus() != AccountStatus.ACTIVE) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, ACCOUNT_DISABLED);
+        }
         return issueTokens(account);
     }
 
