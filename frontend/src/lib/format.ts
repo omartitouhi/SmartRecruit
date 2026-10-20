@@ -73,6 +73,13 @@ const dateTime = new Intl.DateTimeFormat('fr-FR', {
 });
 const monthYear = new Intl.DateTimeFormat('fr-FR', { month: 'short', year: 'numeric' });
 
+/** 1_300_000 → « 1,2 Mo » */
+export function formatSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} o`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} Ko`;
+  return `${decimal.format(bytes / (1024 * 1024))} Mo`;
+}
+
 /** 78.5 → « 78,5 » */
 export const formatScore = (n: number) => decimal.format(n);
 export const formatInt = (n: number) => integer.format(n);
