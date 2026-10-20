@@ -145,6 +145,11 @@ function Jobs({ companyName }: { companyName: string }) {
                       </td>
                       <td className="muted">{formatDateShort(job.publishedAt)}</td>
                       <td style={{ textAlign: 'right' }}>
+                        {(job.status === 'DRAFT' || job.status === 'PUBLISHED') && (
+                          <ButtonLink to={`/recruiter/jobs/${job.id}/edit`} variant="ghost">
+                            Modifier
+                          </ButtonLink>
+                        )}
                         {next ? (
                           <Button
                             variant="ghost"
