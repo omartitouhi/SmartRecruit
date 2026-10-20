@@ -3,6 +3,7 @@ import type {
   ApplicationStatus,
   ContractType,
   ExperienceLevel,
+  InvitationStatus,
   JobStatus,
   Role,
 } from '../types';
@@ -50,6 +51,12 @@ export const ACCOUNT_STATUS: Record<AccountStatus, { label: string; tone: Tone }
   ACTIVE: { label: 'Actif', tone: 'green' },
   DISABLED: { label: 'Désactivé', tone: 'yellow' },
   DELETED: { label: 'Supprimé', tone: 'red' },
+};
+
+export const INVITATION_STATUS: Record<InvitationStatus, { label: string; tone: Tone }> = {
+  PENDING: { label: 'En attente', tone: 'yellow' },
+  ACCEPTED: { label: 'Acceptée', tone: 'green' },
+  EXPIRED: { label: 'Expirée', tone: 'grey' },
 };
 
 /** Libellé de l'action d'un recruteur qui fait passer une candidature à ce statut. */

@@ -17,6 +17,7 @@ const NAV: Record<Role, { to: string; label: string; end?: boolean }[]> = {
     { to: '/recruiter/jobs', label: 'Mes offres', end: true },
     { to: '/recruiter/jobs/new', label: 'Publier une offre' },
     { to: '/recruiter/company', label: 'Entreprise' },
+    { to: '/recruiter/team', label: 'Équipe' },
   ],
   ADMIN: [{ to: '/admin', label: 'Tableau de bord' }],
 };

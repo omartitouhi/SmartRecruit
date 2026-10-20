@@ -1106,3 +1106,11 @@ aside .alert {
   padding-top: var(--space-5);
   border-top: 1px solid var(--line);
 }
+
+.member-list {
+  display: grid;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0 0;
+}
