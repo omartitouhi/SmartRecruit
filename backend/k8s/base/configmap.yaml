@@ -1,0 +1,18 @@
+# Configuration non secrète partagée par les services (noms DNS = noms des Services Kubernetes).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  AUTH_SERVICE_URI: http://auth-service:8081
+  USER_SERVICE_URI: http://user-service:8082
+  JOB_SERVICE_URI: http://job-service:8083
+  APPLICATION_SERVICE_URI: http://application-service:8084
+  DASHBOARD_SERVICE_URI: http://dashboard-service:8085
+  AI_SERVICE_URI: http://ai-service:8000
+  OPENROUTER_MODEL: anthropic/claude-haiku-5.5
+  RATE_LIMIT_MAX_REQUESTS: "10"
+  SERVER_SHUTDOWN: graceful
+  SPRING_LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE: 20s

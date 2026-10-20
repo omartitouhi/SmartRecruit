@@ -1,0 +1,13 @@
+# Disque des CV chiffrés (BE-SEC-01).
+# shortcut: ReadWriteOnce => un seul exemplaire de user-service ; passer à un stockage objet (S3) pour plusieurs répliques.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cv-data
+  labels:
+    app.kubernetes.io/part-of: smartrecruit
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi
