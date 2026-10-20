@@ -30,3 +30,6 @@ cv-analysis:
 company-invitation:
   token-ttl: 7d
   link-base-url: http://frontend.test/invitations/accept
+
+services:
+  dashboard-service-uri: http://localhost:1

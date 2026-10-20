@@ -55,3 +55,7 @@ company-invitation:
   # BE-COMP-03: invitations to join a company; the link is logged (no mail server in the MVP).
   token-ttl: 7d
   link-base-url: ${COMPANY_INVITATION_LINK_BASE_URL:http://localhost:5173/invitations/accept}
+
+services:
+  # Audit events of candidate data views (best effort, asynchronous).
+  dashboard-service-uri: ${DASHBOARD_SERVICE_URI:http://localhost:8085}
