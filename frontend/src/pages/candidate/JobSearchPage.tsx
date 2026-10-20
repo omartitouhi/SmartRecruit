@@ -10,13 +10,13 @@ import { CONTRACT_LABEL, formatDateShort, LEVEL_LABEL, pluralize } from '../../l
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import type { ContractType, ExperienceLevel } from '../../types';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 export function JobSearchPage() {
   useDocumentTitle('Offres');
   const [params, setParams] = useSearchParams();
   const filters = {
-    q: params.get('q') ?? '',
+    keyword: params.get('keyword') ?? '',
     location: params.get('location') ?? '',
     contractType: (params.get('contractType') ?? '') as ContractType | '',
     experienceLevel: (params.get('experienceLevel') ?? '') as ExperienceLevel | '',
@@ -106,9 +106,9 @@ export function JobSearchPage() {
         <form className="toolbar panel" onSubmit={onSubmit} role="search">
           <TextField
             label="Recherche"
-            placeholder="Intitulé, compétence, entreprise"
-            value={draft.q}
-            onChange={(e) => setDraft({ ...draft, q: e.target.value })}
+            placeholder="Intitulé ou description"
+            value={draft.keyword}
+            onChange={(e) => setDraft({ ...draft, keyword: e.target.value })}
           />
           <TextField
             label="Ville"
@@ -144,7 +144,7 @@ export function JobSearchPage() {
             title="Aucune offre ne correspond"
             action={
               hasFilters && (
-                <Button variant="ghost" onClick={() => apply({ q: '', location: '', contractType: '', experienceLevel: '' })}>
+                <Button variant="ghost" onClick={() => apply({ keyword: '', location: '', contractType: '', experienceLevel: '' })}>
                   Effacer les filtres
                 </Button>
               )

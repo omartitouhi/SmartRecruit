@@ -1,7 +1,48 @@
 import { HttpError } from '../../lib/errors';
-import type { JobsApi } from '../jobs';
+import { JOB_STATUS_TRANSITIONS, type Job } from '../../types';
+import type { JobCreateRequest, JobsApi } from '../jobs';
 import { computeMatch } from './scoring';
-import { db, save, delay, now, uuid, clone, currentAccount, requireRole, audit, findProfile, findJob, summary, recruiterCompany, assertOwnsJob } from './store';
+import {
+  assertOwnsJob,
+  clone,
+  currentAccount,
+  db,
+  delay,
+  findJob,
+  findProfile,
+  now,
+  recruiterCompany,
+  requireRole,
+  save,
+  summary,
+  uuid,
+} from './store';
+
+/** Field rules of JobCreateRequest; a patch only checks the fields it carries. */
+function validateJob(request: Partial<JobCreateRequest>, partial: boolean) {
+  const e: Record<string, string> = {};
+  const { title, description, requiredSkills, location } = request;
+  if (!partial || title !== undefined) {
+    if (!title?.trim()) e.title = 'L’intitulé est obligatoire';
+    else if (title.length > 255) e.title = '255 caractères maximum';
+  }
+  if (!partial || description !== undefined) {
+    if (!description || description.trim().length < 20 || description.length > 20000) {
+      e.description = 'La description doit contenir entre 20 et 20 000 caractères';
+    }
+  }
+  if (!partial || requiredSkills !== undefined) {
+    if (!requiredSkills?.length || requiredSkills.length > 50) e.requiredSkills = 'Indiquez entre 1 et 50 compétences';
+    else if (requiredSkills.some((s) => s.length > 100)) e.requiredSkills = '100 caractères maximum par compétence';
+  }
+  if (!partial || location !== undefined) {
+    if (!location?.trim()) e.location = 'Le lieu est obligatoire';
+    else if (location.length > 255) e.location = '255 caractères maximum';
+  }
+  if (Object.keys(e).length) throw new HttpError(400, 'Requête invalide', e);
+}
+
+const normalize = (s: string) => s.trim().toLowerCase();
 
 export const mockJobsApi: JobsApi = {
   async recommendations(limit = 10) {
@@ -11,58 +52,60 @@ export const mockJobsApi: JobsApi = {
     if (!profile) return [];
     return db.jobs
       .filter((j) => j.status === 'PUBLISHED')
-      .map((j) => {
-        const s = summary(j.id);
-        return {
-          jobId: j.id,
-          title: j.title,
-          companyId: j.companyId,
-          companyName: s.companyName,
-          location: j.location,
-          contractType: j.contractType,
-          experienceLevel: j.experienceLevel,
-          publishedAt: j.publishedAt,
-          score: computeMatch(profile, j).score,
-        };
-      })
+      .map((j) => ({
+        jobId: j.id,
+        title: j.title,
+        companyId: j.companyId,
+        companyName: summary(j.id).companyName,
+        location: j.location,
+        contractType: j.contractType,
+        experienceLevel: j.experienceLevel,
+        publishedAt: j.publishedAt,
+        score: computeMatch(profile, j).score,
+      }))
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
   },
 
-  async search({ q, location, contractType, experienceLevel, companyId, page = 0, size = 20 }) {
+  async search({ keyword, location, skills, contractType, experienceLevel, companyId, status, page = 0, size = 20 }) {
     await delay();
     const account = currentAccount();
-    const ownCompany = account.role === 'RECRUITER' ? recruiterCompany(account.id) : undefined;
-    const term = q?.trim().toLowerCase();
+    const own = account.role === 'RECRUITER' ? recruiterCompany(account.id) : undefined;
+    const mine = companyId === 'me';
+    if (mine && account.role !== 'RECRUITER') throw new HttpError(403);
+    // Candidates and the default view only see PUBLISHED offers; `me` and admins see every status.
+    const seesAll = account.role === 'ADMIN' || mine;
+    const pageSize = Math.min(Math.max(size, 1), 50);
+    const term = keyword?.trim().toLowerCase();
+    const wanted = (skills ?? []).map(normalize).filter(Boolean);
     const filtered = db.jobs
       .filter((j) => {
-        // Drafts and closed offers are only visible to their own company and to admins.
-        const visible = j.status === 'PUBLISHED' || account.role === 'ADMIN' || j.companyId === ownCompany?.id;
-        if (!visible) return false;
-        if (companyId && j.companyId !== companyId) return false;
+        if (mine ? j.companyId !== own?.id : companyId && j.companyId !== companyId) return false;
+        if (!seesAll && j.status !== 'PUBLISHED') return false;
+        if (seesAll && status && j.status !== status) return false;
         if (contractType && j.contractType !== contractType) return false;
         if (experienceLevel && j.experienceLevel !== experienceLevel) return false;
         if (location && !j.location.toLowerCase().includes(location.toLowerCase())) return false;
-        if (term) {
-          const company = db.companies.find((c) => c.id === j.companyId)?.name ?? '';
-          const haystack = [j.title, j.description, company, ...j.requiredSkills].join(' ').toLowerCase();
-          if (!haystack.includes(term)) return false;
-        }
+        if (term && !`${j.title} ${j.description}`.toLowerCase().includes(term)) return false;
+        if (wanted.length && !j.requiredSkills.some((s) => wanted.includes(normalize(s)))) return false;
         return true;
       })
-      .sort((a, b) => (b.publishedAt ?? '9999').localeCompare(a.publishedAt ?? '9999'));
+      .sort((a, b) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''));
     return {
-      content: filtered.slice(page * size, page * size + size).map((j) => summary(j.id)),
+      content: filtered.slice(page * pageSize, (page + 1) * pageSize).map((j) => summary(j.id, mine)),
       page,
-      size,
+      size: pageSize,
       totalElements: filtered.length,
-      totalPages: Math.max(1, Math.ceil(filtered.length / size)),
+      totalPages: Math.ceil(filtered.length / pageSize),
     };
   },
 
   async get(jobId) {
     await delay(160);
-    currentAccount();
+    const account = currentAccount();
+    const job = findJob(jobId);
+    const owner = account.role === 'RECRUITER' && recruiterCompany(account.id)?.id === job.companyId;
+    if (job.status !== 'PUBLISHED' && account.role !== 'ADMIN' && !owner) throw new HttpError(404, 'Offre introuvable.');
     return summary(jobId);
   },
 
@@ -70,30 +113,49 @@ export const mockJobsApi: JobsApi = {
     await delay();
     const account = requireRole('RECRUITER');
     const company = recruiterCompany(account.id);
-    if (!company || company.id !== request.companyId) throw new HttpError(403);
-    const fieldErrors: Record<string, string> = {};
-    if (!request.title.trim()) fieldErrors.title = 'L’intitulé est obligatoire';
-    if (!request.description.trim()) fieldErrors.description = 'La description est obligatoire';
-    if (!request.location.trim()) fieldErrors.location = 'Le lieu est obligatoire';
-    if (!request.requiredSkills.length) fieldErrors.requiredSkills = 'Ajoutez au moins une compétence';
-    if (Object.keys(fieldErrors).length) throw new HttpError(400, 'Requête invalide', fieldErrors);
+    if (!company) throw new HttpError(403, 'Créez d’abord votre entreprise.');
+    validateJob(request, false);
     const stamp = now();
-    const job = { ...request, id: uuid(), status: 'DRAFT' as const, publishedAt: null, updatedAt: stamp, moderationReason: null };
+    const job: Job = {
+      ...request,
+      id: uuid(),
+      companyId: company.id,
+      status: 'PUBLISHED',
+      publishedAt: stamp,
+      updatedAt: stamp,
+      moderationReason: null,
+    };
     db.jobs.push(job);
-    audit('JOB_CREATED', 'Job', job.id, account.id);
+    save();
+    return clone(job);
+  },
+
+  async update(jobId, patch) {
+    await delay();
+    const account = requireRole('RECRUITER');
+    assertOwnsJob(account.id, jobId);
+    const job = findJob(jobId);
+    if (job.status === 'CLOSED' || job.status === 'MODERATED') {
+      throw new HttpError(409, 'Une offre clôturée ou modérée ne peut plus être modifiée.');
+    }
+    validateJob(patch, true);
+    Object.assign(job, patch, { updatedAt: now() });
     save();
     return clone(job);
   },
 
   async updateStatus(jobId, status) {
     await delay();
-    const account = requireRole('RECRUITER', 'ADMIN');
-    if (account.role === 'RECRUITER') assertOwnsJob(account.id, jobId);
-    if (status === 'MODERATED' && account.role !== 'ADMIN') throw new HttpError(403);
+    const account = requireRole('RECRUITER');
+    assertOwnsJob(account.id, jobId);
     const job = findJob(jobId);
+    if (job.status === 'MODERATED') throw new HttpError(403, 'Cette offre a été modérée par l’administration.');
+    if (!JOB_STATUS_TRANSITIONS[job.status].includes(status)) {
+      throw new HttpError(400, `Transition impossible : ${job.status} → ${status}.`);
+    }
     job.status = status;
-    if (status === 'PUBLISHED' && !job.publishedAt) job.publishedAt = now();
-    audit(`JOB_${status}`, 'Job', jobId, account.id);
+    job.updatedAt = now();
+    if (status === 'PUBLISHED' && !job.publishedAt) job.publishedAt = job.updatedAt;
     save();
     return clone(job);
   },

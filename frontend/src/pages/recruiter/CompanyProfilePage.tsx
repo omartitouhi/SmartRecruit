@@ -19,8 +19,8 @@ interface JobRow {
   toReview: number;
 }
 
-async function loadJobs(companyId: string): Promise<JobRow[]> {
-  const page = await jobsApi.search({ companyId, size: 100 });
+async function loadJobs(): Promise<JobRow[]> {
+  const page = await jobsApi.search({ companyId: 'me', size: 50 });
   const counts = await Promise.all(
     page.content.map((job) =>
       job.status === 'DRAFT' ? Promise.resolve([]) : applicationsApi.forJob(job.id).catch(() => []),
@@ -95,7 +95,7 @@ export function CompanyProfilePage() {
 
 function CompanyJobs({ company, onEdit }: { company: Company; onEdit: () => void }) {
   const notify = useToast();
-  const jobs = useAsync(() => loadJobs(company.id), [company.id]);
+  const jobs = useAsync(loadJobs, [company.id]);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 

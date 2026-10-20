@@ -12,7 +12,7 @@ import { CONTRACT_LABEL, LEVEL_LABEL } from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import type { ContractType, ExperienceLevel } from '../../types';
 
-type Draft = Omit<JobCreateRequest, 'companyId'>;
+type Draft = JobCreateRequest;
 
 export function NewJobPage() {
   useDocumentTitle('Publier une offre');
@@ -30,7 +30,6 @@ export function NewJobPage() {
     contractType: 'CDI',
     location: '',
   });
-  const [publishNow, setPublishNow] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -53,7 +52,6 @@ export function NewJobPage() {
       </div>
     );
   }
-  const companyId = company.data.id;
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -67,9 +65,8 @@ export function NewJobPage() {
     setSaving(true);
     setFormError(null);
     try {
-      const job = await jobsApi.create({ ...form, companyId });
-      if (publishNow) await jobsApi.updateStatus(job.id, 'PUBLISHED');
-      notify(publishNow ? 'Offre publiée.' : 'Offre enregistrée en brouillon.');
+      await jobsApi.create(form);
+      notify('Offre publiée.');
       navigate('/recruiter/company');
     } catch (err) {
       const ui = toUiError(err);
@@ -130,13 +127,9 @@ export function NewJobPage() {
           hint="Les missions, l’équipe, ce qui rend le poste intéressant."
           error={errors.description}
         />
-        <label className="check">
-          <input type="checkbox" checked={publishNow} onChange={(e) => setPublishNow(e.target.checked)} />
-          Publier tout de suite (sinon, l’offre reste en brouillon)
-        </label>
         <div className="detail-actions">
           <Button type="submit" size="lg" loading={saving}>
-            {publishNow ? 'Publier l’offre' : 'Enregistrer le brouillon'}
+            Publier l’offre
           </Button>
           <ButtonLink to="/recruiter/company" variant="ghost" size="lg">
             Annuler

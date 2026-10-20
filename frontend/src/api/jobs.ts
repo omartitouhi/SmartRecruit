@@ -9,27 +9,30 @@ import type {
 import { apiClient, isMocked } from './client';
 import { mockJobsApi } from './mock/jobs';
 
-/**
- * Offre enrichie du nom de l'entreprise, comme RecommendedJob (§4.7).
- * Contrat à confirmer avec job-service : seul GET /jobs/recommendations existe aujourd'hui.
- */
+/** JobResponse enrichi (API_CONTRACTS.md §2). `applicationsCount` n'est renseigné qu'avec `companyId=me`. */
 export interface JobSummary extends Job {
   companyName: string | null;
+  applicationsCount: number | null;
 }
 
 export interface JobSearchParams {
-  q?: string;
+  /** Cherche dans le titre et la description. */
+  keyword?: string;
   location?: string;
+  /** Au moins une des compétences doit être demandée par l'offre. */
+  skills?: string[];
   contractType?: ContractType | '';
   experienceLevel?: ExperienceLevel | '';
+  /** UUID d'une entreprise, ou `me` (recruteur : toutes les offres de son entreprise, tous statuts). */
   companyId?: string;
+  /** Réservé à l'admin et à `companyId=me`. */
+  status?: JobStatus | '';
   page?: number;
   size?: number;
 }
 
-/** Corps de POST /jobs (JobCreateRequest) — le statut part toujours en DRAFT. */
+/** Corps de POST /jobs : l'entreprise est déduite du recruteur, l'offre part PUBLISHED. */
 export interface JobCreateRequest {
-  companyId: string;
   title: string;
   description: string;
   requiredSkills: string[];
@@ -43,30 +46,36 @@ export interface JobsApi {
   search(params: JobSearchParams): Promise<PaginatedResponse<JobSummary>>;
   get(jobId: string): Promise<JobSummary>;
   create(request: JobCreateRequest): Promise<Job>;
+  /** Merge patch ; 403 autre entreprise, 409 si l'offre est CLOSED ou MODERATED. */
+  update(jobId: string, patch: Partial<JobCreateRequest>): Promise<Job>;
+  /** DRAFT→PUBLISHED, PUBLISHED→CLOSED, CLOSED→PUBLISHED ; autre transition 400, offre MODERATED 403. */
   updateStatus(jobId: string, status: JobStatus): Promise<Job>;
 }
 
 const clean = (params: object) =>
-  Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v !== undefined && v !== null));
+  Object.fromEntries(
+    Object.entries(params)
+      .map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : v])
+      .filter(([, v]) => v !== '' && v !== undefined && v !== null),
+  );
 
-const httpJobsApi: JobsApi = {
-  // Existe (BE-REC-01).
+// job-service — API_CONTRACTS.md §2.
+export const httpJobsApi: JobsApi = {
   async recommendations(limit = 10) {
     return (await apiClient.get<RecommendedJob[]>('/jobs/recommendations', { params: { limit } })).data;
   },
-  // Contrat à confirmer.
   async search(params) {
     return (await apiClient.get<PaginatedResponse<JobSummary>>('/jobs', { params: clean(params) })).data;
   },
-  // Contrat à confirmer.
   async get(jobId) {
     return (await apiClient.get<JobSummary>(`/jobs/${jobId}`)).data;
   },
-  // DTO JobCreateRequest présent dans job-service, contrôleur à venir.
   async create(request) {
     return (await apiClient.post<Job>('/jobs', request)).data;
   },
-  // Contrat à confirmer.
+  async update(jobId, patch) {
+    return (await apiClient.patch<Job>(`/jobs/${jobId}`, patch)).data;
+  },
   async updateStatus(jobId, status) {
     return (await apiClient.patch<Job>(`/jobs/${jobId}/status`, { status })).data;
   },

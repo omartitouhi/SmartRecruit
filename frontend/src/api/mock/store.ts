@@ -94,9 +94,13 @@ export function findJob(id: string) {
   return job;
 }
 
-export function summary(jobId: string): JobSummary {
+export function summary(jobId: string, withCount = false): JobSummary {
   const job = findJob(jobId);
-  return { ...clone(job), companyName: db.companies.find((c) => c.id === job.companyId)?.name ?? null };
+  return {
+    ...clone(job),
+    companyName: db.companies.find((c) => c.id === job.companyId)?.name ?? null,
+    applicationsCount: withCount ? db.applications.filter((a) => a.jobId === jobId && a.status !== 'WITHDRAWN').length : null,
+  };
 }
 
 export function recruiterCompany(accountId: string) {

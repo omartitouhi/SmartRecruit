@@ -12,6 +12,14 @@ export type InvitationStatus = 'PENDING' | 'ACCEPTED' | 'EXPIRED';
 
 export type JobStatus = 'DRAFT' | 'PUBLISHED' | 'CLOSED' | 'MODERATED';
 
+// Transitions de statut d'une offre voulues par le recruteur — API_CONTRACTS.md §2. MODERATED n'en a aucune.
+export const JOB_STATUS_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
+  DRAFT: ['PUBLISHED'],
+  PUBLISHED: ['CLOSED'],
+  CLOSED: ['PUBLISHED'],
+  MODERATED: [],
+};
+
 export type ContractType = 'CDI' | 'CDD' | 'STAGE' | 'ALTERNANCE' | 'FREELANCE';
 
 export type ExperienceLevel = 'JUNIOR' | 'INTERMEDIATE' | 'SENIOR' | 'LEAD';
