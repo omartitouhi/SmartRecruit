@@ -1,23 +1,36 @@
-import { useState, type CSSProperties, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { jobsApi } from '../../api/jobs';
 import { JobMeta } from '../../components/domain/JobMeta';
-import { Button, ButtonLink } from '../../components/ui/Button';
+import { Button } from '../../components/ui/Button';
 import { SelectField, TextField } from '../../components/ui/Field';
-import { ScoreChip } from '../../components/ui/ScoreBreakdown';
 import { EmptyState, ErrorState, SkeletonRows } from '../../components/ui/States';
 import { CONTRACT_LABEL, formatDateShort, LEVEL_LABEL, pluralize } from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import type { ContractType, ExperienceLevel } from '../../types';
 
 const PAGE_SIZE = 20;
+/** Pause after the last keystroke before the list is refreshed. */
+export const SEARCH_DEBOUNCE_MS = 350;
+
+interface Filters {
+  keyword: string;
+  location: string;
+  skills: string;
+  contractType: ContractType | '';
+  experienceLevel: ExperienceLevel | '';
+}
+
+const NO_FILTERS: Filters = { keyword: '', location: '', skills: '', contractType: '', experienceLevel: '' };
+const splitSkills = (skills: string) => skills.split(',').map((s) => s.trim()).filter(Boolean);
 
 export function JobSearchPage() {
   useDocumentTitle('Offres');
   const [params, setParams] = useSearchParams();
-  const filters = {
+  const filters: Filters = {
     keyword: params.get('keyword') ?? '',
     location: params.get('location') ?? '',
+    skills: params.get('skills') ?? '',
     contractType: (params.get('contractType') ?? '') as ContractType | '',
     experienceLevel: (params.get('experienceLevel') ?? '') as ExperienceLevel | '',
   };
@@ -32,16 +45,27 @@ export function JobSearchPage() {
     setDraft(filters);
   }
 
-  const recommendations = useAsync(() => jobsApi.recommendations(5), []);
-  const results = useAsync(() => jobsApi.search({ ...filters, page, size: PAGE_SIZE }), [key]);
+  const results = useAsync(
+    () => jobsApi.search({ ...filters, skills: splitSkills(filters.skills), page, size: PAGE_SIZE }),
+    [key],
+  );
   const hasFilters = Object.values(filters).some(Boolean);
 
-  function apply(next: typeof draft, nextPage = 0) {
+  function apply(next: Filters, nextPage = 0) {
     const p = new URLSearchParams();
     Object.entries(next).forEach(([k, v]) => v && p.set(k, v));
     if (nextPage) p.set('page', String(nextPage));
     setParams(p);
   }
+
+  // Typing refreshes the list after a short pause; the URL keeps the search shareable.
+  const draftJson = JSON.stringify(draft);
+  useEffect(() => {
+    if (draftJson === JSON.stringify(filters)) return;
+    const timer = setTimeout(() => apply(draft), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftJson]);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -54,56 +78,19 @@ export function JobSearchPage() {
         <div>
           <h1 className="page-head__title">Offres</h1>
           <p className="page-head__text">
-            Chaque offre affiche votre score de compatibilité. Ouvrez-la pour lire ce qui le compose.
+            Parcourez les offres publiées. Ouvrez-en une pour lire le détail, voir votre score et postuler.
           </p>
         </div>
+        <Link className="text-link" to="/candidate/recommendations">
+          Voir mes recommandations
+        </Link>
       </header>
 
-      <section className="stack" aria-labelledby="reco-title">
-        <h2 className="section-title" id="reco-title">
-          Recommandées pour vous
-        </h2>
-        {recommendations.error ? (
-          <ErrorState error={recommendations.error} onRetry={recommendations.reload} />
-        ) : recommendations.loading ? (
-          <div className="panel">
-            <SkeletonRows rows={3} />
-          </div>
-        ) : recommendations.data?.length ? (
-          <ol className="reco">
-            {recommendations.data.map((job, i) => (
-              <li key={job.jobId} className="reco__item reveal" style={{ '--i': i } as CSSProperties}>
-                <Link to={`/candidate/match/${job.jobId}`} className="reco__link">
-                  <span className="reco__score">
-                    <ScoreChip score={job.score} />
-                  </span>
-                  <span className="reco__title">{job.title}</span>
-                  <JobMeta
-                    companyName={job.companyName}
-                    location={job.location}
-                    contractType={job.contractType}
-                    experienceLevel={job.experienceLevel}
-                  />
-                </Link>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <EmptyState
-            title="Pas encore de recommandations"
-            action={<ButtonLink to="/candidate/profile">Compléter mon profil</ButtonLink>}
-          >
-            Les recommandations se calculent à partir de votre profil et de votre CV. Renseignez vos compétences et
-            déposez votre CV pour les voir apparaître.
-          </EmptyState>
-        )}
-      </section>
-
-      <section className="stack" aria-labelledby="all-title" style={{ marginTop: 'var(--space-8)' }}>
-        <h2 className="section-title" id="all-title">
+      <section className="stack" aria-labelledby="all-title">
+        <h2 className="section-title visually-hidden" id="all-title">
           Toutes les offres
         </h2>
-        <form className="toolbar panel" onSubmit={onSubmit} role="search">
+        <form className="toolbar panel" onSubmit={onSubmit} role="search" aria-label="Filtrer les offres">
           <TextField
             label="Recherche"
             placeholder="Intitulé ou description"
@@ -115,6 +102,13 @@ export function JobSearchPage() {
             placeholder="Tunis, Sfax…"
             value={draft.location}
             onChange={(e) => setDraft({ ...draft, location: e.target.value })}
+          />
+          <TextField
+            label="Compétences"
+            placeholder="Java, React"
+            hint="Séparées par des virgules : une seule suffit."
+            value={draft.skills}
+            onChange={(e) => setDraft({ ...draft, skills: e.target.value })}
           />
           <SelectField
             label="Contrat"
@@ -130,12 +124,11 @@ export function JobSearchPage() {
             onChange={(e) => setDraft({ ...draft, experienceLevel: e.target.value as ExperienceLevel | '' })}
             options={Object.entries(LEVEL_LABEL).map(([value, label]) => ({ value, label }))}
           />
-          <Button type="submit">Rechercher</Button>
         </form>
 
         {results.error ? (
           <ErrorState error={results.error} onRetry={results.reload} />
-        ) : results.loading || !results.data ? (
+        ) : !results.data ? (
           <div className="panel">
             <SkeletonRows rows={5} />
           </div>
@@ -144,7 +137,13 @@ export function JobSearchPage() {
             title="Aucune offre ne correspond"
             action={
               hasFilters && (
-                <Button variant="ghost" onClick={() => apply({ keyword: '', location: '', contractType: '', experienceLevel: '' })}>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setDraft(NO_FILTERS);
+                    apply(NO_FILTERS);
+                  }}
+                >
                   Effacer les filtres
                 </Button>
               )
@@ -153,14 +152,14 @@ export function JobSearchPage() {
             Essayez une autre ville ou retirez un filtre.
           </EmptyState>
         ) : (
-          <>
+          <div aria-busy={results.loading} style={{ opacity: results.loading ? 0.6 : 1 }}>
             <p className="muted" aria-live="polite">
               {pluralize(results.data.totalElements, 'offre')}
             </p>
             <ul className="job-list panel panel--flush">
               {results.data.content.map((job) => (
                 <li key={job.id}>
-                  <Link to={`/candidate/match/${job.id}`} className="job-row">
+                  <Link to={`/candidate/jobs/${job.id}`} className="job-row">
                     <span className="job-row__main">
                       <span className="job-row__title">{job.title}</span>
                       <JobMeta
@@ -172,7 +171,7 @@ export function JobSearchPage() {
                     </span>
                     <span className="job-row__side">
                       <span className="muted">Publiée le {formatDateShort(job.publishedAt)}</span>
-                      <span className="job-row__cta">Voir mon score</span>
+                      <span className="job-row__cta">Voir l’offre</span>
                     </span>
                   </Link>
                 </li>
@@ -191,7 +190,7 @@ export function JobSearchPage() {
                 </Button>
               </nav>
             )}
-          </>
+          </div>
         )}
       </section>
     </div>
