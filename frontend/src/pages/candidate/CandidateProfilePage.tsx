@@ -86,7 +86,7 @@ function ProfileEditor({ existing, onSaved }: {
     if (first) {
       setStep(stepOf(first));
       setFormError('Certains champs sont à corriger.');
-      return;
+      return false;
     }
     setSaving(true);
     try {
@@ -98,10 +98,12 @@ function ProfileEditor({ existing, onSaved }: {
       storage.remove(draftKey);
       onSaved(saved);
       notify(message);
+      return true;
     } catch (err) {
       const ui = toUiError(err);
       setErrors(ui.fieldErrors);
       setFormError(ui.message);
+      return false;
     } finally {
       setSaving(false);
     }
@@ -136,7 +138,8 @@ function ProfileEditor({ existing, onSaved }: {
   async function applyPicked(picked: CVParsingResult) {
     const merged = applySuggestions(form, picked);
     setForm(merged);
-    await persist(merged, 'Données du CV ajoutées à votre profil.');
+    // What the candidate left unticked counts as ignored: the panel does not come back for this analysis.
+    if (await persist(merged, 'Données du CV ajoutées à votre profil.')) dismissSuggestions();
   }
 
   function dismissSuggestions() {
