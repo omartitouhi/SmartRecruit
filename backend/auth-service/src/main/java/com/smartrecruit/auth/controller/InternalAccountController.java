@@ -1,6 +1,7 @@
 package com.smartrecruit.auth.controller;
 
 import com.smartrecruit.auth.dto.AccountResponse;
+import com.smartrecruit.auth.dto.AccountStatsResponse;
 import com.smartrecruit.auth.dto.AccountStatusRequest;
 import com.smartrecruit.auth.dto.PageResponse;
 import com.smartrecruit.auth.model.AccountStatus;
@@ -42,6 +43,11 @@ public class InternalAccountController {
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "20") int size) {
         return adminService.list(role, status, page, size);
+    }
+
+    @GetMapping("/stats")
+    public AccountStatsResponse stats() {
+        return adminService.stats();
     }
 
     @PatchMapping("/{accountId}/status")

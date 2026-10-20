@@ -14,6 +14,10 @@ import java.util.UUID;
 
 public interface AccountRepository extends JpaRepository<Account, UUID> {
 
+    long countByRole(Role role);
+
+    long countByStatus(AccountStatus status);
+
     boolean existsByEmail(String email);
 
     Optional<Account> findByEmail(String email);
