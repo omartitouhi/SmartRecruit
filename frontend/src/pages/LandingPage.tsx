@@ -11,7 +11,7 @@ import type { ApplicationStatus, MatchScore } from '../types';
 
 // Sample explained score, same shape as POST /ai/matching/score (DATA_MODEL.md §4.1).
 const BASE: MatchScore = {
-  score: 79,
+  score: 85,
   criteria: [
     {
       label: 'Compétences techniques',
@@ -19,16 +19,14 @@ const BASE: MatchScore = {
       contribution: 40,
       explanation: '8 des 10 compétences requises sont dans le profil : Java, Spring Boot, PostgreSQL, Docker, REST, Git, JUnit, Maven.',
     },
-    { label: 'Expérience', weight: 0.3, contribution: 24, explanation: '2 ans et demi d’expérience pour un niveau Senior (3 à 5 ans demandés).' },
-    { label: 'Formation', weight: 0.1, contribution: 10, explanation: 'Diplôme d’ingénieur en informatique, ESPRIT, 2023. Bac+5 demandé.' },
-    { label: 'Langues', weight: 0.1, contribution: 5, explanation: 'Français et anglais présents. L’offre demande aussi l’allemand.' },
+    { label: 'Expérience', weight: 0.3, contribution: 25, explanation: '2,5 ans d’expérience cumulée pour un poste de niveau confirmé (3 ans attendus).' },
+    { label: 'Formation', weight: 0.2, contribution: 20, explanation: 'Diplôme le plus élevé : Master Génie Logiciel, pour un poste de niveau confirmé.' },
   ],
 };
 
 const MISSING = [
   { name: 'Kubernetes', criterion: 0, points: 5 },
   { name: 'GraphQL', criterion: 0, points: 5 },
-  { name: 'Allemand', criterion: 3, points: 5 },
 ];
 
 const RANKING: { name: string; score: number; status: ApplicationStatus }[] = [
@@ -117,17 +115,17 @@ export function LandingPage() {
       <section className="explain" id="score" aria-labelledby="score-title">
         <div className="explain__head">
           <h2 className="section-heading serif" id="score-title" data-reveal>
-            Quatre critères, chacun expliqué
+            Trois critères, chacun expliqué
           </h2>
           <p className="section-lead" data-reveal>
-            Compétences, expérience, formation, langues. Chaque critère a un poids, une note et une phrase qui dit
+            Compétences, expérience, formation. Chaque critère a un poids, une note et une phrase qui dit
             pourquoi. Essayez : ajoutez une compétence manquante à ce profil.
           </p>
         </div>
         <div className="panel explain__doc" data-ui data-reveal>
           <p className="explain__job">
             <span className="cell-strong">Développeur·se backend Java</span>
-            <span className="muted"> · Carthage Fret · Tunis · CDI · Senior</span>
+            <span className="muted"> · Carthage Fret · Tunis · CDI · Confirmé·e</span>
           </p>
           <ScoreTotal
             score={match.score}
