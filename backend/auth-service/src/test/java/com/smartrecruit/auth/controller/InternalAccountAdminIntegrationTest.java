@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -18,8 +19,12 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.time.Instant;
 import java.util.UUID;
 
+import static com.smartrecruit.auth.support.AuthTestHelper.json;
+import static com.smartrecruit.auth.support.AuthTestHelper.login;
 import static com.smartrecruit.auth.support.AuthTestHelper.register;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -119,5 +124,68 @@ class InternalAccountAdminIntegrationTest {
         mockMvc.perform(signed(get("/internal/v1/accounts"), "ADMIN")).andExpect(status().isForbidden());
         mockMvc.perform(signed(get("/internal/v1/accounts"), "CANDIDATE")).andExpect(status().isForbidden());
         mockMvc.perform(get("/internal/v1/accounts")).andExpect(status().isUnauthorized());
+    }
+
+    private ResultActions setStatus(UUID id, String body, String role) throws Exception {
+        return mockMvc.perform(signed(patch("/internal/v1/accounts/{id}/status", id)
+                .contentType(MediaType.APPLICATION_JSON).content(body), role));
+    }
+
+    private UUID idOf(String email) {
+        return accountRepository.findByEmail(email).orElseThrow().getId();
+    }
+
+    @Test
+    void disablingRefusesLoginAndRefreshThenReEnablingRestoresAccess() throws Exception {
+        String refreshToken = json(login(mockMvc, "alice@example.com", PASSWORD), "$.refreshToken");
+
+        setStatus(idOf("alice@example.com"), "{\"status\": \"DISABLED\"}", "SERVICE")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DISABLED"))
+                .andExpect(jsonPath("$.email").value("alice@example.com"));
+
+        login(mockMvc, "alice@example.com", PASSWORD).andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/api/v1/auth/refresh").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"refreshToken\": \"" + refreshToken + "\"}")).andExpect(status().isUnauthorized());
+
+        setStatus(idOf("alice@example.com"), "{\"status\": \"ACTIVE\"}", "SERVICE")
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+        login(mockMvc, "alice@example.com", PASSWORD).andExpect(status().isOk());
+    }
+
+    @Test
+    void disablingRevokesRefreshTokensEvenIfTheAccountIsReEnabledLater() throws Exception {
+        String refreshToken = json(login(mockMvc, "alice@example.com", PASSWORD), "$.refreshToken");
+        setStatus(idOf("alice@example.com"), "{\"status\": \"DISABLED\"}", "SERVICE").andExpect(status().isOk());
+        setStatus(idOf("alice@example.com"), "{\"status\": \"ACTIVE\"}", "SERVICE").andExpect(status().isOk());
+
+        mockMvc.perform(post("/api/v1/auth/refresh").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"refreshToken\": \"" + refreshToken + "\"}")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void statusChangeRejectsUnknownAccountsAndInvalidStatuses() throws Exception {
+        setStatus(UUID.randomUUID(), "{\"status\": \"DISABLED\"}", "SERVICE").andExpect(status().isNotFound());
+        UUID alice = idOf("alice@example.com");
+        setStatus(alice, "{}", "SERVICE").andExpect(status().isBadRequest());
+        setStatus(alice, "{\"status\": \"DELETED\"}", "SERVICE").andExpect(status().isBadRequest());
+        setStatus(alice, "{\"status\": \"WIZARD\"}", "SERVICE").andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void erasedAccountsCannotBeReEnabled() throws Exception {
+        Account alice = accountRepository.findByEmail("alice@example.com").orElseThrow();
+        alice.setStatus(AccountStatus.DELETED);
+        accountRepository.save(alice);
+
+        setStatus(alice.getId(), "{\"status\": \"ACTIVE\"}", "SERVICE").andExpect(status().isConflict());
+    }
+
+    @Test
+    void statusChangeIsReservedToBackendServices() throws Exception {
+        UUID alice = idOf("alice@example.com");
+        setStatus(alice, "{\"status\": \"DISABLED\"}", "ADMIN").andExpect(status().isForbidden());
+        setStatus(alice, "{\"status\": \"DISABLED\"}", "CANDIDATE").andExpect(status().isForbidden());
+        login(mockMvc, "alice@example.com", PASSWORD).andExpect(status().isOk());
     }
 }
