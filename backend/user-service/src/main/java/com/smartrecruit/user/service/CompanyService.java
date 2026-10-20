@@ -1,5 +1,6 @@
 package com.smartrecruit.user.service;
 
+import com.smartrecruit.user.dto.CompanyPatchRequest;
 import com.smartrecruit.user.dto.CompanyPublicResponse;
 import com.smartrecruit.user.dto.CompanyRequest;
 import com.smartrecruit.user.dto.CompanyResponse;
@@ -55,6 +56,35 @@ public class CompanyService {
         return companyRepository.findByMember(accountId).map(CompanyResponse::from)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND,
                         "Aucune entreprise : créez-la avec POST /api/v1/users/companies"));
+    }
+
+    /** Partial update reserved to the members of the company (BE-COMP-02): 404 if unknown, 403 otherwise. */
+    @Transactional
+    public CompanyResponse patch(UUID accountId, UUID companyId, CompanyPatchRequest request) {
+        Company company = findForMember(accountId, companyId);
+        if (request.has("name")) {
+            company.setName(request.name().trim());
+        }
+        if (request.has("sector")) {
+            company.setSector(request.sector().trim());
+        }
+        if (request.has("description")) {
+            company.setDescription(CandidateProfileService.blankToNull(request.description()));
+        }
+        if (request.has("logoUrl")) {
+            company.setLogoUrl(CandidateProfileService.blankToNull(request.logoUrl()));
+        }
+        return CompanyResponse.from(companyRepository.saveAndFlush(company));
+    }
+
+    /** The company with the given id, provided the account is one of its members. */
+    Company findForMember(UUID accountId, UUID companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Entreprise introuvable"));
+        if (!company.getMembers().contains(accountId)) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Vous n'êtes pas membre de cette entreprise");
+        }
+        return company;
     }
 
     @Transactional(readOnly = true)
