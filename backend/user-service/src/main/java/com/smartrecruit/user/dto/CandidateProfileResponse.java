@@ -1,6 +1,7 @@
 package com.smartrecruit.user.dto;
 
 import com.smartrecruit.user.model.CandidateProfile;
+import com.smartrecruit.user.model.CvAnalysisStatus;
 import com.smartrecruit.user.model.Education;
 import com.smartrecruit.user.model.Experience;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ public class CandidateProfileResponse {
     private List<String> languages;
     private String cvUrl;
     private Instant cvParsedAt;
+    private CvAnalysisStatus cvAnalysisStatus;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -60,6 +62,7 @@ public class CandidateProfileResponse {
                 .languages(List.copyOf(profile.getLanguages()))
                 .cvUrl(profile.getCvUrl())
                 .cvParsedAt(profile.getCvParsedAt())
+                .cvAnalysisStatus(profile.analysisStatus())
                 .createdAt(profile.getCreatedAt())
                 .updatedAt(profile.getUpdatedAt())
                 .build();

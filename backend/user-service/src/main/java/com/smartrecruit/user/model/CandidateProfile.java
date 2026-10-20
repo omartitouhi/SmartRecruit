@@ -4,6 +4,8 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
@@ -86,6 +88,10 @@ public class CandidateProfile {
     /** Horodatage de la dernière analyse IA réussie (AI-CV-02). */
     private Instant cvParsedAt;
 
+    /** Null only on rows created before BE-CV-02: read it through {@link #analysisStatus()}. */
+    @Enumerated(EnumType.STRING)
+    private CvAnalysisStatus cvAnalysisStatus;
+
     private Instant createdAt;
 
     private Instant updatedAt;
@@ -100,6 +106,17 @@ public class CandidateProfile {
     @PreUpdate
     void onUpdate() {
         updatedAt = Instant.now();
+    }
+
+    /** Analysis state; profiles saved before BE-CV-02 have none stored and get it derived from the CV fields. */
+    public CvAnalysisStatus analysisStatus() {
+        if (cvAnalysisStatus != null) {
+            return cvAnalysisStatus;
+        }
+        if (cvStorageKey == null) {
+            return CvAnalysisStatus.NONE;
+        }
+        return cvParsedAt != null ? CvAnalysisStatus.DONE : CvAnalysisStatus.FAILED;
     }
 
     /** Replaces the content of a persistent collection in place (keeps Hibernate's collection wrapper). */
