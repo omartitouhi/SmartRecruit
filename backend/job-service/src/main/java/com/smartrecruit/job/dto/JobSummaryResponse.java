@@ -1,7 +1,6 @@
 package com.smartrecruit.job.dto;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.smartrecruit.job.model.Job;
 
 /**
  * {@link JobResponse} plus what lists and detail pages display: {@code companyName} (null when
@@ -9,8 +8,4 @@ import com.smartrecruit.job.model.Job;
  * null elsewhere).
  */
 public record JobSummaryResponse(@JsonUnwrapped JobResponse job, String companyName, Long applicationsCount) {
-
-    public static JobSummaryResponse of(Job job, String companyName, Long applicationsCount) {
-        return new JobSummaryResponse(JobResponse.from(job), companyName, applicationsCount);
-    }
 }
