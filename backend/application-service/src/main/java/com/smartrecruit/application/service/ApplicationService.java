@@ -1,5 +1,6 @@
 package com.smartrecruit.application.service;
 
+import com.smartrecruit.application.client.AuditClient;
 import com.smartrecruit.application.client.CandidateReadinessClient;
 import com.smartrecruit.application.client.CandidateReadinessClient.Readiness;
 import com.smartrecruit.application.client.CompanyDirectoryClient;
@@ -30,6 +31,7 @@ public class ApplicationService {
     private final JobDirectoryClient jobs;
     private final CandidateReadinessClient readiness;
     private final CompanyDirectoryClient companies;
+    private final AuditClient audit;
     private final ApplicationScoring scoring;
     private final MatchScoreService matchScores;
     private final Clock clock;
@@ -89,6 +91,25 @@ public class ApplicationService {
                 .sorted(Comparator.comparing((Application a) -> a.getMatchScore() == null ? null : a.getMatchScore().getScore(),
                         Comparator.nullsLast(Comparator.reverseOrder())).thenComparing(Application::getAppliedAt))
                 .toList();
+    }
+
+    /**
+     * BE-APP-04: a recruiter of the owning company moves the application along
+     * {@link ApplicationStatus#ALLOWED_TRANSITIONS}; WITHDRAWN is reserved for the candidate.
+     */
+    public Application changeStatus(UUID recruiterId, UUID applicationId, ApplicationStatus target) {
+        Application application = applications.findById(applicationId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Candidature introuvable"));
+        requireMemberOf(recruiterId, application.getCompanyId());
+        ApplicationStatus current = application.getStatus();
+        if (target == ApplicationStatus.WITHDRAWN || !current.canTransitionTo(target)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Transition interdite : " + current + " -> " + target);
+        }
+        application.setStatus(target);
+        application.getStatusHistory().add(new StatusHistoryEntry(target, clock.instant(), recruiterId));
+        Application saved = applications.save(application);
+        audit.record(recruiterId, "APPLICATION_STATUS_CHANGED", "APPLICATION", saved.getId());
+        return saved;
     }
 
     private void requireMemberOf(UUID recruiterId, UUID companyId) {
