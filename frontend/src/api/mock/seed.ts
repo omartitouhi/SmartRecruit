@@ -31,6 +31,8 @@ export interface MockDb {
   audit: AuditLogEntry[];
   /** Nom du fichier CV par candidat (le contenu reste en mémoire pendant la session). */
   cvFiles: Record<string, string>;
+  /** Horodatage (ms) du dernier dépôt de CV par candidat : l'analyse « se termine » quelques secondes plus tard. */
+  cvUploadedAt: Record<string, number>;
 }
 
 export const DB_VERSION = 3;
@@ -373,5 +375,6 @@ export function createSeed(): MockDb {
     applications: apps,
     audit,
     cvFiles: Object.fromEntries(profiles.map((p) => [p.id, `CV-${p.firstName}-${p.lastName}.pdf`])),
+    cvUploadedAt: {},
   };
 }

@@ -9,6 +9,7 @@ import {
   type ApplicationStatus,
   type AuditLogEntry,
   type CandidateProfile,
+  type CVParsingResult,
   type Role,
 } from '../../types';
 import type { ApplicationsApi } from '../applications';
@@ -38,7 +39,6 @@ function load(): MockDb {
 
 const db: MockDb = load();
 const cvBlobs = new Map<string, Blob>();
-const cvUploadedAt = new Map<string, number>();
 
 function save() {
   try {
@@ -181,15 +181,29 @@ export const mockAuthApi: AuthApi = {
 // ───────────────────────── candidates ─────────────────────────
 
 function withParsingState(profile: CandidateProfile) {
-  // The AI parses the CV a few seconds after upload (cvParsedAt stays null until then).
-  const uploaded = cvUploadedAt.get(profile.id);
-  if (profile.cvUrl && !profile.cvParsedAt && uploaded && Date.now() - uploaded > CV_PARSE_DELAY_MS) {
-    profile.cvParsedAt = now();
-    profile.cvAnalysisStatus = 'DONE';
-    profile.updatedAt = profile.cvParsedAt;
+  // The AI parses the CV a few seconds after upload; a file whose name contains "fail" or "echec" makes it fail.
+  if (profile.cvAnalysisStatus === 'PENDING' && Date.now() - (db.cvUploadedAt[profile.id] ?? 0) > CV_PARSE_DELAY_MS) {
+    const failed = /fail|echec/i.test(db.cvFiles[profile.id] ?? '');
+    profile.cvAnalysisStatus = failed ? 'FAILED' : 'DONE';
+    if (!failed) profile.cvParsedAt = now();
+    profile.updatedAt = now();
     save();
   }
   return clone(profile);
+}
+
+/** What the AI "read" in the CV: the profile plus a few extras, so the validation screen has something to apply. */
+function demoSuggestions(profile: CandidateProfile): CVParsingResult {
+  const unique = (items: string[]) => items.filter((v, i) => items.findIndex((x) => x.toLowerCase() === v.toLowerCase()) === i);
+  return {
+    skills: unique([...profile.skills, 'Kubernetes', 'GraphQL']),
+    experiences: [
+      ...clone(profile.experiences),
+      { title: 'Stagiaire DevOps', company: 'Byrsa Lab', startDate: '2020-06', endDate: '2020-09', description: 'Automatisation des déploiements.' },
+    ],
+    education: clone(profile.education),
+    languages: unique([...profile.languages, 'Allemand']),
+  };
 }
 
 export const mockCandidatesApi: CandidatesApi = {
@@ -230,15 +244,18 @@ export const mockCandidatesApi: CandidatesApi = {
     return clone(profile);
   },
 
-  async uploadCv(file) {
-    await delay(700);
+  async uploadCv(file, onProgress) {
+    for (const percent of [30, 70, 100]) {
+      await delay(200);
+      onProgress?.(percent);
+    }
     const account = requireRole('CANDIDATE');
     const profile = findProfile(account.id);
     if (!profile) throw new HttpError(404, 'Créez votre profil avant de déposer un CV.');
     if (file.type !== 'application/pdf') throw new HttpError(400, 'Le CV doit être un fichier PDF.');
     if (file.size > 5 * 1024 * 1024) throw new HttpError(413, 'Le CV ne doit pas dépasser 5 Mo.');
     cvBlobs.set(account.id, file);
-    cvUploadedAt.set(account.id, Date.now());
+    db.cvUploadedAt[account.id] = Date.now();
     db.cvFiles[account.id] = file.name;
     profile.cvUrl = `/api/v1/users/candidates/${account.id}/cv`;
     profile.cvParsedAt = null;
@@ -260,6 +277,15 @@ export const mockCandidatesApi: CandidatesApi = {
       save();
     }
     return cvBlobs.get(candidateId) ?? demoPdf(`${profile.firstName} ${profile.lastName}`, db.cvFiles[candidateId]);
+  },
+
+  async cvSuggestions() {
+    await delay();
+    const account = requireRole('CANDIDATE');
+    const stored = findProfile(account.id);
+    const profile = stored && withParsingState(stored);
+    if (profile?.cvAnalysisStatus !== 'DONE') throw new HttpError(404, 'Aucun CV analysé pour ce profil.');
+    return demoSuggestions(profile);
   },
 
   async deleteMyAccount() {

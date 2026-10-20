@@ -1,4 +1,4 @@
-import type { CandidateProfile, CandidateView, Education, Experience } from '../types';
+import type { CandidateProfile, CandidateView, CVParsingResult, Education, Experience } from '../types';
 import { apiClient, isMocked } from './client';
 import { mockCandidatesApi } from './mock/handlers';
 
@@ -21,7 +21,10 @@ export interface CandidatesApi {
   /** 404 tant que le candidat n'a pas créé son profil. */
   getMyProfile(): Promise<CandidateProfile>;
   saveMyProfile(request: CandidateProfileRequest): Promise<CandidateProfile>;
-  uploadCv(file: File): Promise<CandidateProfile>;
+  /** `onProgress` reçoit un pourcentage (0-100) pendant l'envoi. L'upload remet cvAnalysisStatus à PENDING. */
+  uploadCv(file: File, onProgress?: (percent: number) => void): Promise<CandidateProfile>;
+  /** Données extraites du dernier CV analysé, à valider ; 404 sans CV analysé, 503 si l'IA est indisponible. */
+  cvSuggestions(): Promise<CVParsingResult>;
   downloadCv(candidateId: string): Promise<Blob>;
   deleteMyAccount(): Promise<void>;
   /** Vue recruteur / admin d'un candidat. */
@@ -29,17 +32,24 @@ export interface CandidatesApi {
 }
 
 // user-service — CandidateProfileController, CandidateCvController, CandidateDirectoryController.
-const httpCandidatesApi: CandidatesApi = {
+export const httpCandidatesApi: CandidatesApi = {
   async getMyProfile() {
     return (await apiClient.get<CandidateProfile>('/users/candidates/me')).data;
   },
   async saveMyProfile(request) {
     return (await apiClient.put<CandidateProfile>('/users/candidates/me', request)).data;
   },
-  async uploadCv(file) {
+  async uploadCv(file, onProgress) {
     const form = new FormData();
     form.append('file', file);
-    return (await apiClient.post<CandidateProfile>('/users/candidates/me/cv', form)).data;
+    return (
+      await apiClient.post<CandidateProfile>('/users/candidates/me/cv', form, {
+        onUploadProgress: (e) => e.total && onProgress?.(Math.round((e.loaded / e.total) * 100)),
+      })
+    ).data;
+  },
+  async cvSuggestions() {
+    return (await apiClient.get<CVParsingResult>('/users/candidates/me/cv-suggestions')).data;
   },
   async downloadCv(candidateId) {
     return (await apiClient.get<Blob>(`/users/candidates/${candidateId}/cv`, { responseType: 'blob' })).data;
