@@ -6,3 +6,8 @@ resources:
   - configmap.yaml
   - postgres.yaml
   - cv-storage.yaml
+  - auth-service.yaml
+  - user-service.yaml
+  - job-service.yaml
+  - application-service.yaml
+  - dashboard-service.yaml
