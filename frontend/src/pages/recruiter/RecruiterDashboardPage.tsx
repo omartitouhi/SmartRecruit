@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { applicationsApi } from '../../api/applications';
+import { candidatesApi, fullName } from '../../api/candidates';
 import { dashboardApi } from '../../api/dashboard';
 import { jobsApi } from '../../api/jobs';
 import { NoCompany } from '../../components/domain/NoCompany';
@@ -10,7 +11,7 @@ import { ApplicationStatusTag } from '../../components/ui/Tag';
 import { formatInt, formatRate } from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import { useMyCompany } from '../../lib/useCompany';
-import type { Application, Company } from '../../types';
+import type { Application, CandidateView, Company } from '../../types';
 
 const JOBS_SCANNED = 3;
 const TOP_SHOWN = 5;
@@ -19,6 +20,7 @@ interface TopApplication {
   application: Application;
   jobId: string;
   jobTitle: string;
+  candidate: CandidateView | null;
 }
 
 /** The best-ranked applications across the offers that received the most candidates. */
@@ -29,11 +31,13 @@ async function loadTop(): Promise<TopApplication[]> {
     .sort((a, b) => (b.applicationsCount ?? 0) - (a.applicationsCount ?? 0))
     .slice(0, JOBS_SCANNED);
   const lists = await Promise.all(busiest.map((j) => applicationsApi.forJob(j.id).catch(() => [])));
-  return busiest
+  const top = busiest
     .flatMap((job, i) => lists[i].map((application) => ({ application, jobId: job.id, jobTitle: job.title })))
     .filter((t) => t.application.matchScore)
     .sort((a, b) => (b.application.matchScore?.score ?? 0) - (a.application.matchScore?.score ?? 0))
     .slice(0, TOP_SHOWN);
+  const candidates = await Promise.all(top.map((t) => candidatesApi.getCandidate(t.application.candidateId).catch(() => null)));
+  return top.map((t, i) => ({ ...t, candidate: candidates[i] }));
 }
 
 /** FE-DASH-02 : chiffres clés de l'entreprise et accès rapide aux candidatures les mieux classées. */
@@ -123,6 +127,7 @@ function Dashboard({ company }: { company: Company }) {
               <table className="table">
                 <thead>
                   <tr>
+                    <th>Candidat·e</th>
                     <th>Offre</th>
                     <th>Score</th>
                     <th>Statut</th>
@@ -132,9 +137,10 @@ function Dashboard({ company }: { company: Company }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {top.data.map(({ application, jobId, jobTitle }) => (
+                  {top.data.map(({ application, jobId, jobTitle, candidate }) => (
                     <tr key={application.id}>
-                      <td className="cell-strong">{jobTitle}</td>
+                      <td className="cell-strong">{candidate ? fullName(candidate) : 'Profil indisponible'}</td>
+                      <td>{jobTitle}</td>
                       <td>
                         <ScoreChip score={application.matchScore?.score} />
                       </td>

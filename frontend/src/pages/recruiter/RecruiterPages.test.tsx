@@ -2,11 +2,12 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { applicationsApi } from '../../api/applications';
+import { candidatesApi } from '../../api/candidates';
 import { companiesApi } from '../../api/companies';
 import { dashboardApi } from '../../api/dashboard';
 import { jobsApi } from '../../api/jobs';
 import { HttpError } from '../../lib/errors';
-import { makeAccount, makeApplication, makeCompany, makeInvitation, makeJob, makeMatch, page } from '../../test/fixtures';
+import { makeAccount, makeApplication, makeCompany, makeInvitation, makeJob, makeMatch, makeProfile, page } from '../../test/fixtures';
 import { renderAt } from '../../test/render';
 import { AcceptInvitationPage } from './AcceptInvitationPage';
 import { CompanyProfilePage } from './CompanyProfilePage';
@@ -36,11 +37,16 @@ vi.mock('../../api/companies', async (original) => ({
     acceptInvitation: vi.fn(),
   },
 }));
+vi.mock('../../api/candidates', async (original) => ({
+  ...(await original<typeof import('../../api/candidates')>()),
+  candidatesApi: { getCandidate: vi.fn() },
+}));
 vi.mock('../../api/dashboard', async (original) => ({
   ...(await original<typeof import('../../api/dashboard')>()),
   dashboardApi: { companyStats: vi.fn() },
 }));
 
+const candidates = vi.mocked(candidatesApi);
 const jobs = vi.mocked(jobsApi);
 const applications = vi.mocked(applicationsApi);
 const companies = vi.mocked(companiesApi);
@@ -469,6 +475,9 @@ describe('recruiter dashboard', () => {
         makeJob({ id: 'j3', title: 'Vide', applicationsCount: 0 }),
       ]),
     );
+    candidates.getCandidate.mockImplementation(async (id) =>
+      id === 'c-deleted' ? { id, deleted: true } : makeProfile({ id, firstName: 'Sami', lastName: 'Ben Ali' }),
+    );
     applications.forJob.mockImplementation(async (id) =>
       id === 'j1'
         ? [makeApplication({ id: 'a1', matchScore: makeMatch(70) }), makeApplication({ id: 'a2', matchScore: null })]
@@ -497,6 +506,7 @@ describe('recruiter dashboard', () => {
     const rows = (await screen.findAllByRole('row')).slice(1);
     expect(rows).toHaveLength(2);
     expect(within(rows[0]).getByText('Front')).toBeInTheDocument();
+    expect(within(rows[0]).getByText('Sami Ben Ali')).toBeInTheDocument();
     expect(within(rows[0]).getByText('92,0')).toBeInTheDocument();
     expect(within(rows[0]).getByRole('link', { name: 'Examiner' })).toHaveAttribute('href', '/recruiter/jobs/j2/candidates?id=a3');
     expect(within(rows[1]).getByText('70,0')).toBeInTheDocument();
