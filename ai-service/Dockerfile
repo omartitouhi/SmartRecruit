@@ -12,5 +12,9 @@ RUN --mount=type=cache,id=smartrecruit-pip,target=/root/.cache/pip \
 
 COPY app ./app
 
+# Sans privilèges, UID fixe (requis par runAsNonRoot sous Kubernetes).
+RUN useradd --system --uid 10001 --no-create-home app
+USER 10001
+
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
