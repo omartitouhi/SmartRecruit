@@ -1,6 +1,7 @@
 package com.smartrecruit.application.support;
 
 import com.smartrecruit.application.repository.ApplicationRepository;
+import com.smartrecruit.application.repository.MatchScoreCacheRepository;
 import com.smartrecruit.application.security.InternalIdentityVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +40,14 @@ public abstract class ApiTestSupport {
     @Autowired
     protected ApplicationRepository applications;
 
+    @Autowired
+    protected MatchScoreCacheRepository scoreCache;
+
     @BeforeEach
     void resetState() {
         FakeServices.reset();
         applications.deleteAll();
+        scoreCache.deleteAll();
     }
 
     protected MockHttpServletRequestBuilder as(MockHttpServletRequestBuilder request, UUID userId, String role) {
@@ -65,5 +70,12 @@ public abstract class ApiTestSupport {
                 "{\"profileComplete\":%s,\"hasCv\":%s,\"cvAnalysisStatus\":\"%s\",\"cvParsedAt\":%s}".formatted(
                         profileComplete, hasCv, cvParsedAt == null ? "NONE" : "DONE",
                         cvParsedAt == null ? "null" : "\"" + cvParsedAt + "\""));
+    }
+
+    protected static final String AI_SCORE = "POST /api/v1/ai/matching/score";
+
+    protected static void stubScore(double score) {
+        FakeServices.on(AI_SCORE, 200, ("{\"score\":%s,\"criteria\":[{\"label\":\"Skills\",\"weight\":0.6,"
+                + "\"contribution\":%s,\"explanation\":\"match\"}]}").formatted(score, score * 0.6));
     }
 }
