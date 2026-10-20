@@ -69,7 +69,7 @@ export function CandidateRankingPage() {
     return (
       <div className="page">
         {job.error.status === 404 || job.error.status === 403 ? (
-          <EmptyState title="Offre introuvable" action={<ButtonLink to="/recruiter/company">Retour à mes offres</ButtonLink>}>
+          <EmptyState title="Offre introuvable" action={<ButtonLink to="/recruiter/jobs">Retour à mes offres</ButtonLink>}>
             Cette offre n’existe pas ou n’appartient pas à votre entreprise.
           </EmptyState>
         ) : (
@@ -83,7 +83,7 @@ export function CandidateRankingPage() {
   return (
     <div className="page">
       <nav className="crumbs" aria-label="Fil d’Ariane">
-        <Link to="/recruiter/company">Mes offres</Link>
+        <Link to="/recruiter/jobs">Mes offres</Link>
         <span aria-hidden="true">/</span>
         <span aria-current="page">{job.data.title}</span>
       </nav>

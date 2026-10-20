@@ -20,6 +20,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { CandidateRankingPage } from "./pages/recruiter/CandidateRankingPage";
 import { CompanyProfilePage } from "./pages/recruiter/CompanyProfilePage";
 import { NewJobPage } from "./pages/recruiter/NewJobPage";
+import { RecruiterJobsPage } from "./pages/recruiter/RecruiterJobsPage";
 
 /** Scroll to the top on page change (not on query-string changes such as filters). */
 function ScrollToTop() {
@@ -56,6 +57,7 @@ function App() {
         </Route>
 
         <Route element={<RequireRole roles={["RECRUITER"]}><AppLayout /></RequireRole>}>
+          <Route path="recruiter/jobs" element={<RecruiterJobsPage />} />
           <Route path="recruiter/company" element={<CompanyProfilePage />} />
           <Route path="recruiter/jobs/new" element={<NewJobPage />} />
           <Route path="recruiter/jobs/:jobId/candidates" element={<CandidateRankingPage />} />

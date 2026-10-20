@@ -1,15 +1,16 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { companiesApi } from '../../api/companies';
 import { jobsApi, type JobCreateRequest } from '../../api/jobs';
+import { NoCompany } from '../../components/domain/NoCompany';
 import { Button, ButtonLink } from '../../components/ui/Button';
 import { SelectField, TextAreaField, TextField } from '../../components/ui/Field';
-import { Alert, EmptyState, ErrorState, PageSkeleton } from '../../components/ui/States';
+import { Alert, ErrorState, PageSkeleton } from '../../components/ui/States';
 import { TagInput } from '../../components/ui/TagInput';
 import { useToast } from '../../components/ui/toast';
 import { toUiError } from '../../lib/errors';
 import { CONTRACT_LABEL, LEVEL_LABEL } from '../../lib/format';
-import { useAsync, useDocumentTitle } from '../../lib/useAsync';
+import { useDocumentTitle } from '../../lib/useAsync';
+import { useMyCompany } from '../../lib/useCompany';
 import type { ContractType, ExperienceLevel } from '../../types';
 
 type Draft = JobCreateRequest;
@@ -18,10 +19,7 @@ export function NewJobPage() {
   useDocumentTitle('Publier une offre');
   const navigate = useNavigate();
   const notify = useToast();
-  const company = useAsync(
-    () => companiesApi.getMine().catch((e) => (toUiError(e).status === 404 ? null : Promise.reject(e))),
-    [],
-  );
+  const company = useMyCompany();
   const [form, setForm] = useState<Draft>({
     title: '',
     description: '',
@@ -45,10 +43,7 @@ export function NewJobPage() {
   if (!company.data) {
     return (
       <div className="page page--doc">
-        <EmptyState title="Présentez d’abord votre entreprise" action={<ButtonLink to="/recruiter/company">Renseigner l’entreprise</ButtonLink>}>
-          Chaque offre est rattachée à une entreprise. Il ne vous faut que son nom, son secteur et quelques lignes de
-          présentation.
-        </EmptyState>
+        <NoCompany />
       </div>
     );
   }
@@ -67,7 +62,7 @@ export function NewJobPage() {
     try {
       await jobsApi.create(form);
       notify('Offre publiée.');
-      navigate('/recruiter/company');
+      navigate('/recruiter/jobs');
     } catch (err) {
       const ui = toUiError(err);
       setErrors(ui.fieldErrors);
@@ -79,7 +74,7 @@ export function NewJobPage() {
   return (
     <div className="page page--doc">
       <nav className="crumbs" aria-label="Fil d’Ariane">
-        <Link to="/recruiter/company">{company.data.name}</Link>
+        <Link to="/recruiter/jobs">{company.data.name}</Link>
         <span aria-hidden="true">/</span>
         <span aria-current="page">Nouvelle offre</span>
       </nav>
@@ -131,7 +126,7 @@ export function NewJobPage() {
           <Button type="submit" size="lg" loading={saving}>
             Publier l’offre
           </Button>
-          <ButtonLink to="/recruiter/company" variant="ghost" size="lg">
+          <ButtonLink to="/recruiter/jobs" variant="ghost" size="lg">
             Annuler
           </ButtonLink>
         </div>
