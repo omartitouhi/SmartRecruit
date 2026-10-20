@@ -18,6 +18,12 @@ if (typeof localStorage.clear !== 'function') {
   } satisfies Storage);
 }
 
+// The mock gateway waits 200-500 ms per call to feel real; tests do not.
+vi.mock('../api/mock/store', async (original) => ({
+  ...(await original<typeof import('../api/mock/store')>()),
+  delay: () => Promise.resolve(),
+}));
+
 afterEach(() => {
   cleanup();
   localStorage.clear();
