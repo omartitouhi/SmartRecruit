@@ -285,7 +285,7 @@ export function createSeed(): MockDb {
     job(3, fret, 'Stage data analyst', 'JUNIOR', 'STAGE', 'Tunis, Les Berges du Lac', 'DRAFT', null,
       ['Python', 'SQL', 'Power BI', 'Excel'],
       'Stage de six mois pour mesurer les délais de dédouanement et les présenter à la direction.'),
-    job(4, fret, 'Responsable exploitation', 'LEAD', 'CDI', 'Radès', 'CLOSED', '2026-08-25',
+    job(4, fret, 'Responsable exploitation', 'LEAD', 'CDI', 'Radès', 'MODERATED', '2026-08-25',
       ['Gestion d’équipe', 'Logistique', 'Excel', 'SAP'],
       'Encadrement de l’équipe de quai de Radès (12 personnes).'),
     job(5, kerkennah, 'Data engineer', 'SENIOR', 'CDI', 'Sfax', 'PUBLISHED', '2026-09-28',
@@ -304,6 +304,7 @@ export function createSeed(): MockDb {
       ['Gestion de projet', 'Agile', 'Scrum', 'SQL', 'Java'],
       'Pilotage du remplacement de notre ERP, en lien avec trois prestataires.'),
   ];
+  jobs[3].moderationReason = 'Annonce en doublon d’une offre déjà publiée.';
   const [backend, frontend, , , dataEng, devops, android] = jobs;
 
   const apps: Application[] = [];
@@ -347,18 +348,18 @@ export function createSeed(): MockDb {
   apply(11, amira.id, android, 'REJECTED', '2026-09-21', recruiter.id);
 
   const audit: AuditLogEntry[] = [
-    ['USER_REGISTERED', 'Account', amira.id, amira.id, '2026-09-02T08:14:00Z'],
-    ['CV_UPLOADED', 'CandidateProfile', amira.id, amira.id, '2026-09-02T08:21:00Z'],
-    ['JOB_PUBLISHED', 'Job', backend.id, recruiter.id, '2026-10-01T09:02:00Z'],
-    ['APPLICATION_CREATED', 'Application', apps[4].id, yassine, '2026-10-01T10:40:00Z'],
+    ['PROFILE_VIEWED', 'CandidateProfile', skander, recruiter.id, '2026-10-03T13:04:00Z'],
     ['CV_VIEWED', 'CandidateProfile', skander, recruiter.id, '2026-10-03T13:05:00Z'],
     ['APPLICATION_STATUS_CHANGED', 'Application', apps[0].id, recruiter.id, '2026-10-07T09:30:00Z'],
-    ['JOB_PUBLISHED', 'Job', frontend.id, recruiter.id, '2026-10-06T08:00:00Z'],
-    ['USER_DELETED', 'Account', deletedId, deletedId, '2026-10-10T17:48:00Z'],
+    ['APPLICATION_STATUS_CHANGED', 'Application', apps[1].id, recruiter.id, '2026-10-07T09:35:00Z'],
+    ['PROFILE_VIEWED', 'CandidateProfile', nour, recruiter.id, '2026-10-12T11:11:00Z'],
     ['CV_VIEWED', 'CandidateProfile', nour, recruiter.id, '2026-10-12T11:12:00Z'],
     ['APPLICATION_STATUS_CHANGED', 'Application', apps[4].id, recruiter.id, '2026-10-13T15:20:00Z'],
     ['JOB_MODERATED', 'Job', jobs[3].id, accounts[2].id, '2026-10-14T10:00:00Z'],
-    ['USER_DISABLED', 'Account', accounts[5].id, accounts[2].id, '2026-10-15T16:31:00Z'],
+    ['USER_STATUS_CHANGED', 'Account', accounts[5].id, accounts[2].id, '2026-10-15T16:31:00Z'],
+    ['PROFILE_VIEWED', 'CandidateProfile', malek, recruiter.id, '2026-10-16T08:40:00Z'],
+    ['PROFILE_VIEWED', 'CandidateProfile', ines, recruiter.id, '2026-10-17T14:02:00Z'],
+    ['CV_VIEWED', 'CandidateProfile', ines, recruiter.id, '2026-10-17T14:03:00Z'],
   ].map(([action, resourceType, resourceId, actorId, timestamp], i) => ({
     id: AUDIT_IDS[i],
     action,

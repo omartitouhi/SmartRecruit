@@ -1,6 +1,6 @@
 import { HttpError } from '../../lib/errors';
 import type { AuthApi } from '../auth';
-import { db, save, delay, now, uuid, currentAccount, audit } from './store';
+import { db, save, delay, now, uuid, currentAccount } from './store';
 
 export const mockAuthApi: AuthApi = {
   async register({ email, password, role }) {
@@ -17,7 +17,6 @@ export const mockAuthApi: AuthApi = {
     const stamp = now();
     const account = { id: uuid(), email, role, status: 'ACTIVE' as const, createdAt: stamp, updatedAt: stamp, password };
     db.accounts.push(account);
-    audit('USER_REGISTERED', 'Account', account.id, account.id);
     save();
     const { password: _p, ...publicAccount } = account;
     void _p;

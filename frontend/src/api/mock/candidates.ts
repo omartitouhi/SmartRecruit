@@ -84,7 +84,6 @@ export const mockCandidatesApi: CandidatesApi = {
     profile.cvParsedAt = null;
     profile.cvAnalysisStatus = 'PENDING';
     profile.updatedAt = now();
-    audit('CV_UPLOADED', 'CandidateProfile', account.id, account.id);
     save();
     return clone(profile);
   },
@@ -124,13 +123,14 @@ export const mockCandidatesApi: CandidatesApi = {
     }
     cvBlobs.delete(account.id);
     delete db.cvFiles[account.id];
-    audit('USER_DELETED', 'Account', account.id, account.id);
     save();
   },
 
   async getCandidate(candidateId) {
     await delay(160);
-    requireRole('RECRUITER', 'ADMIN');
+    const viewer = requireRole('RECRUITER', 'ADMIN');
+    audit('PROFILE_VIEWED', 'CandidateProfile', candidateId, viewer.id);
+    save();
     if (db.deletedCandidates.includes(candidateId)) return { id: candidateId, deleted: true };
     const profile = findProfile(candidateId);
     if (!profile) throw new HttpError(404, 'Candidat introuvable.');
