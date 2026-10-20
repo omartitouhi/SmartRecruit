@@ -20,4 +20,11 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     /** Rows of {@code [jobId, count]} for the jobs that have at least one application of another status than {@code excluded}. */
     @Query("select a.jobId, count(a) from Application a where a.jobId in :jobIds and a.status <> :excluded group by a.jobId")
     List<Object[]> countByJob(Collection<UUID> jobIds, ApplicationStatus excluded);
+
+    /** Rows of {@code [status, matchScore]} of every application other than {@code excluded}. */
+    @Query("select a.status, a.matchScore from Application a where a.status <> :excluded")
+    List<Object[]> statusAndScore(ApplicationStatus excluded);
+
+    @Query("select a.status, a.matchScore from Application a where a.companyId = :companyId and a.status <> :excluded")
+    List<Object[]> statusAndScoreOfCompany(UUID companyId, ApplicationStatus excluded);
 }

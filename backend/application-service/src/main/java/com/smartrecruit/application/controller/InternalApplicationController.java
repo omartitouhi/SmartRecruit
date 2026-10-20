@@ -1,5 +1,6 @@
 package com.smartrecruit.application.controller;
 
+import com.smartrecruit.application.dto.ApplicationStatsResponse;
 import com.smartrecruit.application.model.ApplicationStatus;
 import com.smartrecruit.application.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,14 @@ public class InternalApplicationController {
                     .forEach(row -> counts.put((UUID) row[0], (Long) row[1]));
         }
         return counts;
+    }
+
+    /** Statistics over every application, or only those of {@code companyId} when given. */
+    @GetMapping("/stats")
+    @Transactional(readOnly = true)
+    public ApplicationStatsResponse stats(@RequestParam(required = false) UUID companyId) {
+        return ApplicationStatsResponse.from(companyId == null
+                ? applications.statusAndScore(ApplicationStatus.WITHDRAWN)
+                : applications.statusAndScoreOfCompany(companyId, ApplicationStatus.WITHDRAWN));
     }
 }
