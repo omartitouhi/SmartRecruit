@@ -14,3 +14,4 @@ internal-auth:
 services:
   ai-service-uri: http://localhost:1
   user-service-uri: http://localhost:1
+  application-service-uri: http://localhost:1
