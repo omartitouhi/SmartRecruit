@@ -3,3 +3,6 @@ postgres_data/
 .idea/
 *.iml
 .vscode/
+
+# Secrets locaux Kubernetes
+k8s/overlays/*/secrets.env
