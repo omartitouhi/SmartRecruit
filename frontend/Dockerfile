@@ -6,7 +6,8 @@ RUN --mount=type=cache,id=smartrecruit-npm,target=/root/.npm \
     npm ci --fetch-retries=5 --fetch-retry-mintimeout=5000 --fetch-timeout=120000
 COPY . .
 ARG VITE_USE_MOCKS=false
-ENV VITE_USE_MOCKS=$VITE_USE_MOCKS
+ARG VITE_MOCK_MODULES=
+ENV VITE_USE_MOCKS=$VITE_USE_MOCKS VITE_MOCK_MODULES=$VITE_MOCK_MODULES
 RUN npm run build
 
 FROM nginx:alpine

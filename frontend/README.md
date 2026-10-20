@@ -35,6 +35,16 @@ le navigateur), avec les mêmes règles que le backend (rôles, transitions de s
 Comptes : `candidat@demo.tn`, `recruteur@demo.tn`, `admin@demo.tn` — mot de passe `demo1234`.
 Un bandeau rappelle que les données sont fictives ; « Réinitialiser les données » repart du jeu initial.
 
+Pour ne simuler que certains modules pendant que les autres appellent le vrai backend :
+
+```bash
+VITE_MOCK_MODULES=jobs,applications npm run dev
+```
+
+Modules : `auth`, `candidates`, `companies`, `jobs`, `applications`, `dashboard`. `VITE_USE_MOCKS=true` les
+simule tous. Avec l'authentification réelle, les modules simulés lisent le rôle et l'identifiant dans le JWT.
+En Docker : `--build-arg VITE_USE_MOCKS=true` ou `--build-arg VITE_MOCK_MODULES=jobs,applications`.
+
 ## Design
 
 Direction « Le dossier » (skill taste-skill `minimalist-ui`) : fond blanc cassé, titres en
