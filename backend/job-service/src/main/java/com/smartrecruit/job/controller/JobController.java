@@ -2,6 +2,7 @@ package com.smartrecruit.job.controller;
 
 import com.smartrecruit.job.dto.JobCreateRequest;
 import com.smartrecruit.job.dto.JobResponse;
+import com.smartrecruit.job.dto.JobStatusRequest;
 import com.smartrecruit.job.security.AuthenticatedUser;
 import com.smartrecruit.job.service.JobPatchParser;
 import com.smartrecruit.job.service.JobService;
@@ -48,5 +49,13 @@ public class JobController {
     public JobResponse update(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
                               @RequestBody JsonNode body) {
         return jobService.update(user.id(), id, patchParser.parse(body));
+    }
+
+    /** Publishes, closes or reopens an offer — BE-JOB-03. */
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public JobResponse changeStatus(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
+                                    @Valid @RequestBody JobStatusRequest request) {
+        return jobService.changeStatus(user.id(), id, request.status());
     }
 }
