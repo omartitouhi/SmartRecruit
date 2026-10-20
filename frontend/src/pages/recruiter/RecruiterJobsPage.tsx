@@ -55,7 +55,10 @@ function Jobs({ companyName }: { companyName: string }) {
       const updated = await jobsApi.updateStatus(jobId, status);
       jobs.setData((page) => ({
         ...(page as NonNullable<typeof page>),
-        content: (page?.content ?? []).map((j) => (j.id === jobId ? { ...j, ...updated } : j)),
+        // The status endpoint answers a JobResponse: the list-only fields stay as they were.
+        content: (page?.content ?? []).map((j) =>
+          j.id === jobId ? { ...j, ...updated, companyName: j.companyName, applicationsCount: j.applicationsCount } : j,
+        ),
       }));
       notify(done);
     } catch (err) {
