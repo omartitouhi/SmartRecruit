@@ -1,17 +1,43 @@
 import { HttpError } from '../../lib/errors';
-import { APPLICATION_STATUS_TRANSITIONS, type Application, type ApplicationStatus } from '../../types';
+import { APPLICATION_STATUS_TRANSITIONS, type Application } from '../../types';
 import type { ApplicationsApi } from '../applications';
 import { computeMatch, missingSkills } from './scoring';
-import { db, save, delay, now, uuid, clone, currentAccount, requireRole, audit, findProfile, findJob, assertOwnsJob } from './store';
+import {
+  assertOwnsJob,
+  audit,
+  clone,
+  currentAccount,
+  db,
+  delay,
+  findJob,
+  findProfile,
+  now,
+  requireRole,
+  save,
+  uuid,
+} from './store';
+
+/** The AI scores an application in the background: the application exists first, its score follows. */
+const SCORE_DELAY_MS = 1500;
+
+const WITHDRAWABLE = ['RECEIVED', 'IN_REVIEW'];
+
+function findApplication(id: string) {
+  const application = db.applications.find((a) => a.id === id);
+  if (!application) throw new HttpError(404, 'Candidature introuvable.');
+  return application;
+}
 
 export const mockApplicationsApi: ApplicationsApi = {
   async apply(jobId) {
     await delay(500);
     const account = requireRole('CANDIDATE');
-    const profile = findProfile(account.id);
-    if (!profile) throw new HttpError(400, 'Créez votre profil avant de postuler.');
     const job = findJob(jobId);
-    if (job.status !== 'PUBLISHED') throw new HttpError(400, 'Cette offre n’accepte plus de candidatures.');
+    if (job.status !== 'PUBLISHED') throw new HttpError(409, 'Cette offre n’accepte plus de candidatures.');
+    const profile = findProfile(account.id);
+    if (!profile || !profile.cvUrl) {
+      throw new HttpError(422, 'Complétez votre profil et déposez votre CV avant de postuler.');
+    }
     if (db.applications.some((a) => a.jobId === jobId && a.candidateId === account.id && a.status !== 'WITHDRAWN')) {
       throw new HttpError(409, 'Vous avez déjà postulé à cette offre.');
     }
@@ -21,13 +47,19 @@ export const mockApplicationsApi: ApplicationsApi = {
       jobId,
       candidateId: account.id,
       status: 'RECEIVED',
-      matchScore: computeMatch(profile, job),
+      matchScore: null,
       appliedAt: stamp,
       statusHistory: [{ status: 'RECEIVED', changedAt: stamp, changedBy: account.id }],
     };
     db.applications.push(application);
-    audit('APPLICATION_CREATED', 'Application', application.id, account.id);
     save();
+    setTimeout(() => {
+      const stored = db.applications.find((a) => a.id === application.id);
+      if (stored && !stored.matchScore) {
+        stored.matchScore = computeMatch(profile, job);
+        save();
+      }
+    }, SCORE_DELAY_MS);
     return clone(application);
   },
 
@@ -45,22 +77,21 @@ export const mockApplicationsApi: ApplicationsApi = {
     await delay();
     const account = requireRole('RECRUITER', 'ADMIN');
     if (account.role === 'RECRUITER') assertOwnsJob(account.id, jobId);
-    return clone(db.applications.filter((a) => a.jobId === jobId));
+    findJob(jobId);
+    return clone(
+      db.applications
+        .filter((a) => a.jobId === jobId && a.status !== 'WITHDRAWN')
+        .sort((a, b) => (b.matchScore?.score ?? -1) - (a.matchScore?.score ?? -1)),
+    );
   },
 
-  async updateStatus(applicationId, status: ApplicationStatus) {
+  async updateStatus(applicationId, status) {
     await delay();
-    const account = requireRole('CANDIDATE', 'RECRUITER');
-    const application = db.applications.find((a) => a.id === applicationId);
-    if (!application) throw new HttpError(404, 'Candidature introuvable.');
-    if (account.role === 'CANDIDATE') {
-      // A candidate may only withdraw their own application.
-      if (application.candidateId !== account.id || status !== 'WITHDRAWN') throw new HttpError(403);
-    } else {
-      assertOwnsJob(account.id, application.jobId);
-      if (status === 'WITHDRAWN') throw new HttpError(403);
-    }
-    if (!APPLICATION_STATUS_TRANSITIONS[application.status].includes(status)) {
+    const account = requireRole('RECRUITER');
+    const application = findApplication(applicationId);
+    assertOwnsJob(account.id, application.jobId);
+    // Withdrawing is reserved to the candidate; every other move follows ALLOWED_TRANSITIONS.
+    if (status === 'WITHDRAWN' || !APPLICATION_STATUS_TRANSITIONS[application.status].includes(status)) {
       throw new HttpError(400, `Transition impossible : ${application.status} → ${status}.`);
     }
     application.status = status;
@@ -70,12 +101,28 @@ export const mockApplicationsApi: ApplicationsApi = {
     return clone(application);
   },
 
-  async matchPreview(candidateId, jobId) {
+  async withdraw(applicationId) {
+    await delay();
+    const account = requireRole('CANDIDATE');
+    const application = findApplication(applicationId);
+    if (application.candidateId !== account.id) throw new HttpError(403);
+    if (!WITHDRAWABLE.includes(application.status)) {
+      throw new HttpError(409, 'Cette candidature ne peut plus être retirée.');
+    }
+    application.status = 'WITHDRAWN';
+    application.statusHistory.push({ status: 'WITHDRAWN', changedAt: now(), changedBy: account.id });
+    save();
+  },
+
+  async matchPreview(jobId) {
     await delay(400);
-    currentAccount();
-    const profile = findProfile(candidateId);
-    if (!profile) throw new HttpError(404, 'Profil candidat introuvable.');
-    return computeMatch(profile, findJob(jobId));
+    const account = requireRole('CANDIDATE');
+    const job = findJob(jobId);
+    const profile = findProfile(account.id);
+    if (profile?.cvAnalysisStatus !== 'DONE') {
+      throw new HttpError(422, 'Votre CV doit être analysé pour calculer un score.');
+    }
+    return computeMatch(profile, job);
   },
 
   async skillGap(candidateId, jobId) {

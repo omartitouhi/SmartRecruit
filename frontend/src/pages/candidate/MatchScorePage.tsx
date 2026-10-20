@@ -25,7 +25,7 @@ export function MatchScorePage() {
   const profile = useAsync(() => candidatesApi.getMyProfile().then((p) => p, (e) => (toUiError(e).status === 404 ? null : Promise.reject(e))), []);
   const hasProfile = Boolean(profile.data);
   const match = useAsync(
-    () => (hasProfile ? applicationsApi.matchPreview(candidateId, jobId) : Promise.resolve(null)),
+    () => (hasProfile ? applicationsApi.matchPreview(jobId) : Promise.resolve(null)),
     [jobId, candidateId, hasProfile],
   );
   const gap = useAsync(

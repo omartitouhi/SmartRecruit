@@ -49,9 +49,14 @@ export function ApplicationsPage() {
     setWithdrawing(true);
     setActionError(null);
     try {
-      const updated = await applicationsApi.updateStatus(application.id, 'WITHDRAWN');
+      await applicationsApi.withdraw(application.id);
+      const entry = { status: 'WITHDRAWN' as const, changedAt: new Date().toISOString(), changedBy: application.candidateId };
       rows.setData((prev) =>
-        (prev ?? []).map((r) => (r.application.id === updated.id ? { ...r, application: updated } : r)),
+        (prev ?? []).map((r) =>
+          r.application.id === application.id
+            ? { ...r, application: { ...application, status: entry.status, statusHistory: [...application.statusHistory, entry] } }
+            : r,
+        ),
       );
       setConfirmWithdraw(false);
       notify('Candidature retirée.');
