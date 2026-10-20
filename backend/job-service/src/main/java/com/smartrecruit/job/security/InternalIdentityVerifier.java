@@ -30,7 +30,11 @@ public class InternalIdentityVerifier {
     public static final String SIGNATURE = "X-Auth-Signature";
 
     static final Duration MAX_AGE = Duration.ofMinutes(2);
-    private static final Set<String> ROLES = Set.of("CANDIDATE", "RECRUITER", "ADMIN");
+    /**
+     * {@code SERVICE} identifies backend-to-backend calls on {@code /internal/**}. The gateway never
+     * forwards it: it only accepts JWTs carrying CANDIDATE, RECRUITER or ADMIN.
+     */
+    private static final Set<String> ROLES = Set.of("CANDIDATE", "RECRUITER", "ADMIN", "SERVICE");
 
     private final byte[] secret;
     private final Clock clock;
