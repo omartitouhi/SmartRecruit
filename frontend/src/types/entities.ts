@@ -124,6 +124,32 @@ export interface Application {
 }
 
 // 3.5 dashboard-service
+/** Actions journalisées — API_CONTRACTS.md §5. */
+export const AUDIT_ACTIONS = [
+  'CV_VIEWED',
+  'PROFILE_VIEWED',
+  'APPLICATION_STATUS_CHANGED',
+  'USER_STATUS_CHANGED',
+  'JOB_MODERATED',
+] as const;
+
+/** GET /dashboard/stats/global. Une source indisponible donne null (ou 0 pour un compteur). */
+export interface GlobalStats {
+  activeJobs: number;
+  totalApplications: number;
+  totalUsers: number;
+  usersByRole: Record<Role, number>;
+  averageMatchScore: number | null;
+}
+
+/** GET /dashboard/stats/company/{id}. `acceptanceRate` : part des candidatures décidées qui sont acceptées (0 à 1). */
+export interface CompanyStats {
+  publishedJobs: number;
+  applicationsReceived: number;
+  acceptedApplications: number;
+  acceptanceRate: number | null;
+}
+
 export interface AuditLogEntry {
   id: string;
   actorId: string;
