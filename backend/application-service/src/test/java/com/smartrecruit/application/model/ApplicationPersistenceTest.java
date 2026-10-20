@@ -58,4 +58,22 @@ class ApplicationPersistenceTest {
     void missingMatchScoreStaysNull() {
         assertThat(reload(save(null).getId()).getMatchScore()).isNull();
     }
+
+    @Test
+    void companyIdAndOrderedStatusHistoryAreKept() {
+        UUID companyId = UUID.randomUUID();
+        UUID actor = UUID.randomUUID();
+        Application application = Application.builder()
+                .id(UUID.randomUUID()).jobId(UUID.randomUUID()).candidateId(UUID.randomUUID()).companyId(companyId)
+                .status(ApplicationStatus.IN_REVIEW).appliedAt(Instant.now()).build();
+        application.getStatusHistory().add(new StatusHistoryEntry(ApplicationStatus.RECEIVED, Instant.now(), actor));
+        application.getStatusHistory().add(new StatusHistoryEntry(ApplicationStatus.IN_REVIEW, Instant.now(), actor));
+        transaction.executeWithoutResult(status -> entityManager.persist(application));
+
+        Application loaded = reload(application.getId());
+
+        assertThat(loaded.getCompanyId()).isEqualTo(companyId);
+        assertThat(loaded.getStatusHistory()).extracting(StatusHistoryEntry::getStatus)
+                .containsExactly(ApplicationStatus.RECEIVED, ApplicationStatus.IN_REVIEW);
+    }
 }

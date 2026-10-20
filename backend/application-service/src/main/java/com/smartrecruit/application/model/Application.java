@@ -7,14 +7,18 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -48,6 +52,9 @@ public class Application {
 
     private UUID candidateId;
 
+    /** Company owning the job, copied at application time so recruiter checks need no job lookup. */
+    private UUID companyId;
+
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
@@ -56,7 +63,9 @@ public class Application {
 
     private Instant appliedAt;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @OrderColumn(name = "position")
     @CollectionTable(name = "application_status_history", joinColumns = @JoinColumn(name = "application_id"))
     @Builder.Default
     private List<StatusHistoryEntry> statusHistory = new ArrayList<>();
