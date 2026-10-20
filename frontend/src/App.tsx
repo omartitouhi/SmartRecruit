@@ -3,7 +3,10 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { RequireRole } from "./auth/RequireRole";
 import { AppLayout } from "./components/layout/AppLayout";
 import { PublicLayout } from "./components/layout/PublicLayout";
+import { AdminAuditPage } from "./pages/admin/AdminAuditPage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
+import { AdminJobsPage } from "./pages/admin/AdminJobsPage";
+import { AdminUsersPage } from "./pages/admin/AdminUsersPage";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage, ResetPasswordPage } from "./pages/auth/PasswordPages";
 import { RegisterPage } from "./pages/auth/RegisterPage";
@@ -71,6 +74,9 @@ function App() {
 
         <Route element={<RequireRole roles={["ADMIN"]}><AppLayout /></RequireRole>}>
           <Route path="admin" element={<AdminDashboardPage />} />
+          <Route path="admin/users" element={<AdminUsersPage />} />
+          <Route path="admin/jobs" element={<AdminJobsPage />} />
+          <Route path="admin/audit-log" element={<AdminAuditPage />} />
         </Route>
       </Routes>
     </>

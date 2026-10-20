@@ -59,6 +59,15 @@ export const INVITATION_STATUS: Record<InvitationStatus, { label: string; tone: 
   EXPIRED: { label: 'Expirée', tone: 'grey' },
 };
 
+/** Libellés des actions du journal d'audit (API_CONTRACTS.md §5) ; une action inconnue s'affiche telle quelle. */
+export const AUDIT_ACTION_LABEL: Record<string, string> = {
+  CV_VIEWED: 'CV consulté',
+  PROFILE_VIEWED: 'Profil consulté',
+  APPLICATION_STATUS_CHANGED: 'Statut de candidature modifié',
+  USER_STATUS_CHANGED: 'Statut de compte modifié',
+  JOB_MODERATED: 'Offre modérée',
+};
+
 /** Tranche de score pour le badge de classement (FE-MATCH-02). */
 export function scoreBand(score: number): { label: string; tone: Tone } {
   if (score >= 75) return { label: 'Excellent', tone: 'green' };

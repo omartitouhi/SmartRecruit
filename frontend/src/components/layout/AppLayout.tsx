@@ -20,7 +20,12 @@ const NAV: Record<Role, { to: string; label: string; end?: boolean }[]> = {
     { to: '/recruiter/company', label: 'Entreprise' },
     { to: '/recruiter/team', label: 'Équipe' },
   ],
-  ADMIN: [{ to: '/admin', label: 'Tableau de bord' }],
+  ADMIN: [
+    { to: '/admin', label: 'Tableau de bord', end: true },
+    { to: '/admin/users', label: 'Utilisateurs' },
+    { to: '/admin/jobs', label: 'Offres' },
+    { to: '/admin/audit-log', label: 'Journal d’audit' },
+  ],
 };
 
 export function AppLayout() {
