@@ -11,3 +11,6 @@ resources:
   - job-service.yaml
   - application-service.yaml
   - dashboard-service.yaml
+  - api-gateway.yaml
+  - ai-service.yaml
+  - frontend.yaml
