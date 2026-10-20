@@ -29,6 +29,7 @@ public class JobResponse {
     private String location;
     private JobStatus status;
     private Instant publishedAt;
+    private Instant updatedAt;
 
     public static JobResponse from(Job job) {
         return JobResponse.builder()
@@ -42,6 +43,7 @@ public class JobResponse {
                 .location(job.getLocation())
                 .status(job.getStatus())
                 .publishedAt(job.getPublishedAt())
+                .updatedAt(job.getUpdatedAt())
                 .build();
     }
 }

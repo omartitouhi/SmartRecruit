@@ -62,4 +62,7 @@ public class Job {
     private JobStatus status;
 
     private Instant publishedAt;
+
+    /** Last change of the offer; also tells downstream caches (match preview) when to recompute. */
+    private Instant updatedAt;
 }
