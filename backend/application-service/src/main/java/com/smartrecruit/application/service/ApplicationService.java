@@ -4,6 +4,7 @@ import com.smartrecruit.application.client.CandidateReadinessClient;
 import com.smartrecruit.application.client.CandidateReadinessClient.Readiness;
 import com.smartrecruit.application.client.JobDirectoryClient;
 import com.smartrecruit.application.client.JobDirectoryClient.JobSummary;
+import com.smartrecruit.application.dto.MatchScoreDto;
 import com.smartrecruit.application.exception.ApiException;
 import com.smartrecruit.application.model.Application;
 import com.smartrecruit.application.model.ApplicationStatus;
@@ -25,6 +26,7 @@ public class ApplicationService {
     private final JobDirectoryClient jobs;
     private final CandidateReadinessClient readiness;
     private final ApplicationScoring scoring;
+    private final MatchScoreService matchScores;
     private final Clock clock;
 
     /** BE-APP-01: checks, in the contract order: job exists (404), is published (409), candidate ready (422), no duplicate (409). The score is computed afterwards in the background (BE-MATCH-01). */
@@ -52,5 +54,15 @@ public class ApplicationService {
             scoring.scoreInBackground(saved.getId(), candidateId, jobId, candidate.cvParsedAt(), job.updatedAt());
         }
         return saved;
+    }
+
+    /** BE-MATCH-02: score of the candidate for a job, cached; 404 unknown job, 422 no analysed CV, 503 if the AI fails. */
+    public MatchScoreDto matchPreview(UUID candidateId, UUID jobId) {
+        JobSummary job = jobs.find(jobId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable"));
+        Readiness candidate = readiness.find(candidateId).orElse(null);
+        if (candidate == null || candidate.cvParsedAt() == null) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Un CV analysé est requis pour calculer la compatibilité");
+        }
+        return matchScores.scoreFor(candidateId, jobId, candidate.cvParsedAt(), job.updatedAt());
     }
 }
