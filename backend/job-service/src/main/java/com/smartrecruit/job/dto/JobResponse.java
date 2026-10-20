@@ -30,8 +30,16 @@ public class JobResponse {
     private JobStatus status;
     private Instant publishedAt;
     private Instant updatedAt;
+    /** Only shown to the owning company and admins; null for everybody else. */
+    private String moderationReason;
 
+    /** Public view of the offer: without the moderation reason. */
     public static JobResponse from(Job job) {
+        return from(job, false);
+    }
+
+    /** @param withModerationReason true for the owning company and admins */
+    public static JobResponse from(Job job, boolean withModerationReason) {
         return JobResponse.builder()
                 .id(job.getId())
                 .companyId(job.getCompanyId())
@@ -44,6 +52,7 @@ public class JobResponse {
                 .status(job.getStatus())
                 .publishedAt(job.getPublishedAt())
                 .updatedAt(job.getUpdatedAt())
+                .moderationReason(withModerationReason ? job.getModerationReason() : null)
                 .build();
     }
 }
