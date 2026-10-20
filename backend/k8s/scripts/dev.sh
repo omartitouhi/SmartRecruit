@@ -27,6 +27,19 @@ ensure_secrets() {
   fi
 }
 
+ensure_config() {
+  local file="$K8S_DIR/overlays/dev/config.env" model
+  [ -f "$file" ] && return
+  cp "$file.example" "$file"
+  # Même modèle OpenRouter que docker compose (le modèle par défaut peut ne pas être accessible avec votre clé).
+  if [ -f "$BACKEND_DIR/.env" ]; then
+    model="$(grep '^OPENROUTER_MODEL=' "$BACKEND_DIR/.env" | cut -d= -f2- || true)"
+    if [ -n "${model:-}" ]; then
+      sed -i "s|^OPENROUTER_MODEL=.*|OPENROUTER_MODEL=$model|" "$file"
+    fi
+  fi
+}
+
 ensure_images() {
   local missing=()
   for s in "${SERVICES[@]}"; do
@@ -50,6 +63,7 @@ case "${1:-}" in
     kind get clusters 2>/dev/null | grep -qx "$CLUSTER" || kind create cluster --config "$K8S_DIR/kind-config.yaml"
     kubectl config use-context "kind-$CLUSTER" >/dev/null
     ensure_secrets
+    ensure_config
     ensure_images
     load_images
     kubectl apply -k "$K8S_DIR/overlays/dev"

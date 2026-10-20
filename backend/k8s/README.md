@@ -22,8 +22,8 @@ k8s/scripts/dev.sh up
 ```
 
 Le script crée le cluster, construit les images manquantes (`docker compose build`), les charge dans kind,
-déploie l'overlay `dev` et attend que tout soit prêt. La clé OpenRouter est reprise de `.env` (celui de
-docker compose) ; sinon, la renseigner dans `k8s/overlays/dev/secrets.env` (ignoré par git).
+déploie l'overlay `dev` et attend que tout soit prêt. La clé et le modèle OpenRouter sont repris de `.env` (celui de
+docker compose) ; sinon, les renseigner dans `k8s/overlays/dev/secrets.env` et `config.env` (ignorés par git).
 
 | Adresse | Service |
 |---|---|
