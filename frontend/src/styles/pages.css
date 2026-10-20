@@ -472,6 +472,50 @@ aside .alert {
   align-items: flex-start;
 }
 
+.steps__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.steps__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.steps__item[aria-current='step'] {
+  border-color: var(--strong);
+  color: var(--strong);
+  font-weight: 500;
+}
+
+.steps__item:focus-visible {
+  outline: 2px solid var(--strong);
+  outline-offset: 2px;
+}
+
+.steps__num {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: var(--text-sm);
+}
+
 /* ───── Admin ───── */
 .tiles {
   display: grid;

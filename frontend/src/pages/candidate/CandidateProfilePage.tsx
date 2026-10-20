@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { candidatesApi, type CandidateProfileRequest } from '../../api/candidates';
+import { useAuth } from '../../auth/context';
 import { Button } from '../../components/ui/Button';
 import { TextField } from '../../components/ui/Field';
 import { Alert, ErrorState, PageSkeleton } from '../../components/ui/States';
@@ -36,16 +37,42 @@ export function CandidateProfilePage() {
   return <ProfileEditor existing={profile.data ?? null} onSaved={profile.setData} />;
 }
 
+const STEPS = ['Informations', 'Expérience', 'Compétences'];
+
+/** Étape qui contient le champ en erreur (clés de validate() : « experiences[0].title », « email »…). */
+const stepOf = (key: string) => (/^(experiences|education)/.test(key) ? 1 : /^(skills|languages)/.test(key) ? 2 : 0);
+
+function readDraft(key: string): { form: CandidateProfileRequest; step: number } | null {
+  try {
+    return JSON.parse(storage.get(key) ?? 'null');
+  } catch {
+    return null;
+  }
+}
+
 function ProfileEditor({ existing, onSaved }: {
   existing: CandidateProfile | null;
   onSaved: (profile: CandidateProfile) => void;
 }) {
   const notify = useToast();
   const [params] = useSearchParams();
-  const [form, setForm] = useState<CandidateProfileRequest>(() => (existing ? toForm(existing) : EMPTY));
+  const { account } = useAuth();
+  const baseline = existing ? toForm(existing) : EMPTY;
+  const baselineJson = JSON.stringify(baseline);
+  // A draft survives reloads and step changes until the profile is saved.
+  const draftKey = `smartrecruit_profile_draft:${account?.id}`;
+  const [restored] = useState(() => readDraft(draftKey));
+  const [discarded, setDiscarded] = useState(false);
+  const [form, setForm] = useState<CandidateProfileRequest>(() => restored?.form ?? baseline);
+  const [step, setStep] = useState(restored?.step ?? 0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (JSON.stringify(form) === baselineJson) storage.remove(draftKey);
+    else storage.set(draftKey, JSON.stringify({ form, step }));
+  }, [form, step, baselineJson, draftKey]);
 
   const set = <K extends keyof CandidateProfileRequest>(key: K, value: CandidateProfileRequest[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -54,7 +81,9 @@ function ProfileEditor({ existing, onSaved }: {
     setFormError(null);
     const found = validate(next);
     setErrors(found);
-    if (Object.keys(found).length) {
+    const first = Object.keys(found)[0];
+    if (first) {
+      setStep(stepOf(first));
       setFormError('Certains champs sont à corriger.');
       return;
     }
@@ -65,6 +94,7 @@ function ProfileEditor({ existing, onSaved }: {
         phone: next.phone?.trim() || null,
         location: next.location?.trim() || null,
       });
+      storage.remove(draftKey);
       onSaved(saved);
       notify(message);
     } catch (err) {
@@ -74,6 +104,12 @@ function ProfileEditor({ existing, onSaved }: {
     } finally {
       setSaving(false);
     }
+  }
+
+  function next() {
+    const here = Object.entries(validate(form)).filter(([key]) => stepOf(key) === step);
+    setErrors(Object.fromEntries(here));
+    if (here.length === 0) setStep(step + 1);
   }
 
   function onSubmit(e: FormEvent) {
@@ -145,6 +181,48 @@ function ProfileEditor({ existing, onSaved }: {
 
       <div className="split">
         <form className="stack stack--lg" onSubmit={onSubmit} noValidate>
+          <nav className="steps" aria-label="Étapes du profil">
+            <ol className="steps__list">
+              {STEPS.map((label, i) => (
+                <li key={label}>
+                  <button
+                    type="button"
+                    className="steps__item"
+                    aria-current={i === step ? 'step' : undefined}
+                    onClick={() => setStep(i)}
+                  >
+                    <span className="steps__num" aria-hidden="true">
+                      {i + 1}
+                    </span>
+                    {label}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          {restored && !discarded && JSON.stringify(restored.form) !== baselineJson && (
+            <Alert
+              tone="info"
+              title="Brouillon restauré"
+              action={
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setForm(baseline);
+                    setStep(0);
+                    setDiscarded(true);
+                  }}
+                >
+                  Repartir du profil enregistré
+                </Button>
+              }
+            >
+              Vos modifications non enregistrées ont été récupérées sur cet appareil.
+            </Alert>
+          )}
+
+          {step === 0 && (
           <section className="panel form" aria-labelledby="id-title">
             <h2 className="panel__title" id="id-title">
               Identité
@@ -168,7 +246,9 @@ function ProfileEditor({ existing, onSaved }: {
               <TextField label="Ville" autoComplete="address-level2" placeholder="Tunis" value={form.location ?? ''} onChange={(e) => set('location', e.target.value)} error={fieldError('location')} />
             </div>
           </section>
+          )}
 
+          {step === 2 && (
           <section className="panel form" aria-labelledby="skills-title">
             <h2 className="panel__title" id="skills-title">
               Compétences et langues
@@ -190,15 +270,32 @@ function ProfileEditor({ existing, onSaved }: {
               error={fieldError('languages')}
             />
           </section>
+          )}
 
-          <ExperienceEditor items={form.experiences} onChange={(v) => set('experiences', v)} errors={errors} />
-          <EducationEditor items={form.education} onChange={(v) => set('education', v)} errors={errors} />
+          {step === 1 && (
+            <>
+              <ExperienceEditor items={form.experiences} onChange={(v) => set('experiences', v)} errors={errors} />
+              <EducationEditor items={form.education} onChange={(v) => set('education', v)} errors={errors} />
+            </>
+          )}
 
           <div className="form-footer">
             {formError && <Alert tone="error">{formError}</Alert>}
-            <Button type="submit" size="lg" loading={saving}>
-              {existing ? 'Enregistrer le profil' : 'Créer mon profil'}
-            </Button>
+            <div className="detail-actions">
+              {step > 0 && (
+                <Button variant="ghost" onClick={() => setStep(step - 1)}>
+                  Précédent
+                </Button>
+              )}
+              {step < STEPS.length - 1 && (
+                <Button variant="ghost" onClick={next}>
+                  Suivant
+                </Button>
+              )}
+              <Button type="submit" size="lg" loading={saving}>
+                {existing ? 'Enregistrer le profil' : 'Créer mon profil'}
+              </Button>
+            </div>
           </div>
         </form>
 
