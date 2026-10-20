@@ -35,6 +35,14 @@ Copier `.env.example` en `.env` et renseigner `OPENROUTER_API_KEY` (sans clé, l
 Interface : http://localhost:5173 (ou `FRONTEND_HOST_PORT`), API : http://localhost:8080. Un compte administrateur de
 développement est créé au démarrage (`ADMIN_EMAIL` / `ADMIN_PASSWORD`, voir `.env.example`).
 
+## Données de démonstration
+
+Avec la stack démarrée : `python seed/seed_demo.py` crée 5 entreprises, 25 offres, 19 candidats (CV PDF analysés par le
+service IA), une cinquantaine de candidatures à tous les statuts, une offre modérée et une offre clôturée. Rejouable
+sans doublon. Comptes (mot de passe `Motdepasse123`) : `candidat@smartrecruit.test`, `recruteur@smartrecruit.test`
+(Acme Tech), `recruteur2` à `recruteur5@smartrecruit.test` ; administrateur : voir `.env.example`.
+Repartir d'une base vide : `docker compose down -v`.
+
 ## Kubernetes
 
 Manifestes Kustomize, cluster local kind et overlay de production : voir [k8s/README.md](k8s/README.md)
