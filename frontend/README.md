@@ -59,49 +59,68 @@ src/
   auth/         # session (AuthProvider), garde de rôle (RequireRole, GuestOnly)
   components/
     layout/     # barre publique, barre applicative par rôle, pied de page
-    ui/         # Button, Field, Tag, ScoreBreakdown, TagInput, états (vide, erreur, chargement)
-    domain/     # composants métier partagés
-  lib/          # formatage FR, erreurs API, useAsync, useReveal
+    ui/         # Button, Field, Tag, ScoreBreakdown, TagInput, Pager, états (vide, erreur, chargement)
+    domain/     # composants métier partagés (ApplyButton, JobMeta, NoCompany)
+  lib/          # formatage FR, erreurs API, useAsync, storage
   pages/
     auth/       # connexion, inscription, mot de passe oublié / réinitialisation
-    candidate/  # offres, score expliqué, candidatures, profil + CV
-    recruiter/  # entreprise et offres, nouvelle offre, classement IA
-    admin/      # tableau de bord + journal d'audit
+    candidate/  # tableau de bord, offres, détail, score expliqué, recommandations, candidatures, profil + CV
+    recruiter/  # tableau de bord, mes offres, publication, candidatures reçues, entreprise, équipe, invitation
+    admin/      # tableau de bord, utilisateurs, modération des offres, journal d'audit
   styles/       # tokens, base, layout, composants, pages
-  types/        # miroir de DATA_MODEL.md
+  test/         # aides de test (rendu, fixtures, base de démonstration)
+  types/        # miroir de DATA_MODEL.md et API_CONTRACTS.md
 ```
 
 ## Pages
 
-| Page | Route | Backend |
-| --- | --- | --- |
-| Accueil | `/` | — |
-| Connexion / Inscription / Mot de passe | `/login`, `/register`, `/forgot-password`, `/reset-password` | ✅ auth-service |
-| Profil candidat + upload CV + suppression RGPD | `/candidate/profile` | ✅ user-service |
-| Offres recommandées + recherche | `/candidate/jobs` | ✅ recommandations · ⏳ recherche |
-| Score de compatibilité expliqué | `/candidate/match/:jobId` | ⏳ ai-service / application-service |
-| Mes candidatures | `/candidate/applications` | ⏳ application-service |
-| Entreprise et offres | `/recruiter/company` | ⏳ user-service (entreprise) / job-service |
-| Nouvelle offre | `/recruiter/jobs/new` | ⏳ job-service |
-| Classement IA des candidatures | `/recruiter/jobs/:jobId/candidates` | ✅ profils candidats · ⏳ candidatures |
-| Tableau de bord admin | `/admin` | ⏳ dashboard-service |
+| Page | Route | Rôle | Tickets |
+| --- | --- | --- | --- |
+| Accueil | `/` | public | — |
+| Connexion / Inscription / Mot de passe | `/login`, `/register`, `/forgot-password`, `/reset-password` | public | FE-AUTH-01, 02, 05 |
+| Accès refusé | `/forbidden` | tous | FE-AUTH-04 |
+| Tableau de bord candidat | `/candidate` | candidat | FE-DASH-01 |
+| Offres (recherche filtrée) et détail | `/candidate/jobs`, `/candidate/jobs/:jobId` | candidat | FE-JOB-02, 03, FE-APP-01 |
+| Offres recommandées | `/candidate/recommendations` | candidat | FE-REC-01 |
+| Score expliqué + compétences à développer | `/candidate/match/:jobId` | candidat | FE-MATCH-01, FE-REC-02 |
+| Mes candidatures | `/candidate/applications` | candidat | FE-APP-02 |
+| Profil (3 étapes), CV, données extraites | `/candidate/profile` | candidat | FE-USER-01 à 03, FE-CV-01 |
+| Tableau de bord recruteur | `/recruiter` | recruteur | FE-DASH-02 |
+| Mes offres | `/recruiter/jobs` | recruteur | FE-JOB-04 |
+| Nouvelle offre | `/recruiter/jobs/new` | recruteur | FE-JOB-01 |
+| Candidatures reçues, classées par score | `/recruiter/jobs/:jobId/candidates` | recruteur | FE-APP-03, FE-MATCH-02 |
+| Entreprise | `/recruiter/company` | recruteur | FE-COMP-01 |
+| Équipe et invitations | `/recruiter/team` | recruteur | FE-COMP-02 |
+| Accepter une invitation | `/accept-invitation?token=` | recruteur | FE-COMP-02 |
+| Tableau de bord admin | `/admin` | admin | — |
+| Utilisateurs | `/admin/users` | admin | FE-ADMIN-01 |
+| Modération des offres | `/admin/jobs` | admin | FE-ADMIN-02 |
+| Journal d'audit | `/admin/audit-log` | admin | FE-ADMIN-03 |
 
-✅ endpoint existant · ⏳ endpoint à créer : ces écrans fonctionnent en mode démonstration.
+## Contrats d'API
 
-## Contrats à confirmer avec le backend
+Les chemins appelés sont ceux de `API_CONTRACTS.md` (dépôt `smartrecruit-backend`), qui fait foi ; les formes
+de données sont dans `DATA_MODEL.md`. Un module par service dans `src/api/` (`auth`, `candidates`, `companies`,
+`jobs`, `applications`, `dashboard`) ; `src/api/mock/` suit les mêmes règles (codes 400/403/404/409/410/422,
+transitions de statut, 409 sur les doublons) pour que la démonstration se comporte comme le vrai backend.
 
-Les endpoints suivants n'existent pas encore. Le frontend les appelle avec les chemins ci-dessous
-(conventions de `DATA_MODEL.md`) ; à valider ou ajuster dans `src/api/` puis dans `DATA_MODEL.md`.
+Points à connaître :
+- `cvAnalysisStatus` (`NONE`, `PENDING`, `DONE`, `FAILED`) remplace l'ancienne heuristique « CV sans date d'analyse ».
+- Le score d'une offre avant candidature (`GET /applications/match-preview?jobId=`) exige un CV analysé (422 sinon).
+- `acceptanceRate` du tableau de bord recruteur peut être une fraction (0,5) ou un pourcentage (50) : l'affichage accepte les deux.
+- Les membres d'une entreprise ne sont que des identifiants de compte : la page équipe n'affiche donc pas leur email.
 
-| Appel | Utilisé par |
-| --- | --- |
-| `GET /jobs?q=&location=&contractType=&experienceLevel=&companyId=&page=&size=` → `PaginatedResponse<Job & { companyName }>` | recherche, offres du recruteur |
-| `GET /jobs/{id}` → `Job & { companyName }` | score expliqué, classement |
-| `POST /jobs` (`JobCreateRequest`, DTO existant) · `PATCH /jobs/{id}/status` `{ status }` | nouvelle offre, publier / clôturer |
-| `GET /users/companies/me` · `PUT /users/companies/me` | entreprise du recruteur |
-| `POST /applications` `{ jobId }` · `GET /applications/me` · `GET /applications?jobId=` · `PATCH /applications/{id}/status` `{ status }` | candidatures |
-| `POST /ai/matching/score` `{ cvId, jobId }` (`cvId` = id du candidat) → `MatchScore` | score avant de postuler |
-| `GET /dashboard/stats` → `DashboardStats` (forme proposée dans `src/api/dashboard.ts`) · `GET /dashboard/audit-logs?page=&size=` | tableau de bord |
+## Tests
+
+```bash
+npm test          # vitest + Testing Library (jsdom), une fois
+npm run test:watch
+```
+
+Ils couvrent les modules d'API contre le contrat (méthode, chemin, paramètres, corps), l'intercepteur de
+rafraîchissement du jeton, les règles métier de la couche de démonstration, les aides de `src/lib` et les
+principales pages (formulaires, gardes de rôle, états du CV, recherche, candidature, statuts, administration).
+La CI exécute `npm run lint`, `npm test` et `npm run build`.
 
 ## Crédits
 
