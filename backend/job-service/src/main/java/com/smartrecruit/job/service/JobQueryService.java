@@ -68,8 +68,11 @@ public class JobQueryService {
             scope = visibility(user, criteria);
         }
         Specification<Job> filter = filters(criteria).and(scope);
+        // Admins and a company's own listing may read why an offer was moderated.
+        boolean withModerationReason = mine || "ADMIN".equals(user.role());
         Page<JobResponse> found = transaction.execute(status ->
-                jobRepository.findAll(filter, PageRequest.of(page, size, NEWEST_FIRST)).map(JobResponse::from));
+                jobRepository.findAll(filter, PageRequest.of(page, size, NEWEST_FIRST))
+                        .map(job -> JobResponse.from(job, withModerationReason)));
 
         Map<UUID, String> companyNames = companyNames(found.getContent());
         Map<UUID, Long> counts = mine ? applicationCounts(found.getContent()) : null;
@@ -82,7 +85,9 @@ public class JobQueryService {
      * company, everybody else gets 404 as if it did not exist.
      */
     public JobSummaryResponse get(AuthenticatedUser user, UUID jobId) {
-        JobResponse job = transaction.execute(status -> jobRepository.findById(jobId).map(JobResponse::from))
+        // The reason is only ever present on non-published offers, which are only served to owner/admin below.
+        JobResponse job = transaction.execute(status -> jobRepository.findById(jobId)
+                        .map(found -> JobResponse.from(found, found.getStatus() != JobStatus.PUBLISHED)))
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable"));
         if (job.getStatus() != JobStatus.PUBLISHED && !mayViewUnpublished(user, job)) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable");
