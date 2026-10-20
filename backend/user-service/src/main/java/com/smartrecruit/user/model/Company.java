@@ -1,6 +1,7 @@
 package com.smartrecruit.user.model;
 
 import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -31,14 +32,25 @@ public class Company {
     @Id
     private UUID id;
 
+    @Column(length = 150)
     private String name;
+
+    @Column(length = 100)
     private String sector;
+
+    @Column(length = 5000)
     private String description;
+
+    @Column(length = 500)
     private String logoUrl;
 
-    /** accountId des recruteurs rattachés (cf. DATA_MODEL.md §3.2). */
+    /**
+     * accountId des recruteurs rattachés (cf. DATA_MODEL.md §3.2). Unique : dans le MVP un recruteur
+     * n'appartient qu'à une entreprise, et la base le garantit même en cas de requêtes concurrentes.
+     */
     @ElementCollection
     @CollectionTable(name = "company_members", joinColumns = @JoinColumn(name = "company_id"))
+    @Column(name = "members", unique = true)
     @Builder.Default
     private List<UUID> members = new ArrayList<>();
 }
