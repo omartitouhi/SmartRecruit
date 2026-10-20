@@ -25,10 +25,18 @@ def _cv(**changes):
 def test_score_is_explained_criterion_by_criterion_without_any_llm():
     score = asyncio.run(score_match(CV, job(), llm=None))
     labels = {c.label: c for c in score.criteria}
-    assert "3 compétence(s) requise(s) sur 4" in labels["Compétences techniques"].explanation
+    assert "3 compétences requises sur 4 présentes" in labels["Compétences techniques"].explanation
     assert "manque : Kubernetes" in labels["Compétences techniques"].explanation
     assert sum(c.weight for c in score.criteria) == pytest.approx(1)
     assert sum(c.contribution for c in score.criteria) == pytest.approx(score.score, abs=0.2)
+
+
+def test_explanations_use_french_plurals_and_level_names():
+    one = asyncio.run(evaluate_match(CV, job(required_skills=("Java", "Terraform"), level=L.JUNIOR), llm=None))
+    assert one.skills.explanation == "1 compétence requise sur 2 présente dans le CV (Java) ; manque : Terraform."
+    assert "niveau junior (aucune expérience exigée)" in one.experience.explanation
+    none = asyncio.run(evaluate_match(CV, job(required_skills=("PHP",), level=L.SENIOR), llm=None))
+    assert none.skills.explanation.startswith("La compétence requise n'est pas présente")
 
 
 def test_alias_in_the_cv_counts_as_the_required_skill():

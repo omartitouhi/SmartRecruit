@@ -77,6 +77,16 @@ def _list(items: list[str]) -> str:
     return ", ".join(items)
 
 
+LEVEL_LABELS = {
+    ExperienceLevel.JUNIOR: "junior", ExperienceLevel.INTERMEDIATE: "confirmé",
+    ExperienceLevel.SENIOR: "senior", ExperienceLevel.LEAD: "lead",
+}
+
+
+def _years_phrase(years: float) -> str:
+    return f"{_fmt_years(years)} an{'s' if years >= 2 else ''}"
+
+
 def match_criteria_rules(cv: CVParsingResult, job: AnalyzedJob) -> dict[str, tuple[float | None, str]]:
     """Sous-score (0-100, None si non évaluable) et explication de chaque critère."""
     required = job.analysis.required_skills
@@ -84,8 +94,13 @@ def match_criteria_rules(cv: CVParsingResult, job: AnalyzedJob) -> dict[str, tup
     covered = [s for s in required if skill_key(s) in owned]
     missing = [s for s in required if s not in covered]
     if required and (cv.skills or owned):
-        explanation = f"{len(covered)} compétence(s) requise(s) sur {len(required)} présente(s) dans le CV"
-        explanation += f" ({_list(covered)})" if covered else ""
+        plural = "s" if len(covered) > 1 else ""
+        if covered:
+            explanation = f"{len(covered)} compétence{plural} requise{plural} sur {len(required)} présente{plural} dans le CV"
+            explanation += f" ({_list(covered)})"
+        else:
+            explanation = (f"Aucune des {len(required)} compétences requises n'est présente dans le CV"
+                           if len(required) > 1 else "La compétence requise n'est pas présente dans le CV")
         explanation += f" ; manque : {_list(missing)}." if missing else "."
         skills = (round(100 * len(covered) / len(required), 1), explanation)
     else:
@@ -96,8 +111,9 @@ def match_criteria_rules(cv: CVParsingResult, job: AnalyzedJob) -> dict[str, tup
     if cv.experiences:
         years = experience_years(cv)
         score = 100.0 if years >= expected else round(100 * years / expected, 1)
-        experience = (score, f"{_fmt_years(years)} an(s) d'expérience cumulée pour un poste de niveau {level.value}"
-                             f" ({expected} an(s) attendus).")
+        wanted = f"{_years_phrase(expected)} attendus" if expected else "aucune expérience exigée"
+        experience = (score, f"{_years_phrase(years)} d'expérience cumulée pour un poste de niveau "
+                             f"{LEVEL_LABELS[level]} ({wanted}).")
     else:
         experience = (None, "aucune expérience extraite du CV.")
 
@@ -107,7 +123,7 @@ def match_criteria_rules(cv: CVParsingResult, job: AnalyzedJob) -> dict[str, tup
         needed = _DEGREE_NEEDED[level]
         top = next(e.degree for e in cv.education if degree_rank(e.degree) == best)
         education = (min(100.0, round(100 * best / needed, 1)),
-                     f"Diplôme le plus élevé : {top}, pour un poste de niveau {level.value}.")
+                     f"Diplôme le plus élevé : {top}, pour un poste de niveau {LEVEL_LABELS[level]}.")
     else:
         education = (None, "niveau de diplôme non identifiable dans le CV.")
     return {"skills": skills, "experience": experience, "education": education}
