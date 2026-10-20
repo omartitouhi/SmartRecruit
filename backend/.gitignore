@@ -6,3 +6,4 @@ postgres_data/
 
 # Secrets locaux Kubernetes
 k8s/overlays/*/secrets.env
+e2e/__pycache__/
