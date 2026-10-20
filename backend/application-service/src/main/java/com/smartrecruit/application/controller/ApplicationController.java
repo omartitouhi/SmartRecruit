@@ -35,6 +35,12 @@ public class ApplicationController {
         return ApplicationResponse.from(applicationService.apply(user.id(), request.jobId()));
     }
 
+    @GetMapping
+    @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN')")
+    public List<ApplicationResponse> receivedFor(@AuthenticationPrincipal AuthenticatedUser user, @RequestParam UUID jobId) {
+        return applicationService.receivedFor(user, jobId).stream().map(ApplicationResponse::from).toList();
+    }
+
     @GetMapping("/me")
     @PreAuthorize("hasRole('CANDIDATE')")
     public List<ApplicationResponse> mine(@AuthenticationPrincipal AuthenticatedUser user) {

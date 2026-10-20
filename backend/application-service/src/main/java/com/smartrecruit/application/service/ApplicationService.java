@@ -2,6 +2,7 @@ package com.smartrecruit.application.service;
 
 import com.smartrecruit.application.client.CandidateReadinessClient;
 import com.smartrecruit.application.client.CandidateReadinessClient.Readiness;
+import com.smartrecruit.application.client.CompanyDirectoryClient;
 import com.smartrecruit.application.client.JobDirectoryClient;
 import com.smartrecruit.application.client.JobDirectoryClient.JobSummary;
 import com.smartrecruit.application.dto.MatchScoreDto;
@@ -10,12 +11,14 @@ import com.smartrecruit.application.model.Application;
 import com.smartrecruit.application.model.ApplicationStatus;
 import com.smartrecruit.application.model.StatusHistoryEntry;
 import com.smartrecruit.application.repository.ApplicationRepository;
+import com.smartrecruit.application.security.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +29,7 @@ public class ApplicationService {
     private final ApplicationRepository applications;
     private final JobDirectoryClient jobs;
     private final CandidateReadinessClient readiness;
+    private final CompanyDirectoryClient companies;
     private final ApplicationScoring scoring;
     private final MatchScoreService matchScores;
     private final Clock clock;
@@ -70,5 +74,28 @@ public class ApplicationService {
     /** BE-APP-02: newest first, withdrawn ones included. */
     public List<Application> mine(UUID candidateId) {
         return applications.findByCandidateIdOrderByAppliedAtDesc(candidateId);
+    }
+
+    /**
+     * BE-APP-03: active applications of a job, best score first (unscored last). A recruiter must belong
+     * to the company owning the job (403), an admin sees every job.
+     */
+    public List<Application> receivedFor(AuthenticatedUser user, UUID jobId) {
+        JobSummary job = jobs.find(jobId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable"));
+        if (!"ADMIN".equals(user.role())) {
+            requireMemberOf(user.id(), job.companyId());
+        }
+        return applications.findByJobIdAndStatusNot(jobId, ApplicationStatus.WITHDRAWN).stream()
+                .sorted(Comparator.comparing((Application a) -> a.getMatchScore() == null ? null : a.getMatchScore().getScore(),
+                        Comparator.nullsLast(Comparator.reverseOrder())).thenComparing(Application::getAppliedAt))
+                .toList();
+    }
+
+    private void requireMemberOf(UUID recruiterId, UUID companyId) {
+        boolean member = companies.findByMember(recruiterId)
+                .map(company -> company.id().equals(companyId)).orElse(false);
+        if (!member) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Cette offre n'appartient pas à votre entreprise");
+        }
     }
 }
