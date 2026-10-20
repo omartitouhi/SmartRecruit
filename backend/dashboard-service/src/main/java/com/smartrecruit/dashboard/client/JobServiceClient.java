@@ -14,10 +14,27 @@ import java.util.UUID;
 @Component
 public class JobServiceClient {
 
+    public record JobStats(long total, long draft, long published, long closed, long moderated) {
+    }
+
     private final RestClient client;
 
     public JobServiceClient(ServiceEndpointsProperties endpoints, InternalIdentityVerifier signer, Clock clock) {
         this.client = ServiceRestClients.create(endpoints.jobServiceUri(), signer, clock);
+    }
+
+    /** @param companyId restricts the counts to one company; null means platform-wide */
+    public JobStats stats(UUID companyId) {
+        return client.get()
+                .uri(uri -> {
+                    uri.path("/internal/v1/jobs/stats");
+                    if (companyId != null) {
+                        uri.queryParam("companyId", companyId);
+                    }
+                    return uri.build();
+                })
+                .retrieve()
+                .body(JobStats.class);
     }
 
     /** @return the moderated job exactly as job-service describes it */
