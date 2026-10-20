@@ -131,9 +131,10 @@ Contrats complets des entreprises, invitations, offres, candidatures, statistiqu
 | resourceType / resourceId | string / UUID | |
 | timestamp | datetime | |
 
-### 3.6 `ai-service` (Omar) — base `ai_db`, stockage `pgvector`
+### 3.6 `ai-service` (Omar) — base `ai_db`, LLM via OpenRouter
 
-Voir §4, ce sont des contrats d'API plutôt que des entités persistées classiques.
+Tables `parsed_cvs` (dernier CV analysé par candidat) et `job_analyses` (offre analysée), voir §4 pour les contrats d'API.
+Aucun embedding ni `pgvector` : le matching est évalué par un LLM, le score global est calculé par le code.
 
 ---
 
