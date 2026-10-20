@@ -31,6 +31,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "La requête contient des champs invalides", request, fieldErrors);
     }
 
+    @ExceptionHandler(RequestValidationException.class)
+    public ResponseEntity<ApiError> handleRequestValidation(RequestValidationException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request, ex.getFieldErrors());
+    }
+
     @ExceptionHandler({HandlerMethodValidationException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ApiError> handleInvalidParameter(Exception ex, HttpServletRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Paramètre de requête invalide", request, null);
