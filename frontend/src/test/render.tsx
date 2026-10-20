@@ -1,21 +1,11 @@
 import { render } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { vi } from 'vitest';
 import { AuthContext, type AuthContextValue } from '../auth/context';
 import { ToastProvider } from '../components/ui/ToastProvider';
 import type { Account } from '../types';
-
-/** Shows where the router ended up, so tests can assert redirects. */
-export function LocationProbe() {
-  const { pathname, search, state } = useLocation();
-  return (
-    <div>
-      <span data-testid="location">{pathname + search}</span>
-      <span data-testid="state">{JSON.stringify(state)}</span>
-    </div>
-  );
-}
+import { LocationProbe } from './LocationProbe';
 
 interface Options {
   /** Initial URL, e.g. `/candidate/jobs?page=1`. */
@@ -26,16 +16,6 @@ interface Options {
   account?: Account | null;
   status?: AuthContextValue['status'];
 }
-
-export const makeAccount = (role: Account['role'] = 'CANDIDATE', overrides: Partial<Account> = {}): Account => ({
-  id: `${role.toLowerCase()}-id`,
-  email: `${role.toLowerCase()}@demo.tn`,
-  role,
-  status: 'ACTIVE',
-  createdAt: '2026-09-01T09:00:00Z',
-  updatedAt: '2026-09-01T09:00:00Z',
-  ...overrides,
-});
 
 /**
  * Renders `ui` under a router, a stubbed session and the toast provider. Any other URL lands on a

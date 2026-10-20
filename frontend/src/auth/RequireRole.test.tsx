@@ -2,7 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { ForbiddenPage } from '../pages/ForbiddenPage';
-import { LocationProbe, makeAccount } from '../test/render';
+import { makeAccount } from '../test/fixtures';
+import { LocationProbe } from '../test/LocationProbe';
 import { AuthContext, type AuthContextValue } from './context';
 import { RequireRole } from './RequireRole';
 

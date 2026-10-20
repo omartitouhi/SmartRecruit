@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { AxiosError } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { HttpError } from '../../lib/errors';
-import { makeAccount, renderAt } from '../../test/render';
+import { makeAccount } from '../../test/fixtures';
+import { renderAt } from '../../test/render';
 import { LoginPage } from './LoginPage';
 import { RegisterPage } from './RegisterPage';
 

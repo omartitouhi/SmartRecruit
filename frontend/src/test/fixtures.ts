@@ -1,5 +1,15 @@
 import type { JobSummary } from '../api/jobs';
-import type { Application, CandidateProfile, Company, Invitation, MatchScore, PaginatedResponse } from '../types';
+import type { Account, Application, CandidateProfile, Company, Invitation, MatchScore, PaginatedResponse } from '../types';
+
+export const makeAccount = (role: Account['role'] = 'CANDIDATE', overrides: Partial<Account> = {}): Account => ({
+  id: `${role.toLowerCase()}-id`,
+  email: `${role.toLowerCase()}@demo.tn`,
+  role,
+  status: 'ACTIVE',
+  createdAt: '2026-09-01T09:00:00Z',
+  updatedAt: '2026-09-01T09:00:00Z',
+  ...overrides,
+});
 
 export const makeProfile = (overrides: Partial<CandidateProfile> = {}): CandidateProfile => ({
   id: 'candidate-id',
