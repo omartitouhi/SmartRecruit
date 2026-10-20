@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,6 +33,12 @@ public class ApplicationController {
     @PreAuthorize("hasRole('CANDIDATE')")
     public ApplicationResponse apply(@AuthenticationPrincipal AuthenticatedUser user, @Valid @RequestBody ApplyRequest request) {
         return ApplicationResponse.from(applicationService.apply(user.id(), request.jobId()));
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public List<ApplicationResponse> mine(@AuthenticationPrincipal AuthenticatedUser user) {
+        return applicationService.mine(user.id()).stream().map(ApplicationResponse::from).toList();
     }
 
     @GetMapping("/match-preview")

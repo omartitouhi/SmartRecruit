@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -64,5 +65,10 @@ public class ApplicationService {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Un CV analysé est requis pour calculer la compatibilité");
         }
         return matchScores.scoreFor(candidateId, jobId, candidate.cvParsedAt(), job.updatedAt());
+    }
+
+    /** BE-APP-02: newest first, withdrawn ones included. */
+    public List<Application> mine(UUID candidateId) {
+        return applications.findByCandidateIdOrderByAppliedAtDesc(candidateId);
     }
 }
