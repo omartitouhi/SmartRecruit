@@ -1,5 +1,5 @@
 // Stand-in for smartrecruit-ia's matching (§4.1) so the demo shows real explained scores.
-// Weights mirror the DATA_MODEL example: skills 50 %, experience 30 %, education 10 %, languages 10 %.
+// Weights mirror smartrecruit-ia (scoring.py): skills 50 %, experience 30 %, education 20 %.
 
 import type { CandidateProfile, ExperienceLevel, Job, MatchCriterion, MatchScore } from '../../types';
 
@@ -75,7 +75,7 @@ export function computeMatch(profile: CandidateProfile, job: Job): MatchScore {
       (ratio > 0.99 ? '' : years < level.min ? ' En dessous du niveau demandé.' : ' Profil plus expérimenté que demandé.'),
   });
 
-  // Education — 10 %
+  // Education — 20 %
   const best = [...profile.education].sort((a, b) => b.year - a.year)[0];
   let eduRatio = 0;
   let eduText = 'Aucune formation renseignée dans le profil.';
@@ -84,22 +84,7 @@ export function computeMatch(profile: CandidateProfile, job: Job): MatchScore {
     eduRatio = /master|ingenieur|doctorat|mba/.test(d) ? 1 : /licence|bachelor/.test(d) ? 0.7 : 0.45;
     eduText = `${best.degree}, ${best.institution}, ${best.year}.` + (eduRatio === 1 ? ' Bac+5 ou équivalent.' : ' En dessous d’un bac+5.');
   }
-  criteria.push({ label: 'Formation', weight: 0.1, contribution: round1(10 * eduRatio), explanation: eduText });
-
-  // Languages — 10 %
-  const langs = profile.languages.map(norm);
-  const hasFr = langs.includes('francais');
-  const hasEn = langs.includes('anglais');
-  const langRatio = (hasFr ? 0.5 : 0) + (hasEn ? 0.5 : 0);
-  const missingLangs = [!hasFr && 'le français', !hasEn && 'l’anglais'].filter(Boolean) as string[];
-  criteria.push({
-    label: 'Langues',
-    weight: 0.1,
-    contribution: round1(10 * langRatio),
-    explanation: missingLangs.length
-      ? `L’offre demande le français et l’anglais. Il manque ${list(missingLangs)}.`
-      : 'Français et anglais présents, comme demandé.',
-  });
+  criteria.push({ label: 'Formation', weight: 0.2, contribution: round1(20 * eduRatio), explanation: eduText });
 
   const score = round1(criteria.reduce((sum, c) => sum + c.contribution, 0));
   return { score, criteria };

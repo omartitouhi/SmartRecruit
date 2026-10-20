@@ -120,7 +120,7 @@ export function MatchScorePage() {
             title="Créez votre profil pour voir votre score"
             action={<ButtonLink to="/candidate/profile">Créer mon profil</ButtonLink>}
           >
-            Le score compare vos compétences, votre expérience, votre formation et vos langues aux exigences de l’offre.
+            Le score compare vos compétences, votre expérience et votre formation aux exigences de l’offre.
           </EmptyState>
         ) : !scorable ? (
           <EmptyState title={waiting.title} action={<ButtonLink to="/candidate/profile">Ouvrir mon profil</ButtonLink>}>

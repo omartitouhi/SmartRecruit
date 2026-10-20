@@ -62,7 +62,7 @@ describe('mock scoring', () => {
 
   it('explains the score criterion by criterion with weights summing to 1', () => {
     const match = computeMatch(amira(), backend());
-    expect(match.criteria.map((c) => c.label)).toEqual(['Compétences techniques', 'Expérience', 'Formation', 'Langues']);
+    expect(match.criteria.map((c) => c.label)).toEqual(['Compétences techniques', 'Expérience', 'Formation']);
     expect(match.criteria.reduce((sum, c) => sum + c.weight, 0)).toBeCloseTo(1);
     expect(match.score).toBeCloseTo(match.criteria.reduce((sum, c) => sum + c.contribution, 0), 1);
     expect(match.score).toBeLessThanOrEqual(100);
