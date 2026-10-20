@@ -5,7 +5,9 @@ import type {
   AccountStatus,
   ApplicationStatus,
   ContractType,
+  CvAnalysisStatus,
   ExperienceLevel,
+  InvitationStatus,
   JobStatus,
   Role,
 } from './enums';
@@ -50,6 +52,8 @@ export interface CandidateProfile {
   languages: string[];
   cvUrl: string | null;
   cvParsedAt: string | null;
+  /** Remplace l'ancienne heuristique « cvUrl sans cvParsedAt ». */
+  cvAnalysisStatus: CvAnalysisStatus;
   createdAt: string;
   updatedAt: string;
   deleted: false;
@@ -73,6 +77,18 @@ export interface Company {
   members: string[];
 }
 
+/** Vue d'une entreprise par un tiers (GET /users/companies/{id}) : sans la liste des membres. */
+export type CompanyPublic = Omit<Company, 'members'>;
+
+/** Invitation d'un recruteur dans une entreprise ; le jeton n'est jamais renvoyé par l'API. */
+export interface Invitation {
+  id: string;
+  email: string;
+  status: InvitationStatus;
+  expiresAt: string;
+  createdAt?: string;
+}
+
 // 3.3 job-service
 export interface Job {
   id: string;
@@ -85,6 +101,9 @@ export interface Job {
   location: string;
   status: JobStatus;
   publishedAt: string | null;
+  updatedAt: string;
+  /** Motif de modération, visible du propriétaire et de l'admin seulement. */
+  moderationReason: string | null;
 }
 
 // 3.4 application-service

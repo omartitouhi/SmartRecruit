@@ -185,6 +185,7 @@ function withParsingState(profile: CandidateProfile) {
   const uploaded = cvUploadedAt.get(profile.id);
   if (profile.cvUrl && !profile.cvParsedAt && uploaded && Date.now() - uploaded > CV_PARSE_DELAY_MS) {
     profile.cvParsedAt = now();
+    profile.cvAnalysisStatus = 'DONE';
     profile.updatedAt = profile.cvParsedAt;
     save();
   }
@@ -219,6 +220,7 @@ export const mockCandidatesApi: CandidatesApi = {
       id: account.id,
       cvUrl: existing?.cvUrl ?? null,
       cvParsedAt: existing?.cvParsedAt ?? null,
+      cvAnalysisStatus: existing?.cvAnalysisStatus ?? 'NONE',
       createdAt: existing?.createdAt ?? stamp,
       updatedAt: stamp,
       deleted: false,
@@ -240,6 +242,7 @@ export const mockCandidatesApi: CandidatesApi = {
     db.cvFiles[account.id] = file.name;
     profile.cvUrl = `/api/v1/users/candidates/${account.id}/cv`;
     profile.cvParsedAt = null;
+    profile.cvAnalysisStatus = 'PENDING';
     profile.updatedAt = now();
     audit('CV_UPLOADED', 'CandidateProfile', account.id, account.id);
     save();
@@ -362,7 +365,8 @@ export const mockJobsApi: JobsApi = {
     if (!request.location.trim()) fieldErrors.location = 'Le lieu est obligatoire';
     if (!request.requiredSkills.length) fieldErrors.requiredSkills = 'Ajoutez au moins une compétence';
     if (Object.keys(fieldErrors).length) throw new HttpError(400, 'Requête invalide', fieldErrors);
-    const job = { ...request, id: uuid(), status: 'DRAFT' as const, publishedAt: null };
+    const stamp = now();
+    const job = { ...request, id: uuid(), status: 'DRAFT' as const, publishedAt: null, updatedAt: stamp, moderationReason: null };
     db.jobs.push(job);
     audit('JOB_CREATED', 'Job', job.id, account.id);
     save();

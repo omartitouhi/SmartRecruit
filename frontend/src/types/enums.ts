@@ -5,6 +5,11 @@ export type Role = 'CANDIDATE' | 'RECRUITER' | 'ADMIN';
 
 export type AccountStatus = 'ACTIVE' | 'DISABLED' | 'DELETED';
 
+/** Avancement de l'analyse IA du CV (user-service, API_CONTRACTS.md §1). */
+export type CvAnalysisStatus = 'NONE' | 'PENDING' | 'DONE' | 'FAILED';
+
+export type InvitationStatus = 'PENDING' | 'ACCEPTED' | 'EXPIRED';
+
 export type JobStatus = 'DRAFT' | 'PUBLISHED' | 'CLOSED' | 'MODERATED';
 
 export type ContractType = 'CDI' | 'CDD' | 'STAGE' | 'ALTERNANCE' | 'FREELANCE';

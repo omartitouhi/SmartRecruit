@@ -33,7 +33,7 @@ export interface MockDb {
   cvFiles: Record<string, string>;
 }
 
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
 const JOB_IDS = [
   '43b7a3a6-9a8d-4a03-980d-7b71d8f56413',
@@ -81,12 +81,13 @@ function account(id: string, email: string, role: Account['role'], createdAt: st
   return { id, email, role, status: 'ACTIVE', createdAt: T(createdAt), updatedAt: T(createdAt), password: DEMO_PASSWORD };
 }
 
-function profile(p: Omit<CandidateProfile, 'deleted' | 'cvUrl' | 'cvParsedAt' | 'createdAt' | 'updatedAt'> & { since: string; cv?: boolean }): CandidateProfile {
+function profile(p: Omit<CandidateProfile, 'deleted' | 'cvUrl' | 'cvParsedAt' | 'cvAnalysisStatus' | 'createdAt' | 'updatedAt'> & { since: string; cv?: boolean }): CandidateProfile {
   const { since, cv = true, ...rest } = p;
   return {
     ...rest,
     cvUrl: cv ? `/api/v1/users/candidates/${p.id}/cv` : null,
     cvParsedAt: cv ? T(since) : null,
+    cvAnalysisStatus: cv ? 'DONE' : 'NONE',
     createdAt: T(since),
     updatedAt: T(since),
     deleted: false,
@@ -265,6 +266,8 @@ export function createSeed(): MockDb {
     location,
     status,
     publishedAt: publishedAt ? T(publishedAt) : null,
+    updatedAt: T(publishedAt ?? '2026-09-25'),
+    moderationReason: null,
   });
 
   const jobs: Job[] = [
