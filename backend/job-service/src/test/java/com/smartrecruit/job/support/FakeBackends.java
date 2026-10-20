@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * One JDK HTTP server playing user-service, application-service and ai-service at once: responses
@@ -57,6 +60,12 @@ public final class FakeBackends {
 
     public List<Call> callsTo(String path) {
         return calls.stream().filter(call -> call.path().equals(path)).toList();
+    }
+
+    /** Waits for background calls (async AI analysis) to arrive. */
+    public List<Call> awaitCallsTo(String path, int expected) {
+        await().atMost(Duration.ofSeconds(5)).until(() -> callsTo(path).size() >= expected);
+        return callsTo(path);
     }
 
     public List<Call> calls() {

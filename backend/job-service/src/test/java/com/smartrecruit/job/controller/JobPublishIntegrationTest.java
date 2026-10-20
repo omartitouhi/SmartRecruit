@@ -27,6 +27,8 @@ class JobPublishIntegrationTest extends JobApiTest {
              "location": "Tunis"}
             """;
 
+    private static final String ANALYZE = "/api/v1/ai/job-analysis/analyze";
+
     private final UUID recruiterId = UUID.randomUUID();
     private final UUID companyId = UUID.randomUUID();
 
@@ -161,5 +163,41 @@ class JobPublishIntegrationTest extends JobApiTest {
         mockMvc.perform(post("/api/v1/jobs").contentType(MediaType.APPLICATION_JSON).content(VALID_JOB))
                 .andExpect(status().isUnauthorized());
         assertThat(jobRepository.count()).isZero();
+    }
+
+    @Test
+    void publishedOfferIsSentToTheAiForAnalysisInTheBackground() throws Exception {
+        BACKENDS.respond(ANALYZE, 200, "{\"requiredSkills\": [\"Java\"], \"experienceLevel\": \"SENIOR\", \"seniority\": \"SENIOR\"}");
+
+        publish(VALID_JOB, recruiterId, "RECRUITER").andExpect(status().isCreated());
+
+        UUID jobId = jobRepository.findAll().getFirst().getId();
+        assertThat(BACKENDS.awaitCallsTo(ANALYZE, 1)).singleElement().satisfies(call -> {
+            assertThat(call.method()).isEqualTo("POST");
+            assertThat(call.role()).isEqualTo("SERVICE");
+            assertThat(call.h2cUpgrade()).isFalse();
+            assertThat(call.body()).contains("\"jobId\":\"" + jobId + "\"", "\"title\":\"Développeur Java\"",
+                    "Concevoir et maintenir nos microservices Spring Boot.");
+        });
+    }
+
+    @Test
+    void aiFailureNeverAffectsThePublication() throws Exception {
+        BACKENDS.respond(ANALYZE, 500, "{\"detail\": \"boom\"}");
+
+        publish(VALID_JOB, recruiterId, "RECRUITER")
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PUBLISHED"));
+
+        BACKENDS.awaitCallsTo(ANALYZE, 1);
+        assertThat(jobRepository.count()).isEqualTo(1);
+    }
+
+    @Test
+    void rejectedRequestsDoNotTriggerAnyAnalysis() throws Exception {
+        publish("{}", recruiterId, "RECRUITER").andExpect(status().isBadRequest());
+        publish(VALID_JOB, UUID.randomUUID(), "RECRUITER").andExpect(status().isForbidden());
+
+        assertThat(BACKENDS.callsTo(ANALYZE)).isEmpty();
     }
 }
