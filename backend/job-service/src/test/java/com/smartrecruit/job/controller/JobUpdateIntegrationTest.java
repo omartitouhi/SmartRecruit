@@ -106,7 +106,8 @@ class JobUpdateIntegrationTest extends JobApiTest {
             assertThat(call.role()).isEqualTo("SERVICE");
             assertThat(call.body()).contains("\"jobId\":\"" + job.getId() + "\"");
         });
-        assertThat(BACKENDS.callsTo(ANALYZE).getFirst().body()).contains("\"title\":\"Lead Java\"");
+        // The two analyses run asynchronously: their arrival order is not guaranteed.
+        assertThat(BACKENDS.callsTo(ANALYZE)).anySatisfy(call -> assertThat(call.body()).contains("\"title\":\"Lead Java\""));
     }
 
     @Test
