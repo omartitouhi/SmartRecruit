@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { APPLICATION_STATUS, JOB_STATUS, type Tone } from '../../lib/format';
+import { APPLICATION_STATUS, JOB_STATUS, scoreBand, type Tone } from '../../lib/format';
 import type { ApplicationStatus, JobStatus } from '../../types';
 
 export function Tag({ tone = 'grey', children, onRemove, removeLabel }: {
@@ -30,4 +30,11 @@ export function ApplicationStatusTag({ status }: { status: ApplicationStatus }) 
 export function JobStatusTag({ status }: { status: JobStatus }) {
   const s = JOB_STATUS[status];
   return <Tag tone={s.tone}>{s.label}</Tag>;
+}
+
+/** Badge de tranche de score : Excellent, Bon, Moyen ou Faible. */
+export function ScoreBandTag({ score }: { score: number | null | undefined }) {
+  if (score === null || score === undefined) return null;
+  const band = scoreBand(score);
+  return <Tag tone={band.tone}>{band.label}</Tag>;
 }

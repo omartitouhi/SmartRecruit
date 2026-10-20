@@ -59,6 +59,14 @@ export const INVITATION_STATUS: Record<InvitationStatus, { label: string; tone: 
   EXPIRED: { label: 'Expirée', tone: 'grey' },
 };
 
+/** Tranche de score pour le badge de classement (FE-MATCH-02). */
+export function scoreBand(score: number): { label: string; tone: Tone } {
+  if (score >= 75) return { label: 'Excellent', tone: 'green' };
+  if (score >= 50) return { label: 'Bon', tone: 'blue' };
+  if (score >= 25) return { label: 'Moyen', tone: 'yellow' };
+  return { label: 'Faible', tone: 'red' };
+}
+
 /** Libellé de l'action d'un recruteur qui fait passer une candidature à ce statut. */
 export const STATUS_ACTION: Partial<Record<ApplicationStatus, string>> = {
   IN_REVIEW: 'Passer en revue',

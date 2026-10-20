@@ -6,7 +6,7 @@ import { jobsApi } from '../../api/jobs';
 import { Button, ButtonLink } from '../../components/ui/Button';
 import { ScoreBreakdown, ScoreChip } from '../../components/ui/ScoreBreakdown';
 import { Alert, EmptyState, ErrorState, PageSkeleton, SkeletonRows } from '../../components/ui/States';
-import { ApplicationStatusTag, JobStatusTag, Tag } from '../../components/ui/Tag';
+import { ApplicationStatusTag, JobStatusTag, ScoreBandTag, Tag } from '../../components/ui/Tag';
 import { useToast } from '../../components/ui/toast';
 import { toUiError } from '../../lib/errors';
 import {
@@ -157,7 +157,7 @@ export function CandidateRankingPage() {
                         <span className={candidate?.deleted ? 'muted' : 'cell-strong'}>{candidate ? fullName(candidate) : 'Profil indisponible'}</span>
                       </td>
                       <td>
-                        <ScoreChip score={application.matchScore?.score} />
+                        <ScoreChip score={application.matchScore?.score} /> <ScoreBandTag score={application.matchScore?.score} />
                       </td>
                       <td>
                         <ApplicationStatusTag status={application.status} />
@@ -191,6 +191,8 @@ function CandidateDetail({ row, onUpdated }: { row: Row; onUpdated: (a: Applicat
   const notify = useToast();
   const { application, candidate } = row;
   const [busy, setBusy] = useState<ApplicationStatus | 'cv' | null>(null);
+  // A status change is confirmed before it is sent: decisions cannot be undone.
+  const [pending, setPending] = useState<ApplicationStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
   // Recruiters move applications forward; only the candidate may withdraw.
   const transitions = APPLICATION_STATUS_TRANSITIONS[application.status].filter((s) => s !== 'WITHDRAWN');
@@ -200,6 +202,7 @@ function CandidateDetail({ row, onUpdated }: { row: Row; onUpdated: (a: Applicat
     setError(null);
     try {
       onUpdated(await applicationsApi.updateStatus(application.id, status));
+      setPending(null);
       notify(`Candidature passée à « ${APPLICATION_STATUS[status].label} ».`);
     } catch (err) {
       setError(toUiError(err).message);
@@ -309,17 +312,28 @@ function CandidateDetail({ row, onUpdated }: { row: Row; onUpdated: (a: Applicat
       </ol>
 
       <div className="detail-actions">
-        {transitions.map((status, i) => (
-          <Button
-            key={status}
-            variant={i === 0 && status !== 'REJECTED' ? 'primary' : 'ghost'}
-            loading={busy === status}
-            disabled={busy !== null && busy !== status}
-            onClick={() => move(status)}
-          >
-            {STATUS_ACTION[status]}
-          </Button>
-        ))}
+        {pending ? (
+          <span className="confirm-inline">
+            <span>Passer la candidature à « {APPLICATION_STATUS[pending].label} » ?</span>
+            <Button loading={busy === pending} onClick={() => move(pending)}>
+              Confirmer
+            </Button>
+            <Button variant="ghost" disabled={busy !== null} onClick={() => setPending(null)}>
+              Annuler
+            </Button>
+          </span>
+        ) : (
+          transitions.map((status, i) => (
+            <Button
+              key={status}
+              variant={i === 0 && status !== 'REJECTED' ? 'primary' : 'ghost'}
+              disabled={busy !== null}
+              onClick={() => setPending(status)}
+            >
+              {STATUS_ACTION[status]}
+            </Button>
+          ))
+        )}
         {live?.cvUrl && (
           <Button variant="ghost" loading={busy === 'cv'} onClick={openCv}>
             Voir le CV
