@@ -1,6 +1,6 @@
 import type { CandidateProfile, CandidateView, CVParsingResult, Education, Experience } from '../types';
 import { apiClient, isMocked } from './client';
-import { mockCandidatesApi } from './mock/handlers';
+import { mockCandidatesApi } from './mock/candidates';
 
 /** Corps de PUT /users/candidates/me — cvUrl et cvParsedAt sont gérés par l'upload et l'IA. */
 export interface CandidateProfileRequest {

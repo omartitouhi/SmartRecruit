@@ -1,6 +1,6 @@
 import type { Account, Role, TokenResponse } from '../types';
 import { apiClient, isMocked } from './client';
-import { mockAuthApi } from './mock/handlers';
+import { mockAuthApi } from './mock/auth';
 
 export interface RegisterRequest {
   email: string;

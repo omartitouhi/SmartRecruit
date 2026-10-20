@@ -1,6 +1,6 @@
 import type { Company, CompanyPublic, Invitation } from '../types';
 import { apiClient, isMocked } from './client';
-import { mockCompaniesApi } from './mock/handlers';
+import { mockCompaniesApi } from './mock/companies';
 
 export interface CompanyRequest {
   name: string;

@@ -1,6 +1,6 @@
 import type { ApplicationStatus, AuditLogEntry, PaginatedResponse, Role } from '../types';
 import { apiClient, isMocked } from './client';
-import { mockDashboardApi } from './mock/handlers';
+import { mockDashboardApi } from './mock/dashboard';
 
 /**
  * Statistiques globales de la plateforme (BE-ADMIN). Pas encore décrit dans DATA_MODEL.md :

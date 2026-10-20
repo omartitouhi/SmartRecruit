@@ -7,7 +7,7 @@ import type {
   RecommendedJob,
 } from '../types';
 import { apiClient, isMocked } from './client';
-import { mockJobsApi } from './mock/handlers';
+import { mockJobsApi } from './mock/jobs';
 
 /**
  * Offre enrichie du nom de l'entreprise, comme RecommendedJob (§4.7).

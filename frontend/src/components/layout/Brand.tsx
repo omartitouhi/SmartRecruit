@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { USE_MOCKS } from '../../api/client';
-import { resetMockData } from '../../api/mock/handlers';
+import { resetMockData } from '../../api/mock/store';
 
 export function Brand({ to = '/' }: { to?: string }) {
   return (

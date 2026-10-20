@@ -1,6 +1,6 @@
 import type { Application, ApplicationStatus, MatchScore, SkillGapResult } from '../types';
 import { apiClient, isMocked } from './client';
-import { mockApplicationsApi } from './mock/handlers';
+import { mockApplicationsApi } from './mock/applications';
 
 export interface ApplicationsApi {
   apply(jobId: string): Promise<Application>;
