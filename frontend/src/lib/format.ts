@@ -80,6 +80,9 @@ const dateTime = new Intl.DateTimeFormat('fr-FR', {
 });
 const monthYear = new Intl.DateTimeFormat('fr-FR', { month: 'short', year: 'numeric' });
 
+/** Taux d'acceptation : 0.5 ou 50 → « 50 % » (le contrat ne dit pas si c'est une fraction ou un pourcentage). */
+export const formatRate = (rate: number) => `${integer.format(Math.round(rate <= 1 ? rate * 100 : rate))} %`;
+
 /** 1_300_000 → « 1,2 Mo » */
 export function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} o`;

@@ -21,6 +21,7 @@ import { CandidateRankingPage } from "./pages/recruiter/CandidateRankingPage";
 import { AcceptInvitationPage } from "./pages/recruiter/AcceptInvitationPage";
 import { CompanyProfilePage } from "./pages/recruiter/CompanyProfilePage";
 import { NewJobPage } from "./pages/recruiter/NewJobPage";
+import { RecruiterDashboardPage } from "./pages/recruiter/RecruiterDashboardPage";
 import { RecruiterJobsPage } from "./pages/recruiter/RecruiterJobsPage";
 import { TeamPage } from "./pages/recruiter/TeamPage";
 
@@ -59,6 +60,7 @@ function App() {
         </Route>
 
         <Route element={<RequireRole roles={["RECRUITER"]}><AppLayout /></RequireRole>}>
+          <Route path="recruiter" element={<RecruiterDashboardPage />} />
           <Route path="recruiter/jobs" element={<RecruiterJobsPage />} />
           <Route path="recruiter/company" element={<CompanyProfilePage />} />
           <Route path="recruiter/team" element={<TeamPage />} />
