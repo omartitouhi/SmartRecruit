@@ -43,6 +43,8 @@ VITE_MOCK_MODULES=jobs,applications npm run dev
 
 Modules : `auth`, `candidates`, `companies`, `jobs`, `applications`, `dashboard`. `VITE_USE_MOCKS=true` les
 simule tous. Avec l'authentification réelle, les modules simulés lisent le rôle et l'identifiant dans le JWT.
+Les modules simulés partagent une même base dans le navigateur : simulez ensemble ceux qui dépendent l'un de
+l'autre (`jobs` avec `companies`, `applications` avec `jobs` et `candidates`).
 En Docker : `--build-arg VITE_USE_MOCKS=true` ou `--build-arg VITE_MOCK_MODULES=jobs,applications`.
 
 ## Design
