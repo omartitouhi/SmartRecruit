@@ -569,7 +569,7 @@ button.text-link {
 /* ───── Definition list (document properties) ───── */
 .props {
   display: grid;
-  grid-template-columns: 140px 1fr;
+  grid-template-columns: minmax(0, 140px) minmax(0, 1fr);
   gap: var(--space-2) var(--space-4);
   margin: 0;
   font-size: var(--text-sm);
@@ -582,6 +582,7 @@ button.text-link {
 .props dd {
   margin: 0;
   color: var(--ink);
+  overflow-wrap: anywhere; /* une longue adresse e-mail ne doit pas élargir la page */
 }
 
 /* ───── Timeline (status history) ───── */
