@@ -4,6 +4,7 @@ import com.smartrecruit.user.ai.CvAnalysisJob;
 import com.smartrecruit.user.dto.CandidateProfileResponse;
 import com.smartrecruit.user.exception.ApiException;
 import com.smartrecruit.user.model.CandidateProfile;
+import com.smartrecruit.user.model.CvAnalysisStatus;
 import com.smartrecruit.user.repository.CandidateProfileRepository;
 import com.smartrecruit.user.storage.CorruptedCvException;
 import com.smartrecruit.user.storage.CvNotFoundException;
@@ -47,8 +48,8 @@ public class CandidateCvService {
 
     /**
      * Stores the PDF and links it to the profile. A previous CV is deleted once the new one is
-     * committed, and {@code cvParsedAt} is reset since the new file has not been analysed yet. Once
-     * committed, the AI analysis starts asynchronously (BE-CV-01).
+     * committed, and {@code cvParsedAt} is reset with the analysis status back to PENDING, since the new
+     * file has not been analysed yet. Once committed, the AI analysis starts asynchronously (BE-CV-01).
      */
     @Transactional
     public CandidateProfileResponse upload(UUID candidateId, MultipartFile file) {
@@ -65,6 +66,7 @@ public class CandidateCvService {
         profile.setCvStorageKey(newKey);
         profile.setCvUrl(cvUrlOf(candidateId));
         profile.setCvParsedAt(null);
+        profile.setCvAnalysisStatus(CvAnalysisStatus.PENDING);
         return CandidateProfileResponse.from(profileRepository.saveAndFlush(profile));
     }
 
