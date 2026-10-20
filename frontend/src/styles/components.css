@@ -351,6 +351,7 @@ button.text-link {
 /* ───── Tables ───── */
 .table-wrap {
   overflow-x: auto;
+  position: relative; /* contient les libellés .visually-hidden des colonnes d'action, sinon la page défile en largeur */
 }
 
 .table {

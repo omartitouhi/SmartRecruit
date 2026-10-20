@@ -293,7 +293,7 @@
 @media (max-width: 900px) {
   .split,
   .split--even {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr); /* 1fr seul laisse un tableau élargir la colonne et toute la page */
   }
 
   .sticky {
