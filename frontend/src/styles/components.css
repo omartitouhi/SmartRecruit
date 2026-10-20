@@ -104,6 +104,15 @@
   text-decoration-color: var(--strong);
 }
 
+/* A button that acts as an inline link (e.g. a filter shortcut inside a table row). */
+button.text-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 /* ───── Tags ───── */
 .tag {
   display: inline-flex;
