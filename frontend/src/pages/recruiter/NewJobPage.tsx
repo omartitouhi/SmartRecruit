@@ -1,36 +1,17 @@
-import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { jobsApi, type JobCreateRequest } from '../../api/jobs';
+import { jobsApi } from '../../api/jobs';
+import { EMPTY_JOB, JobForm } from '../../components/domain/JobForm';
 import { NoCompany } from '../../components/domain/NoCompany';
-import { Button, ButtonLink } from '../../components/ui/Button';
-import { SelectField, TextAreaField, TextField } from '../../components/ui/Field';
-import { Alert, ErrorState, PageSkeleton } from '../../components/ui/States';
-import { TagInput } from '../../components/ui/TagInput';
+import { ErrorState, PageSkeleton } from '../../components/ui/States';
 import { useToast } from '../../components/ui/toast';
-import { toUiError } from '../../lib/errors';
-import { CONTRACT_LABEL, LEVEL_LABEL } from '../../lib/format';
 import { useDocumentTitle } from '../../lib/useAsync';
 import { useMyCompany } from '../../lib/useCompany';
-import type { ContractType, ExperienceLevel } from '../../types';
-
-type Draft = JobCreateRequest;
 
 export function NewJobPage() {
   useDocumentTitle('Publier une offre');
   const navigate = useNavigate();
   const notify = useToast();
   const company = useMyCompany();
-  const [form, setForm] = useState<Draft>({
-    title: '',
-    description: '',
-    requiredSkills: [],
-    experienceLevel: 'INTERMEDIATE',
-    contractType: 'CDI',
-    location: '',
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
 
   if (company.error) {
     return (
@@ -46,29 +27,6 @@ export function NewJobPage() {
         <NoCompany />
       </div>
     );
-  }
-
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    const found: Record<string, string> = {};
-    if (!form.title.trim()) found.title = 'L’intitulé est obligatoire.';
-    if (!form.location.trim()) found.location = 'Le lieu est obligatoire.';
-    if (form.description.trim().length < 20) found.description = 'Décrivez le poste en quelques lignes (20 caractères au minimum).';
-    if (!form.requiredSkills.length) found.requiredSkills = 'Ajoutez au moins une compétence : elles comptent pour 50 % du score.';
-    setErrors(found);
-    if (Object.keys(found).length) return;
-    setSaving(true);
-    setFormError(null);
-    try {
-      await jobsApi.create(form);
-      notify('Offre publiée.');
-      navigate('/recruiter/jobs');
-    } catch (err) {
-      const ui = toUiError(err);
-      setErrors(ui.fieldErrors);
-      setFormError(ui.message);
-      setSaving(false);
-    }
   }
 
   return (
@@ -88,51 +46,16 @@ export function NewJobPage() {
         </div>
       </header>
 
-      <form className="panel form" onSubmit={onSubmit} noValidate>
-        {formError && <Alert tone="error">{formError}</Alert>}
-        <TextField label="Intitulé du poste" placeholder="Développeur·se backend Java" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} error={errors.title} maxLength={255} />
-        <div className="form-row">
-          <TextField label="Lieu" placeholder="Tunis, Les Berges du Lac" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} error={errors.location} maxLength={255} />
-          <SelectField
-            label="Contrat"
-            value={form.contractType}
-            onChange={(e) => setForm({ ...form, contractType: e.target.value as ContractType })}
-            options={Object.entries(CONTRACT_LABEL).map(([value, label]) => ({ value, label }))}
-          />
-          <SelectField
-            label="Niveau"
-            value={form.experienceLevel}
-            onChange={(e) => setForm({ ...form, experienceLevel: e.target.value as ExperienceLevel })}
-            options={Object.entries(LEVEL_LABEL).map(([value, label]) => ({ value, label }))}
-          />
-        </div>
-        <TagInput
-          label="Compétences demandées"
-          values={form.requiredSkills}
-          onChange={(v) => setForm({ ...form, requiredSkills: v })}
-          placeholder="Java, Spring Boot, PostgreSQL…"
-          max={50}
-          hint="Entrée ou virgule pour ajouter (50 au maximum)."
-          error={errors.requiredSkills}
-        />
-        <TextAreaField
-          label="Description du poste"
-          rows={7}
-          value={form.description}
-          maxLength={20000}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          hint="Les missions, l’équipe, ce qui rend le poste intéressant."
-          error={errors.description}
-        />
-        <div className="detail-actions">
-          <Button type="submit" size="lg" loading={saving}>
-            Publier l’offre
-          </Button>
-          <ButtonLink to="/recruiter/jobs" variant="ghost" size="lg">
-            Annuler
-          </ButtonLink>
-        </div>
-      </form>
+      <JobForm
+        initial={EMPTY_JOB}
+        submitLabel="Publier l’offre"
+        cancelTo="/recruiter/jobs"
+        onSubmit={async (values) => {
+          await jobsApi.create(values);
+          notify('Offre publiée.');
+          navigate('/recruiter/jobs');
+        }}
+      />
     </div>
   );
 }
