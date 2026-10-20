@@ -112,6 +112,21 @@ public class ApplicationService {
         return saved;
     }
 
+    /** BE-APP-05: the candidate withdraws their own application, only while RECEIVED or IN_REVIEW (else 409). */
+    public void withdraw(UUID candidateId, UUID applicationId) {
+        Application application = applications.findById(applicationId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Candidature introuvable"));
+        if (!application.getCandidateId().equals(candidateId)) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Cette candidature ne vous appartient pas");
+        }
+        if (application.getStatus() != ApplicationStatus.RECEIVED && application.getStatus() != ApplicationStatus.IN_REVIEW) {
+            throw new ApiException(HttpStatus.CONFLICT, "Une candidature " + application.getStatus() + " ne peut plus être retirée");
+        }
+        application.setStatus(ApplicationStatus.WITHDRAWN);
+        application.getStatusHistory().add(new StatusHistoryEntry(ApplicationStatus.WITHDRAWN, clock.instant(), candidateId));
+        applications.save(application);
+    }
+
     private void requireMemberOf(UUID recruiterId, UUID companyId) {
         boolean member = companies.findByMember(recruiterId)
                 .map(company -> company.id().equals(companyId)).orElse(false);
