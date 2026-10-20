@@ -1,5 +1,6 @@
 package com.smartrecruit.job.service;
 
+import com.smartrecruit.job.client.ApplicationCountsClient;
 import com.smartrecruit.job.client.CompanyDirectoryClient;
 import com.smartrecruit.job.dto.JobResponse;
 import com.smartrecruit.job.dto.JobSummaryResponse;
@@ -24,18 +25,22 @@ import org.springframework.web.client.RestClientException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Read side of the offers: search (BE-JOB-04). What a caller may see depends on the role: candidates
- * and recruiters browsing see published offers only, admins see every status.
+ * Read side of the offers: search (BE-JOB-04) and a recruiter's own listing (BE-JOB-05). What a caller
+ * may see depends on the role: candidates and recruiters browsing see published offers only, admins
+ * see every status, a recruiter sees every status of their own company with {@code companyId=me}.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class JobQueryService {
+
+    private static final String ME = "me";
 
     /** Newest publication first; drafts (no publication date) last; id keeps pages stable. */
     private static final Sort NEWEST_FIRST =
@@ -43,15 +48,41 @@ public class JobQueryService {
 
     private final JobRepository jobRepository;
     private final CompanyDirectoryClient companyClient;
+    private final ApplicationCountsClient countsClient;
+    private final RecruiterCompanies recruiterCompanies;
     private final TransactionTemplate transaction;
 
     public PageResponse<JobSummaryResponse> search(AuthenticatedUser user, JobSearchCriteria criteria, int page, int size) {
-        Specification<Job> filter = filters(criteria).and(visibility(user, criteria));
+        boolean mine = ME.equalsIgnoreCase(criteria.companyId() == null ? "" : criteria.companyId().strip());
+        Specification<Job> scope;
+        if (mine) {
+            Optional<UUID> company = ownCompanyId(user);
+            if (company.isEmpty()) {
+                return new PageResponse<>(List.of(), page, size, 0, 0);
+            }
+            scope = JobSpecifications.ownedBy(company.get());
+            if (criteria.status() != null) {
+                scope = scope.and(JobSpecifications.hasStatus(criteria.status()));
+            }
+        } else {
+            scope = visibility(user, criteria);
+        }
+        Specification<Job> filter = filters(criteria).and(scope);
         Page<JobResponse> found = transaction.execute(status ->
                 jobRepository.findAll(filter, PageRequest.of(page, size, NEWEST_FIRST)).map(JobResponse::from));
 
         Map<UUID, String> companyNames = companyNames(found.getContent());
-        return PageResponse.of(found, job -> new JobSummaryResponse(job, companyNames.get(job.getCompanyId()), null));
+        Map<UUID, Long> counts = mine ? applicationCounts(found.getContent()) : null;
+        return PageResponse.of(found, job -> new JobSummaryResponse(job, companyNames.get(job.getCompanyId()),
+                counts == null ? null : counts.getOrDefault(job.getId(), 0L)));
+    }
+
+    /** {@code companyId=me} only makes sense for a recruiter; empty if they have no company yet. */
+    private Optional<UUID> ownCompanyId(AuthenticatedUser user) {
+        if (!"RECRUITER".equals(user.role())) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "companyId=me est réservé aux recruteurs");
+        }
+        return recruiterCompanies.companyIdOf(user.id());
     }
 
     private Specification<Job> visibility(AuthenticatedUser user, JobSearchCriteria criteria) {
@@ -109,6 +140,16 @@ public class JobQueryService {
             return companyClient.namesOf(companyIds);
         } catch (RestClientException e) {
             log.warn("user-service indisponible, offres renvoyées sans nom d'entreprise : {}", e.getMessage());
+            return Map.of();
+        }
+    }
+
+    /** Application counts are a nice-to-have: without application-service every offer shows 0. */
+    private Map<UUID, Long> applicationCounts(List<JobResponse> jobs) {
+        try {
+            return countsClient.countsOf(jobs.stream().map(JobResponse::getId).toList());
+        } catch (RestClientException e) {
+            log.warn("application-service indisponible, nombre de candidatures mis à 0 : {}", e.getMessage());
             return Map.of();
         }
     }
