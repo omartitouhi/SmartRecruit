@@ -89,9 +89,19 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
+// A 401 on these means "wrong credentials / token", not "expired access token". /auth/me does refresh.
+const NO_REFRESH = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/refresh',
+  '/auth/logout',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+];
+
 apiClient.interceptors.response.use(undefined, async (error: AxiosError) => {
   const config = error.config as (InternalAxiosRequestConfig & { _retried?: boolean }) | undefined;
-  const isAuthCall = config?.url?.startsWith('/auth/') ?? false;
+  const isAuthCall = NO_REFRESH.some((path) => config?.url?.startsWith(path));
 
   if (error.response?.status !== 401 || !config || config._retried || isAuthCall) {
     throw error;

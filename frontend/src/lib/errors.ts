@@ -14,7 +14,9 @@ const FALLBACK: Record<number, string> = {
   403: 'Vous n’avez pas accès à cette ressource.',
   404: 'Ressource introuvable.',
   409: 'Cette ressource existe déjà.',
+  410: 'Ce lien n’est plus valide.',
   413: 'Le fichier est trop volumineux.',
+  422: 'Action impossible : des informations sont manquantes.',
   429: 'Trop de tentatives. Réessayez dans quelques minutes.',
   503: 'Ce service est momentanément indisponible.',
   // The dev proxy / nginx answer 502–504 with an empty body when the gateway is down.
