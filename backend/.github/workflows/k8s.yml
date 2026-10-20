@@ -14,6 +14,7 @@ jobs:
       - name: Render the overlays
         run: |
           cp k8s/overlays/dev/secrets.env.example k8s/overlays/dev/secrets.env
+          cp k8s/overlays/dev/config.env.example k8s/overlays/dev/config.env
           kubectl kustomize k8s/overlays/dev > dev.yaml
           kubectl kustomize k8s/overlays/prod > prod.yaml
       - name: Validate against the Kubernetes schemas

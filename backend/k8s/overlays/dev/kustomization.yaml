@@ -6,6 +6,11 @@ resources:
   - ../../base
 generatorOptions:
   disableNameSuffixHash: true
+configMapGenerator:
+  - name: app-config
+    behavior: merge
+    envs:
+      - config.env
 secretGenerator:
   - name: app-secrets
     envs:
@@ -74,11 +79,3 @@ patches:
       - op: add
         path: /spec/ports/0/nodePort
         value: 30001
-  # Pas de limite de requêtes réaliste en développement (tous les clients partagent l'IP du proxy).
-  - target:
-      kind: ConfigMap
-      name: app-config
-    patch: |-
-      - op: replace
-        path: /data/RATE_LIMIT_MAX_REQUESTS
-        value: "500"
