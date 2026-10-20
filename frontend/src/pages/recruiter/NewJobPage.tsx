@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { jobsApi } from '../../api/jobs';
-import { EMPTY_JOB, JobForm } from '../../components/domain/JobForm';
+import { JobForm } from '../../components/domain/JobForm';
 import { NoCompany } from '../../components/domain/NoCompany';
 import { ErrorState, PageSkeleton } from '../../components/ui/States';
 import { useToast } from '../../components/ui/toast';
@@ -47,7 +47,6 @@ export function NewJobPage() {
       </header>
 
       <JobForm
-        initial={EMPTY_JOB}
         submitLabel="Publier l’offre"
         cancelTo="/recruiter/jobs"
         onSubmit={async (values) => {

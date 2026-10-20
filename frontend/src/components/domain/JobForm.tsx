@@ -8,7 +8,7 @@ import { SelectField, TextAreaField, TextField } from '../ui/Field';
 import { Alert } from '../ui/States';
 import { TagInput } from '../ui/TagInput';
 
-export const EMPTY_JOB: JobCreateRequest = {
+const EMPTY_JOB: JobCreateRequest = {
   title: '',
   description: '',
   requiredSkills: [],
@@ -18,7 +18,8 @@ export const EMPTY_JOB: JobCreateRequest = {
 };
 
 interface Props {
-  initial: JobCreateRequest;
+  /** Defaults to an empty publication form. */
+  initial?: JobCreateRequest;
   submitLabel: string;
   cancelTo: string;
   /** A rejection is shown as a form message plus the `fieldErrors` of a 400, under their field. */
@@ -26,7 +27,7 @@ interface Props {
 }
 
 /** The job offer form shared by the publication and the edit pages (validation, server errors, saving state). */
-export function JobForm({ initial, submitLabel, cancelTo, onSubmit }: Props) {
+export function JobForm({ initial = EMPTY_JOB, submitLabel, cancelTo, onSubmit }: Props) {
   const [form, setForm] = useState<JobCreateRequest>(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
