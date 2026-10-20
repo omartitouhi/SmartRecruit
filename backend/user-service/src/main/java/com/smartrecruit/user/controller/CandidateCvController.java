@@ -1,5 +1,7 @@
 package com.smartrecruit.user.controller;
 
+import com.smartrecruit.user.audit.AuditAction;
+import com.smartrecruit.user.audit.AuditEmitter;
 import com.smartrecruit.user.dto.CandidateProfileResponse;
 import com.smartrecruit.user.dto.CvSuggestionsResponse;
 import com.smartrecruit.user.security.AuthenticatedUser;
@@ -29,6 +31,7 @@ public class CandidateCvController {
 
     private final CandidateCvService cvService;
     private final CvSuggestionsService suggestionsService;
+    private final AuditEmitter auditEmitter;
 
     /** Upload of the connected candidate's CV (PDF, 5 MB max) — BE-USER-02. */
     @PostMapping(path = "/me/cv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -46,12 +49,17 @@ public class CandidateCvController {
     }
 
     /**
-     * Download of a CV: target of {@code cvUrl}. Allowed for the candidate themself, recruiters and admins.
+     * Download of a CV: target of {@code cvUrl}. Allowed for the candidate themself, recruiters and admins;
+     * a download by a recruiter or an admin is audited.
      */
     @GetMapping("/{candidateId}/cv")
     @PreAuthorize("hasAnyRole('RECRUITER', 'ADMIN') or (hasRole('CANDIDATE') and #candidateId == principal.id())")
-    public ResponseEntity<byte[]> download(@PathVariable UUID candidateId) {
+    public ResponseEntity<byte[]> download(@AuthenticationPrincipal AuthenticatedUser user,
+                                           @PathVariable UUID candidateId) {
         byte[] content = cvService.download(candidateId);
+        if (!"CANDIDATE".equals(user.role())) {
+            auditEmitter.emit(user.id(), AuditAction.CV_VIEWED, candidateId);
+        }
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION,
