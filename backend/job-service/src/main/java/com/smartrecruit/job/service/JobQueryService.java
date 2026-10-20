@@ -77,6 +77,27 @@ public class JobQueryService {
                 counts == null ? null : counts.getOrDefault(job.getId(), 0L)));
     }
 
+    /**
+     * One offer. Published offers are public; any other status exists only for admins and the owning
+     * company, everybody else gets 404 as if it did not exist.
+     */
+    public JobSummaryResponse get(AuthenticatedUser user, UUID jobId) {
+        JobResponse job = transaction.execute(status -> jobRepository.findById(jobId).map(JobResponse::from))
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable"));
+        if (job.getStatus() != JobStatus.PUBLISHED && !mayViewUnpublished(user, job)) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable");
+        }
+        return new JobSummaryResponse(job, companyNames(List.of(job)).get(job.getCompanyId()), null);
+    }
+
+    private boolean mayViewUnpublished(AuthenticatedUser user, JobResponse job) {
+        return switch (user.role()) {
+            case "ADMIN" -> true;
+            case "RECRUITER" -> recruiterCompanies.companyIdOf(user.id()).filter(job.getCompanyId()::equals).isPresent();
+            default -> false;
+        };
+    }
+
     /** {@code companyId=me} only makes sense for a recruiter; empty if they have no company yet. */
     private Optional<UUID> ownCompanyId(AuthenticatedUser user) {
         if (!"RECRUITER".equals(user.role())) {
