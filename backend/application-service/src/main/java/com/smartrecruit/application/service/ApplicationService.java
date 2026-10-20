@@ -1,6 +1,7 @@
 package com.smartrecruit.application.service;
 
 import com.smartrecruit.application.client.CandidateReadinessClient;
+import com.smartrecruit.application.client.CandidateReadinessClient.Readiness;
 import com.smartrecruit.application.client.JobDirectoryClient;
 import com.smartrecruit.application.client.JobDirectoryClient.JobSummary;
 import com.smartrecruit.application.exception.ApiException;
@@ -23,17 +24,17 @@ public class ApplicationService {
     private final ApplicationRepository applications;
     private final JobDirectoryClient jobs;
     private final CandidateReadinessClient readiness;
+    private final ApplicationScoring scoring;
     private final Clock clock;
 
-    /** BE-APP-01: checks, in the contract order: job exists (404), is published (409), candidate ready (422), no duplicate (409). */
+    /** BE-APP-01: checks, in the contract order: job exists (404), is published (409), candidate ready (422), no duplicate (409). The score is computed afterwards in the background (BE-MATCH-01). */
     public Application apply(UUID candidateId, UUID jobId) {
         JobSummary job = jobs.find(jobId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable"));
         if (!"PUBLISHED".equals(job.status())) {
             throw new ApiException(HttpStatus.CONFLICT, "L'offre n'accepte pas de candidatures");
         }
-        boolean ready = readiness.find(candidateId)
-                .map(r -> r.profileComplete() && r.hasCv()).orElse(false);
-        if (!ready) {
+        Readiness candidate = readiness.find(candidateId).orElse(null);
+        if (candidate == null || !candidate.profileComplete() || !candidate.hasCv()) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
                     "Profil complet et CV requis pour postuler");
         }
@@ -45,6 +46,11 @@ public class ApplicationService {
                 .id(UUID.randomUUID()).jobId(jobId).candidateId(candidateId).companyId(job.companyId())
                 .status(ApplicationStatus.RECEIVED).appliedAt(now).build();
         application.getStatusHistory().add(new StatusHistoryEntry(ApplicationStatus.RECEIVED, now, candidateId));
-        return applications.save(application);
+        Application saved = applications.save(application);
+        // Without an analysed CV there is nothing to score; the application stays valid without a score.
+        if (candidate.cvParsedAt() != null) {
+            scoring.scoreInBackground(saved.getId(), candidateId, jobId, candidate.cvParsedAt(), job.updatedAt());
+        }
+        return saved;
     }
 }
