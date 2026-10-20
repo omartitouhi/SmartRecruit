@@ -10,6 +10,7 @@ import { makeAccount, makeApplication, makeCompany, makeInvitation, makeJob, mak
 import { renderAt } from '../../test/render';
 import { AcceptInvitationPage } from './AcceptInvitationPage';
 import { CompanyProfilePage } from './CompanyProfilePage';
+import { EditJobPage } from './EditJobPage';
 import { NewJobPage } from './NewJobPage';
 import { RecruiterDashboardPage } from './RecruiterDashboardPage';
 import { RecruiterJobsPage } from './RecruiterJobsPage';
@@ -92,6 +93,15 @@ describe('"Mes offres"', () => {
     const moderated = await rowOf('Offre retirée');
     expect(within(moderated).queryByRole('button')).not.toBeInTheDocument();
     expect(within(moderated).getByText('Motif : Doublon')).toBeInTheDocument();
+  });
+
+  it('offers "Modifier" on a draft or published offer only, linking to its edit page', async () => {
+    show();
+    const published = within(await rowOf('Backend')).getByRole('link', { name: 'Modifier' });
+    expect(published).toHaveAttribute('href', '/recruiter/jobs/j1/edit');
+    expect(within(await rowOf('Brouillon stage')).getByRole('link', { name: 'Modifier' })).toHaveAttribute('href', '/recruiter/jobs/j2/edit');
+    expect(within(await rowOf('Ancienne offre')).queryByRole('link', { name: 'Modifier' })).not.toBeInTheDocument();
+    expect(within(await rowOf('Offre retirée')).queryByRole('link', { name: 'Modifier' })).not.toBeInTheDocument();
   });
 
   it('changes the status in place and confirms', async () => {
@@ -189,6 +199,108 @@ describe('publication form', () => {
     noCompany();
     show();
     expect(await screen.findByText('Présentez d’abord votre entreprise')).toBeInTheDocument();
+  });
+});
+
+describe('edit form', () => {
+  const show = () => renderAt(<EditJobPage />, { route: '/recruiter/jobs/job-1/edit', path: '/recruiter/jobs/:jobId/edit', account });
+  const save = (user: ReturnType<typeof userEvent.setup>) => user.click(screen.getByRole('button', { name: 'Enregistrer' }));
+  const retitle = async (user: ReturnType<typeof userEvent.setup>, title: string) => {
+    const field = await screen.findByLabelText('Intitulé du poste');
+    await user.clear(field);
+    await user.type(field, title);
+  };
+
+  beforeEach(() => {
+    jobs.get.mockResolvedValue(makeJob({ requiredSkills: ['Java', 'Kubernetes'] }));
+  });
+
+  it('pre-fills the form with the saved offer', async () => {
+    show();
+    expect(await screen.findByLabelText('Intitulé du poste')).toHaveValue('Développeur backend');
+    expect(screen.getByLabelText('Lieu')).toHaveValue('Tunis');
+    expect(screen.getByLabelText('Contrat')).toHaveValue('CDI');
+    expect(screen.getByLabelText('Niveau')).toHaveValue('SENIOR');
+    expect(screen.getByLabelText('Description du poste')).toHaveValue('Vous construisez nos services.');
+    expect(screen.getByText('Kubernetes')).toBeInTheDocument();
+    expect(jobs.get).toHaveBeenCalledWith('job-1');
+  });
+
+  it('sends only the changed fields, then confirms with a link back to "Mes offres"', async () => {
+    const user = userEvent.setup();
+    jobs.update.mockResolvedValue(makeJob({ title: 'Backend Java', requiredSkills: ['Java', 'Kubernetes'] }));
+    show();
+    await retitle(user, 'Backend Java');
+    await user.selectOptions(screen.getByLabelText('Contrat'), 'CDD');
+    await save(user);
+
+    await waitFor(() => expect(jobs.update).toHaveBeenCalledTimes(1));
+    expect(jobs.update).toHaveBeenCalledWith('job-1', { title: 'Backend Java', contractType: 'CDD' });
+    expect(await screen.findByText('Offre mise à jour.', { selector: '.toast' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Retour à Mes offres' })).toHaveAttribute('href', '/recruiter/jobs');
+  });
+
+  it('compares the next save with the last saved values', async () => {
+    const user = userEvent.setup();
+    jobs.update.mockResolvedValue(makeJob({ title: 'Backend Java' }));
+    show();
+    await retitle(user, 'Backend Java');
+    await save(user);
+    await user.type(screen.getByLabelText('Lieu'), ' Nord');
+    await save(user);
+    await waitFor(() => expect(jobs.update).toHaveBeenCalledTimes(2));
+    expect(jobs.update).toHaveBeenLastCalledWith('job-1', { location: 'Tunis Nord' });
+  });
+
+  it('does not call the API when nothing changed', async () => {
+    const user = userEvent.setup();
+    show();
+    await screen.findByLabelText('Intitulé du poste');
+    await save(user);
+    expect(await screen.findByText('Aucune modification à enregistrer.', { selector: '.toast' })).toBeInTheDocument();
+    expect(jobs.update).not.toHaveBeenCalled();
+  });
+
+  it('blocks an emptied required field before calling the API', async () => {
+    const user = userEvent.setup();
+    show();
+    await user.clear(await screen.findByLabelText('Intitulé du poste'));
+    await save(user);
+    expect(screen.getByText('L’intitulé est obligatoire.')).toBeInTheDocument();
+    expect(jobs.update).not.toHaveBeenCalled();
+  });
+
+  it('shows the 400 field errors under the right field', async () => {
+    const user = userEvent.setup();
+    jobs.update.mockRejectedValue(new HttpError(400, 'Requête invalide', { title: 'Intitulé trop long' }));
+    show();
+    await retitle(user, 'Autre titre');
+    await save(user);
+    expect(await screen.findByText('Intitulé trop long')).toBeInTheDocument();
+    expect(screen.getByLabelText('Intitulé du poste')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeEnabled();
+  });
+
+  it.each([403, 409])('explains a %i as a closed or withdrawn offer', async (status) => {
+    const user = userEvent.setup();
+    jobs.update.mockRejectedValue(new HttpError(status));
+    show();
+    await retitle(user, 'Autre titre');
+    await save(user);
+    expect(await screen.findByRole('alert')).toHaveTextContent('Offre clôturée ou retirée : non modifiable.');
+  });
+
+  it.each(['CLOSED', 'MODERATED'] as const)('shows no form for a %s offer', async (status) => {
+    jobs.get.mockResolvedValue(makeJob({ status }));
+    show();
+    expect(await screen.findByRole('alert')).toHaveTextContent('Offre clôturée ou retirée : non modifiable.');
+    expect(screen.queryByLabelText('Intitulé du poste')).not.toBeInTheDocument();
+  });
+
+  it('shows an error state when the offer cannot be loaded', async () => {
+    jobs.get.mockRejectedValue(new HttpError(404, 'Offre introuvable.'));
+    show();
+    expect(await screen.findByText('Offre introuvable.')).toBeInTheDocument();
   });
 });
 
