@@ -69,6 +69,12 @@ public class JobController {
                 page, size);
     }
 
+    /** One offer; unpublished ones only for their company and admins — BE-JOB-05. */
+    @GetMapping("/{id}")
+    public JobSummaryResponse get(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
+        return queryService.get(user, id);
+    }
+
     /** Publishes an offer for the recruiter's company — BE-JOB-01. */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
