@@ -14,6 +14,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -46,6 +47,9 @@ public abstract class JobApiTest {
     @Autowired
     protected JobRepository jobRepository;
 
+    @Autowired
+    private TransactionTemplate transaction;
+
     @BeforeEach
     void resetBackendsAndData() {
         BACKENDS.reset();
@@ -73,6 +77,15 @@ public abstract class JobApiTest {
     protected void directoryKnows(UUID companyId, String companyName) {
         BACKENDS.respond("/internal/v1/companies", 200,
                 "[{\"id\": \"%s\", \"name\": \"%s\", \"logoUrl\": null}]".formatted(companyId, companyName));
+    }
+
+    /** Reads a job back with its skills loaded, as the lazy collection needs a session. */
+    protected Job reload(UUID jobId) {
+        return transaction.execute(status -> {
+            Job job = jobRepository.findById(jobId).orElseThrow();
+            job.getRequiredSkills().size();
+            return job;
+        });
     }
 
     protected Job saveJob(UUID companyId, String title, JobStatus status) {
