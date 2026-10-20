@@ -8,12 +8,14 @@ import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -53,5 +55,21 @@ public class CvAnalysisClient {
                 .body(body)
                 .retrieve()
                 .toBodilessEntity();
+    }
+
+    /**
+     * Last parsing result stored by the AI for this candidate, or empty if none (404). Any other
+     * failure (I/O, 5xx) throws a {@link org.springframework.web.client.RestClientException}.
+     */
+    public Optional<ParsedCv> findParsedCv(UUID candidateId) {
+        try {
+            return Optional.ofNullable(aiService.get()
+                    .uri("/api/v1/ai/cv-parsing/candidates/{id}", candidateId)
+                    .headers(signer::addServiceIdentity)
+                    .retrieve()
+                    .body(ParsedCv.class));
+        } catch (HttpClientErrorException.NotFound e) {
+            return Optional.empty();
+        }
     }
 }
