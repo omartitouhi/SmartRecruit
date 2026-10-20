@@ -9,6 +9,7 @@ resources:
   - ingress.yaml
   - hpa.yaml
   - pdb.yaml
+  - networkpolicies.yaml
 images:
   - name: ghcr.io/omartitouhi/smartrecruit-auth-service
     newTag: latest
