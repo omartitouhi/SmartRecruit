@@ -25,3 +25,10 @@ management:
 internal-auth:
   # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
   secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}
+
+services:
+  # Backend-to-backend calls (HTTP/1.1, signed SERVICE identity).
+  job-service-uri: ${JOB_SERVICE_URI:http://localhost:8083}
+  user-service-uri: ${USER_SERVICE_URI:http://localhost:8082}
+  ai-service-uri: ${AI_SERVICE_URI:http://localhost:8000}
+  dashboard-service-uri: ${DASHBOARD_SERVICE_URI:http://localhost:8085}

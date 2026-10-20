@@ -10,3 +10,9 @@ spring:
 
 internal-auth:
   secret: test-only-internal-auth-secret
+
+services:
+  job-service-uri: http://localhost:1
+  user-service-uri: http://localhost:1
+  ai-service-uri: http://localhost:1
+  dashboard-service-uri: http://localhost:1
