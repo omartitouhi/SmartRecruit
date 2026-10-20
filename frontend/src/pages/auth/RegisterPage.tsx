@@ -20,31 +20,33 @@ export function RegisterPage() {
   const [role, setRole] = useState<RegisterRequest['role']>(params.get('role') === 'recruiter' ? 'RECRUITER' : 'CANDIDATE');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState({ email: false, password: false });
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  function validate() {
-    const next: Record<string, string> = {};
-    if (!EMAIL.test(email.trim())) next.email = 'Saisissez un email valide, par exemple prenom.nom@mail.tn.';
-    if (password.length < 8) next.password = 'Au moins 8 caractères.';
-    else if (password.length > 72) next.password = '72 caractères au maximum.';
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  }
+  // Recomputed on every keystroke: an error shows once its field was visited, and clears as soon as it is fixed.
+  const problems: Record<string, string> = {};
+  if (!EMAIL.test(email.trim())) problems.email = 'Saisissez un email valide, par exemple prenom.nom@mail.tn.';
+  if (password.length < 8) problems.password = 'Au moins 8 caractères.';
+  else if (password.length > 72) problems.password = '72 caractères au maximum.';
+  const errors = {
+    email: touched.email ? (problems.email ?? serverErrors.email) : undefined,
+    password: touched.password ? (problems.password ?? serverErrors.password) : undefined,
+  };
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setFormError(null);
-    if (!validate()) return;
+    setTouched({ email: true, password: true });
+    if (Object.keys(problems).length) return;
     setSubmitting(true);
     try {
       await register({ email, password, role });
-      // First stop: the profile (candidate) or the company (recruiter).
-      navigate(role === 'CANDIDATE' ? '/candidate/profile?welcome=1' : '/recruiter/company?welcome=1', { replace: true });
+      navigate('/login?registered=1', { replace: true, state: { email: email.trim() } });
     } catch (err) {
       const ui = toUiError(err);
-      setErrors(ui.fieldErrors);
+      setServerErrors(ui.fieldErrors);
       setFormError(ui.status === 409 ? 'Un compte existe déjà avec cet email. Connectez-vous plutôt.' : ui.message);
       setSubmitting(false);
     }
@@ -87,6 +89,7 @@ export function RegisterPage() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
             error={errors.email}
             required
           />
@@ -96,6 +99,7 @@ export function RegisterPage() {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, password: true }))}
             hint="Entre 8 et 72 caractères."
             error={errors.password}
             required

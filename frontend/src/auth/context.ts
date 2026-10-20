@@ -8,7 +8,7 @@ export interface AuthContextValue {
   status: AuthStatus;
   account: Account | null;
   login(email: string, password: string): Promise<Account>;
-  /** Crée le compte puis connecte directement l'utilisateur. */
+  /** Crée le compte sans le connecter : l'utilisateur passe ensuite par la page de connexion. */
   register(request: RegisterRequest): Promise<Account>;
   logout(): Promise<void>;
 }

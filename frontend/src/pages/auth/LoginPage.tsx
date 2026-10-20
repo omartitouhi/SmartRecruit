@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { isMocked } from '../../api/client';
 import { DEMO_ACCOUNTS, DEMO_PASSWORD } from '../../api/mock/seed';
 import { HOME_BY_ROLE, useAuth } from '../../auth/context';
@@ -21,7 +21,8 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const [email, setEmail] = useState('');
+  const registeredEmail = (useLocation().state as { email?: string } | null)?.email;
+  const [email, setEmail] = useState(registeredEmail ?? '');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -65,6 +66,11 @@ export function LoginPage() {
         }
       >
         <form className="form" onSubmit={onSubmit} noValidate>
+          {params.get('registered') && !error && (
+            <Alert tone="success" title="Compte créé">
+              Connectez-vous avec votre email et votre mot de passe pour commencer.
+            </Alert>
+          )}
           {error && <Alert tone="error">{error}</Alert>}
           <TextField
             label="Email"
