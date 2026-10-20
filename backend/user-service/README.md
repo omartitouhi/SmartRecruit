@@ -52,6 +52,12 @@ réussie n'est pas rejouée. Le suivi (`deleted_candidates`) conserve la date li
 (suppression + 30 jours) ; une suppression encore incomplète après cette date est journalisée
 en `ERROR`. Variables : `AUTH_SERVICE_URI`, `AI_SERVICE_URI`.
 
+## Audit
+
+Lorsqu'un RECRUITER ou un ADMIN lit `GET /candidates/{id}` ou télécharge un CV, un événement
+`PROFILE_VIEWED` / `CV_VIEWED` est envoyé en tâche de fond à `POST {DASHBOARD_SERVICE_URI}/internal/v1/audit-events`
+(par défaut `http://localhost:8085`). Un échec est journalisé sans donnée personnelle et n'affecte jamais la réponse.
+
 ## Endpoints
 
 - `GET /api/v1/users/candidates/me` — (CANDIDATE) profil du candidat connecté, `404` s'il n'existe pas encore (BE-USER-03)
@@ -61,7 +67,17 @@ en `ERROR`. Variables : `AUTH_SERVICE_URI`, `AI_SERVICE_URI`.
 - `GET /api/v1/users/candidates/{id}/cv` — téléchargement du CV (cible de `cvUrl`) : le candidat lui-même, RECRUITER ou ADMIN
 - `DELETE /api/v1/users/candidates/me?confirm=true` — (CANDIDATE) droit à l'oubli : profil et CV supprimés immédiatement, seul un marqueur sans donnée personnelle est conservé ; toute réécriture ultérieure renvoie `410` (BE-USER-04)
 - `GET /api/v1/users/candidates/{id}` — (RECRUITER, ADMIN) profil d'un candidat ; pour un compte supprimé : `{"id": ..., "deleted": true}` sans aucune donnée personnelle
+- `GET /api/v1/users/candidates/me/cv-suggestions` — (CANDIDATE) données extraites du dernier CV analysé (ai-service), dates en `YYYY-MM`, à valider puis enregistrer via PUT/PATCH ; `404` sans CV analysé, `503` si l'IA est indisponible (BE-CV-02). `cvAnalysisStatus` (`NONE|PENDING|DONE|FAILED`) du profil indique l'état de l'analyse
+- `POST /api/v1/users/companies` — (RECRUITER) crée l'entreprise, le créateur en est le premier membre ; `409` s'il en a déjà une (BE-COMP-01)
+- `GET /api/v1/users/companies/me` — (RECRUITER) son entreprise avec la liste des membres, `404` sinon (BE-COMP-01)
+- `GET /api/v1/users/companies/{id}` — (tout connecté) vue publique sans les membres (BE-COMP-01)
+- `PATCH /api/v1/users/companies/{id}` — (RECRUITER membre) JSON Merge Patch ; `403` pour un non-membre (BE-COMP-02)
+- `POST` / `GET /api/v1/users/companies/{id}/invitations` — (RECRUITER membre) invite un recruteur par email (jeton aléatoire stocké haché, valable 7 jours, lien journalisé faute de serveur mail) / liste les invitations ; `409` si une invitation est déjà en attente (BE-COMP-03)
+- `POST /api/v1/users/companies/invitations/accept` — (RECRUITER) `{token}` rattache l'appelant à l'entreprise ; `400` jeton inconnu, `410` expiré ou déjà utilisé, `409` s'il a déjà une entreprise (BE-COMP-03)
 - `GET /internal/v1/companies?ids=...` — (SERVICE, non routé par le gateway) nom et logo d'entreprises, utilisé par job-service pour les recommandations (BE-REC-01)
+- `GET /internal/v1/companies/by-member/{accountId}` — (SERVICE) entreprise d'un recruteur `{id,name,logoUrl}`, `404` sinon
+- `GET /internal/v1/candidates/{id}/readiness` — (SERVICE) `{profileComplete, hasCv, cvAnalysisStatus, cvParsedAt}`, utilisé par application-service
+- `GET /internal/v1/stats` — (SERVICE) `{candidateProfiles, companies}` pour dashboard-service
 - `GET /api/v1/ping` — health check applicatif
 - `GET /actuator/health` — health check Spring Boot Actuator
 
