@@ -29,6 +29,9 @@ services:
       DB_PASSWORD: smartrecruit
       JWT_SECRET: dev-only-secret-change-in-production
       INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      # Administrateur de démarrage (développement uniquement : surcharger dans .env).
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@smartrecruit.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin-Dev-2026!}
     depends_on:
       postgres:
         condition: service_healthy
@@ -46,6 +49,7 @@ services:
       CV_STORAGE_DIR: /data/cvs
       AUTH_SERVICE_URI: http://auth-service:8081
       AI_SERVICE_URI: http://ai-service:8000
+      DASHBOARD_SERVICE_URI: http://dashboard-service:8085
       CV_ENCRYPTION_KEY: c21hcnRyZWNydWl0LWRldi1vbmx5LWN2LWtleS0zMmI=
     volumes:
       - cv_data:/data/cvs
@@ -65,6 +69,7 @@ services:
       INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
       AI_SERVICE_URI: http://ai-service:8000
       USER_SERVICE_URI: http://user-service:8082
+      APPLICATION_SERVICE_URI: http://application-service:8084
     depends_on:
       postgres:
         condition: service_healthy
@@ -79,6 +84,10 @@ services:
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
       INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      JOB_SERVICE_URI: http://job-service:8083
+      USER_SERVICE_URI: http://user-service:8082
+      AI_SERVICE_URI: http://ai-service:8000
+      DASHBOARD_SERVICE_URI: http://dashboard-service:8085
     depends_on:
       postgres:
         condition: service_healthy
@@ -93,6 +102,10 @@ services:
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
       INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      AUTH_SERVICE_URI: http://auth-service:8081
+      USER_SERVICE_URI: http://user-service:8082
+      JOB_SERVICE_URI: http://job-service:8083
+      APPLICATION_SERVICE_URI: http://application-service:8084
     depends_on:
       postgres:
         condition: service_healthy
