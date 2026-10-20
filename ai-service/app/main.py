@@ -1,10 +1,13 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.database import init_db
+from app.core.database import get_session, init_db
 from app.core.errors import register_error_handlers
 from app.routers import candidate_data, cv_parsing, job_analysis, matching, recommendation, skill_gap
 
@@ -41,3 +44,13 @@ async def ping():
         "status": "UP",
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@app.get(f"{API_PREFIX}/ready")
+def ready(session: Session = Depends(get_session)):
+    """Sonde de disponibilité (Kubernetes) : le service n'est prêt que si ai_db répond."""
+    try:
+        session.execute(text("SELECT 1"))
+    except SQLAlchemyError as exc:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "Base de données indisponible.") from exc
+    return {"service": settings.service_name, "status": "READY"}
