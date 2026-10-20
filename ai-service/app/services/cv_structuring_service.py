@@ -3,9 +3,11 @@ import re
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from app.core.config import settings
 from app.schemas.common import CVParsingResult, ParsedEducation, ParsedExperience
 from app.services.grounding import appears_in, dedupe
 from app.services.llm_client import OpenRouterClient
+from app.services.rules_cv import parse_cv_rules
 
 log = logging.getLogger(__name__)
 
@@ -95,6 +97,8 @@ async def parse_cv_text(text: str, llm: OpenRouterClient) -> CVParsingResult:
 
     Lève `LLMNotConfiguredError` / `LLMError` : aucune donnée n'est inventée en cas d'échec.
     """
+    if settings.ai_engine == "rules":
+        return parse_cv_rules(text)
     output = await llm.complete_json(
         SYSTEM_PROMPT, f"Texte du CV :\n\"\"\"\n{text[:MAX_CV_TEXT_CHARS]}\n\"\"\"", LLMCVOutput
     )

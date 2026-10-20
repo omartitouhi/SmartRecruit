@@ -5,10 +5,12 @@ from datetime import datetime, timezone
 from pydantic import ConfigDict
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.models import JobAnalysis
 from app.schemas.common import JobAnalysisResult
 from app.services.grounding import appears_in, dedupe
 from app.services.llm_client import LLMError, OpenRouterClient
+from app.services.rules_job import analyze_job_rules
 
 MAX_JOB_TEXT_CHARS = 12_000
 
@@ -44,6 +46,8 @@ async def analyze_job_description(
     Sortie validée par schéma strict ; les compétences absentes du texte de l'offre
     sont écartées. LLMError / LLMNotConfiguredError sinon : rien n'est inventé.
     """
+    if settings.ai_engine == "rules":
+        return analyze_job_rules(description, title)
     offer = f"Titre : {title}\n" if title else ""
     offer += f"Description :\n\"\"\"\n{description[:MAX_JOB_TEXT_CHARS]}\n\"\"\""
     output = await llm.complete_json(SYSTEM_PROMPT, offer, _StrictJobAnalysis)

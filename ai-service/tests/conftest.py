@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from app.core.config import settings
 from app.core.database import get_session, init_db
 from app.main import app
 from app.services.llm_client import get_llm_client, parse_llm_json
@@ -29,6 +30,12 @@ class StubLLM:
             raise self.error
         response = self.responses.pop(0)
         return parse_llm_json(response if isinstance(response, str) else json.dumps(response), schema)
+
+
+@pytest.fixture(autouse=True)
+def llm_engine(monkeypatch):
+    """Les tests historiques couvrent le chemin LLM ; tests/test_rules_*.py passent en moteur à règles."""
+    monkeypatch.setattr(settings, "ai_engine", "llm")
 
 
 @pytest.fixture

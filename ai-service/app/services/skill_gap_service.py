@@ -3,10 +3,12 @@ import logging
 
 from pydantic import BaseModel, ConfigDict
 
+from app.core.config import settings
 from app.schemas.common import CVParsingResult, SkillGapResult
 from app.services.grounding import normalize
 from app.services.job_analysis_service import AnalyzedJob
 from app.services.llm_client import OpenRouterClient
+from app.services.rules_match import skill_gap_rules
 
 log = logging.getLogger(__name__)
 
@@ -48,6 +50,8 @@ async def analyze_skill_gap(cv: CVParsingResult, job: AnalyzedJob, llm: OpenRout
     """Compétences requises par l'offre absentes du profil, selon le LLM (AI-REC-02)."""
     if not job.analysis.required_skills:
         return SkillGapResult(missing_skills=[])
+    if settings.ai_engine == "rules":
+        return SkillGapResult(missing_skills=skill_gap_rules(cv, job))
     prompt = (
         f"Compétences du candidat : {json.dumps(cv.skills, ensure_ascii=False)}\n"
         f"Expériences du candidat : {json.dumps([e.title for e in cv.experiences], ensure_ascii=False)}\n"

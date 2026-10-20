@@ -3,10 +3,12 @@ import logging
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.config import settings
 from app.schemas.common import CVParsingResult, Recommendation, RecommendationResult
 from app.services.grounding import normalize
 from app.services.job_analysis_service import AnalyzedJob
 from app.services.llm_client import OpenRouterClient
+from app.services.rules_match import recommend_rules
 
 log = logging.getLogger(__name__)
 
@@ -89,6 +91,8 @@ async def recommend_jobs(
     """Offres classées par le LLM pour un candidat (AI-REC-01)."""
     if not jobs:
         return RecommendationResult(recommendations=[])
+    if settings.ai_engine == "rules":
+        return recommend_rules(cv, jobs)
     candidates = shortlist(cv, jobs)
     output = await llm.complete_json(SYSTEM_PROMPT, _prompt(cv, candidates), LLMRecommendations)
     return RecommendationResult(recommendations=keep_known_jobs(output, candidates))

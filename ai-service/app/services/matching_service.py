@@ -7,6 +7,7 @@ from app.core.config import settings
 from app.schemas.common import CamelModel, CVParsingResult, MatchCriterion, MatchScore
 from app.services.job_analysis_service import AnalyzedJob
 from app.services.llm_client import OpenRouterClient
+from app.services.rules_match import match_criteria_rules
 from app.services.scoring import CRITERIA_WEIGHTS, compute_global_score
 
 CRITERIA_LABELS = {
@@ -76,6 +77,11 @@ async def evaluate_match(cv: CVParsingResult, job: AnalyzedJob, llm: OpenRouterC
     Une sortie non conforme (sous-score hors 0-100, critère manquant, champ inconnu)
     ou un échec OpenRouter lève LLMError (502) / LLMNotConfiguredError (503).
     """
+    if settings.ai_engine == "rules":
+        return MatchEvaluation(**{
+            criterion: CriterionEvaluation(sub_score=score, explanation=explanation)
+            for criterion, (score, explanation) in match_criteria_rules(cv, job).items()
+        })
     return await llm.complete_json(
         SYSTEM_PROMPT, _prompt(cv, job), MatchEvaluation, timeout_seconds=settings.matching_timeout_seconds
     )

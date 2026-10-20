@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     db_user: str = "smartrecruit"
     db_password: str = "smartrecruit"
 
+    # "rules" : moteur à règles, réponse instantanée sans LLM (par défaut) ; "llm" : tâches confiées à OpenRouter.
+    ai_engine: str = "rules"
+
     # LLM via OpenRouter (structuration CV, analyse d'offre, matching, recommandation, skill gap).
     # Sans clé, les endpoints qui en dépendent répondent 503.
     openrouter_api_key: str | None = None
