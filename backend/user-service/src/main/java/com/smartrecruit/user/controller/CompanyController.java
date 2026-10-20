@@ -3,7 +3,10 @@ package com.smartrecruit.user.controller;
 import com.smartrecruit.user.dto.CompanyPublicResponse;
 import com.smartrecruit.user.dto.CompanyRequest;
 import com.smartrecruit.user.dto.CompanyResponse;
+import com.smartrecruit.user.dto.InvitationRequest;
+import com.smartrecruit.user.dto.InvitationResponse;
 import com.smartrecruit.user.security.AuthenticatedUser;
+import com.smartrecruit.user.service.CompanyInvitationService;
 import com.smartrecruit.user.service.CompanyPatchParser;
 import com.smartrecruit.user.service.CompanyService;
 import jakarta.validation.Valid;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -33,6 +37,7 @@ public class CompanyController {
 
     private final CompanyService companyService;
     private final CompanyPatchParser patchParser;
+    private final CompanyInvitationService invitationService;
 
     /** Creates the recruiter's company; they become its first member — BE-COMP-01. */
     @PostMapping
@@ -55,6 +60,22 @@ public class CompanyController {
     public CompanyResponse patch(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
                                  @RequestBody JsonNode body) {
         return companyService.patch(user.id(), id, patchParser.parse(body));
+    }
+
+    /** Invites a recruiter by email; the token is only delivered through the notifier — BE-COMP-03. */
+    @PostMapping("/{id}/invitations")
+    @PreAuthorize("hasRole('RECRUITER')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public InvitationResponse invite(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
+                                     @Valid @RequestBody InvitationRequest request) {
+        return invitationService.invite(user.id(), id, request);
+    }
+
+    @GetMapping("/{id}/invitations")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public List<InvitationResponse> invitations(@AuthenticationPrincipal AuthenticatedUser user,
+                                                @PathVariable UUID id) {
+        return invitationService.list(user.id(), id);
     }
 
     /** Public view (no member ids) for any connected user, e.g. a candidate reading an offer. */
