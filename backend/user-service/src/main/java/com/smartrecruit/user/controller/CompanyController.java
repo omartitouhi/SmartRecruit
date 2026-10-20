@@ -1,5 +1,6 @@
 package com.smartrecruit.user.controller;
 
+import com.smartrecruit.user.dto.AcceptInvitationRequest;
 import com.smartrecruit.user.dto.CompanyPublicResponse;
 import com.smartrecruit.user.dto.CompanyRequest;
 import com.smartrecruit.user.dto.CompanyResponse;
@@ -76,6 +77,14 @@ public class CompanyController {
     public List<InvitationResponse> invitations(@AuthenticationPrincipal AuthenticatedUser user,
                                                 @PathVariable UUID id) {
         return invitationService.list(user.id(), id);
+    }
+
+    /** The invited recruiter joins the inviting company with the token of the link — BE-COMP-03. */
+    @PostMapping("/invitations/accept")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public CompanyResponse acceptInvitation(@AuthenticationPrincipal AuthenticatedUser user,
+                                            @Valid @RequestBody AcceptInvitationRequest request) {
+        return invitationService.accept(user.id(), request.token());
     }
 
     /** Public view (no member ids) for any connected user, e.g. a candidate reading an offer. */
