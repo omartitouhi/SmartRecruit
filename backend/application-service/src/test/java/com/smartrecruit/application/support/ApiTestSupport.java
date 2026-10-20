@@ -72,6 +72,11 @@ public abstract class ApiTestSupport {
                         cvParsedAt == null ? "null" : "\"" + cvParsedAt + "\""));
     }
 
+    protected static void stubCompanyOf(UUID recruiterId, UUID companyId) {
+        FakeServices.on("GET /internal/v1/companies/by-member/" + recruiterId, 200,
+                "{\"id\":\"%s\",\"name\":\"Acme\",\"logoUrl\":null}".formatted(companyId));
+    }
+
     protected static final String AI_SCORE = "POST /api/v1/ai/matching/score";
 
     protected static void stubScore(double score) {
