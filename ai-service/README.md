@@ -34,7 +34,17 @@ uvicorn app.main:app --reload
 Nécessite une instance PostgreSQL (voir
 `docker-compose.yml` du dépôt `smartrecruit-backend` pour lancer toute la stack).
 
-## LLM (OpenRouter)
+## Moteur : règles (défaut) ou LLM
+
+| `AI_ENGINE` | Comportement |
+|---|---|
+| `rules` _(défaut)_ | Réponse en quelques millisecondes, sans clé ni réseau : CV (sections, dates, catalogue de compétences), analyse d'offre, matching, skill gap et recommandation sont calculés par règles. Chaque valeur est lue dans le texte source et chaque score garde son explication critère par critère. |
+| `llm` | Les mêmes tâches sont confiées au LLM OpenRouter (voir ci-dessous) : meilleure compréhension sémantique, plusieurs secondes de latence, clé obligatoire. |
+
+Limites du moteur à règles : compétences reconnues = celles du catalogue (`app/services/skills_catalog.py`) et de la rubrique
+« Compétences » du CV ; mise en page de CV très atypique (sans rubriques ni dates lisibles) donne des listes vides plutôt que des données inventées.
+
+## LLM (OpenRouter, `AI_ENGINE=llm`)
 
 | Variable | Défaut | Rôle |
 |---|---|---|
