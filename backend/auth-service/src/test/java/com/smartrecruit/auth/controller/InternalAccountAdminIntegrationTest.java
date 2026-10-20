@@ -188,4 +188,22 @@ class InternalAccountAdminIntegrationTest {
         setStatus(alice, "{\"status\": \"DISABLED\"}", "CANDIDATE").andExpect(status().isForbidden());
         login(mockMvc, "alice@example.com", PASSWORD).andExpect(status().isOk());
     }
+
+    @Test
+    void statsCountEveryRoleAndStatusIncludingEmptyOnes() throws Exception {
+        call(get("/internal/v1/accounts/stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(3))
+                .andExpect(jsonPath("$.byRole.CANDIDATE").value(2))
+                .andExpect(jsonPath("$.byRole.RECRUITER").value(1))
+                .andExpect(jsonPath("$.byRole.ADMIN").value(0))
+                .andExpect(jsonPath("$.byStatus.ACTIVE").value(2))
+                .andExpect(jsonPath("$.byStatus.DISABLED").value(1))
+                .andExpect(jsonPath("$.byStatus.DELETED").value(0));
+    }
+
+    @Test
+    void statsAreReservedToBackendServices() throws Exception {
+        mockMvc.perform(signed(get("/internal/v1/accounts/stats"), "ADMIN")).andExpect(status().isForbidden());
+    }
 }
