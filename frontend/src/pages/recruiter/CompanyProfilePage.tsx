@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { applicationsApi } from '../../api/applications';
-import { companiesApi, jobsApi, type CompanyRequest, type JobSummary } from '../../api/jobs';
+import { companiesApi, type CompanyRequest } from '../../api/companies';
+import { jobsApi, type JobSummary } from '../../api/jobs';
 import { Button, ButtonLink } from '../../components/ui/Button';
 import { TextAreaField, TextField } from '../../components/ui/Field';
 import { Alert, EmptyState, ErrorState, PageSkeleton, SkeletonRows } from '../../components/ui/States';
@@ -249,7 +250,7 @@ function CompanyForm({ initial, onSaved, onCancel }: {
     setSaving(true);
     setFormError(null);
     try {
-      onSaved(await companiesApi.saveMine(form));
+      onSaved(await (initial ? companiesApi.update(initial.id, form) : companiesApi.create(form)));
       notify('Entreprise enregistrée.');
     } catch (err) {
       const ui = toUiError(err);

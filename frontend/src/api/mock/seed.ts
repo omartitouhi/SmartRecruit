@@ -7,6 +7,7 @@ import type {
   AuditLogEntry,
   CandidateProfile,
   Company,
+  Invitation,
   Job,
 } from '../../types';
 import { computeMatch } from './scoring';
@@ -33,6 +34,8 @@ export interface MockDb {
   cvFiles: Record<string, string>;
   /** Horodatage (ms) du dernier dépôt de CV par candidat : l'analyse « se termine » quelques secondes plus tard. */
   cvUploadedAt: Record<string, number>;
+  /** Le jeton reste côté « serveur » : l'API ne le renvoie jamais. */
+  invitations: (Invitation & { companyId: string; token: string })[];
 }
 
 export const DB_VERSION = 3;
@@ -376,5 +379,16 @@ export function createSeed(): MockDb {
     audit,
     cvFiles: Object.fromEntries(profiles.map((p) => [p.id, `CV-${p.firstName}-${p.lastName}.pdf`])),
     cvUploadedAt: {},
+    invitations: [
+      {
+        id: '0b8a3c0e-5f1d-4b7e-9d52-0a8c5e6f7a11',
+        companyId: fret.id,
+        token: 'demo-invitation-token',
+        email: 'nouveau.recruteur@demo.tn',
+        status: 'PENDING',
+        createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+        expiresAt: new Date(Date.now() + 5 * 86400000).toISOString(),
+      },
+    ],
   };
 }

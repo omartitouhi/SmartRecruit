@@ -1,5 +1,4 @@
 import type {
-  Company,
   ContractType,
   ExperienceLevel,
   Job,
@@ -8,7 +7,7 @@ import type {
   RecommendedJob,
 } from '../types';
 import { apiClient, isMocked } from './client';
-import { mockCompaniesApi, mockJobsApi } from './mock/handlers';
+import { mockJobsApi } from './mock/handlers';
 
 /**
  * Offre enrichie du nom de l'entreprise, comme RecommendedJob (§4.7).
@@ -74,23 +73,3 @@ const httpJobsApi: JobsApi = {
 };
 
 export const jobsApi: JobsApi = isMocked('jobs') ? mockJobsApi : httpJobsApi;
-
-export type CompanyRequest = Pick<Company, 'name' | 'sector' | 'description' | 'logoUrl'>;
-
-export interface CompaniesApi {
-  /** Entreprise du recruteur connecté — 404 s'il n'en a pas encore. */
-  getMine(): Promise<Company>;
-  saveMine(request: CompanyRequest): Promise<Company>;
-}
-
-// Contrat à confirmer avec user-service (seul /internal/v1/companies existe, entre services).
-const httpCompaniesApi: CompaniesApi = {
-  async getMine() {
-    return (await apiClient.get<Company>('/users/companies/me')).data;
-  },
-  async saveMine(request) {
-    return (await apiClient.put<Company>('/users/companies/me', request)).data;
-  },
-};
-
-export const companiesApi: CompaniesApi = isMocked('companies') ? mockCompaniesApi : httpCompaniesApi;

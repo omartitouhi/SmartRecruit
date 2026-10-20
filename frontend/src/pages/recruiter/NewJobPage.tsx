@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { companiesApi, jobsApi, type JobCreateRequest } from '../../api/jobs';
+import { companiesApi } from '../../api/companies';
+import { jobsApi, type JobCreateRequest } from '../../api/jobs';
 import { Button, ButtonLink } from '../../components/ui/Button';
 import { SelectField, TextAreaField, TextField } from '../../components/ui/Field';
 import { Alert, EmptyState, ErrorState, PageSkeleton } from '../../components/ui/States';
