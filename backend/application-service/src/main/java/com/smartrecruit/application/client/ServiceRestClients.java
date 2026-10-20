@@ -1,12 +1,17 @@
 package com.smartrecruit.application.client;
 
 import com.smartrecruit.application.security.InternalIdentityVerifier;
+import com.smartrecruit.application.exception.ApiException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.net.http.HttpClient;
 import java.time.Clock;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -39,5 +44,16 @@ final class ServiceRestClients {
                     return execution.execute(request, body);
                 })
                 .build();
+    }
+
+    /** GET returning empty on 404; any other failure becomes a 503 naming the unavailable service. */
+    static <T> Optional<T> find(RestClient client, Class<T> type, String service, String uri, Object... variables) {
+        try {
+            return Optional.ofNullable(client.get().uri(uri, variables).retrieve().body(type));
+        } catch (HttpClientErrorException.NotFound e) {
+            return Optional.empty();
+        } catch (RestClientException e) {
+            throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, service + " indisponible");
+        }
     }
 }
