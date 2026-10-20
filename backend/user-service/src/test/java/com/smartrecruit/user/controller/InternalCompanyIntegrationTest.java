@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.smartrecruit.user.support.GatewayIdentity.as;
@@ -72,6 +74,38 @@ class InternalCompanyIntegrationTest {
                         .with(as(verifier, UUID.randomUUID(), "ADMIN")))
                 .andExpect(status().isForbidden());
         mockMvc.perform(get("/internal/v1/companies").param("ids", acme.toString()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findsTheCompanyOfAMember() throws Exception {
+        UUID recruiter = UUID.randomUUID();
+        UUID teammate = UUID.randomUUID();
+        companyRepository.save(Company.builder().id(UUID.randomUUID()).name("Initech").sector("IT")
+                .logoUrl("https://initech.test/logo.png").members(new ArrayList<>(List.of(recruiter, teammate))).build());
+        UUID initech = companyRepository.findByMember(teammate).orElseThrow().getId();
+
+        mockMvc.perform(get("/internal/v1/companies/by-member/" + teammate).with(as(verifier, SERVICE_ID, "SERVICE")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(initech.toString()))
+                .andExpect(jsonPath("$.name").value("Initech"))
+                .andExpect(jsonPath("$.logoUrl").value("https://initech.test/logo.png"))
+                .andExpect(jsonPath("$.members").doesNotExist());
+    }
+
+    @Test
+    void byMemberIs404ForAnAccountWithoutCompany() throws Exception {
+        mockMvc.perform(get("/internal/v1/companies/by-member/" + UUID.randomUUID())
+                        .with(as(verifier, SERVICE_ID, "SERVICE")))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void byMemberIsReservedToBackendServices() throws Exception {
+        mockMvc.perform(get("/internal/v1/companies/by-member/" + UUID.randomUUID())
+                        .with(as(verifier, UUID.randomUUID(), "RECRUITER")))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/internal/v1/companies/by-member/" + UUID.randomUUID()))
                 .andExpect(status().isUnauthorized());
     }
 }

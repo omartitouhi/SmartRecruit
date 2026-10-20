@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,5 +39,13 @@ public class InternalCompanyController {
             throw new ApiException(HttpStatus.BAD_REQUEST, "100 entreprises maximum par requête");
         }
         return companyRepository.findAllById(ids).stream().map(CompanySummaryResponse::from).toList();
+    }
+
+    /** Company of a recruiter, used by dashboard-service and job-service; 404 if the account has none. */
+    @GetMapping("/by-member/{accountId}")
+    @Transactional(readOnly = true)
+    public CompanySummaryResponse findByMember(@PathVariable UUID accountId) {
+        return companyRepository.findByMember(accountId).map(CompanySummaryResponse::from)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Aucune entreprise pour ce compte"));
     }
 }
