@@ -20,7 +20,7 @@ public record CompanyRequest(
         String description,
 
         @Size(max = 500, message = "L'URL du logo ne doit pas dépasser 500 caractères")
-        @Pattern(regexp = "^https?://\S+$", message = "L'URL du logo doit commencer par http:// ou https://")
+        @Pattern(regexp = "^https?://\\S+$", message = "L'URL du logo doit commencer par http:// ou https://")
         String logoUrl
 ) {
 }
