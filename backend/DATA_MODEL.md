@@ -114,8 +114,9 @@ Contrats complets des entreprises, invitations, offres, candidatures, statistiqu
 | id | UUID | |
 | jobId | UUID | |
 | candidateId | UUID | |
+| companyId | UUID | entreprise propriétaire de l'offre, copiée à la candidature (stockage interne, non exposé) |
 | status | ApplicationStatus | |
-| matchScore | MatchScore \| null | voir §4 — objet complet, pas juste le nombre |
+| matchScore | MatchScore \| null | voir §4 — objet complet, pas juste le nombre ; `null` tant que l'IA n'a pas répondu ou si elle a échoué |
 | appliedAt | datetime | |
 | statusHistory | `{ status, changedAt, changedBy }[]` | pour l'audit (`BE-ADMIN-03`) |
 
