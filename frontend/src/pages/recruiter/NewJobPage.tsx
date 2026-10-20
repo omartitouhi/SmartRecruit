@@ -53,7 +53,7 @@ export function NewJobPage() {
     const found: Record<string, string> = {};
     if (!form.title.trim()) found.title = 'L’intitulé est obligatoire.';
     if (!form.location.trim()) found.location = 'Le lieu est obligatoire.';
-    if (!form.description.trim()) found.description = 'Décrivez le poste en quelques lignes.';
+    if (form.description.trim().length < 20) found.description = 'Décrivez le poste en quelques lignes (20 caractères au minimum).';
     if (!form.requiredSkills.length) found.requiredSkills = 'Ajoutez au moins une compétence : elles comptent pour 50 % du score.';
     setErrors(found);
     if (Object.keys(found).length) return;
@@ -90,9 +90,9 @@ export function NewJobPage() {
 
       <form className="panel form" onSubmit={onSubmit} noValidate>
         {formError && <Alert tone="error">{formError}</Alert>}
-        <TextField label="Intitulé du poste" placeholder="Développeur·se backend Java" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} error={errors.title} />
+        <TextField label="Intitulé du poste" placeholder="Développeur·se backend Java" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} error={errors.title} maxLength={255} />
         <div className="form-row">
-          <TextField label="Lieu" placeholder="Tunis, Les Berges du Lac" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} error={errors.location} />
+          <TextField label="Lieu" placeholder="Tunis, Les Berges du Lac" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} error={errors.location} maxLength={255} />
           <SelectField
             label="Contrat"
             value={form.contractType}
@@ -111,13 +111,15 @@ export function NewJobPage() {
           values={form.requiredSkills}
           onChange={(v) => setForm({ ...form, requiredSkills: v })}
           placeholder="Java, Spring Boot, PostgreSQL…"
-          hint="Entrée ou virgule pour ajouter."
+          max={50}
+          hint="Entrée ou virgule pour ajouter (50 au maximum)."
           error={errors.requiredSkills}
         />
         <TextAreaField
           label="Description du poste"
           rows={7}
           value={form.description}
+          maxLength={20000}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           hint="Les missions, l’équipe, ce qui rend le poste intéressant."
           error={errors.description}
