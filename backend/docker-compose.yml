@@ -119,6 +119,7 @@ services:
       DB_NAME: ai_db
       DB_USER: smartrecruit
       DB_PASSWORD: smartrecruit
+      AI_ENGINE: ${AI_ENGINE:-rules}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
       OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-haiku-5.5}
     depends_on:

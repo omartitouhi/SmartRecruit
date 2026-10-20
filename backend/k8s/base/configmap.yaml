@@ -12,6 +12,7 @@ data:
   APPLICATION_SERVICE_URI: http://application-service:8084
   DASHBOARD_SERVICE_URI: http://dashboard-service:8085
   AI_SERVICE_URI: http://ai-service:8000
+  AI_ENGINE: rules
   OPENROUTER_MODEL: anthropic/claude-haiku-5.5
   RATE_LIMIT_MAX_REQUESTS: "10"
   SERVER_SHUTDOWN: graceful
