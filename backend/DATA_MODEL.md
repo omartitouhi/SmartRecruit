@@ -103,6 +103,8 @@ Contrats complets des entreprises, invitations, offres, candidatures, statistiqu
 | location | string | |
 | status | JobStatus | |
 | publishedAt | datetime \| null | |
+| updatedAt | datetime | dernière modification ; sert aussi d'invalidation au cache des scores |
+| moderationReason | string \| null | raison du retrait par un admin (`BE-ADMIN-02`), visible du propriétaire et des admins seulement |
 
 ### 3.4 `application-service` (Kadhem) — base `application_db`
 
