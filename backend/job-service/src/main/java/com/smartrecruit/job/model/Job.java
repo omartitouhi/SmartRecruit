@@ -72,4 +72,10 @@ public class Job {
 
     /** Last change of the offer; also tells downstream caches (match preview) when to recompute. */
     private Instant updatedAt;
+
+    /** Why an admin withdrew the offer (BE-ADMIN-02); set together with {@code moderatedAt}. */
+    @Column(length = 500)
+    private String moderationReason;
+
+    private Instant moderatedAt;
 }
