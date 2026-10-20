@@ -8,7 +8,8 @@ import java.time.Duration;
  * Tunables of the authentication module, bound from the {@code auth.*} keys of application.yml.
  */
 @ConfigurationProperties(prefix = "auth")
-public record AuthProperties(Jwt jwt, Lockout lockout, PasswordReset passwordReset) {
+public record AuthProperties(Jwt jwt, Lockout lockout, PasswordReset passwordReset,
+                             BootstrapAdmin bootstrapAdmin) {
 
     /**
      * @param secret              HMAC key used to sign access tokens (>= 32 bytes)
@@ -33,5 +34,12 @@ public record AuthProperties(Jwt jwt, Lockout lockout, PasswordReset passwordRes
      * @param linkBaseUrl frontend page receiving the token as {@code ?token=...}
      */
     public record PasswordReset(Duration tokenTtl, String linkBaseUrl) {
+    }
+
+    /**
+     * First administrator, created at startup when both values are set and no account has that email.
+     * Both are optional (blank means disabled).
+     */
+    public record BootstrapAdmin(String email, String password) {
     }
 }
