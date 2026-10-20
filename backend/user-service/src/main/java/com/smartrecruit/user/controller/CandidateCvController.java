@@ -1,8 +1,10 @@
 package com.smartrecruit.user.controller;
 
 import com.smartrecruit.user.dto.CandidateProfileResponse;
+import com.smartrecruit.user.dto.CvSuggestionsResponse;
 import com.smartrecruit.user.security.AuthenticatedUser;
 import com.smartrecruit.user.service.CandidateCvService;
+import com.smartrecruit.user.service.CvSuggestionsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class CandidateCvController {
 
     private final CandidateCvService cvService;
+    private final CvSuggestionsService suggestionsService;
 
     /** Upload of the connected candidate's CV (PDF, 5 MB max) — BE-USER-02. */
     @PostMapping(path = "/me/cv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -33,6 +36,13 @@ public class CandidateCvController {
     public CandidateProfileResponse upload(@AuthenticationPrincipal AuthenticatedUser user,
                                            @RequestParam(name = "file", required = false) MultipartFile file) {
         return cvService.upload(user.id(), file);
+    }
+
+    /** Data the AI extracted from the last analysed CV, to validate before saving it on the profile — BE-CV-02. */
+    @GetMapping("/me/cv-suggestions")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public CvSuggestionsResponse suggestions(@AuthenticationPrincipal AuthenticatedUser user) {
+        return suggestionsService.suggestionsFor(user.id());
     }
 
     /**
