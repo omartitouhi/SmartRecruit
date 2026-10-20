@@ -679,7 +679,7 @@ aside .alert {
 
 .hbars__row {
   display: grid;
-  grid-template-columns: 110px 1fr;
+  grid-template-columns: 150px 1fr;
   gap: var(--space-3);
   align-items: center;
   font-size: var(--text-sm);

@@ -249,6 +249,7 @@
 
 .toolbar > .field {
   flex: 1 1 180px;
+  align-self: flex-start; /* un champ avec aide ne doit pas décaler les libellés de ses voisins */
 }
 
 .section-title {
