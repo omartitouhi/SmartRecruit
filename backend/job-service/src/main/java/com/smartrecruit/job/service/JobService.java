@@ -82,6 +82,31 @@ public class JobService {
         });
     }
 
+    /**
+     * Publishes, closes or reopens an offer of the recruiter's company. A moderated offer is out of
+     * the recruiter's hands (403); other transitions are limited by {@link JobStatus#canBecome}.
+     */
+    public JobResponse changeStatus(UUID recruiterId, UUID jobId, JobStatus next) {
+        UUID companyId = recruiterCompanies.requireCompanyId(recruiterId);
+        return transaction.execute(status -> {
+            Job job = ownedJob(jobId, companyId);
+            if (job.getStatus() == JobStatus.MODERATED) {
+                throw new ApiException(HttpStatus.FORBIDDEN, "Cette offre a été retirée par modération");
+            }
+            if (!job.getStatus().canBecome(next)) {
+                throw new ApiException(HttpStatus.BAD_REQUEST,
+                        "Transition de statut interdite : %s vers %s".formatted(job.getStatus(), next));
+            }
+            Instant now = clock.instant();
+            job.setStatus(next);
+            if (next == JobStatus.PUBLISHED && job.getPublishedAt() == null) {
+                job.setPublishedAt(now);
+            }
+            job.setUpdatedAt(now);
+            return JobResponse.from(jobRepository.save(job));
+        });
+    }
+
     private Job ownedJob(UUID jobId, UUID companyId) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable"));
