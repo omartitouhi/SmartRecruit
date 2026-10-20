@@ -23,6 +23,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { CandidateRankingPage } from "./pages/recruiter/CandidateRankingPage";
 import { AcceptInvitationPage } from "./pages/recruiter/AcceptInvitationPage";
 import { CompanyProfilePage } from "./pages/recruiter/CompanyProfilePage";
+import { EditJobPage } from "./pages/recruiter/EditJobPage";
 import { NewJobPage } from "./pages/recruiter/NewJobPage";
 import { RecruiterDashboardPage } from "./pages/recruiter/RecruiterDashboardPage";
 import { RecruiterJobsPage } from "./pages/recruiter/RecruiterJobsPage";
@@ -70,6 +71,7 @@ function App() {
           <Route path="accept-invitation" element={<AcceptInvitationPage />} />
           <Route path="recruiter/jobs/new" element={<NewJobPage />} />
           <Route path="recruiter/jobs/:jobId/candidates" element={<CandidateRankingPage />} />
+          <Route path="recruiter/jobs/:jobId/edit" element={<EditJobPage />} />
         </Route>
 
         <Route element={<RequireRole roles={["ADMIN"]}><AppLayout /></RequireRole>}>
