@@ -26,3 +26,7 @@ gdpr:
 
 cv-analysis:
   enabled: false
+
+company-invitation:
+  token-ttl: 7d
+  link-base-url: http://frontend.test/invitations/accept

@@ -50,3 +50,8 @@ gdpr:
 cv-analysis:
   # BE-CV-01: call ai-service after each CV upload (asynchronous, best-effort).
   enabled: ${CV_ANALYSIS_ENABLED:true}
+
+company-invitation:
+  # BE-COMP-03: invitations to join a company; the link is logged (no mail server in the MVP).
+  token-ttl: 7d
+  link-base-url: ${COMPANY_INVITATION_LINK_BASE_URL:http://localhost:5173/invitations/accept}
