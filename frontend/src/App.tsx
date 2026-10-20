@@ -9,6 +9,7 @@ import { ForgotPasswordPage, ResetPasswordPage } from "./pages/auth/PasswordPage
 import { RegisterPage } from "./pages/auth/RegisterPage";
 import { ApplicationsPage } from "./pages/candidate/ApplicationsPage";
 import { CandidateProfilePage } from "./pages/candidate/CandidateProfilePage";
+import { JobDetailPage } from "./pages/candidate/JobDetailPage";
 import { JobSearchPage } from "./pages/candidate/JobSearchPage";
 import { MatchScorePage } from "./pages/candidate/MatchScorePage";
 import { ForbiddenPage } from "./pages/ForbiddenPage";
@@ -45,6 +46,7 @@ function App() {
         <Route element={<RequireRole roles={["CANDIDATE"]}><AppLayout /></RequireRole>}>
           <Route path="candidate/profile" element={<CandidateProfilePage />} />
           <Route path="candidate/jobs" element={<JobSearchPage />} />
+          <Route path="candidate/jobs/:jobId" element={<JobDetailPage />} />
           <Route path="candidate/applications" element={<ApplicationsPage />} />
           <Route path="candidate/match/:jobId" element={<MatchScorePage />} />
         </Route>

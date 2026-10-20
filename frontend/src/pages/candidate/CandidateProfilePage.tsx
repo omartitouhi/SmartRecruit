@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { candidatesApi, type CandidateProfileRequest } from '../../api/candidates';
 import { useAuth } from '../../auth/context';
 import { Button } from '../../components/ui/Button';
@@ -56,6 +56,7 @@ function ProfileEditor({ existing, onSaved }: {
 }) {
   const notify = useToast();
   const [params] = useSearchParams();
+  const notice = (useLocation().state as { notice?: string } | null)?.notice;
   const { account } = useAuth();
   const baseline = existing ? toForm(existing) : EMPTY;
   const baselineJson = JSON.stringify(baseline);
@@ -156,6 +157,14 @@ function ProfileEditor({ existing, onSaved }: {
         </div>
         {existing && <p className="muted">Mis à jour le {formatDate(existing.updatedAt)}</p>}
       </header>
+
+      {notice && (
+        <div style={{ marginBottom: 'var(--space-6)' }}>
+          <Alert tone="warning" title="Une étape manque avant de postuler">
+            {notice}
+          </Alert>
+        </div>
+      )}
 
       {!existing && (
         <div style={{ marginBottom: 'var(--space-6)' }}>
