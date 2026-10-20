@@ -75,6 +75,7 @@ Transitions autorisées pour `ApplicationStatus` (cf. `BE-APP-04`) :
 | languages | string[] | |
 | cvUrl | string \| null | référence au fichier stocké (chiffré, cf. `BE-SEC-01`), jamais l'URL brute du stockage : endpoint de téléchargement `/api/v1/users/candidates/{id}/cv` |
 | cvParsedAt | datetime \| null | horodatage de la dernière analyse IA réussie |
+| cvAnalysisStatus | enum | `NONE` (pas de CV) \| `PENDING` (analyse en cours) \| `DONE` \| `FAILED` (IA indisponible : l'upload reste valide, mode dégradé) — `BE-CV-02` |
 | createdAt / updatedAt | datetime | |
 | deleted | boolean | réponse API uniquement : `true` si le candidat a supprimé son compte (`BE-USER-04`) ; tous les champs personnels sont alors `null` (afficher « Compte supprimé ») |
 
@@ -84,7 +85,9 @@ Transitions autorisées pour `ApplicationStatus` (cf. `BE-APP-04`) :
 | id | UUID | |
 | name, sector, description | string | |
 | logoUrl | string \| null | |
-| members | UUID[] | accountId des recruteurs rattachés |
+| members | UUID[] | accountId des recruteurs rattachés (un recruteur n'appartient qu'à une entreprise) |
+
+Contrats complets des entreprises, invitations, offres, candidatures, statistiques et administration : [API_CONTRACTS.md](API_CONTRACTS.md).
 
 ### 3.3 `job-service` (Kadhem) — base `job_db`
 
