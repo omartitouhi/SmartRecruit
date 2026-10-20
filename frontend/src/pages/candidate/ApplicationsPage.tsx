@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { applicationsApi } from '../../api/applications';
 import { jobsApi, type JobSummary } from '../../api/jobs';
@@ -36,6 +36,23 @@ export function ApplicationsPage() {
   const [actionError, setActionError] = useState<string | null>(null);
 
   const list = rows.data ?? [];
+
+  // A new application is scored in the background: refresh quietly until every score has arrived.
+  const awaitingScore = list.some((r) => !r.application.matchScore && r.application.status !== 'WITHDRAWN');
+  useEffect(() => {
+    if (!awaitingScore) return;
+    const timer = setInterval(() => {
+      applicationsApi.mine().then(
+        (fresh) =>
+          rows.setData((prev) =>
+            (prev ?? []).map((r) => ({ ...r, application: fresh.find((a) => a.id === r.application.id) ?? r.application })),
+          ),
+        () => undefined,
+      );
+    }, 4000);
+    return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [awaitingScore]);
   const selectedId = params.get('id') ?? list[0]?.application.id;
   const selected = list.find((r) => r.application.id === selectedId);
 
@@ -98,6 +115,9 @@ export function ApplicationsPage() {
                     <th>Score</th>
                     <th>Statut</th>
                     <th>Envoyée le</th>
+                    <th>
+                      <span className="visually-hidden">Détail</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -110,7 +130,7 @@ export function ApplicationsPage() {
                       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), select(application.id))}
                     >
                       <td>
-                        <div className="cell-strong">{job?.title ?? 'Offre retirée'}</div>
+                        <div className="cell-strong">{job?.title ?? 'Offre indisponible'}</div>
                         <div className="muted">{job ? `${job.companyName ?? 'Entreprise'} · ${job.location}` : '—'}</div>
                       </td>
                       <td>
@@ -120,6 +140,11 @@ export function ApplicationsPage() {
                         <ApplicationStatusTag status={application.status} />
                       </td>
                       <td className="muted">{formatDateShort(application.appliedAt)}</td>
+                      <td>
+                        <Link className="text-link" to={`/candidate/applications?id=${application.id}`} replace>
+                          Voir le détail
+                        </Link>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -131,7 +156,7 @@ export function ApplicationsPage() {
             <aside className="panel sticky" aria-label="Détail de la candidature">
               <div className="panel__head">
                 <div>
-                  <h2 className="panel__title">{selected.job?.title ?? 'Offre retirée'}</h2>
+                  <h2 className="panel__title">{selected.job?.title ?? 'Offre indisponible'}</h2>
                   <p className="panel__sub">
                     {selected.job?.companyName ?? '—'} · <ApplicationStatusTag status={selected.application.status} />
                   </p>
@@ -165,7 +190,7 @@ export function ApplicationsPage() {
 
               <div className="detail-actions">
                 {selected.job && (
-                  <Link className="text-link" to={`/candidate/match/${selected.application.jobId}`}>
+                  <Link className="text-link" to={`/candidate/jobs/${selected.application.jobId}`}>
                     Voir l’offre
                   </Link>
                 )}
