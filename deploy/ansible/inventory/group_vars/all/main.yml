@@ -7,7 +7,7 @@ smartrecruit_user: "{{ ansible_user | default(lookup('ansible.builtin.env', 'USE
 
 # Versions épinglées des outils (rôle k8s_tools).
 kubectl_version: "1.33.3"
-kind_version: "0.29.0"
+kind_version: "0.33.0"  # doit prendre en charge le nœud créé par le provider Terraform (kindest/node v1.37)
 helm_version: "3.18.4"
 terraform_version: "1.12.2"
 
