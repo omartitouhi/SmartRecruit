@@ -6,6 +6,7 @@ import httpx
 from pydantic import BaseModel, ValidationError
 
 from app.core.config import settings
+from app.core.metrics import LLM_CALLS_IN_PROGRESS
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -63,14 +64,8 @@ class OpenRouterClient:
         }
         headers = {"Authorization": f"Bearer {self.api_key}", "X-Title": "SmartRecruit AI Service"}
         try:
-            async with httpx.AsyncClient(
-                transport=self.transport, timeout=timeout_seconds or self.timeout_seconds
-            ) as client:
-                response = await client.post(
-                    f"{self.base_url}/chat/completions", json=payload, headers=headers
-                )
-                response.raise_for_status()
-                content = response.json()["choices"][0]["message"]["content"]
+            with LLM_CALLS_IN_PROGRESS.track_inprogress():
+                content = await self._post(payload, headers, timeout_seconds)
         except httpx.TimeoutException as exc:
             raise LLMError("Le LLM n'a pas répondu dans le délai imparti.") from exc
         except httpx.HTTPStatusError as exc:
@@ -79,6 +74,17 @@ class OpenRouterClient:
             raise LLMError("Réponse OpenRouter inexploitable.") from exc
 
         return parse_llm_json(content, schema)
+
+    async def _post(self, payload: dict, headers: dict, timeout_seconds: float | None) -> str | None:
+        """Appel HTTP à OpenRouter ; renvoie le contenu texte du premier choix."""
+        async with httpx.AsyncClient(
+            transport=self.transport, timeout=timeout_seconds or self.timeout_seconds
+        ) as client:
+            response = await client.post(
+                f"{self.base_url}/chat/completions", json=payload, headers=headers
+            )
+            response.raise_for_status()
+            return response.json()["choices"][0]["message"]["content"]
 
 
 def parse_llm_json(content: str | None, schema: type[T]) -> T:

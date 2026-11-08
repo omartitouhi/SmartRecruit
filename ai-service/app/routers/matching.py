@@ -4,7 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.database import get_session
+from app.core.metrics import MATCH_REQUESTS, MATCH_SCORE
 from app.schemas.common import CamelModel, MatchScore
 from app.services.cv_store import find_parsed_cv
 from app.services.job_analysis_service import find_job
@@ -49,7 +51,15 @@ async def compute_match_score(
     if job is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Offre non analysée : appeler d'abord /job-analysis/analyze.")
 
+    engine = settings.ai_engine
     try:
-        return await score_match(cv, job, llm)
+        result = await score_match(cv, job, llm)
     except InsufficientDataError as exc:
+        MATCH_REQUESTS.labels(engine=engine, outcome="insufficient_data").inc()
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
+    except Exception:
+        MATCH_REQUESTS.labels(engine=engine, outcome="error").inc()
+        raise
+    MATCH_REQUESTS.labels(engine=engine, outcome="success").inc()
+    MATCH_SCORE.observe(result.score)
+    return result

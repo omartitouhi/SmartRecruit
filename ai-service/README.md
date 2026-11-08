@@ -82,6 +82,9 @@ tests/
 
 - `GET /api/v1/ai/ping` — liveness (le processus répond)
 - `GET /api/v1/ai/ready` — disponibilité : `200` si `ai_db` répond, sinon `503` (sonde Kubernetes)
+- `GET /metrics` — métriques Prometheus : HTTP (`http_requests_total`, `http_request_duration_seconds`) et métier
+  (`smartrecruit_ai_match_requests_total`, `smartrecruit_ai_match_score`, `smartrecruit_ai_llm_calls_in_progress`) ;
+  collectées par le ServiceMonitor du chart Helm (voir `DEVOPS.md` du dépôt backend). Hors schéma OpenAPI.
 - `POST /api/v1/ai/cv-parsing/parse` — IA-01 : multipart, champ `file` (PDF, 5 Mo max) ->
   `CVParsingResult`. Fichier invalide (type, vide, trop gros, corrompu, scanné sans texte) -> `422`.
   Champ optionnel `candidateId` : le résultat est stocké dans `ai_db` (table `parsed_cvs`) et lié au

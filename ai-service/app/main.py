@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -35,6 +36,12 @@ app.include_router(skill_gap.router, prefix=API_PREFIX)
 app.include_router(candidate_data.router, prefix=API_PREFIX)
 
 register_error_handlers(app)
+
+# Métriques Prometheus sur /metrics (lues par le ServiceMonitor du chart Helm smartrecruit).
+# Les sondes Kubernetes sont exclues pour ne pas fausser le trafic mesuré.
+Instrumentator(
+    excluded_handlers=[f"{API_PREFIX}/ping", f"{API_PREFIX}/ready", "/metrics"],
+).instrument(app).expose(app, include_in_schema=False)
 
 
 @app.get(f"{API_PREFIX}/ping")

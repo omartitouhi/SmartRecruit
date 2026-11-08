@@ -1,6 +1,7 @@
 import uuid
 
 from fastapi.testclient import TestClient
+from prometheus_client import REGISTRY
 
 from app.main import app
 from app.services.cv_store import save_parsed_cv
@@ -79,3 +80,31 @@ def test_out_of_range_sub_score_from_the_llm_gives_502(stub_llm, db_session):
 def test_invalid_ids_give_422():
     response = client.post("/api/v1/ai/matching/score", json={"cvId": "abc", "jobId": str(uuid.uuid4())})
     assert response.status_code == 422
+
+
+def _counter(engine, outcome):
+    return REGISTRY.get_sample_value(
+        "smartrecruit_ai_match_requests_total", {"engine": engine, "outcome": outcome}
+    ) or 0.0
+
+
+def test_scoring_updates_prometheus_metrics(stub_llm, db_session):
+    cv_id, job_id = _store(db_session)
+    stub_llm.reply(EVALUATION)
+    successes = _counter("llm", "success")
+    observed = REGISTRY.get_sample_value("smartrecruit_ai_match_score_count") or 0.0
+
+    assert _score(cv_id, job_id).status_code == 200
+
+    assert _counter("llm", "success") == successes + 1
+    assert REGISTRY.get_sample_value("smartrecruit_ai_match_score_count") == observed + 1
+
+
+def test_insufficient_data_is_counted_separately(stub_llm, db_session):
+    empty_cv = CV.model_copy(update={"skills": [], "experiences": [], "education": []})
+    cv_id, job_id = _store(db_session, cv=empty_cv)
+    before = _counter("llm", "insufficient_data")
+
+    assert _score(cv_id, job_id).status_code == 422
+
+    assert _counter("llm", "insufficient_data") == before + 1
