@@ -11,6 +11,12 @@ images:
 config:
   # Tous les clients partagent l'IP du proxy en local : pas de limite réaliste.
   RATE_LIMIT_MAX_REQUESTS: "500"
+  # JVM plus légères au démarrage sur une petite machine : compilateur JIT C1 seul, GC série (peu de threads).
+  JAVA_TOOL_OPTIONS: "-XX:TieredStopAtLevel=1 -XX:+UseSerialGC"
+
+# Six JVM qui démarrent en même temps sur 2 vCPU : jusqu'à 15 minutes avant le premier redémarrage.
+probes:
+  startupFailureThreshold: 180
 
 # Valeurs de développement uniquement (identiques à deploy/k8s/overlays/dev/secrets.env.example).
 secrets:

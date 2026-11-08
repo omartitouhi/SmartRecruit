@@ -18,6 +18,8 @@ elasticsearch:
       memory: 1280Mi
 
 logstash:
+  # Un seul thread de traitement : peu de logs en dev, et le CPU de la VM est partagé.
+  pipelineWorkers: 1
   javaOpts: "-Xms256m -Xmx256m"
   resources:
     requests:

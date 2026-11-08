@@ -36,6 +36,8 @@ logstash:
     repository: docker.elastic.co/logstash/logstash
     tag: ""
   javaOpts: "-Xms256m -Xmx256m"
+  # Threads de traitement du pipeline (vide = un par cœur).
+  pipelineWorkers: ""
   replicas: 1
   resources:
     requests:

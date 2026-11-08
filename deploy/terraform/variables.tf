@@ -311,7 +311,7 @@ variable "kube_prometheus_stack_chart_version" {
 variable "helm_timeout_seconds" {
   description = "Délai d'attente de chaque release Helm (les services Java démarrent lentement sur un poste de dev)."
   type        = number
-  default     = 1200
+  default     = 1800
 
   validation {
     condition     = var.helm_timeout_seconds >= 60
