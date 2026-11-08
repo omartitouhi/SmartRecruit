@@ -57,7 +57,13 @@ if $STATUS_ONLY; then
 fi
 
 echo "==> Vérification de la VM $TARGET"
-read -r MEM_GB CPUS DISK_GB OS_ID < <(remote 'echo "$(awk "/MemTotal/ {printf \"%d\", \$2/1024/1024 + 0.5}" /proc/meminfo) $(nproc) $(df -BG --output=avail / | tail -1 | tr -dc 0-9) $(. /etc/os-release && echo $ID)')
+read -r MEM_GB CPUS DISK_GB OS_ID < <(remote bash -s <<'CHECK'
+mem=$(awk '/MemTotal/ {printf "%d", $2/1024/1024 + 0.5}' /proc/meminfo)
+disk=$(df -BG --output=avail / | tail -1 | tr -dc 0-9)
+. /etc/os-release
+echo "$mem $(nproc) $disk $ID"
+CHECK
+)
 echo "    RAM ${MEM_GB} Go, ${CPUS} vCPU, ${DISK_GB} Go libres, OS ${OS_ID}"
 [ "$OS_ID" = "ubuntu" ] || [ "$OS_ID" = "debian" ] || { echo "VM Ubuntu/Debian attendue." >&2; exit 1; }
 if [ "$METHOD" = "terraform" ] && [ "$MEM_GB" -lt 6 ]; then
