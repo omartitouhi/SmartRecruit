@@ -1,0 +1,145 @@
+{{- $es := .Values.elasticsearch -}}
+{{- $name := include "elk.componentName" (dict "ctx" . "component" "elasticsearch") -}}
+# Elasticsearch : stockage et recherche des logs. Application avec état -> StatefulSet + volume dédié
+# (même raisonnement que Prometheus dans le cours : nom stable elk-elasticsearch-0, PVC conservé).
+# Service headless : identité réseau stable des pods du StatefulSet.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "elasticsearch") | nindent 4 }}
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    {{- include "elk.selectorLabels" (dict "ctx" . "component" "elasticsearch") | nindent 4 }}
+  ports:
+    - name: http
+      port: 9200
+      targetPort: http
+    - name: transport
+      port: 9300
+      targetPort: transport
+---
+# Service ClusterIP : point d'entrée de Logstash, Filebeat et Kibana (http://elk-elasticsearch:9200).
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "elasticsearch") | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "elk.selectorLabels" (dict "ctx" . "component" "elasticsearch") | nindent 4 }}
+  ports:
+    - name: http
+      port: 9200
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "elasticsearch") | nindent 4 }}
+spec:
+  serviceName: {{ $name }}-headless
+  # shortcut: nœud unique (discovery.type=single-node). Un vrai cluster demande 3 nœuds maîtres.
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "elk.selectorLabels" (dict "ctx" . "component" "elasticsearch") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "elk.labels" (dict "ctx" . "component" "elasticsearch") | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      {{- if $es.sysctlInitContainer.enabled }}
+      initContainers:
+        # Elasticsearch exige vm.max_map_count >= 262144 sur le nœud (réglage du noyau, donc privilégié).
+        - name: sysctl
+          image: busybox:1.36
+          command: ["sysctl", "-w", "vm.max_map_count=262144"]
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 32Mi
+      {{- end }}
+      containers:
+        - name: elasticsearch
+          image: {{ include "elk.image" (dict "ctx" . "image" $es.image) }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9200
+            - name: transport
+              containerPort: 9300
+          env:
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: cluster.name
+              value: {{ $es.clusterName | quote }}
+            - name: discovery.type
+              value: single-node
+            # shortcut: sécurité désactivée pour le lab (HTTP sans mot de passe). Elasticsearch n'est exposé
+            # que dans le cluster ; activer xpack.security (TLS + comptes) pour une vraie production.
+            - name: xpack.security.enabled
+              value: "false"
+            - name: ES_JAVA_OPTS
+              value: {{ $es.javaOpts | quote }}
+            {{- if not $es.sysctlInitContainer.enabled }}
+            # Sans vm.max_map_count réglé, on désactive mmap (un peu moins performant).
+            - name: node.store.allow_mmap
+              value: "false"
+            {{- end }}
+            {{- with $es.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health?local=true
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 12
+          livenessProbe:
+            tcpSocket:
+              port: transport
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            failureThreshold: 5
+          resources:
+            {{- toYaml $es.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          {{- include "elk.selectorLabels" (dict "ctx" . "component" "elasticsearch") | nindent 10 }}
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- with $es.persistence.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ $es.persistence.size }}

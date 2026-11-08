@@ -1,0 +1,12 @@
+apiVersion: v2
+name: elk
+description: >-
+  Centralisation des logs SmartRecruit : Filebeat (DaemonSet) -> Logstash -> Elasticsearch -> Kibana.
+type: application
+version: 0.1.0
+# Une seule version Elastic pour toute la pile (Elasticsearch, Logstash, Kibana, Filebeat) : le cours
+# rappelle que des versions différentes entre composants ne sont pas supportées.
+appVersion: "8.15.3"
+keywords: [elasticsearch, logstash, kibana, filebeat, logging]
+maintainers:
+  - name: smartrecruit

@@ -1,0 +1,90 @@
+# Valeurs par défaut du chart ELK. Surcharger avec values-dev.yaml ou values-prod.yaml.
+# Toutes les images utilisent .Chart.AppVersion sauf si un tag est forcé (déconseillé : même version partout).
+
+# Préfixe des index quotidiens : <prefix>-AAAA.MM.JJ (data view Kibana : <prefix>-*).
+index:
+  prefix: smartrecruit
+
+elasticsearch:
+  image:
+    repository: docker.elastic.co/elasticsearch/elasticsearch
+    tag: ""
+  clusterName: smartrecruit-logs
+  # Taille du tas JVM (Xms = Xmx). La limite mémoire du conteneur doit être environ 2x plus grande.
+  javaOpts: "-Xms512m -Xmx512m"
+  # Variables supplémentaires (ex. désactiver les seuils de disque sur un cluster de lab).
+  extraEnv: []
+  # L'initContainer privilégié règle vm.max_map_count=262144 sur le nœud. S'il est désactivé
+  # (cluster qui interdit les pods privilégiés), Elasticsearch démarre avec node.store.allow_mmap=false.
+  sysctlInitContainer:
+    enabled: true
+  persistence:
+    size: 5Gi
+    # Vide = StorageClass par défaut du cluster (provisionnement dynamique, cf. lab PV/PVC).
+    storageClass: ""
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1Gi
+    limits:
+      memory: 1536Mi
+
+logstash:
+  # false : Filebeat envoie directement à Elasticsearch (parsing JSON fait par Filebeat, pas de grok nginx).
+  enabled: true
+  image:
+    repository: docker.elastic.co/logstash/logstash
+    tag: ""
+  javaOpts: "-Xms256m -Xmx256m"
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      memory: 1Gi
+
+filebeat:
+  image:
+    repository: docker.elastic.co/beats/filebeat
+    tag: ""
+  # Namespaces dont les logs sont collectés. Liste vide = tous les conteneurs du nœud.
+  namespaces:
+    - smartrecruit
+  # Registre Filebeat (positions de lecture) conservé sur le nœud entre deux redémarrages du pod.
+  dataHostPath: /var/lib/filebeat-data
+  # Un pod par nœud, y compris le control-plane (cluster kind à un seul nœud).
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      memory: 300Mi
+
+kibana:
+  image:
+    repository: docker.elastic.co/kibana/kibana
+    tag: ""
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      memory: 1Gi
+  ingress:
+    enabled: false
+    className: nginx
+    host: kibana.smartrecruit.local
+    annotations: {}
+    # Exemple : [{ secretName: kibana-tls, hosts: [kibana.example.com] }]
+    tls: []
+  # Job (hook Helm post-install/post-upgrade) : modèle d'index (0 réplique, nœud unique)
+  # puis data view Kibana "<prefix>-*" sur @timestamp.
+  dataView:
+    enabled: true
+    image: curlimages/curl:8.10.1
+    name: SmartRecruit

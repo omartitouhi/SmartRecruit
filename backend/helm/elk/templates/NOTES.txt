@@ -1,0 +1,29 @@
+Stack ELK {{ .Chart.AppVersion }} installée dans le namespace {{ .Release.Namespace }} (release {{ .Release.Name }}).
+
+Chaîne : Filebeat (DaemonSet{{ if .Values.filebeat.namespaces }}, namespaces : {{ join ", " .Values.filebeat.namespaces }}{{ end }})
+{{- if .Values.logstash.enabled }} -> Logstash ({{ include "elk.logstash.host" . }}){{ end }} -> Elasticsearch -> Kibana
+Index : {{ .Values.index.prefix }}-AAAA.MM.JJ
+
+1. Vérifier que tout tourne :
+   kubectl -n {{ .Release.Namespace }} get pods,svc,pvc
+   kubectl -n {{ .Release.Namespace }} rollout status statefulset/{{ include "elk.componentName" (dict "ctx" . "component" "elasticsearch") }}
+
+2. Elasticsearch (http://localhost:9200) :
+   kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "elk.componentName" (dict "ctx" . "component" "elasticsearch") }} 9200:9200
+   curl localhost:9200
+   curl "localhost:9200/_cat/indices/{{ .Values.index.prefix }}-*?v"
+
+3. Kibana :
+{{- if .Values.kibana.ingress.enabled }}
+   {{ if .Values.kibana.ingress.tls }}https{{ else }}http{{ end }}://{{ .Values.kibana.ingress.host }}  (le nom doit pointer vers l'Ingress, ex. fichier hosts)
+   ou :
+{{- end }}
+   kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "elk.componentName" (dict "ctx" . "component" "kibana") }} 5601:5601
+   puis http://localhost:5601 > Discover > data view "{{ .Values.kibana.dataView.name }}" ({{ .Values.index.prefix }}-*)
+   Exemple KQL : service.name : "auth-service" and log.level : "ERROR"
+
+4. Logs des agents en cas de problème :
+   kubectl -n {{ .Release.Namespace }} logs daemonset/{{ include "elk.componentName" (dict "ctx" . "component" "filebeat") }}
+{{- if .Values.logstash.enabled }}
+   kubectl -n {{ .Release.Namespace }} logs deploy/{{ include "elk.componentName" (dict "ctx" . "component" "logstash") }}
+{{- end }}

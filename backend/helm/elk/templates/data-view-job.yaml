@@ -1,0 +1,77 @@
+{{- if .Values.kibana.dataView.enabled -}}
+{{- $dv := .Values.kibana.dataView -}}
+{{- $prefix := .Values.index.prefix -}}
+# Job lancé après chaque install/upgrade (hook Helm) : prépare Elasticsearch et Kibana pour qu'on puisse
+# ouvrir Discover directement. Idempotent : peut être rejoué sans effet de bord.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "elk.componentName" (dict "ctx" . "component" "data-view") }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "data-view") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  # Elasticsearch et Kibana peuvent mettre plusieurs minutes à démarrer (prévoir helm --timeout 15m).
+  activeDeadlineSeconds: 840
+  template:
+    metadata:
+      labels:
+        {{- include "elk.selectorLabels" (dict "ctx" . "component" "data-view") | nindent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+      containers:
+        - name: setup
+          image: {{ $dv.image }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ES_URL
+              value: {{ include "elk.elasticsearch.url" . | quote }}
+            - name: KIBANA_URL
+              value: {{ include "elk.kibana.url" . | quote }}
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -eu
+              echo "Attente d'Elasticsearch ($ES_URL)..."
+              until curl -fs "$ES_URL/_cluster/health" >/dev/null; do sleep 5; done
+
+              # Modèle d'index : 1 shard, 0 réplique (nœud unique -> état "green" au lieu de "yellow").
+              curl -fsS -X PUT "$ES_URL/_index_template/{{ $prefix }}" \
+                -H 'Content-Type: application/json' \
+                -d '{"index_patterns":["{{ $prefix }}-*"],"template":{"settings":{"number_of_shards":1,"number_of_replicas":0}}}'
+              echo
+              # Index déjà créés avant le modèle (aucun index : erreur ignorée).
+              curl -s -X PUT "$ES_URL/{{ $prefix }}-*/_settings" \
+                -H 'Content-Type: application/json' \
+                -d '{"index":{"number_of_replicas":0}}' || true
+              echo
+
+              echo "Attente de Kibana ($KIBANA_URL)..."
+              until curl -fs "$KIBANA_URL/api/status" >/dev/null; do sleep 5; done
+
+              # Data view "{{ $prefix }}-*" (identifiant fixe ; override=true la remplace si elle existe déjà).
+              code=$(curl -s -o /dev/null -w '%{http_code}' "$KIBANA_URL/api/data_views/data_view/{{ $prefix }}")
+              if [ "$code" = "200" ]; then
+                echo "Data view {{ $prefix }}-* déjà présente."
+                exit 0
+              fi
+              curl -fsS -X POST "$KIBANA_URL/api/data_views/data_view" \
+                -H 'kbn-xsrf: true' -H 'Content-Type: application/json' \
+                -d '{"data_view":{"id":"{{ $prefix }}","title":"{{ $prefix }}-*","name":"{{ $dv.name }}","timeFieldName":"@timestamp"},"override":true}'
+              echo
+              echo "Data view {{ $prefix }}-* créée."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+{{- end }}
