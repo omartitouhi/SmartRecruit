@@ -8,3 +8,13 @@ postgres_data/
 k8s/overlays/*/secrets.env
 k8s/overlays/*/config.env
 e2e/__pycache__/
+
+# Ansible : secrets chiffrés et fichiers de reprise
+ansible/**/vault.yml
+ansible/*.retry
+
+# Terraform (le fichier .terraform.lock.hcl reste versionné)
+terraform/**/.terraform/
+terraform/**/*.tfstate*
+terraform/state/
+terraform/**/terraform.tfvars
