@@ -78,7 +78,7 @@ variable "https_port" {
 ########################################
 
 variable "image_registry" {
-  description = "Registre des images (ex. ghcr.io/omartitouhi). Vide = images locales smartrecruit-<service>:<tag> chargées dans kind."
+  description = "Registre des images (ex. ghcr.io/omartitouhi/smartrecruit : images <registre>/<service>). Vide = images locales smartrecruit-<service>:<tag> chargées dans kind."
   type        = string
   default     = ""
 }

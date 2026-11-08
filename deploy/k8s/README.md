@@ -60,7 +60,7 @@ kubectl -n smartrecruit create secret generic app-secrets \
 
 ```bash
 cd deploy/k8s/overlays/prod
-kustomize edit set image ghcr.io/omartitouhi/smartrecruit-api-gateway=ghcr.io/omartitouhi/smartrecruit-api-gateway:<sha>
+kustomize edit set image ghcr.io/omartitouhi/smartrecruit/api-gateway=ghcr.io/omartitouhi/smartrecruit/api-gateway:<sha>
 kubectl apply -k .
 ```
 

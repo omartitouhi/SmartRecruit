@@ -4,6 +4,7 @@
 
 images:
   registry: ""
+  prefix: smartrecruit-
   tag: latest
   pullPolicy: IfNotPresent
 

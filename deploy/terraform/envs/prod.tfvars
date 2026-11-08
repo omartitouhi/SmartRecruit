@@ -7,7 +7,7 @@ create_cluster = false
 kubeconfig_path = "~/.kube/config"
 kube_context    = "smartrecruit-prod"
 
-image_registry    = "ghcr.io/omartitouhi"
+image_registry    = "ghcr.io/omartitouhi/smartrecruit"
 image_tag         = "latest" # à remplacer par le SHA publié (images immuables)
 load_local_images = false
 

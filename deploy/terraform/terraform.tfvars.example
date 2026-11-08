@@ -8,7 +8,7 @@ cluster_name   = "smartrecruit-tf"
 # http_port  = 8081   # si le port 80 de la machine est déjà utilisé
 # https_port = 8443
 
-image_registry = ""        # "" = images locales ; "ghcr.io/omartitouhi" = images publiées
+image_registry = ""        # "" = images locales ; "ghcr.io/omartitouhi/smartrecruit" = images publiées
 image_tag      = "latest"
 
 enable_monitoring = true

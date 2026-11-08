@@ -7,10 +7,11 @@ fullnameOverride: ""
 
 # --- Images ------------------------------------------------------------------
 # Image d'un service = <registry>/<prefix><service>:<tag>
-# registry vide => images locales (ex. smartrecruit-auth-service:latest chargée dans kind).
+#   publiée : ghcr.io/omartitouhi/smartrecruit/auth-service:<tag> (paquets rattachés au monorepo)
+#   locale  : registry vide + prefix smartrecruit- => smartrecruit-auth-service:latest chargée dans kind
 images:
-  registry: ghcr.io/omartitouhi
-  prefix: smartrecruit-
+  registry: ghcr.io/omartitouhi/smartrecruit
+  prefix: ""
   # Vide => .Chart.AppVersion
   tag: latest
   pullPolicy: IfNotPresent

@@ -32,7 +32,7 @@ smartrecruit_deploy_method: terraform
 # Nom distinct du cluster de deploy/k8s/scripts/dev.sh (« smartrecruit ») pour que les deux puissent coexister.
 smartrecruit_cluster_name: smartrecruit-tf
 # Vide = images locales smartrecruit-<service>:<tag> (construites par docker compose, chargées dans kind).
-# Pour tirer les images publiées : ghcr.io/omartitouhi et smartrecruit_load_local_images: false.
+# Pour tirer les images publiées : ghcr.io/omartitouhi/smartrecruit et smartrecruit_load_local_images: false.
 smartrecruit_image_registry: ""
 smartrecruit_image_tag: latest
 smartrecruit_load_local_images: true     # construit les images avec docker compose et les charge dans kind

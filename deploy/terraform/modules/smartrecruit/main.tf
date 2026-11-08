@@ -81,6 +81,13 @@ resource "helm_release" "smartrecruit" {
     type  = "string"
   }
 
+  # Images locales : smartrecruit-<service> ; publiées : <registre>/<service> (ghcr.io/omartitouhi/smartrecruit/...).
+  set {
+    name  = "images.prefix"
+    value = var.image_registry == "" ? "smartrecruit-" : ""
+    type  = "string"
+  }
+
   set {
     name  = "images.tag"
     value = var.image_tag

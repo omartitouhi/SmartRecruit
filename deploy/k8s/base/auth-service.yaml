@@ -40,7 +40,7 @@ spec:
                   key: DB_USER
       containers:
         - name: auth-service
-          image: ghcr.io/omartitouhi/smartrecruit-auth-service:latest
+          image: ghcr.io/omartitouhi/smartrecruit/auth-service:latest
           ports:
             - name: http
               containerPort: 8081

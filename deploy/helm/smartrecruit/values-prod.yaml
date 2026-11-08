@@ -6,7 +6,7 @@
 #   kubectl -n smartrecruit create secret generic app-secrets --from-literal=DB_USER=... (voir deploy/k8s/README.md)
 
 images:
-  registry: ghcr.io/omartitouhi
+  registry: ghcr.io/omartitouhi/smartrecruit
   # Figer une version (SHA du commit publié par l'étape « 3 · Images Docker » du pipeline) plutôt que latest.
   tag: latest
   pullPolicy: IfNotPresent

@@ -4,7 +4,7 @@ name: CI/CD SmartRecruit
 #
 #   1. Tests            backend (6 services) · frontend · service IA
 #   2. Validation IaC   Kustomize · Helm · Terraform · Ansible
-#   3. Images Docker    8 images construites ; publiées sur ghcr.io depuis main
+#   3. Images Docker    8 images construites ; publiées sur ghcr.io/<owner>/smartrecruit/<service> depuis main
 #   4. Déploiement      VM Azure (runner installé sur la VM), depuis main, si DEPLOY_ENABLED=true
 #   5. Tests de fumée   interface, Grafana et Kibana répondent sur la VM
 on:
@@ -66,7 +66,7 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '20'
           cache: npm
@@ -87,7 +87,7 @@ jobs:
         working-directory: ai-service
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
           cache: pip
@@ -122,7 +122,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: azure/setup-helm@v4
+      - uses: azure/setup-helm@v5
         with:
           version: v3.16.4
       - name: helm lint (smartrecruit, elk ; dev et prod)
@@ -156,7 +156,7 @@ jobs:
         working-directory: deploy/terraform
     steps:
       - uses: actions/checkout@v7
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: 1.9.8
       - name: terraform fmt
@@ -175,7 +175,7 @@ jobs:
         working-directory: deploy/ansible
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - run: pip install "ansible>=10,<12" ansible-lint yamllint
@@ -214,22 +214,22 @@ jobs:
       PUBLISH: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
     steps:
       - uses: actions/checkout@v7
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
         if: env.PUBLISH == 'true'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository_owner }}/smartrecruit-${{ matrix.name }}
+          images: ghcr.io/${{ github.repository_owner }}/smartrecruit/${{ matrix.name }}
           tags: |
             type=sha,format=long
             type=ref,event=tag
             type=raw,value=latest,enable={{is_default_branch}}
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: ./${{ matrix.context }}
           push: ${{ env.PUBLISH == 'true' }}
