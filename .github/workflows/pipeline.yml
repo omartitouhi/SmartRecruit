@@ -5,7 +5,7 @@ name: CI/CD SmartRecruit
 #   1. Tests            backend (6 services) · frontend · service IA
 #   2. Validation IaC   Kustomize · Helm · Terraform · Ansible
 #   3. Images Docker    8 images construites ; publiées sur ghcr.io depuis main
-#   4. Déploiement      VM Azure (deploy/scripts/deploy-vm.sh), depuis main, si DEPLOY_ENABLED=true
+#   4. Déploiement      VM Azure (runner installé sur la VM), depuis main, si DEPLOY_ENABLED=true
 #   5. Tests de fumée   interface, Grafana et Kibana répondent sur la VM
 on:
   push:
@@ -239,28 +239,25 @@ jobs:
           cache-to: type=gha,scope=${{ matrix.name }},mode=max
 
   # ---------------------------------------------------------- 4. Déploiement
-  # Activation : variables du dépôt DEPLOY_ENABLED=true, VM_HOST (IP publique), VM_USER, et secret VM_SSH_KEY
-  # (clé privée autorisée sur la VM). Le groupe de sécurité réseau Azure doit accepter SSH depuis GitHub Actions.
+  # S'exécute sur le runner GitHub Actions installé sur la VM Azure (label smartrecruit-vm) : aucun port à ouvrir,
+  # aucune clé SSH dans GitHub. Activation : variables du dépôt DEPLOY_ENABLED=true et VM_HOST (IP publique).
   deploy:
     name: "4 · Déploiement VM Azure"
     needs: images
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, smartrecruit-vm]
     timeout-minutes: 90
     environment:
       name: azure-vm
       url: http://${{ vars.VM_HOST }}.nip.io/
     steps:
       - uses: actions/checkout@v7
-      - name: Clé SSH de déploiement
+      - name: Archive du commit déployé
+        run: git archive --format=tar.gz -o /tmp/smartrecruit.tar.gz HEAD
+      - name: Ansible sur la VM (deploy/scripts/vm-install.sh)
         env:
-          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
-        run: |
-          install -m 700 -d ~/.ssh
-          printf '%s\n' "$VM_SSH_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-      - name: deploy/scripts/deploy-vm.sh
-        run: bash deploy/scripts/deploy-vm.sh "${{ vars.VM_USER }}@${{ vars.VM_HOST }}" -i ~/.ssh/deploy_key
+          DOMAIN: ${{ vars.VM_HOST }}.nip.io
+        run: bash deploy/scripts/vm-install.sh
 
   # ------------------------------------------------------- 5. Tests de fumée
   smoke-test:

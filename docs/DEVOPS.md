@@ -296,10 +296,16 @@ Un seul workflow, [`.github/workflows/pipeline.yml`](../.github/workflows/pipeli
 | 4 · Déploiement | `deploy/scripts/deploy-vm.sh` vers la VM Azure, depuis `main` uniquement, environnement GitHub `azure-vm` |
 | 5 · Tests de fumée | L'interface, l'API (via l'Ingress), Grafana et Kibana répondent sur `http://<ip>.nip.io` |
 
-Activer le déploiement (sinon les étapes 4 et 5 apparaissent « skipped ») : dans *Settings → Secrets and variables →
-Actions*, créer les variables `DEPLOY_ENABLED=true`, `VM_HOST` (IP publique), `VM_USER`, et le secret `VM_SSH_KEY`
-(clé privée autorisée sur la VM). Les machines de GitHub Actions doivent pouvoir joindre la VM en SSH : la règle du
-groupe de sécurité réseau qui limite le port 22 à une seule IP les bloque.
+Le déploiement tourne sur un **runner GitHub Actions auto-hébergé installé sur la VM** (label `smartrecruit-vm`) :
+le runner contacte GitHub en sortie, donc aucun port à ouvrir dans Azure et aucune clé SSH stockée dans GitHub. Le job
+archive le commit, puis lance `deploy/scripts/vm-install.sh` (Ansible en local). Un verrou empêche deux déploiements
+simultanés (pipeline et poste).
+
+Activer le déploiement (sinon les étapes 4 et 5 apparaissent « skipped ») :
+1. Installer le runner sur la VM : `deploy/scripts/setup-runner.sh` (jeton à copier depuis *Settings → Actions →
+   Runners → New self-hosted runner*).
+2. Dans *Settings → Secrets and variables → Actions → Variables*, créer `DEPLOY_ENABLED=true` et `VM_HOST` (IP publique
+   de la VM). Les tests de fumée partent des machines de GitHub : le port 80 de la VM doit être ouvert à Internet.
 
 ## Limites connues
 
