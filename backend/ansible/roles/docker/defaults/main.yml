@@ -1,0 +1,11 @@
+---
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+# Rotation des logs des conteneurs (fichiers json lus par Filebeat).
+docker_log_max_size: "10m"
+docker_log_max_file: "3"
+docker_keyring: /etc/apt/keyrings/docker.asc

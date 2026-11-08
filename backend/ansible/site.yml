@@ -1,0 +1,29 @@
+# Prépare une machine Ubuntu (VM, serveur, WSL2) et y déploie SmartRecruit.
+#   ansible-playbook site.yml                       (sans vault : secrets de développement)
+#   ansible-playbook site.yml --ask-vault-pass      (avec inventory/group_vars/all/vault.yml chiffré)
+#   ansible-playbook site.yml --tags tools          (seulement une partie : common, docker, tools, deploy)
+---
+- name: Préparer et déployer SmartRecruit
+  hosts: smartrecruit
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Vérifier que la cible est une distribution Debian/Ubuntu
+      ansible.builtin.assert:
+        that:
+          - ansible_os_family == "Debian"
+          - smartrecruit_deploy_method in ["terraform", "compose", "kind-script"]
+          - smartrecruit_environment in ["dev", "prod"]
+        fail_msg: "Cible non Debian/Ubuntu ou variable smartrecruit_deploy_method / smartrecruit_environment invalide."
+      tags: always
+
+  roles:
+    - role: common
+      tags: common
+    - role: docker
+      tags: docker
+    - role: k8s_tools
+      tags: tools
+    - role: smartrecruit
+      tags: deploy

@@ -1,0 +1,26 @@
+---
+- name: Attendre que l'interface réponde ({{ smartrecruit_check_urls[smartrecruit_deploy_method] }})
+  ansible.builtin.uri:
+    url: "{{ smartrecruit_check_urls[smartrecruit_deploy_method] }}"
+    status_code: 200
+  register: smartrecruit_check
+  until: smartrecruit_check.status == 200
+  retries: 30
+  delay: 10
+  become: false
+
+- name: Adresses de la plateforme
+  ansible.builtin.debug:
+    msg: >-
+      {{
+        {
+          'terraform': ['Interface et API : http://' ~ smartrecruit_base_domain ~ '/']
+            + (['Grafana : http://grafana.' ~ smartrecruit_base_domain ~ '/'] if smartrecruit_enable_monitoring | bool else [])
+            + (['Kibana  : http://kibana.' ~ smartrecruit_base_domain ~ '/'] if smartrecruit_enable_logging | bool else []),
+          'compose': ['Interface : http://localhost:' ~ smartrecruit_frontend_host_port,
+                      'API : http://localhost:8080',
+                      'Service IA : http://localhost:' ~ smartrecruit_ai_host_port ~ '/docs'],
+          'kind-script': ['Interface : http://localhost:8090', 'API : http://localhost:8080',
+                          'Service IA : http://localhost:8001/docs']
+        }[smartrecruit_deploy_method]
+      }}

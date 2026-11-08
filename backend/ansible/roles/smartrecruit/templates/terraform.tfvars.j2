@@ -1,0 +1,19 @@
+{#- Chaîne HCL : chaîne JSON échappée, puis neutralisation des interpolations ${...} et %{...}. -#}
+{%- macro hcl(value) -%}
+{{ value | string | to_json | replace('${', '$${') | replace('%{', '%%{') }}
+{%- endmacro -%}
+# {{ ansible_managed }}
+# Valeurs de terraform/ générées par Ansible (rôle smartrecruit). Contient des secrets : ne pas commiter.
+
+environment       = {{ hcl(smartrecruit_environment) }}
+cluster_name      = {{ hcl(smartrecruit_cluster_name) }}
+image_registry    = {{ hcl(smartrecruit_image_registry) }}
+image_tag         = {{ hcl(smartrecruit_image_tag) }}
+load_local_images = {{ smartrecruit_load_local_images | bool | lower }}
+enable_monitoring = {{ smartrecruit_enable_monitoring | bool | lower }}
+enable_logging    = {{ smartrecruit_enable_logging | bool | lower }}
+base_domain       = {{ hcl(smartrecruit_base_domain) }}
+
+openrouter_api_key = {{ hcl(smartrecruit_openrouter_api_key) }}
+admin_email        = {{ hcl(smartrecruit_admin_email) }}
+admin_password     = {{ hcl(smartrecruit_admin_password) }}

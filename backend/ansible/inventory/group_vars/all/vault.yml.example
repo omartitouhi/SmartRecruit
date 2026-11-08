@@ -1,0 +1,7 @@
+# Copier en vault.yml puis chiffrer :  ansible-vault encrypt inventory/group_vars/all/vault.yml
+# Modifier ensuite avec :              ansible-vault edit inventory/group_vars/all/vault.yml
+# vault.yml est ignoré par git ; ne jamais commiter de secret en clair.
+---
+vault_openrouter_api_key: "sk-or-..."
+vault_admin_password: "Changer-Moi-2026!"
+vault_db_password: "changer-moi"

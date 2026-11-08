@@ -1,0 +1,52 @@
+---
+- name: Créer le dossier des clés apt
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Télécharger la clé GPG officielle de Docker
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    dest: "{{ docker_keyring }}"
+    mode: "0644"
+
+- name: Ajouter le dépôt apt officiel de Docker
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [arch={{ smartrecruit_arch }} signed-by={{ docker_keyring }}]
+      https://download.docker.com/linux/{{ ansible_distribution | lower }}
+      {{ ansible_distribution_release }} stable
+    filename: docker
+    state: present
+    update_cache: true
+
+- name: Installer Docker Engine, Buildx et le plugin Compose
+  ansible.builtin.apt:
+    name: "{{ docker_packages }}"
+    state: present
+
+- name: Configurer le démon Docker (rotation des logs)
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Redémarrer docker
+
+- name: Démarrer Docker et l'activer au démarrage
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Ajouter l'utilisateur d'exploitation au groupe docker
+  ansible.builtin.user:
+    name: "{{ smartrecruit_user }}"
+    groups: docker
+    append: true
+
+# Appliquer daemon.json avant les builds et le cluster kind du rôle smartrecruit.
+- name: Exécuter les handlers en attente
+  ansible.builtin.meta: flush_handlers

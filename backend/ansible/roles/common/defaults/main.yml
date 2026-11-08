@@ -1,0 +1,18 @@
+---
+common_packages:
+  - git
+  - curl
+  - ca-certificates
+  - gnupg
+  - unzip
+  - tar
+  - jq
+  - acl              # nécessaire à become_user vers un utilisateur non privilégié
+  - python3-pip
+  - python3-requests # utilisé par la collection community.docker
+# Fuseau horaire (vide = inchangé). Exemple : Africa/Tunis
+common_timezone: ""
+# Correspondance architecture Ansible -> nom utilisé par les binaires officiels.
+common_arch_map:
+  x86_64: amd64
+  aarch64: arm64
