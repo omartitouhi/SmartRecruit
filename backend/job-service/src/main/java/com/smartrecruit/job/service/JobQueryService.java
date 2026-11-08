@@ -51,6 +51,7 @@ public class JobQueryService {
     private final ApplicationCountsClient countsClient;
     private final RecruiterCompanies recruiterCompanies;
     private final TransactionTemplate transaction;
+    private final SavedJobService savedJobs;
 
     public PageResponse<JobSummaryResponse> search(AuthenticatedUser user, JobSearchCriteria criteria, int page, int size) {
         boolean mine = ME.equalsIgnoreCase(criteria.companyId() == null ? "" : criteria.companyId().strip());
@@ -76,8 +77,10 @@ public class JobQueryService {
 
         Map<UUID, String> companyNames = companyNames(found.getContent());
         Map<UUID, Long> counts = mine ? applicationCounts(found.getContent()) : null;
+        Set<UUID> saved = savedJobIds(user, found.getContent());
         return PageResponse.of(found, job -> new JobSummaryResponse(job, companyNames.get(job.getCompanyId()),
-                counts == null ? null : counts.getOrDefault(job.getId(), 0L)));
+                counts == null ? null : counts.getOrDefault(job.getId(), 0L),
+                saved == null ? null : saved.contains(job.getId())));
     }
 
     /**
@@ -92,7 +95,17 @@ public class JobQueryService {
         if (job.getStatus() != JobStatus.PUBLISHED && !mayViewUnpublished(user, job)) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Offre introuvable");
         }
-        return new JobSummaryResponse(job, companyNames(List.of(job)).get(job.getCompanyId()), null);
+        Set<UUID> saved = savedJobIds(user, List.of(job));
+        return new JobSummaryResponse(job, companyNames(List.of(job)).get(job.getCompanyId()), null,
+                saved == null ? null : saved.contains(job.getId()));
+    }
+
+    /** EXT-SAVED-01: which of the offers the candidate bookmarked; null for other roles (no {@code saved} flag). */
+    private Set<UUID> savedJobIds(AuthenticatedUser user, List<JobResponse> jobs) {
+        if (!"CANDIDATE".equals(user.role())) {
+            return null;
+        }
+        return savedJobs.savedAmong(user.id(), jobs.stream().map(JobResponse::getId).toList());
     }
 
     private boolean mayViewUnpublished(AuthenticatedUser user, JobResponse job) {
@@ -142,6 +155,12 @@ public class JobQueryService {
         }
         if (criteria.experienceLevel() != null) {
             spec = spec.and(JobSpecifications.hasExperienceLevel(criteria.experienceLevel()));
+        }
+        if (criteria.workMode() != null) {
+            spec = spec.and(JobSpecifications.hasWorkMode(criteria.workMode()));
+        }
+        if (criteria.minSalary() != null) {
+            spec = spec.and(JobSpecifications.paysAtLeast(criteria.minSalary()));
         }
         return spec;
     }

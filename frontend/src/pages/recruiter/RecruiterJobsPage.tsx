@@ -4,10 +4,10 @@ import { jobsApi } from '../../api/jobs';
 import { NoCompany } from '../../components/domain/NoCompany';
 import { Button, ButtonLink } from '../../components/ui/Button';
 import { Alert, EmptyState, ErrorState, PageSkeleton, SkeletonRows } from '../../components/ui/States';
-import { JobStatusTag } from '../../components/ui/Tag';
+import { JobStatusTag, Tag } from '../../components/ui/Tag';
 import { useToast } from '../../components/ui/toast';
 import { toUiError } from '../../lib/errors';
-import { CONTRACT_LABEL, formatDateShort, LEVEL_LABEL, pluralize } from '../../lib/format';
+import { CONTRACT_LABEL, deadlineLabel, formatDateShort, formatSalary, LEVEL_LABEL, pluralize, WORK_MODE_LABEL } from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import { useMyCompany } from '../../lib/useCompany';
 import type { JobStatus } from '../../types';
@@ -47,6 +47,25 @@ function Jobs({ companyName }: { companyName: string }) {
   const jobs = useAsync(() => jobsApi.search({ companyId: 'me', size: 50 }), []);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  /** EXT-JOB-01: the copy is a draft at the top of the list, to adjust then publish. */
+  async function duplicate(jobId: string) {
+    setBusy(`copy:${jobId}`);
+    setError(null);
+    try {
+      const copy = await jobsApi.duplicate(jobId);
+      jobs.setData((page) => ({
+        ...(page as NonNullable<typeof page>),
+        totalElements: (page?.totalElements ?? 0) + 1,
+        content: [{ ...copy, companyName: null, applicationsCount: 0, saved: null }, ...(page?.content ?? [])],
+      }));
+      notify(`Brouillon « ${copy.title} » créé : modifiez-le, puis publiez-le.`);
+    } catch (err) {
+      setError(toUiError(err).message);
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function changeStatus(jobId: string, status: JobStatus, done: string) {
     setBusy(jobId);
@@ -126,10 +145,20 @@ function Jobs({ companyName }: { companyName: string }) {
                         </Link>
                         <div className="muted">
                           {job.location} · {CONTRACT_LABEL[job.contractType]} · {LEVEL_LABEL[job.experienceLevel]}
+                          {job.workMode && job.workMode !== 'ON_SITE' && ` · ${WORK_MODE_LABEL[job.workMode]}`}
+                          {(job.positions ?? 1) > 1 && ` · ${pluralize(job.positions, 'poste')}`}
                         </div>
+                        {formatSalary(job.salaryMin, job.salaryMax) && (
+                          <div className="muted">{formatSalary(job.salaryMin, job.salaryMax)}</div>
+                        )}
                       </td>
                       <td>
                         <JobStatusTag status={job.status} />
+                        {job.status === 'PUBLISHED' && deadlineLabel(job.applicationDeadline) && (
+                          <div>
+                            <Tag tone={deadlineLabel(job.applicationDeadline)!.tone}>{deadlineLabel(job.applicationDeadline)!.label}</Tag>
+                          </div>
+                        )}
                         {job.status === 'MODERATED' && job.moderationReason && (
                           <div className="muted">Motif : {job.moderationReason}</div>
                         )}
@@ -144,7 +173,7 @@ function Jobs({ companyName }: { companyName: string }) {
                         )}
                       </td>
                       <td className="muted">{formatDateShort(job.publishedAt)}</td>
-                      <td style={{ textAlign: 'right' }}>
+                      <td className="row-actions">
                         {(job.status === 'DRAFT' || job.status === 'PUBLISHED') && (
                           <ButtonLink to={`/recruiter/jobs/${job.id}/edit`} variant="ghost">
                             Modifier
@@ -160,6 +189,17 @@ function Jobs({ companyName }: { companyName: string }) {
                           </Button>
                         ) : (
                           <span className="muted">Modérée par l’administration</span>
+                        )}
+                        {job.status !== 'MODERATED' && (
+                          <Button
+                            variant="ghost"
+                            loading={busy === `copy:${job.id}`}
+                            disabled={busy !== null && busy !== `copy:${job.id}`}
+                            aria-label={`Dupliquer l’offre ${job.title}`}
+                            onClick={() => duplicate(job.id)}
+                          >
+                            Dupliquer
+                          </Button>
                         )}
                       </td>
                     </tr>

@@ -19,11 +19,19 @@ import { TeamPage } from './TeamPage';
 
 vi.mock('../../api/jobs', async (original) => ({
   ...(await original<typeof import('../../api/jobs')>()),
-  jobsApi: { search: vi.fn(), get: vi.fn(), create: vi.fn(), update: vi.fn(), updateStatus: vi.fn(), recommendations: vi.fn() },
+  jobsApi: {
+    search: vi.fn(),
+    get: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    updateStatus: vi.fn(),
+    recommendations: vi.fn(),
+    duplicate: vi.fn(),
+  },
 }));
 vi.mock('../../api/applications', async (original) => ({
   ...(await original<typeof import('../../api/applications')>()),
-  applicationsApi: { forJob: vi.fn() },
+  applicationsApi: { forJob: vi.fn(), upcomingInterviews: vi.fn() },
 }));
 vi.mock('../../api/companies', async (original) => ({
   ...(await original<typeof import('../../api/companies')>()),
@@ -52,10 +60,12 @@ const applications = vi.mocked(applicationsApi);
 const companies = vi.mocked(companiesApi);
 const dashboard = vi.mocked(dashboardApi);
 const account = makeAccount('RECRUITER', { id: 'recruiter-id' });
+const NO_EXTRA_STATS = { applicationsByStatus: null, averageDecisionDays: null, upcomingInterviews: null, jobsClosingSoon: null };
 
 beforeEach(() => {
   vi.resetAllMocks();
   companies.getMine.mockResolvedValue(makeCompany());
+  applications.upcomingInterviews.mockResolvedValue([]);
 });
 
 const noCompany = () => companies.getMine.mockRejectedValue(new HttpError(404));
@@ -186,6 +196,11 @@ describe('publication form', () => {
       experienceLevel: 'SENIOR',
       contractType: 'CDI',
       location: 'Tunis',
+      workMode: 'ON_SITE',
+      salaryMin: null,
+      salaryMax: null,
+      applicationDeadline: null,
+      positions: 1,
     });
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/recruiter/jobs'));
   });
@@ -467,7 +482,7 @@ describe('recruiter dashboard', () => {
   const show = () => renderAt(<RecruiterDashboardPage />, { route: '/recruiter', account });
 
   beforeEach(() => {
-    dashboard.companyStats.mockResolvedValue({ publishedJobs: 2, applicationsReceived: 8, acceptedApplications: 1, acceptanceRate: 0.5 });
+    dashboard.companyStats.mockResolvedValue({ publishedJobs: 2, applicationsReceived: 8, acceptedApplications: 1, acceptanceRate: 0.5, ...NO_EXTRA_STATS });
     jobs.search.mockResolvedValue(
       page([
         makeJob({ id: 'j1', title: 'Backend', applicationsCount: 5 }),
@@ -496,7 +511,7 @@ describe('recruiter dashboard', () => {
   });
 
   it('shows a dash instead of a rate when nothing is decided yet', async () => {
-    dashboard.companyStats.mockResolvedValue({ publishedJobs: 1, applicationsReceived: 0, acceptedApplications: 0, acceptanceRate: null });
+    dashboard.companyStats.mockResolvedValue({ publishedJobs: 1, applicationsReceived: 0, acceptedApplications: 0, acceptanceRate: null, ...NO_EXTRA_STATS });
     show();
     expect(within(((await screen.findByText('Taux d’acceptation')).closest('.tile')) as HTMLElement).getByText('—')).toBeInTheDocument();
   });

@@ -18,6 +18,7 @@ import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -78,4 +79,24 @@ public class Job {
     private String moderationReason;
 
     private Instant moderatedAt;
+
+    /** On site, hybrid or remote (EXT-JOB-01); null on rows created before the field, read as ON_SITE. */
+    @Enumerated(EnumType.STRING)
+    private WorkMode workMode;
+
+    /** Gross monthly salary range in TND (EXT-JOB-01), both optional. */
+    private Integer salaryMin;
+
+    private Integer salaryMax;
+
+    /** Last day (inclusive, UTC) to apply (EXT-JOB-01); the offer is closed automatically afterwards. */
+    private LocalDate applicationDeadline;
+
+    /** Number of open positions (EXT-JOB-01); null on rows created before the field, read as 1. */
+    private Integer positions;
+
+    /** @return true when the deadline exists and {@code today} is after it */
+    public boolean isPastDeadline(LocalDate today) {
+        return applicationDeadline != null && today.isAfter(applicationDeadline);
+    }
 }

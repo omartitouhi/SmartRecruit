@@ -90,3 +90,38 @@ describe('ApplyButton', () => {
     expect(screen.getByRole('button', { name: 'Postuler' })).toBeEnabled();
   });
 });
+
+describe('ApplyButton with a cover letter (EXT-APP-01)', () => {
+  it('sends the optional letter with the application', async () => {
+    const user = userEvent.setup();
+    api.apply.mockResolvedValue(makeApplication({ id: 'new-app', coverLetter: 'Motivée.' }));
+    show();
+    await user.click(await screen.findByRole('button', { name: 'Joindre une lettre de motivation' }));
+    await user.type(screen.getByLabelText('Lettre de motivation (facultative)'), '  Motivée.  ');
+    await user.click(screen.getByRole('button', { name: 'Postuler avec ma lettre' }));
+
+    expect(api.apply).toHaveBeenCalledWith('job-1', 'Motivée.');
+    expect(await screen.findByRole('button', { name: 'Candidature envoyée' })).toBeDisabled();
+  });
+
+  it('applies without a letter once it is removed, and counts the characters', async () => {
+    const user = userEvent.setup();
+    api.apply.mockResolvedValue(makeApplication());
+    show();
+    await user.click(await screen.findByRole('button', { name: 'Joindre une lettre de motivation' }));
+    await user.type(screen.getByLabelText('Lettre de motivation (facultative)'), 'Bonjour');
+    expect(screen.getByText(/7 \/ 5.000 caractères/)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Retirer la lettre' }));
+    expect(screen.queryByLabelText('Lettre de motivation (facultative)')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Postuler' }));
+    expect(api.apply).toHaveBeenCalledWith('job-1');
+  });
+
+  it('shows a 409 for an offer past its deadline', async () => {
+    const user = userEvent.setup();
+    api.apply.mockRejectedValue(new HttpError(409, 'La date limite de candidature est dépassée.'));
+    show();
+    await user.click(await screen.findByRole('button', { name: 'Postuler' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('La date limite de candidature est dépassée.');
+  });
+});

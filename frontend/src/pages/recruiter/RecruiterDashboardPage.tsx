@@ -3,15 +3,27 @@ import { applicationsApi } from '../../api/applications';
 import { candidatesApi, fullName } from '../../api/candidates';
 import { dashboardApi } from '../../api/dashboard';
 import { jobsApi } from '../../api/jobs';
+import { Funnel } from '../../components/domain/Funnel';
 import { NoCompany } from '../../components/domain/NoCompany';
 import { ButtonLink } from '../../components/ui/Button';
 import { ScoreChip } from '../../components/ui/ScoreBreakdown';
 import { EmptyState, ErrorState, PageSkeleton, Skeleton, SkeletonRows } from '../../components/ui/States';
-import { ApplicationStatusTag } from '../../components/ui/Tag';
-import { formatInt, formatRate } from '../../lib/format';
+import { ApplicationStatusTag, Tag } from '../../components/ui/Tag';
+import {
+  daysUntil,
+  deadlineLabel,
+  formatDateTimeLong,
+  formatDays,
+  formatDuration,
+  formatInt,
+  formatRate,
+  INTERVIEW_MODE_LABEL,
+  isoDay,
+  pluralize,
+} from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import { useMyCompany } from '../../lib/useCompany';
-import type { Application, CandidateView, Company } from '../../types';
+import type { Application, CandidateView, Company, UpcomingInterview } from '../../types';
 
 const JOBS_SCANNED = 3;
 const TOP_SHOWN = 5;
@@ -40,6 +52,34 @@ async function loadTop(): Promise<TopApplication[]> {
   return top.map((t, i) => ({ ...t, candidate: candidates[i] }));
 }
 
+const INTERVIEWS_SHOWN = 5;
+const CLOSING_WINDOW_DAYS = 7;
+
+interface AgendaRow {
+  interview: UpcomingInterview;
+  jobTitle: string | null;
+  candidate: CandidateView | null;
+}
+
+/** EXT-APP-02 : prochains entretiens de l'entreprise, avec l'offre et le nom du candidat. */
+async function loadAgenda(): Promise<AgendaRow[]> {
+  const interviews = (await applicationsApi.upcomingInterviews()).slice(0, INTERVIEWS_SHOWN);
+  const jobIds = [...new Set(interviews.map((i) => i.jobId))];
+  const jobs = await Promise.all(jobIds.map((id) => jobsApi.get(id).catch(() => null)));
+  const titles = new Map(jobIds.map((id, i) => [id, jobs[i]?.title ?? null]));
+  const candidates = await Promise.all(interviews.map((i) => candidatesApi.getCandidate(i.candidateId).catch(() => null)));
+  return interviews.map((interview, i) => ({ interview, jobTitle: titles.get(interview.jobId) ?? null, candidate: candidates[i] }));
+}
+
+/** EXT-JOB-01 : offres publiées dont la date limite tombe dans les 7 jours, la plus proche d'abord. */
+async function loadClosingSoon() {
+  const page = await jobsApi.search({ companyId: 'me', status: 'PUBLISHED', size: 50 });
+  const last = isoDay(CLOSING_WINDOW_DAYS);
+  return page.content
+    .filter((j) => j.applicationDeadline && j.applicationDeadline <= last && daysUntil(j.applicationDeadline) >= 0)
+    .sort((a, b) => (a.applicationDeadline ?? '').localeCompare(b.applicationDeadline ?? ''));
+}
+
 /** FE-DASH-02 : chiffres clés de l'entreprise et accès rapide aux candidatures les mieux classées. */
 export function RecruiterDashboardPage() {
   useDocumentTitle('Tableau de bord');
@@ -66,12 +106,20 @@ export function RecruiterDashboardPage() {
 function Dashboard({ company }: { company: Company }) {
   const stats = useAsync(() => dashboardApi.companyStats(company.id), [company.id]);
   const top = useAsync(loadTop, [company.id]);
+  const agenda = useAsync(loadAgenda, [company.id]);
+  const closing = useAsync(loadClosingSoon, [company.id]);
 
   const tiles = stats.data && [
     { label: 'Offres publiées', value: formatInt(stats.data.publishedJobs) },
     { label: 'Candidatures reçues', value: formatInt(stats.data.applicationsReceived) },
     { label: 'Candidatures acceptées', value: formatInt(stats.data.acceptedApplications) },
     { label: 'Taux d’acceptation', value: stats.data.acceptanceRate === null ? '—' : formatRate(stats.data.acceptanceRate) },
+  ];
+  // EXT-DASH-01: each figure is null when its source service is down.
+  const pace = stats.data && [
+    { label: 'Délai moyen de décision', value: stats.data.averageDecisionDays == null ? '—' : formatDays(stats.data.averageDecisionDays) },
+    { label: 'Entretiens à venir', value: stats.data.upcomingInterviews == null ? '—' : formatInt(stats.data.upcomingInterviews) },
+    { label: 'Offres bientôt clôturées', value: stats.data.jobsClosingSoon == null ? '—' : formatInt(stats.data.jobsClosingSoon) },
   ];
 
   return (
@@ -110,6 +158,96 @@ function Dashboard({ company }: { company: Company }) {
           ))}
         </div>
       )}
+
+      {pace && (
+        <div className="tiles tiles--three" style={{ marginTop: 'var(--space-3)' }}>
+          {pace.map((t) => (
+            <div className="panel tile" key={t.label}>
+              <p className="tile__label">{t.label}</p>
+              <p className="tile__value tile__value--sm">{t.value}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {stats.data?.applicationsByStatus && (
+        <div style={{ marginTop: 'var(--space-5)' }}>
+          <Funnel byStatus={stats.data.applicationsByStatus} />
+        </div>
+      )}
+
+      <div className="dash-columns">
+        <section className="stack" aria-labelledby="agenda-title">
+          <h2 className="section-title" id="agenda-title">
+            Prochains entretiens
+          </h2>
+          {agenda.error ? (
+            <ErrorState error={agenda.error} onRetry={agenda.reload} />
+          ) : agenda.loading ? (
+            <div className="panel">
+              <SkeletonRows rows={2} />
+            </div>
+          ) : agenda.data?.length ? (
+            <ul className="agenda panel panel--flush">
+              {agenda.data.map(({ interview, jobTitle, candidate }) => (
+                <li key={interview.applicationId} className="agenda__item">
+                  <span className="agenda__when">{formatDateTimeLong(interview.scheduledAt)}</span>
+                  <span className="agenda__what">
+                    <span className="cell-strong">{candidate ? fullName(candidate) : 'Profil indisponible'}</span>
+                    <span className="muted"> · {jobTitle ?? 'Offre'}</span>
+                    <span className="muted">
+                      {' '}
+                      · {INTERVIEW_MODE_LABEL[interview.mode]}, {formatDuration(interview.durationMinutes)}
+                    </span>
+                  </span>
+                  <Link className="text-link" to={`/recruiter/jobs/${interview.jobId}/candidates?id=${interview.applicationId}`}>
+                    Préparer
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyState title="Aucun entretien planifié">
+              Proposez un entretien depuis le classement d’une offre : il apparaîtra ici et dans l’espace du candidat.
+            </EmptyState>
+          )}
+        </section>
+
+        <section className="stack" aria-labelledby="closing-title">
+          <h2 className="section-title" id="closing-title">
+            Clôture dans les 7 jours
+          </h2>
+          {closing.error ? (
+            <ErrorState error={closing.error} onRetry={closing.reload} />
+          ) : closing.loading ? (
+            <div className="panel">
+              <SkeletonRows rows={2} />
+            </div>
+          ) : closing.data?.length ? (
+            <ul className="agenda panel panel--flush">
+              {closing.data.map((job) => {
+                const deadline = deadlineLabel(job.applicationDeadline);
+                return (
+                  <li key={job.id} className="agenda__item">
+                    <span className="agenda__what">
+                      <span className="cell-strong">{job.title}</span>
+                      <span className="muted"> · {pluralize(job.applicationsCount ?? 0, 'candidature')}</span>
+                    </span>
+                    {deadline && <Tag tone={deadline.tone}>{deadline.label}</Tag>}
+                    <Link className="text-link" to={`/recruiter/jobs/${job.id}/edit`}>
+                      Prolonger
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <EmptyState title="Aucune offre ne se termine bientôt">
+              Les offres dont la date limite approche apparaîtront ici, pour la prolonger à temps.
+            </EmptyState>
+          )}
+        </section>
+      </div>
 
       <section className="stack" aria-labelledby="top-title" style={{ marginTop: 'var(--space-7, var(--space-6))' }}>
         <h2 className="section-title" id="top-title">

@@ -7,9 +7,12 @@ import type {
   ContractType,
   CvAnalysisStatus,
   ExperienceLevel,
+  FunnelStatus,
+  InterviewMode,
   InvitationStatus,
   JobStatus,
   Role,
+  WorkMode,
 } from './enums';
 import type { MatchScore } from './contracts';
 
@@ -104,6 +107,15 @@ export interface Job {
   updatedAt: string;
   /** Motif de modération, visible du propriétaire et de l'admin seulement. */
   moderationReason: string | null;
+  /** EXT-JOB-01 — jamais null dans les réponses (ON_SITE par défaut). */
+  workMode: WorkMode;
+  /** Salaire brut mensuel en TND. */
+  salaryMin: number | null;
+  salaryMax: number | null;
+  /** Dernier jour pour postuler, `YYYY-MM-DD` (inclus, UTC) ; l'offre est clôturée le lendemain. */
+  applicationDeadline: string | null;
+  /** Nombre de postes, 1 par défaut. */
+  positions: number;
 }
 
 // 3.4 application-service
@@ -111,6 +123,41 @@ export interface StatusHistoryEntry {
   status: ApplicationStatus;
   changedAt: string;
   changedBy: string;
+  /** Explication adressée au candidat par le recruteur (EXT-APP-01). */
+  message?: string | null;
+}
+
+/** Entretien planifié (EXT-APP-02). `location` = adresse ou lien de visio. */
+export interface Interview {
+  scheduledAt: string;
+  durationMinutes: number;
+  mode: InterviewMode;
+  location: string | null;
+}
+
+/** Corps de planification d'un entretien ; `durationMinutes` vaut 60 par défaut. */
+export interface InterviewRequest {
+  scheduledAt: string;
+  durationMinutes?: number;
+  mode: InterviewMode;
+  location?: string | null;
+}
+
+/** GET /applications/interviews/upcoming (recruteur). */
+export interface UpcomingInterview extends Interview {
+  applicationId: string;
+  jobId: string;
+  candidateId: string;
+}
+
+/** Note interne d'équipe sur une candidature (EXT-APP-03), jamais visible du candidat. */
+export interface ApplicationNote {
+  id: string;
+  applicationId: string;
+  authorId: string;
+  content: string;
+  rating: number | null;
+  createdAt: string;
 }
 
 export interface Application {
@@ -121,6 +168,12 @@ export interface Application {
   matchScore: MatchScore | null;
   appliedAt: string;
   statusHistory: StatusHistoryEntry[];
+  /** Lettre de motivation facultative (EXT-APP-01). */
+  coverLetter: string | null;
+  interview: Interview | null;
+  /** Vue recruteur/admin seulement : null pour le candidat (EXT-APP-03). */
+  notesCount: number | null;
+  averageRating: number | null;
 }
 
 // 3.5 dashboard-service
@@ -131,7 +184,11 @@ export const AUDIT_ACTIONS = [
   'APPLICATION_STATUS_CHANGED',
   'USER_STATUS_CHANGED',
   'JOB_MODERATED',
+  'INTERVIEW_SCHEDULED',
 ] as const;
+
+/** Candidatures par statut, hors retirées : l'entonnoir (EXT-DASH-01). */
+export type ApplicationsByStatus = Record<FunnelStatus, number>;
 
 /** GET /dashboard/stats/global. Une source indisponible donne null (ou 0 pour un compteur). */
 export interface GlobalStats {
@@ -140,6 +197,11 @@ export interface GlobalStats {
   totalUsers: number;
   usersByRole: Record<Role, number>;
   averageMatchScore: number | null;
+  applicationsByStatus: ApplicationsByStatus | null;
+  /** Jours entre la candidature et la décision (acceptée ou non retenue), en moyenne. */
+  averageDecisionDays: number | null;
+  /** Offres publiées dont la date limite tombe dans les 7 jours. */
+  jobsClosingSoon: number | null;
 }
 
 /** GET /dashboard/stats/company/{id}. `acceptanceRate` : part des candidatures décidées qui sont acceptées (0 à 1). */
@@ -148,6 +210,10 @@ export interface CompanyStats {
   applicationsReceived: number;
   acceptedApplications: number;
   acceptanceRate: number | null;
+  applicationsByStatus: ApplicationsByStatus | null;
+  averageDecisionDays: number | null;
+  upcomingInterviews: number | null;
+  jobsClosingSoon: number | null;
 }
 
 export interface AuditLogEntry {

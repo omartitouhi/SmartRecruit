@@ -8,6 +8,7 @@ import com.smartrecruit.job.dto.PageResponse;
 import com.smartrecruit.job.model.ContractType;
 import com.smartrecruit.job.model.ExperienceLevel;
 import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.model.WorkMode;
 import com.smartrecruit.job.security.AuthenticatedUser;
 import com.smartrecruit.job.service.JobPatchParser;
 import com.smartrecruit.job.service.JobQueryService;
@@ -36,8 +37,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Offers API. {@code GET /api/v1/jobs/recommendations} lives in {@link RecommendationController};
- * its literal path wins over {@code /{id}}.
+ * Offers API. {@code GET /api/v1/jobs/recommendations} lives in {@link RecommendationController} and
+ * {@code GET /api/v1/jobs/saved} in {@link SavedJobController}; their literal paths win over {@code /{id}}.
  */
 @RestController
 @RequestMapping("/api/v1/jobs")
@@ -62,10 +63,13 @@ public class JobController {
             @RequestParam(required = false) ExperienceLevel experienceLevel,
             @RequestParam(required = false) String companyId,
             @RequestParam(required = false) JobStatus status,
+            @RequestParam(required = false) WorkMode workMode,
+            @RequestParam(required = false) @Min(0) Integer minSalary,
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(50) int size) {
         return queryService.search(user,
-                new JobSearchCriteria(keyword, location, skills, contractType, experienceLevel, companyId, status),
+                new JobSearchCriteria(keyword, location, skills, contractType, experienceLevel, companyId, status,
+                        workMode, minSalary),
                 page, size);
     }
 
@@ -90,6 +94,14 @@ public class JobController {
     public JobResponse update(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
                               @RequestBody JsonNode body) {
         return jobService.update(user.id(), id, patchParser.parse(body));
+    }
+
+    /** Copies an offer of the recruiter's company as a new draft — EXT-JOB-01. */
+    @PostMapping("/{id}/duplicate")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('RECRUITER')")
+    public JobResponse duplicate(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
+        return jobService.duplicate(user.id(), id);
     }
 
     /** Publishes, closes or reopens an offer — BE-JOB-03. */

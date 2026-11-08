@@ -52,6 +52,8 @@ class ImmediateErasureIntegrationTest {
         String uri = "http://localhost:" + SERVICES.getAddress().getPort();
         registry.add("gdpr.erasure.auth-service-uri", () -> uri);
         registry.add("gdpr.erasure.ai-service-uri", () -> uri);
+        registry.add("gdpr.erasure.job-service-uri", () -> uri);
+        registry.add("gdpr.erasure.application-service-uri", () -> uri);
     }
 
     @AfterAll
@@ -81,6 +83,6 @@ class ImmediateErasureIntegrationTest {
             Thread.sleep(50);
         }
         assertThat(deletedRepository.findById(candidateId).orElseThrow().isFullyErased()).isTrue();
-        assertThat(HITS.get()).isEqualTo(2);
+        assertThat(HITS.get()).isEqualTo(4);
     }
 }

@@ -14,7 +14,8 @@ import java.util.UUID;
 @Component
 public class JobServiceClient {
 
-    public record JobStats(long total, long draft, long published, long closed, long moderated) {
+    /** {@code closingSoon}: published offers whose deadline falls within 7 days (EXT-DASH-01), null from an older job-service. */
+    public record JobStats(long total, long draft, long published, long closed, long moderated, Long closingSoon) {
     }
 
     private final RestClient client;

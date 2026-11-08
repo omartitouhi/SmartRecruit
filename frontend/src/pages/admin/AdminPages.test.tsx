@@ -43,6 +43,9 @@ describe('admin dashboard', () => {
       totalUsers: 15,
       usersByRole: { CANDIDATE: 10, RECRUITER: 4, ADMIN: 1 },
       averageMatchScore: 66.4,
+      applicationsByStatus: null,
+      averageDecisionDays: null,
+      jobsClosingSoon: null,
     });
     renderAt(<AdminDashboardPage />, { route: '/admin', account: admin });
     const tile = async (label: string) => (await screen.findByText(label, { selector: '.tile__label' })).closest('.tile') as HTMLElement;
@@ -61,6 +64,9 @@ describe('admin dashboard', () => {
       totalUsers: 1,
       usersByRole: { CANDIDATE: 0, RECRUITER: 0, ADMIN: 1 },
       averageMatchScore: null,
+      applicationsByStatus: null,
+      averageDecisionDays: null,
+      jobsClosingSoon: null,
     });
     const { unmount } = renderAt(<AdminDashboardPage />, { route: '/admin', account: admin });
     expect(within(((await screen.findByText('Score moyen des candidatures')).closest('.tile')) as HTMLElement).getByText('—')).toBeInTheDocument();

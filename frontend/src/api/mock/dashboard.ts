@@ -1,7 +1,7 @@
 import { HttpError } from '../../lib/errors';
-import type { Account, PaginatedResponse, Role } from '../../types';
+import { FUNNEL_STATUSES, type Account, type Application, type ApplicationsByStatus, type Job, type PaginatedResponse, type Role } from '../../types';
 import type { DashboardApi } from '../dashboard';
-import { audit, clone, db, delay, findJob, now, recruiterCompany, requireRole, save } from './store';
+import { audit, clone, closeExpiredJobs, db, delay, findJob, now, recruiterCompany, requireRole, save, today } from './store';
 
 function paginate<T>(rows: T[], page = 0, size = 20): PaginatedResponse<T> {
   const pageSize = Math.min(Math.max(size, 1), 50);
@@ -22,10 +22,38 @@ const publicAccount = ({ password: _password, ...account }: Account & { password
 const average = (scores: number[]) =>
   scores.length ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10 : null;
 
+const DAY_MS = 86400000;
+
+/** EXT-DASH-01: the funnel, every non-withdrawn application by status. */
+function byStatus(applications: Application[]): ApplicationsByStatus {
+  const counts = Object.fromEntries(FUNNEL_STATUSES.map((s) => [s, 0])) as ApplicationsByStatus;
+  applications.forEach((a) => {
+    if (a.status !== 'WITHDRAWN') counts[a.status] += 1;
+  });
+  return counts;
+}
+
+/** Mean days between applying and the first ACCEPTED/REJECTED entry of the history, one decimal. */
+function averageDecisionDays(applications: Application[]) {
+  const days = applications.flatMap((a) => {
+    const decision = a.statusHistory.find((h) => h.status === 'ACCEPTED' || h.status === 'REJECTED');
+    return decision ? [(new Date(decision.changedAt).getTime() - new Date(a.appliedAt).getTime()) / DAY_MS] : [];
+  });
+  return average(days);
+}
+
+/** Published offers whose deadline falls within the next 7 days, today included. */
+function closingSoon(jobs: Job[]) {
+  const from = today();
+  const to = new Date(Date.now() + 7 * DAY_MS).toISOString().slice(0, 10);
+  return jobs.filter((j) => j.status === 'PUBLISHED' && j.applicationDeadline && j.applicationDeadline >= from && j.applicationDeadline <= to).length;
+}
+
 export const mockDashboardApi: DashboardApi = {
   async globalStats() {
     await delay();
     requireRole('ADMIN');
+    closeExpiredJobs();
     const users = db.accounts.filter((a) => a.status !== 'DELETED');
     const count = (role: Role) => users.filter((a) => a.role === role).length;
     return {
@@ -34,6 +62,9 @@ export const mockDashboardApi: DashboardApi = {
       totalUsers: users.length,
       usersByRole: { CANDIDATE: count('CANDIDATE'), RECRUITER: count('RECRUITER'), ADMIN: count('ADMIN') },
       averageMatchScore: average(db.applications.flatMap((a) => (a.matchScore ? [a.matchScore.score] : []))),
+      applicationsByStatus: byStatus(db.applications),
+      averageDecisionDays: averageDecisionDays(db.applications),
+      jobsClosingSoon: closingSoon(db.jobs),
     };
   },
 
@@ -41,6 +72,7 @@ export const mockDashboardApi: DashboardApi = {
     await delay();
     const account = requireRole('RECRUITER', 'ADMIN');
     if (account.role === 'RECRUITER' && recruiterCompany(account.id)?.id !== companyId) throw new HttpError(403);
+    closeExpiredJobs();
     const jobIds = new Set(db.jobs.filter((j) => j.companyId === companyId).map((j) => j.id));
     const received = db.applications.filter((a) => jobIds.has(a.jobId) && a.status !== 'WITHDRAWN');
     const accepted = received.filter((a) => a.status === 'ACCEPTED').length;
@@ -50,6 +82,12 @@ export const mockDashboardApi: DashboardApi = {
       applicationsReceived: received.length,
       acceptedApplications: accepted,
       acceptanceRate: decided ? accepted / decided : null,
+      applicationsByStatus: byStatus(received),
+      averageDecisionDays: averageDecisionDays(received),
+      upcomingInterviews: received.filter(
+        (a) => a.status === 'INTERVIEW' && a.interview && new Date(a.interview.scheduledAt).getTime() >= Date.now(),
+      ).length,
+      jobsClosingSoon: closingSoon(db.jobs.filter((j) => j.companyId === companyId)),
     };
   },
 

@@ -5,6 +5,17 @@ service IA calcule un score de compatibilité expliqué critère par critère.
 
 Monorepo : un seul dépôt pour le code, l'infrastructure et la documentation.
 
+Au-delà du Product Backlog, la plateforme couvre aussi (`EXT-*`, contrats dans
+[API_CONTRACTS.md §7](docs/API_CONTRACTS.md#7-enrichissements-métier-hors-product-backlog)) :
+
+- **Offres enrichies** : mode de travail, fourchette de salaire, date limite avec clôture automatique, nombre de postes,
+  duplication d'une offre ;
+- **Côté candidat** : offres favorites, lettre de motivation, page publique des entreprises, suivi détaillé
+  (messages du recruteur, entretien planifié) ;
+- **Côté recruteur** : décisions motivées, planification des entretiens, notes et évaluation d'équipe, pipeline Kanban,
+  export CSV des candidats ;
+- **Pilotage** : entonnoir par statut, délai moyen de décision, entretiens à venir, offres bientôt clôturées.
+
 ```
 SmartRecruit/
 ├── backend/             6 microservices Spring Boot (gateway, auth, user, job, application, dashboard), e2e, seed

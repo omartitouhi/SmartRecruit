@@ -1,5 +1,6 @@
 package com.smartrecruit.application.support;
 
+import com.smartrecruit.application.repository.ApplicationNoteRepository;
 import com.smartrecruit.application.repository.ApplicationRepository;
 import com.smartrecruit.application.repository.MatchScoreCacheRepository;
 import com.smartrecruit.application.security.InternalIdentityVerifier;
@@ -43,9 +44,13 @@ public abstract class ApiTestSupport {
     @Autowired
     protected MatchScoreCacheRepository scoreCache;
 
+    @Autowired
+    protected ApplicationNoteRepository notes;
+
     @BeforeEach
     void resetState() {
         FakeServices.reset();
+        notes.deleteAll();
         applications.deleteAll();
         scoreCache.deleteAll();
     }
@@ -63,6 +68,14 @@ public abstract class ApiTestSupport {
         FakeServices.on("GET /internal/v1/jobs/" + jobId, 200,
                 "{\"id\":\"%s\",\"companyId\":\"%s\",\"title\":\"Dev Java\",\"status\":\"%s\",\"updatedAt\":\"%s\"}"
                         .formatted(jobId, companyId, status, updatedAt));
+    }
+
+    /** Same as {@link #stubJob(UUID, UUID, String, Instant)} with a last day to apply (EXT-JOB-01). */
+    protected static void stubJob(UUID jobId, UUID companyId, String status, Instant updatedAt, java.time.LocalDate deadline) {
+        FakeServices.on("GET /internal/v1/jobs/" + jobId, 200,
+                ("{\"id\":\"%s\",\"companyId\":\"%s\",\"title\":\"Dev Java\",\"status\":\"%s\",\"updatedAt\":\"%s\","
+                        + "\"applicationDeadline\":%s}").formatted(jobId, companyId, status, updatedAt,
+                        deadline == null ? "null" : "\"" + deadline + "\""));
     }
 
     protected static void stubReadiness(UUID candidateId, boolean profileComplete, boolean hasCv, Instant cvParsedAt) {

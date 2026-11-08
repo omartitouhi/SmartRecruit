@@ -3,10 +3,14 @@ package com.smartrecruit.application.controller;
 import com.smartrecruit.application.dto.MatchScoreDto;
 import com.smartrecruit.application.model.Application;
 import com.smartrecruit.application.model.ApplicationStatus;
+import com.smartrecruit.application.model.Interview;
+import com.smartrecruit.application.model.InterviewMode;
+import com.smartrecruit.application.model.StatusHistoryEntry;
 import com.smartrecruit.application.support.ApiTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -98,6 +102,49 @@ class InternalStatsIntegrationTest extends ApiTestSupport {
         stats("SERVICE", acme).andExpect(jsonPath("$.total").value(1))
                 .andExpect(jsonPath("$.averageMatchScore").value(org.hamcrest.Matchers.nullValue()))
                 .andExpect(jsonPath("$.acceptanceRate").value(org.hamcrest.Matchers.nullValue()));
+    }
+
+    /** EXT-DASH-01: applied → first decision, in days. */
+    private void saveDecided(UUID company, ApplicationStatus decision, Instant appliedAt, Duration delay) {
+        Application application = Application.builder().id(UUID.randomUUID()).jobId(UUID.randomUUID())
+                .candidateId(UUID.randomUUID()).companyId(company).status(decision).appliedAt(appliedAt).build();
+        application.getStatusHistory().add(new StatusHistoryEntry(ApplicationStatus.RECEIVED, appliedAt, application.getCandidateId()));
+        application.getStatusHistory().add(new StatusHistoryEntry(ApplicationStatus.IN_REVIEW, appliedAt.plus(Duration.ofDays(1)), service));
+        application.getStatusHistory().add(new StatusHistoryEntry(decision, appliedAt.plus(delay), service));
+        applications.save(application);
+    }
+
+    private void saveInterview(UUID company, Instant at) {
+        applications.save(Application.builder().id(UUID.randomUUID()).jobId(UUID.randomUUID()).candidateId(UUID.randomUUID())
+                .companyId(company).status(ApplicationStatus.INTERVIEW).appliedAt(Instant.now())
+                .interview(Interview.builder().scheduledAt(at).durationMinutes(60).mode(InterviewMode.PHONE).build()).build());
+    }
+
+    @Test
+    void averageDecisionDaysAndUpcomingInterviews() throws Exception {
+        Instant applied = Instant.parse("2026-03-01T08:00:00Z");
+        saveDecided(acme, ApplicationStatus.ACCEPTED, applied, Duration.ofDays(4));
+        saveDecided(acme, ApplicationStatus.REJECTED, applied, Duration.ofHours(36));
+        saveDecided(globex, ApplicationStatus.REJECTED, applied, Duration.ofDays(10));
+        saveInterview(acme, Instant.now().plus(Duration.ofDays(2)));
+        saveInterview(acme, Instant.now().minus(Duration.ofDays(2)));
+        saveInterview(globex, Instant.now().plus(Duration.ofHours(3)));
+        save(acme, ApplicationStatus.ACCEPTED, null);
+
+        stats("SERVICE", acme).andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageDecisionDays").value(2.8))
+                .andExpect(jsonPath("$.upcomingInterviews").value(1));
+        stats("SERVICE", null).andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageDecisionDays").value(5.2))
+                .andExpect(jsonPath("$.upcomingInterviews").value(2));
+    }
+
+    @Test
+    void noDecisionMeansNullDelayAndNoInterviewMeansZero() throws Exception {
+        save(acme, ApplicationStatus.RECEIVED, null);
+
+        stats("SERVICE", acme).andExpect(jsonPath("$.averageDecisionDays").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.upcomingInterviews").value(0));
     }
 
     @Test

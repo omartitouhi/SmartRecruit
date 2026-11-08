@@ -1,51 +1,38 @@
 import { useState, type FormEvent } from 'react';
-import type { JobCreateRequest } from '../../api/jobs';
 import { toUiError } from '../../lib/errors';
-import { CONTRACT_LABEL, LEVEL_LABEL } from '../../lib/format';
-import type { ContractType, ExperienceLevel } from '../../types';
+import { CONTRACT_LABEL, isoDay, LEVEL_LABEL, WORK_MODE_LABEL } from '../../lib/format';
+import { EMPTY_JOB, toFormState, toFormValues, validateJobForm, type JobFormState, type JobFormValues } from '../../lib/jobForm';
+import type { ContractType, ExperienceLevel, WorkMode } from '../../types';
 import { Button, ButtonLink } from '../ui/Button';
 import { SelectField, TextAreaField, TextField } from '../ui/Field';
 import { Alert } from '../ui/States';
 import { TagInput } from '../ui/TagInput';
 
-const EMPTY_JOB: JobCreateRequest = {
-  title: '',
-  description: '',
-  requiredSkills: [],
-  experienceLevel: 'INTERMEDIATE',
-  contractType: 'CDI',
-  location: '',
-};
-
 interface Props {
   /** Defaults to an empty publication form. */
-  initial?: JobCreateRequest;
+  initial?: JobFormValues;
   submitLabel: string;
   cancelTo: string;
   /** A rejection is shown as a form message plus the `fieldErrors` of a 400, under their field. */
-  onSubmit(values: JobCreateRequest): Promise<void>;
+  onSubmit(values: JobFormValues): Promise<void>;
 }
 
 /** The job offer form shared by the publication and the edit pages (validation, server errors, saving state). */
 export function JobForm({ initial = EMPTY_JOB, submitLabel, cancelTo, onSubmit }: Props) {
-  const [form, setForm] = useState<JobCreateRequest>(initial);
+  const [form, setForm] = useState<JobFormState>(() => toFormState(initial));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    const found: Record<string, string> = {};
-    if (!form.title.trim()) found.title = 'L’intitulé est obligatoire.';
-    if (!form.location.trim()) found.location = 'Le lieu est obligatoire.';
-    if (form.description.trim().length < 20) found.description = 'Décrivez le poste en quelques lignes (20 caractères au minimum).';
-    if (!form.requiredSkills.length) found.requiredSkills = 'Ajoutez au moins une compétence : elles comptent pour 50 % du score.';
+    const found = validateJobForm(form, initial.applicationDeadline);
     setErrors(found);
     if (Object.keys(found).length) return;
     setSaving(true);
     setFormError(null);
     try {
-      await onSubmit(form);
+      await onSubmit(toFormValues(form));
     } catch (err) {
       const ui = toUiError(err);
       setErrors(ui.fieldErrors);
@@ -72,6 +59,59 @@ export function JobForm({ initial = EMPTY_JOB, submitLabel, cancelTo, onSubmit }
           value={form.experienceLevel}
           onChange={(e) => setForm({ ...form, experienceLevel: e.target.value as ExperienceLevel })}
           options={Object.entries(LEVEL_LABEL).map(([value, label]) => ({ value, label }))}
+        />
+      </div>
+      <div className="form-row">
+        <SelectField
+          label="Mode de travail"
+          value={form.workMode}
+          onChange={(e) => setForm({ ...form, workMode: e.target.value as WorkMode })}
+          options={Object.entries(WORK_MODE_LABEL).map(([value, label]) => ({ value, label }))}
+          error={errors.workMode}
+        />
+        <TextField
+          label="Nombre de postes"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={100}
+          value={form.positions}
+          onChange={(e) => setForm({ ...form, positions: e.target.value })}
+          error={errors.positions}
+        />
+        <TextField
+          label="Date limite de candidature"
+          type="date"
+          min={form.applicationDeadline && form.applicationDeadline === initial.applicationDeadline ? undefined : isoDay()}
+          value={form.applicationDeadline}
+          onChange={(e) => setForm({ ...form, applicationDeadline: e.target.value })}
+          hint="Facultative. L’offre est clôturée automatiquement le lendemain."
+          error={errors.applicationDeadline}
+        />
+      </div>
+      <div className="form-row">
+        <TextField
+          label="Salaire minimum (TND brut / mois)"
+          type="number"
+          inputMode="numeric"
+          min={0}
+          step={100}
+          value={form.salaryMin}
+          placeholder="2 500"
+          onChange={(e) => setForm({ ...form, salaryMin: e.target.value })}
+          hint="Facultatif. Un salaire affiché attire plus de candidatures."
+          error={errors.salaryMin}
+        />
+        <TextField
+          label="Salaire maximum (TND brut / mois)"
+          type="number"
+          inputMode="numeric"
+          min={0}
+          step={100}
+          value={form.salaryMax}
+          placeholder="3 500"
+          onChange={(e) => setForm({ ...form, salaryMax: e.target.value })}
+          error={errors.salaryMax}
         />
       </div>
       <TagInput

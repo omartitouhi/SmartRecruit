@@ -51,6 +51,9 @@ services:
       AUTH_SERVICE_URI: http://auth-service:8081
       AI_SERVICE_URI: http://ai-service:8000
       DASHBOARD_SERVICE_URI: http://dashboard-service:8085
+      # Right to be forgotten also erases saved offers and cover letters / recruiter notes.
+      JOB_SERVICE_URI: http://job-service:8083
+      APPLICATION_SERVICE_URI: http://application-service:8084
       CV_ENCRYPTION_KEY: c21hcnRyZWNydWl0LWRldi1vbmx5LWN2LWtleS0zMmI=
     volumes:
       - cv_data:/data/cvs

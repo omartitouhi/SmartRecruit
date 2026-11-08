@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface DeletedCandidateRepository extends JpaRepository<DeletedCandidate, UUID> {
 
     /** Deletions not yet propagated to every service (BE-SEC-02). */
-    @Query("select d.id from DeletedCandidate d where d.authErasedAt is null or d.aiErasedAt is null order by d.deletedAt")
+    @Query("select d.id from DeletedCandidate d where d.authErasedAt is null or d.aiErasedAt is null"
+            + " or d.jobsErasedAt is null or d.applicationsErasedAt is null order by d.deletedAt")
     List<UUID> findPendingErasureIds();
 }

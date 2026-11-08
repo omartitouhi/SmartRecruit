@@ -282,6 +282,105 @@ r = c.get(f"{GW}/dashboard/admin/audit-log", headers=HA, params={"actorId": admi
 check("filtre du journal par acteur", r.status_code == 200 and all(e["actorId"] == admin_id for e in r.json()["content"]))
 check("journal d'audit refuse aux non-admins (403)", c.get(f"{GW}/dashboard/admin/audit-log", headers=H1).status_code == 403)
 
+# ---------------------------------------------------------------- enrichissements metier (hors backlog)
+section("Offres enrichies et favoris (EXT-JOB-01, EXT-SAVED-01)")
+in_3_days = time.strftime("%Y-%m-%d", time.gmtime(time.time() + 3 * 86400))
+yesterday = time.strftime("%Y-%m-%d", time.gmtime(time.time() - 86400))
+JOB3 = {**JOB, "title": f"Ingenieur Data {RUN}", "requiredSkills": ["Python", "SQL", f"Data{RUN}"], "workMode": "HYBRID",
+        "salaryMin": 2500, "salaryMax": 3500, "applicationDeadline": in_3_days, "positions": 2}
+r = c.post(f"{GW}/jobs", headers=H1, json=JOB3)
+job3 = r.json() if r.status_code == 201 else {}
+job3_id = job3.get("id")
+check("publication avec mode, salaire, date limite et postes (201)",
+      r.status_code == 201 and job3.get("workMode") == "HYBRID" and job3.get("salaryMax") == 3500
+      and job3.get("applicationDeadline") == in_3_days and job3.get("positions") == 2, r.text[:200])
+check("offre sans nouveaux champs : valeurs par defaut (ON_SITE, 1 poste)", job.get("workMode") == "ON_SITE" and job.get("positions") == 1, job)
+r = c.post(f"{GW}/jobs", headers=H1, json={**JOB3, "salaryMin": 4000, "salaryMax": 3000})
+check("salaire minimum superieur au maximum (400 salaryMax)", r.status_code == 400 and "salaryMax" in r.json().get("fieldErrors", {}), r.text[:200])
+r = c.post(f"{GW}/jobs", headers=H1, json={**JOB3, "applicationDeadline": yesterday})
+check("date limite passee refusee (400 applicationDeadline)", r.status_code == 400 and "applicationDeadline" in r.json().get("fieldErrors", {}), r.text[:200])
+r = c.get(f"{GW}/jobs", headers=HC1, params={"keyword": RUN, "workMode": "HYBRID"})
+check("filtre workMode", r.status_code == 200 and [j["id"] for j in r.json()["content"]] == [job3_id], r.text[:200])
+r = c.get(f"{GW}/jobs", headers=HC1, params={"keyword": RUN, "minSalary": 3000})
+check("filtre minSalary (offres sans salaire exclues)", r.status_code == 200 and [j["id"] for j in r.json()["content"]] == [job3_id], r.text[:200])
+r = c.patch(f"{GW}/jobs/{job3_id}", headers=H1, json={"salaryMin": None, "salaryMax": None})
+check("suppression du salaire en PATCH (200)", r.status_code == 200 and r.json().get("salaryMin") is None, r.text[:200])
+r = c.post(f"{GW}/jobs/{job_id}/duplicate", headers=H1)
+dup = r.json() if r.status_code == 201 else {}
+check("duplication d'une offre (201, DRAFT, titre (copie))", r.status_code == 201 and dup.get("status") == "DRAFT" and dup.get("title", "").endswith("(copie)"), r.text[:200])
+check("duplication par une autre entreprise (403)", c.post(f"{GW}/jobs/{job_id}/duplicate", headers=H2).status_code == 403)
+check("duplication d'une offre moderee (409)", c.post(f"{GW}/jobs/{job2_id}/duplicate", headers=H3).status_code == 409)
+check("mise en favori (204)", c.put(f"{GW}/jobs/{job3_id}/saved", headers=HC1).status_code == 204)
+check("mise en favori idempotente (204)", c.put(f"{GW}/jobs/{job3_id}/saved", headers=HC1).status_code == 204)
+check("favori sur un brouillon (404)", c.put(f"{GW}/jobs/{dup.get('id')}/saved", headers=HC1).status_code == 404)
+check("favori par un recruteur (403)", c.put(f"{GW}/jobs/{job3_id}/saved", headers=H1).status_code == 403)
+r = c.get(f"{GW}/jobs/saved", headers=HC1)
+check("liste des favoris", r.status_code == 200 and [j["id"] for j in r.json()] == [job3_id] and r.json()[0].get("saved") is True, r.text[:200])
+r = c.get(f"{GW}/jobs/{job3_id}", headers=HC1)
+check("indicateur saved sur le detail (candidat)", r.status_code == 200 and r.json().get("saved") is True, r.text[:150])
+check("indicateur saved absent pour un recruteur", c.get(f"{GW}/jobs/{job3_id}", headers=H1).json().get("saved") is None)
+check("retrait du favori (204)", c.delete(f"{GW}/jobs/{job3_id}/saved", headers=HC1).status_code == 204)
+check("favoris vides apres retrait", c.get(f"{GW}/jobs/saved", headers=HC1).json() == [])
+check("publication du brouillon duplique (200)",
+      c.patch(f"{GW}/jobs/{dup.get('id')}/status", headers=H1, json={"status": "PUBLISHED"}).status_code == 200)
+
+section("Candidature motivee, entretiens et notes (EXT-APP-01..03)")
+letter = "Bonjour,\nVotre offre correspond a mon parcours data. Disponible rapidement."
+r = c.post(f"{GW}/applications", headers=HC1, json={"jobId": job3_id, "coverLetter": letter})
+app_x = r.json() if r.status_code == 201 else {}
+check("candidature avec lettre de motivation (201)", r.status_code == 201 and app_x.get("coverLetter") == letter, r.text[:200])
+check("le candidat ne voit pas les notes (notesCount null)", app_x.get("notesCount") is None and app_x.get("averageRating") is None, app_x)
+check("lettre trop longue (400)", c.post(f"{GW}/applications", headers=HC3, json={"jobId": job3_id, "coverLetter": "x" * 5001}).status_code == 400)
+r = c.patch(f"{GW}/applications/{app_x.get('id')}/status", headers=H1, json={"status": "IN_REVIEW", "message": "Profil retenu pour etude"})
+check("decision avec message au candidat (200)", r.status_code == 200 and r.json()["statusHistory"][-1].get("message") == "Profil retenu pour etude", r.text[:200])
+slot = time.strftime("%Y-%m-%dT10:00:00Z", time.gmtime(time.time() + 5 * 86400))
+interview = {"scheduledAt": slot, "durationMinutes": 45, "mode": "VIDEO", "location": "https://meet.e2e.test/abc"}
+check("entretien avec un autre statut refuse (400)",
+      c.patch(f"{GW}/applications/{app_x.get('id')}/status", headers=H1, json={"status": "IN_REVIEW", "interview": interview}).status_code == 400)
+r = c.patch(f"{GW}/applications/{app_x.get('id')}/status", headers=H1, json={"status": "INTERVIEW", "interview": interview})
+check("passage en entretien avec planification (200)", r.status_code == 200 and (r.json().get("interview") or {}).get("mode") == "VIDEO", r.text[:200])
+past = {**interview, "scheduledAt": "2020-01-01T10:00:00Z"}
+check("entretien dans le passe refuse (400)", c.put(f"{GW}/applications/{app_x.get('id')}/interview", headers=H1, json=past).status_code == 400)
+r = c.put(f"{GW}/applications/{app_x.get('id')}/interview", headers=H1, json={**interview, "mode": "ON_SITE", "location": "Siege, Tunis"})
+check("replanification (200)", r.status_code == 200 and r.json()["interview"]["mode"] == "ON_SITE", r.text[:200])
+check("replanification par une autre entreprise (403)", c.put(f"{GW}/applications/{app_x.get('id')}/interview", headers=H2, json=interview).status_code == 403)
+r = c.get(f"{GW}/applications/interviews/upcoming", headers=H1)
+check("entretiens a venir du recruteur", r.status_code == 200 and any(i["applicationId"] == app_x.get("id") for i in r.json()), r.text[:200])
+check("entretiens a venir d'une autre entreprise (vide)", all(i["applicationId"] != app_x.get("id") for i in c.get(f"{GW}/applications/interviews/upcoming", headers=H2).json()))
+mine = c.get(f"{GW}/applications/me", headers=HC1).json()
+mine_x = next((a for a in mine if a["id"] == app_x.get("id")), {})
+check("le candidat voit son entretien et le message", (mine_x.get("interview") or {}).get("mode") == "ON_SITE" and any(h.get("message") for h in mine_x.get("statusHistory", [])), mine_x)
+r = c.post(f"{GW}/applications/{app_x.get('id')}/notes", headers=H1, json={"content": "Bon niveau SQL", "rating": 4})
+note = r.json() if r.status_code == 201 else {}
+check("note d'equipe (201)", r.status_code == 201 and note.get("rating") == 4, r.text[:200])
+if token:
+    r = c.get(f"{GW}/applications/{app_x.get('id')}/notes", headers=H3)
+    check("notes partagees avec un autre membre de l'entreprise", r.status_code == 200 and len(r.json()) == 1, r.text[:150])
+c.post(f"{GW}/applications/{app_x.get('id')}/notes", headers=H1, json={"content": "A confirmer en entretien", "rating": 5})
+check("note hors bornes (400)", c.post(f"{GW}/applications/{app_x.get('id')}/notes", headers=H1, json={"content": "x", "rating": 6}).status_code == 400)
+check("notes refusees au candidat (403)", c.get(f"{GW}/applications/{app_x.get('id')}/notes", headers=HC1).status_code == 403)
+check("notes refusees a une autre entreprise (403)", c.get(f"{GW}/applications/{app_x.get('id')}/notes", headers=H2).status_code == 403)
+r = c.get(f"{GW}/applications", headers=H1, params={"jobId": job3_id})
+row = next((a for a in r.json() if a["id"] == app_x.get("id")), {}) if r.status_code == 200 else {}
+check("compteur et moyenne des notes cote recruteur", row.get("notesCount") == 2 and row.get("averageRating") == 4.5, row)
+check("suppression d'une note par son auteur (204)", c.delete(f"{GW}/applications/{app_x.get('id')}/notes/{note.get('id')}", headers=H1).status_code == 204)
+r = c.patch(f"{GW}/applications/{app_x.get('id')}/status", headers=H1, json={"status": "REJECTED", "message": "Nous avons retenu un autre profil."})
+check("refus motive (200)", r.status_code == 200 and r.json()["statusHistory"][-1].get("message") == "Nous avons retenu un autre profil.", r.text[:200])
+
+section("Pilotage enrichi (EXT-DASH-01)")
+r = c.get(f"{GW}/dashboard/stats/company/{co1.get('id')}", headers=H1)
+s = r.json() if r.status_code == 200 else {}
+check("entonnoir par statut (entreprise)", isinstance(s.get("applicationsByStatus"), dict) and s["applicationsByStatus"].get("REJECTED", 0) >= 1, s)
+check("delai moyen de decision (entreprise)", s.get("averageDecisionDays") is not None, s)
+check("offres bientot cloturees (entreprise)", (s.get("jobsClosingSoon") or 0) >= 1, s)
+check("compteur d'entretiens a venir present", "upcomingInterviews" in s, s)
+r = c.get(f"{GW}/dashboard/stats/global", headers=HA)
+g = r.json() if r.status_code == 200 else {}
+check("entonnoir et delai de decision (global)", isinstance(g.get("applicationsByStatus"), dict) and g.get("averageDecisionDays") is not None and "jobsClosingSoon" in g, g)
+time.sleep(2)
+r = c.get(f"{GW}/dashboard/admin/audit-log", headers=HA, params={"action": "INTERVIEW_SCHEDULED"})
+check("evenement d'audit INTERVIEW_SCHEDULED journalise", r.status_code == 200 and len(r.json().get("content", [])) >= 1, r.text[:150])
+
 # ---------------------------------------------------------------- securite
 section("Securite et acces")
 check("endpoints internes non exposes par le gateway", c.get(f"{GW.replace('/api/v1','')}/internal/v1/accounts/stats", headers=HA).status_code in (401, 403, 404))

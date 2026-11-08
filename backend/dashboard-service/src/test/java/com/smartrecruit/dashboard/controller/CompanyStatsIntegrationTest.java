@@ -26,10 +26,11 @@ class CompanyStatsIntegrationTest extends AbstractUpstreamIntegrationTest {
 
     private void sourcesUp() {
         FAKE.respond("GET", "/internal/v1/jobs/stats", 200,
-                "{\"total\": 6, \"draft\": 1, \"published\": 3, \"closed\": 1, \"moderated\": 1}");
+                "{\"total\": 6, \"draft\": 1, \"published\": 3, \"closed\": 1, \"moderated\": 1, \"closingSoon\": 2}");
         FAKE.respond("GET", "/internal/v1/applications/stats", 200, """
-                {"total": 20, "byStatus": {"PENDING": 14, "ACCEPTED": 3, "REJECTED": 3}, "averageMatchScore": 66.0,
-                 "accepted": 3, "decided": 6, "acceptanceRate": 0.5}""");
+                {"total": 20, "byStatus": {"RECEIVED": 8, "IN_REVIEW": 4, "INTERVIEW": 2, "ACCEPTED": 3, "REJECTED": 3},
+                 "averageMatchScore": 66.0, "accepted": 3, "decided": 6, "acceptanceRate": 0.5,
+                 "averageDecisionDays": 4.5, "upcomingInterviews": 2}""");
     }
 
     @Test
@@ -42,7 +43,15 @@ class CompanyStatsIntegrationTest extends AbstractUpstreamIntegrationTest {
                 .andExpect(jsonPath("$.publishedJobs").value(3))
                 .andExpect(jsonPath("$.applicationsReceived").value(20))
                 .andExpect(jsonPath("$.acceptedApplications").value(3))
-                .andExpect(jsonPath("$.acceptanceRate").value(0.5));
+                .andExpect(jsonPath("$.acceptanceRate").value(0.5))
+                .andExpect(jsonPath("$.applicationsByStatus.RECEIVED").value(8))
+                .andExpect(jsonPath("$.applicationsByStatus.IN_REVIEW").value(4))
+                .andExpect(jsonPath("$.applicationsByStatus.INTERVIEW").value(2))
+                .andExpect(jsonPath("$.applicationsByStatus.ACCEPTED").value(3))
+                .andExpect(jsonPath("$.applicationsByStatus.REJECTED").value(3))
+                .andExpect(jsonPath("$.averageDecisionDays").value(4.5))
+                .andExpect(jsonPath("$.upcomingInterviews").value(2))
+                .andExpect(jsonPath("$.jobsClosingSoon").value(2));
 
         assertThat(FAKE.callsTo("GET", "/internal/v1/jobs/stats").getFirst().target())
                 .contains("companyId=" + companyId);
@@ -111,7 +120,42 @@ class CompanyStatsIntegrationTest extends AbstractUpstreamIntegrationTest {
                 .andExpect(jsonPath("$.publishedJobs").value(3))
                 .andExpect(jsonPath("$.applicationsReceived").value(Matchers.nullValue()))
                 .andExpect(jsonPath("$.acceptedApplications").value(Matchers.nullValue()))
-                .andExpect(jsonPath("$.acceptanceRate").value(Matchers.nullValue()));
+                .andExpect(jsonPath("$.acceptanceRate").value(Matchers.nullValue()))
+                .andExpect(jsonPath("$.applicationsByStatus").value(Matchers.nullValue()))
+                .andExpect(jsonPath("$.averageDecisionDays").value(Matchers.nullValue()))
+                .andExpect(jsonPath("$.upcomingInterviews").value(Matchers.nullValue()))
+                .andExpect(jsonPath("$.jobsClosingSoon").value(2));
+    }
+
+    /** EXT-DASH-01: the funnel always lists the five steps, 0 for a step the source did not report. */
+    @Test
+    void funnelFillsMissingStepsWithZeroAndIgnoresWithdrawn() throws Exception {
+        membership(companyId);
+        sourcesUp();
+        FAKE.respond("GET", "/internal/v1/applications/stats", 200,
+                "{\"total\": 2, \"byStatus\": {\"RECEIVED\": 2, \"WITHDRAWN\": 5}, \"averageMatchScore\": null, \"accepted\": 0, \"decided\": 0, \"acceptanceRate\": null}");
+
+        perform(get(URL, companyId), recruiterId, "RECRUITER")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.applicationsByStatus.RECEIVED").value(2))
+                .andExpect(jsonPath("$.applicationsByStatus.INTERVIEW").value(0))
+                .andExpect(jsonPath("$.applicationsByStatus.REJECTED").value(0))
+                .andExpect(jsonPath("$.applicationsByStatus.WITHDRAWN").doesNotExist())
+                .andExpect(jsonPath("$.averageDecisionDays").value(Matchers.nullValue()));
+    }
+
+    /** EXT-DASH-01: job-service down nulls only the job figures. */
+    @Test
+    void jobServiceDownNullsClosingSoon() throws Exception {
+        membership(companyId);
+        sourcesUp();
+        FAKE.respond("GET", "/internal/v1/jobs/stats", 500, "boom");
+
+        perform(get(URL, companyId), recruiterId, "RECRUITER")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.publishedJobs").value(Matchers.nullValue()))
+                .andExpect(jsonPath("$.jobsClosingSoon").value(Matchers.nullValue()))
+                .andExpect(jsonPath("$.upcomingInterviews").value(2));
     }
 
     @Test

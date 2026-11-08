@@ -115,3 +115,97 @@ Un module source d'une statistique indisponible ne casse pas la réponse : la va
 Chemins publics ci-dessus uniquement. `cvAnalysisStatus` remplace l'heuristique « cvUrl sans cvParsedAt ».
 `matchPreview` appelle `GET /applications/match-preview?jobId=` (et non plus l'IA directement). La forme de `DashboardStats`
 suit §5. Mode démo : un réglage par module (`VITE_MOCK_MODULES=jobs,applications,...`, `VITE_USE_MOCKS=true` = tous).
+
+## 7. Enrichissements métier (hors Product Backlog)
+
+Ajouts transverses qui ne correspondent à aucun ticket du backlog : ils sont référencés `EXT-*` dans le code,
+les tests et les commits. Mêmes règles qu'au §0 (validation, assainissement, best effort, `ddl-auto: update`).
+Les champs ajoutés aux entités existantes sont **nullables en base** : les lignes déjà présentes restent lisibles
+et prennent la valeur par défaut indiquée à la lecture.
+
+### 7.1 Offres enrichies — job-service (`EXT-JOB-01`)
+
+Nouveaux champs de `Job` / `JobResponse` / `JobSummary` :
+
+| Champ | Type | Règles |
+|---|---|---|
+| `workMode` | `WorkMode` (`ON_SITE` \| `HYBRID` \| `REMOTE`) | optionnel à la création (défaut `ON_SITE`), jamais `null` dans les réponses (une ligne ancienne vaut `ON_SITE`) ; ne peut pas être supprimé en PATCH |
+| `salaryMin`, `salaryMax` | integer \| null | salaire brut **mensuel** en TND, `0..1 000 000` ; si les deux sont renseignés, `salaryMin ≤ salaryMax` (sinon 400 `fieldErrors.salaryMax`, y compris quand un PATCH n'envoie qu'une des deux bornes) ; supprimables en PATCH (`null`) |
+| `applicationDeadline` | date `YYYY-MM-DD` \| null | dernier jour où l'on peut postuler (inclus, UTC) ; à la création et en PATCH elle doit être aujourd'hui ou plus tard (sinon 400 `fieldErrors.applicationDeadline`) ; supprimable en PATCH |
+| `positions` | integer | nombre de postes, `1..100`, défaut `1` (une ligne ancienne vaut `1`) ; ne peut pas être supprimé en PATCH |
+
+- **Clôture automatique** : une tâche planifiée (toutes les 5 min, `jobs.expiry.interval`, désactivable par
+  `jobs.expiry.enabled`) passe en `CLOSED` toute offre `PUBLISHED` dont `applicationDeadline` est passée
+  (`updatedAt` = maintenant).
+- `PATCH /jobs/{id}/status` vers `PUBLISHED` (depuis `DRAFT` ou `CLOSED`) d'une offre dont la date limite est passée → **409**
+  (« modifiez ou supprimez la date limite », ou dupliquez l'offre si elle est clôturée).
+- **Recherche** `GET /api/v1/jobs` : nouveaux paramètres `workMode` et `minSalary` (entier ≥ 0 : garde les offres dont
+  `salaryMax ≥ minSalary`, ou, sans `salaryMax`, dont `salaryMin ≥ minSalary` ; une offre sans salaire est exclue).
+- **Dupliquer** `POST /api/v1/jobs/{id}/duplicate` (RECRUITER propriétaire) → 201 `JobResponse` : copie en `DRAFT`, `publishedAt`
+  null, titre suffixé de « (copie) » (tronqué à 255), `applicationDeadline` vidée, autres champs copiés ; analyse IA
+  demandée comme à la création. Offre `MODERATED` → 409 ; autre entreprise → 403 ; inconnue → 404.
+- Interne `GET /internal/v1/jobs/{id}` gagne `applicationDeadline` ; `GET /internal/v1/jobs/stats` gagne `closingSoon`
+  (offres `PUBLISHED` dont la date limite tombe dans les 7 prochains jours, aujourd'hui inclus).
+
+### 7.2 Offres favorites — job-service (`EXT-SAVED-01`)
+
+| Méthode et chemin | Rôle | Comportement |
+|---|---|---|
+| `PUT /api/v1/jobs/{id}/saved` | CANDIDATE | 204, idempotent ; offre inconnue ou non `PUBLISHED` → 404 ; au-delà de 200 favoris → 409 |
+| `DELETE /api/v1/jobs/{id}/saved` | CANDIDATE | 204, idempotent (même si l'offre n'était pas en favori ou n'existe plus) |
+| `GET /api/v1/jobs/saved` | CANDIDATE | `JobSummary[]` des favoris encore `PUBLISHED` ou `CLOSED` (les autres sont masqués), plus récemment ajoutés d'abord |
+
+`JobSummary` gagne **`saved`** : `true`/`false` pour un CANDIDATE (recherche, détail, favoris), `null` pour les autres rôles.
+Interne (RGPD) : `DELETE /internal/v1/candidates/{candidateId}/saved-jobs` → 204, idempotent.
+
+### 7.3 Candidature motivée, décision expliquée, entretiens — application-service (`EXT-APP-01`, `EXT-APP-02`)
+
+- `POST /api/v1/applications` accepte `{jobId, coverLetter?}` : lettre de motivation facultative, ≤ 5000 caractères (vide → null).
+  Offre dont `applicationDeadline` est passée → **409** (même si la clôture automatique n'est pas encore passée).
+- `PATCH /api/v1/applications/{id}/status` accepte `{status, message?, interview?}` :
+  - `message` (≤ 2000, vide → null) : explication destinée au candidat, enregistrée dans l'entrée d'historique créée ;
+  - `interview` n'est accepté qu'avec `status = INTERVIEW` (sinon 400) : `{scheduledAt (ISO 8601, dans le futur), durationMinutes (15..480, défaut 60), mode, location? (≤ 500)}`
+    avec `InterviewMode = VIDEO | ON_SITE | PHONE` (`location` = adresse ou lien de visio).
+- `PUT /api/v1/applications/{id}/interview` (RECRUITER de l'entreprise) : même corps `Interview`, planifie ou replanifie ;
+  candidature hors `INTERVIEW` → 409. Audit `INTERVIEW_SCHEDULED` (aussi émis quand l'entretien est fourni au changement de statut).
+- `GET /api/v1/applications/interviews/upcoming` (RECRUITER) : entretiens à venir de son entreprise (statut `INTERVIEW`,
+  `scheduledAt ≥ maintenant`), plus proches d'abord, 50 au plus : `{applicationId, jobId, candidateId, scheduledAt, durationMinutes, mode, location}[]` ;
+  `[]` sans entreprise.
+
+`Application` gagne `coverLetter|null`, `interview|null` (`{scheduledAt, durationMinutes, mode, location|null}`) ;
+chaque entrée de `statusHistory` gagne `message|null`. Le candidat voit sa lettre, ses messages et son entretien.
+
+### 7.4 Notes et évaluation d'équipe — application-service (`EXT-APP-03`)
+
+Réservé aux recruteurs de l'entreprise propriétaire (et à l'admin en lecture) ; **jamais visible du candidat**.
+
+| Méthode et chemin | Rôle | Comportement |
+|---|---|---|
+| `GET /api/v1/applications/{id}/notes` | RECRUITER membre / ADMIN | `ApplicationNote[]` du plus ancien au plus récent |
+| `POST /api/v1/applications/{id}/notes` | RECRUITER membre | `{content (1..2000), rating? (1..5)}` → 201 `ApplicationNote` |
+| `DELETE /api/v1/applications/{id}/notes/{noteId}` | RECRUITER auteur de la note | 204 ; autre auteur → 403 ; inconnue → 404 |
+
+`ApplicationNote` = `{id, applicationId, authorId, content, rating|null, createdAt}`.
+Dans `GET /api/v1/applications?jobId=` (vue recruteur/admin), chaque `Application` gagne `notesCount` et `averageRating|null`
+(moyenne des notes chiffrées, 1 décimale) ; ces deux champs valent `null` dans les réponses destinées au candidat.
+
+Interne (RGPD) : `DELETE /internal/v1/candidates/{candidateId}/data` → 204, idempotent : vide `coverLetter` des candidatures du
+candidat et supprime les notes qui les concernent. user-service l'appelle, comme `DELETE /internal/v1/candidates/{id}/saved-jobs`
+de job-service, dans la propagation du droit à l'oubli (BE-SEC-02), avec les mêmes reprises.
+
+### 7.5 Pilotage enrichi — application-service et dashboard-service (`EXT-DASH-01`)
+
+- Interne `GET /internal/v1/applications/stats` gagne `averageDecisionDays|null` (moyenne, en jours à 1 décimale, entre `appliedAt`
+  et la première entrée `ACCEPTED`/`REJECTED` de l'historique) et `upcomingInterviews` (nombre d'entretiens à venir).
+- `GET /api/v1/dashboard/stats/company/{id}` gagne `applicationsByStatus` (`{RECEIVED, IN_REVIEW, INTERVIEW, ACCEPTED, REJECTED}`, l'entonnoir),
+  `averageDecisionDays`, `upcomingInterviews` et `jobsClosingSoon`.
+- `GET /api/v1/dashboard/stats/global` gagne `applicationsByStatus`, `averageDecisionDays` et `jobsClosingSoon`.
+- Comme au §5, chaque valeur est `null` quand son service source est indisponible.
+
+Nouvelle action d'audit : `INTERVIEW_SCHEDULED`.
+
+### 7.6 Frontend (`EXT-FE-*`)
+
+- Page publique d'une entreprise `/candidate/companies/:companyId` : `GET /users/companies/{id}` + `GET /jobs?companyId={id}` (aucun nouvel endpoint).
+- Pipeline Kanban et export CSV des candidats d'une offre : construits côté client à partir de `GET /applications?jobId=`
+  et des profils déjà chargés par la page de classement (aucun nouvel endpoint).

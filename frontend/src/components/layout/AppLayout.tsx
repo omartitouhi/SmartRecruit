@@ -10,6 +10,7 @@ const NAV: Record<Role, { to: string; label: string; end?: boolean }[]> = {
     { to: '/candidate', label: 'Tableau de bord', end: true },
     { to: '/candidate/jobs', label: 'Offres' },
     { to: '/candidate/recommendations', label: 'Recommandées' },
+    { to: '/candidate/saved', label: 'Favoris' },
     { to: '/candidate/applications', label: 'Mes candidatures' },
     { to: '/candidate/profile', label: 'Mon profil' },
   ],

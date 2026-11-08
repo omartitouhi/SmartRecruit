@@ -2,6 +2,7 @@ package com.smartrecruit.application.model;
 
 import com.smartrecruit.application.dto.MatchScoreDto;
 import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -62,6 +63,17 @@ public class Application {
     private MatchScoreDto matchScore;
 
     private Instant appliedAt;
+
+    /**
+     * Optional cover letter (EXT-APP-01). A plain varchar rather than a {@code @Lob}: PostgreSQL maps a
+     * Hibernate LOB to {@code oid}. 5000 is the API limit.
+     */
+    @Column(length = 5000)
+    private String coverLetter;
+
+    /** Interview planned while the application is in INTERVIEW (EXT-APP-02); null when none. */
+    @Embedded
+    private Interview interview;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)

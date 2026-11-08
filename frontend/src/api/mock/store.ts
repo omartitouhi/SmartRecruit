@@ -94,13 +94,44 @@ export function findJob(id: string) {
   return job;
 }
 
+/** The caller, or null outside a session (no role-dependent field then). */
+function viewer(): Account | null {
+  try {
+    return currentAccount();
+  } catch {
+    return null;
+  }
+}
+
 export function summary(jobId: string, withCount = false): JobSummary {
   const job = findJob(jobId);
+  const caller = viewer();
   return {
     ...clone(job),
     companyName: db.companies.find((c) => c.id === job.companyId)?.name ?? null,
     applicationsCount: withCount ? db.applications.filter((a) => a.jobId === jobId && a.status !== 'WITHDRAWN').length : null,
+    // EXT-SAVED-01: only candidates get a saved flag.
+    saved: caller?.role === 'CANDIDATE' ? db.savedJobs.some((s) => s.candidateId === caller.id && s.jobId === jobId) : null,
   };
+}
+
+/** `YYYY-MM-DD` of today (UTC), the reference of application deadlines. */
+export const today = () => new Date().toISOString().slice(0, 10);
+
+/** A deadline is the last day one may apply: it is passed from the next day on. */
+export const deadlinePassed = (deadline: string | null) => Boolean(deadline && deadline < today());
+
+/** What the scheduled job of job-service does every 5 minutes: close published offers past their deadline. */
+export function closeExpiredJobs() {
+  let changed = false;
+  for (const job of db.jobs) {
+    if (job.status === 'PUBLISHED' && deadlinePassed(job.applicationDeadline)) {
+      job.status = 'CLOSED';
+      job.updatedAt = now();
+      changed = true;
+    }
+  }
+  if (changed) save();
 }
 
 export function recruiterCompany(accountId: string) {

@@ -33,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * BE-SEC-02 — a deleted account is erased from every service holding the candidate's data.
- * A JDK HTTP server plays auth-service and ai-service.
+ * A JDK HTTP server plays auth-service, ai-service, job-service and application-service (EXT-SAVED-01,
+ * EXT-APP-01/03).
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -75,6 +76,8 @@ class PersonalDataErasureIntegrationTest {
         String uri = "http://localhost:" + SERVICES.getAddress().getPort();
         registry.add("gdpr.erasure.auth-service-uri", () -> uri);
         registry.add("gdpr.erasure.ai-service-uri", () -> uri);
+        registry.add("gdpr.erasure.job-service-uri", () -> uri);
+        registry.add("gdpr.erasure.application-service-uri", () -> uri);
     }
 
     @AfterAll
@@ -120,12 +123,14 @@ class PersonalDataErasureIntegrationTest {
     }
 
     @Test
-    void erasureIsPropagatedToAuthAndAiServicesWithSignedServiceIdentity() {
+    void erasureIsPropagatedToEveryServiceWithSignedServiceIdentity() {
         assertThat(processor.processPending()).isZero();
 
         assertThat(CALLS).extracting(Call::method, Call::path).containsExactlyInAnyOrder(
                 org.assertj.core.groups.Tuple.tuple("DELETE", "/internal/v1/accounts/" + candidateId),
-                org.assertj.core.groups.Tuple.tuple("DELETE", "/api/v1/ai/candidates/" + candidateId + "/data"));
+                org.assertj.core.groups.Tuple.tuple("DELETE", "/api/v1/ai/candidates/" + candidateId + "/data"),
+                org.assertj.core.groups.Tuple.tuple("DELETE", "/internal/v1/candidates/" + candidateId + "/saved-jobs"),
+                org.assertj.core.groups.Tuple.tuple("DELETE", "/internal/v1/candidates/" + candidateId + "/data"));
         for (Call call : CALLS) {
             assertThat(call.h2cUpgrade()).as("HTTP/1.1 only: no h2c upgrade towards uvicorn").isFalse();
             assertThat(call.role()).isEqualTo("SERVICE");
@@ -157,6 +162,29 @@ class PersonalDataErasureIntegrationTest {
         CALLS.clear();
         processor.processPending();
         assertThat(CALLS).isEmpty();
+    }
+
+    @Test
+    void savedJobsAndApplicationDataAreRetriedIndependently() {
+        STATUS_BY_PREFIX.put("/internal/v1/candidates/" + candidateId + "/saved-jobs", 503);
+        STATUS_BY_PREFIX.put("/internal/v1/candidates/" + candidateId + "/data", 500);
+
+        assertThat(processor.processPending()).isEqualTo(1);
+        DeletedCandidate afterFailure = deletedRepository.findById(candidateId).orElseThrow();
+        assertThat(afterFailure.getAuthErasedAt()).isNotNull();
+        assertThat(afterFailure.getAiErasedAt()).isNotNull();
+        assertThat(afterFailure.getJobsErasedAt()).isNull();
+        assertThat(afterFailure.getApplicationsErasedAt()).isNull();
+        assertThat(afterFailure.getLastErasureError()).contains("job-service").contains("application-service");
+
+        STATUS_BY_PREFIX.clear();
+        CALLS.clear();
+        assertThat(processor.processPending()).isZero();
+
+        assertThat(CALLS).extracting(Call::path).containsExactlyInAnyOrder(
+                "/internal/v1/candidates/" + candidateId + "/saved-jobs",
+                "/internal/v1/candidates/" + candidateId + "/data");
+        assertThat(deletedRepository.findById(candidateId).orElseThrow().isFullyErased()).isTrue();
     }
 
     @Test

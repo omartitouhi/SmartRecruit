@@ -3,6 +3,7 @@
 import type {
   Account,
   Application,
+  ApplicationNote,
   ApplicationStatus,
   AuditLogEntry,
   CandidateProfile,
@@ -36,9 +37,22 @@ export interface MockDb {
   cvUploadedAt: Record<string, number>;
   /** Le jeton reste côté « serveur » : l'API ne le renvoie jamais. */
   invitations: (Invitation & { companyId: string; token: string })[];
+  /** Offres favorites des candidats (EXT-SAVED-01). */
+  savedJobs: { candidateId: string; jobId: string; savedAt: string }[];
+  /** Notes d'équipe sur les candidatures (EXT-APP-03). */
+  notes: ApplicationNote[];
 }
 
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
+
+/** `YYYY-MM-DD` relatif à aujourd'hui (UTC) : les dates limites de la démo restent dans le futur. */
+const dayFromNow = (days: number) => new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
+/** Instant à `days` jours d'ici, à l'heure ronde `hour` (UTC). */
+const atFromNow = (days: number, hour: number) => {
+  const d = new Date(Date.now() + days * 86400000);
+  d.setUTCHours(hour, 0, 0, 0);
+  return d.toISOString();
+};
 
 const JOB_IDS = [
   '43b7a3a6-9a8d-4a03-980d-7b71d8f56413',
@@ -273,6 +287,11 @@ export function createSeed(): MockDb {
     publishedAt: publishedAt ? T(publishedAt) : null,
     updatedAt: T(publishedAt ?? '2026-09-25'),
     moderationReason: null,
+    workMode: 'ON_SITE',
+    salaryMin: null,
+    salaryMax: null,
+    applicationDeadline: null,
+    positions: 1,
   });
 
   const jobs: Job[] = [
@@ -305,6 +324,19 @@ export function createSeed(): MockDb {
       'Pilotage du remplacement de notre ERP, en lien avec trois prestataires.'),
   ];
   jobs[3].moderationReason = 'Annonce en doublon d’une offre déjà publiée.';
+  // EXT-JOB-01: work mode, salary, deadline and number of positions.
+  const extras: Partial<Job>[] = [
+    { workMode: 'HYBRID', salaryMin: 3200, salaryMax: 4200, applicationDeadline: dayFromNow(24), positions: 2 },
+    { workMode: 'HYBRID', salaryMin: 2400, salaryMax: 3200, applicationDeadline: dayFromNow(5) },
+    { salaryMin: 900, salaryMax: 900 },
+    { salaryMin: 4500 },
+    { workMode: 'REMOTE', salaryMin: 3500, salaryMax: 5000, applicationDeadline: dayFromNow(3) },
+    { salaryMax: 3000, applicationDeadline: dayFromNow(40) },
+    { workMode: 'REMOTE', salaryMin: 2800, salaryMax: 3600 },
+    { workMode: 'HYBRID', salaryMin: 1200, salaryMax: 1400, positions: 3 },
+    { salaryMin: 5000, salaryMax: 6500, applicationDeadline: dayFromNow(18) },
+  ];
+  jobs.forEach((j, i) => Object.assign(j, extras[i]));
   const [backend, frontend, , , dataEng, devops, android] = jobs;
 
   const apps: Application[] = [];
@@ -330,7 +362,12 @@ export function createSeed(): MockDb {
         status: s,
         changedAt: new Date(start + i * 2.5 * 86400000).toISOString(),
         changedBy: i === 0 || s === 'WITHDRAWN' ? candidateId : actor,
+        message: null,
       })),
+      coverLetter: null,
+      interview: null,
+      notesCount: null,
+      averageRating: null,
     });
   };
 
@@ -346,6 +383,35 @@ export function createSeed(): MockDb {
   apply(9, amira.id, dataEng, 'INTERVIEW', '2026-09-29', kerkennahRecruiter.id);
   apply(10, amira.id, devops, 'RECEIVED', '2026-10-11', recruiter.id);
   apply(11, amira.id, android, 'REJECTED', '2026-09-21', recruiter.id);
+
+  // EXT-APP-01 / EXT-APP-02: cover letters, messages to the candidate and planned interviews.
+  const byNumber = (n: number) => apps[n - 1];
+  byNumber(1).coverLetter =
+    'Je suis le suivi de conteneurs en temps réel depuis cinq ans chez Cap Bon Logistics : votre projet de découpage en services sur Kubernetes est exactement ce que je veux faire ensuite.';
+  byNumber(1).interview = { scheduledAt: atFromNow(2, 9), durationMinutes: 60, mode: 'ON_SITE', location: 'Carthage Fret, Les Berges du Lac, 3e étage' };
+  byNumber(1).statusHistory[2].message = 'Votre expérience Kafka nous intéresse : rencontrons-nous avec l’équipe technique.';
+  byNumber(2).coverLetter = 'Développeuse full-stack, je souhaite me concentrer sur le backend Spring Boot.';
+  byNumber(5).statusHistory[3].message = 'Bienvenue dans l’équipe ! Les RH vous contactent pour la suite.';
+  byNumber(9).coverLetter = 'Mon expérience PostgreSQL et Python me prépare aux pipelines de vos clients industriels.';
+  byNumber(9).interview = { scheduledAt: atFromNow(4, 13), durationMinutes: 45, mode: 'VIDEO', location: 'https://meet.demo.tn/kerkennah-data-engineer' };
+  byNumber(9).statusHistory[2].message = 'Entretien technique de 45 minutes avec notre lead data.';
+  byNumber(11).statusHistory[3].message = 'Nous avons retenu un profil avec plus d’expérience Kotlin. Merci pour votre intérêt.';
+
+  // EXT-APP-03: team notes, never shown to the candidate.
+  const note = (id: string, n: number, authorId: string, content: string, rating: number | null, at: string): ApplicationNote => ({
+    id,
+    applicationId: byNumber(n).id,
+    authorId,
+    content,
+    rating,
+    createdAt: `${at}Z`,
+  });
+  const notes: ApplicationNote[] = [
+    note('5f0d2c55-1a1e-4b52-9a3e-2c7b6c1d0a01', 1, recruiter.id, 'Très bon échange téléphonique, solide sur Kafka et la supervision.', 5, '2026-10-06T10:15:00'),
+    note('5f0d2c55-1a1e-4b52-9a3e-2c7b6c1d0a02', 1, recruiter.id, 'À challenger sur Kubernetes en entretien.', 4, '2026-10-06T10:20:00'),
+    note('5f0d2c55-1a1e-4b52-9a3e-2c7b6c1d0a03', 2, recruiter.id, 'Profil full-stack, motivation backend à vérifier.', 3, '2026-10-07T15:00:00'),
+    note('5f0d2c55-1a1e-4b52-9a3e-2c7b6c1d0a04', 3, recruiter.id, 'Junior mais très bonnes bases Spring.', null, '2026-10-08T11:30:00'),
+  ];
 
   const audit: AuditLogEntry[] = [
     ['PROFILE_VIEWED', 'CandidateProfile', skander, recruiter.id, '2026-10-03T13:04:00Z'],
@@ -380,6 +446,11 @@ export function createSeed(): MockDb {
     audit,
     cvFiles: Object.fromEntries(profiles.map((p) => [p.id, `CV-${p.firstName}-${p.lastName}.pdf`])),
     cvUploadedAt: {},
+    savedJobs: [
+      { candidateId: amira.id, jobId: backend.id, savedAt: '2026-10-12T08:00:00Z' },
+      { candidateId: amira.id, jobId: jobs[8].id, savedAt: '2026-10-14T18:30:00Z' },
+    ],
+    notes,
     invitations: [
       {
         id: '0b8a3c0e-5f1d-4b7e-9d52-0a8c5e6f7a11',

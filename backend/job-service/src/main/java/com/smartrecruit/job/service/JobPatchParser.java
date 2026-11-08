@@ -46,7 +46,7 @@ public class JobPatchParser {
 
         Map<String, String> errors = new TreeMap<>();
         for (String field : present) {
-            if (body.get(field).isNull()) {
+            if (body.get(field).isNull() && !JobPatchRequest.NULLABLE_FIELDS.contains(field)) {
                 errors.put(field, "Ce champ est obligatoire et ne peut pas être supprimé");
             }
         }

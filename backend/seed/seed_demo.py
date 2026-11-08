@@ -10,6 +10,7 @@ Rejouable : un compte, une entreprise ou une offre déjà présents est réutili
 Tous les comptes ont le mot de passe `Motdepasse123`.
 """
 
+import datetime as dt
 import io
 import os
 import random
@@ -229,6 +230,30 @@ def cv_pdf(first, last, city, title, skills, experiences, education, languages) 
     return buffer.getvalue()
 
 
+# Fourchettes de salaire brut mensuel (TND) par niveau ; les stages sont indemnisés.
+SALARIES = {"JUNIOR": (1200, 1800), "INTERMEDIATE": (2000, 3200), "SENIOR": (3500, 5000), "LEAD": (5200, 7500)}
+
+
+def job_extras(title, contract, level):
+    """Champs EXT-JOB-01 déterministes par offre : mode de travail, salaire, date limite, postes."""
+    r = random.Random(title)
+    low, high = (400, 700) if contract == "STAGE" else SALARIES[level]
+    salary_min = r.randrange(low, high, 100)
+    with_salary = r.random() < 0.8
+    deadline = None
+    if r.random() < 0.6:
+        # Quelques offres arrivent à échéance dans la semaine (indicateur « bientôt clôturées »).
+        days = r.randint(2, 6) if r.random() < 0.3 else r.randint(10, 60)
+        deadline = (dt.datetime.now(dt.timezone.utc).date() + dt.timedelta(days=days)).isoformat()
+    return {
+        "workMode": r.choices(["ON_SITE", "HYBRID", "REMOTE"], weights=[5, 4, 2])[0],
+        "salaryMin": salary_min if with_salary else None,
+        "salaryMax": salary_min + r.randrange(300, 1200, 100) if with_salary else None,
+        "applicationDeadline": deadline,
+        "positions": r.choices([1, 2, 3], weights=[6, 3, 1])[0],
+    }
+
+
 def seed_companies_and_jobs():
     owners = []
     for spec in COMPANIES:
@@ -243,16 +268,21 @@ def seed_companies_and_jobs():
     existing = {}
     for index, (headers, _) in enumerate(owners):
         page = call("GET", "/jobs", headers=headers, params={"companyId": "me", "size": 100}).json()
-        existing[index] = {job["title"]: job["id"] for job in page.get("content", [])}
+        existing[index] = {job["title"]: job for job in page.get("content", [])}
 
     job_ids = {}
     for company, title, contract, city, level, skills, description in JOBS:
+        extras = job_extras(title, contract, level)
         if title in existing[company]:
-            job_ids[title] = existing[company][title]
+            job = existing[company][title]
+            job_ids[title] = job["id"]
+            # Base créée avant EXT-JOB-01 : on complète les nouveaux champs des offres encore modifiables.
+            if job.get("salaryMin") is None and job.get("applicationDeadline") is None and job["status"] in ("DRAFT", "PUBLISHED"):
+                call("PATCH", f"/jobs/{job['id']}", headers=owners[company][0], json=extras)
             continue
         response = call("POST", "/jobs", headers=owners[company][0], json={
             "title": title, "description": description, "requiredSkills": skills, "experienceLevel": level,
-            "contractType": contract, "location": city})
+            "contractType": contract, "location": city} | extras)
         assert response.status_code == 201, (title, response.text[:200])
         job_ids[title] = response.json()["id"]
     return owners, job_ids
@@ -286,6 +316,42 @@ def seed_candidates():
     return result
 
 
+COVER_LETTERS = [
+    "Bonjour,\n\nVotre offre correspond exactement au poste que je recherche. J'ai mené des projets similaires "
+    "et je serais ravi d'en discuter lors d'un entretien.\n\nCordialement",
+    "Madame, Monsieur,\n\nPassionné par votre secteur, je souhaite mettre mes compétences au service de votre "
+    "équipe. Je suis disponible rapidement.\n\nBien à vous",
+    "Bonjour,\n\nJe suis votre entreprise depuis longtemps et ce poste est l'occasion idéale d'y contribuer. "
+    "Mon CV détaille les technologies que j'utilise au quotidien.",
+]
+
+DECISION_MESSAGES = {
+    "IN_REVIEW": "Votre profil a retenu notre attention, nous étudions votre dossier.",
+    "INTERVIEW": "Nous souhaitons vous rencontrer : les détails de l'entretien sont ci-dessous.",
+    "ACCEPTED": "Félicitations ! Votre candidature est retenue, nous vous contactons pour la proposition.",
+    "REJECTED": "Merci pour votre intérêt. Nous avons retenu un profil plus expérimenté sur l'architecture du projet.",
+}
+
+TEAM_NOTES = [
+    ("Bon échange technique, solides bases sur le back-end.", 4),
+    ("Profil intéressant mais peu d'expérience en production.", 3),
+    ("Très motivé, à revoir avec le responsable technique.", None),
+    ("Excellent entretien, recommandé pour la suite.", 5),
+]
+
+
+def interview_slot():
+    """Entretien dans 2 à 15 jours, en semaine, entre 9 h et 16 h (UTC)."""
+    day = dt.datetime.now(dt.timezone.utc).date() + dt.timedelta(days=rng.randint(2, 15))
+    while day.weekday() >= 5:
+        day += dt.timedelta(days=1)
+    mode = rng.choice(["VIDEO", "ON_SITE", "PHONE"])
+    location = {"VIDEO": "https://meet.smartrecruit.test/" + format(rng.getrandbits(32), "x"),
+                "ON_SITE": "Siège, Les Berges du Lac, Tunis", "PHONE": None}[mode]
+    return {"scheduledAt": f"{day.isoformat()}T{rng.randint(9, 16):02d}:00:00Z",
+            "durationMinutes": rng.choice([30, 45, 60, 90]), "mode": mode, "location": location}
+
+
 def seed_applications(job_ids, candidates, owners):
     jobs_by_id = {}
     for company, title, _, _, _, skills, _ in JOBS:
@@ -297,7 +363,10 @@ def seed_applications(job_ids, candidates, owners):
             continue  # déjà candidaté lors d'une exécution précédente
         ranked = sorted(jobs_by_id.items(), key=lambda item: (-len(item[1][1] & skills), rng.random()))
         for job_id, (company, _) in [pair for pair in ranked if pair[1][1] & skills][: rng.randint(2, 4)]:
-            response = call("POST", "/applications", headers=headers, json={"jobId": job_id})
+            body = {"jobId": job_id}
+            if rng.random() < 0.6:
+                body["coverLetter"] = rng.choice(COVER_LETTERS)
+            response = call("POST", "/applications", headers=headers, json=body)
             if response.status_code == 201:
                 applications.append((owners[company][0], response.json()["id"], headers))
 
@@ -309,8 +378,25 @@ def seed_applications(job_ids, candidates, owners):
             if step == "WITHDRAW":
                 call("DELETE", f"/applications/{application_id}", headers=candidate)
             else:
-                call("PATCH", f"/applications/{application_id}/status", headers=recruiter, json={"status": step})
+                change = {"status": step}
+                if step != "IN_REVIEW" or rng.random() < 0.5:
+                    change["message"] = DECISION_MESSAGES[step]
+                if step == "INTERVIEW":
+                    change["interview"] = interview_slot()
+                call("PATCH", f"/applications/{application_id}/status", headers=recruiter, json=change)
+        # Notes d'équipe sur une partie des dossiers (jamais visibles du candidat)
+        if rng.random() < 0.4:
+            content, rating = rng.choice(TEAM_NOTES)
+            call("POST", f"/applications/{application_id}/notes", headers=recruiter,
+                 json={"content": content} | ({"rating": rating} if rating else {}))
     return len(applications)
+
+
+def seed_saved_jobs(job_ids, candidates):
+    """Le candidat de démonstration garde quelques offres en favoris (EXT-SAVED-01)."""
+    demo = next(headers for email, headers, _ in candidates if email == "candidat@smartrecruit.test")
+    for title in ("Ingénieur DevOps", "Data Engineer", "Lead Developer Node.js"):
+        call("PUT", f"/jobs/{job_ids[title]}/saved", headers=demo)
 
 
 def seed_admin_actions(owners, job_ids):
@@ -330,5 +416,6 @@ if __name__ == "__main__":
     candidates = seed_candidates()
     print(f"{len(candidates)} candidats avec CV analysé")
     print(f"{seed_applications(job_ids, candidates, owners)} candidatures créées")
+    seed_saved_jobs(job_ids, candidates)
     seed_admin_actions(owners, job_ids)
     print(f"Comptes : candidat@ et recruteur[2-5]@ smartrecruit.test, prenom.nom@smartrecruit.test ; mot de passe {PASSWORD}")

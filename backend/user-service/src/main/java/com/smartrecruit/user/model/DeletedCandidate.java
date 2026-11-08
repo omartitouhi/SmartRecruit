@@ -45,6 +45,12 @@ public class DeletedCandidate {
     /** CV analysis / matching data removed from ai-service. */
     private Instant aiErasedAt;
 
+    /** Saved offers removed from job-service (EXT-SAVED-01). */
+    private Instant jobsErasedAt;
+
+    /** Cover letters and recruiter notes removed from application-service (EXT-APP-01, EXT-APP-03). */
+    private Instant applicationsErasedAt;
+
     private int erasureAttempts;
 
     private Instant lastErasureAttemptAt;
@@ -56,6 +62,6 @@ public class DeletedCandidate {
     private Long version;
 
     public boolean isFullyErased() {
-        return authErasedAt != null && aiErasedAt != null;
+        return authErasedAt != null && aiErasedAt != null && jobsErasedAt != null && applicationsErasedAt != null;
     }
 }

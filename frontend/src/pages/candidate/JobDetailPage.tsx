@@ -3,10 +3,20 @@ import { Link, useParams } from 'react-router-dom';
 import { companiesApi } from '../../api/companies';
 import { jobsApi } from '../../api/jobs';
 import { ApplyButton } from '../../components/domain/ApplyButton';
+import { SaveJobButton } from '../../components/domain/SaveJobButton';
 import { ButtonLink } from '../../components/ui/Button';
 import { EmptyState, ErrorState, PageSkeleton } from '../../components/ui/States';
 import { Tag } from '../../components/ui/Tag';
-import { CONTRACT_LABEL, formatDate, LEVEL_LABEL } from '../../lib/format';
+import {
+  CONTRACT_LABEL,
+  deadlineLabel,
+  formatDate,
+  formatDay,
+  formatSalary,
+  LEVEL_LABEL,
+  pluralize,
+  WORK_MODE_LABEL,
+} from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 
 /** Fiche d'une offre : tout ce que le candidat doit savoir avant de postuler. */
@@ -37,12 +47,19 @@ export function JobDetailPage() {
   if (job.loading || !job.data) return <PageSkeleton />;
 
   const offer = job.data;
+  const salary = formatSalary(offer.salaryMin, offer.salaryMax);
+  const deadline = deadlineLabel(offer.applicationDeadline);
+  const companyLink = (
+    <Link className="text-link" to={`/candidate/companies/${offer.companyId}`}>
+      {offer.companyName ?? 'Voir l’entreprise'}
+    </Link>
+  );
   return (
     <article className="page page--doc">
       <nav className="crumbs" aria-label="Fil d’Ariane">
         <Link to="/candidate/jobs">Offres</Link>
         <span aria-hidden="true">/</span>
-        <span>{offer.companyName ?? 'Entreprise'}</span>
+        <Link to={`/candidate/companies/${offer.companyId}`}>{offer.companyName ?? 'Entreprise'}</Link>
         <span aria-hidden="true">/</span>
         <span aria-current="page">{offer.title}</span>
       </nav>
@@ -51,21 +68,43 @@ export function JobDetailPage() {
 
       <dl className="props reveal" style={{ margin: '28px 0', '--i': 1 } as CSSProperties}>
         <dt>Entreprise</dt>
-        <dd>{offer.companyName ?? '—'}</dd>
+        <dd>{companyLink}</dd>
         <dt>Lieu</dt>
         <dd>{offer.location}</dd>
         <dt>Contrat</dt>
         <dd>
           <Tag tone="blue">{CONTRACT_LABEL[offer.contractType]}</Tag>
         </dd>
+        <dt>Mode de travail</dt>
+        <dd>{WORK_MODE_LABEL[offer.workMode ?? 'ON_SITE']}</dd>
         <dt>Niveau</dt>
         <dd>{LEVEL_LABEL[offer.experienceLevel]}</dd>
+        <dt>Salaire</dt>
+        <dd>{salary ?? <span className="muted">Non communiqué</span>}</dd>
+        {(offer.positions ?? 1) > 1 && (
+          <>
+            <dt>Postes</dt>
+            <dd>{pluralize(offer.positions, 'poste ouvert', 'postes ouverts')}</dd>
+          </>
+        )}
         <dt>Publiée le</dt>
         <dd>{formatDate(offer.publishedAt)}</dd>
+        {offer.applicationDeadline && deadline && (
+          <>
+            <dt>Candidater avant</dt>
+            <dd>
+              {formatDay(offer.applicationDeadline)}{' '}
+              {deadline.tone !== 'grey' && <Tag tone={deadline.tone}>{deadline.label}</Tag>}
+            </dd>
+          </>
+        )}
       </dl>
 
       <div className="detail-actions" style={{ marginBottom: 'var(--space-6)' }}>
         <ApplyButton jobId={offer.id} />
+        {offer.saved !== null && offer.saved !== undefined && (
+          <SaveJobButton jobId={offer.id} saved={offer.saved} onChange={(saved) => job.setData({ ...offer, saved })} />
+        )}
         <Link className="text-link" to={`/candidate/match/${offer.id}`}>
           Voir mon score expliqué
         </Link>
@@ -91,6 +130,9 @@ export function JobDetailPage() {
           </h2>
           <p className="muted">{company.data.sector}</p>
           {company.data.description && <p>{company.data.description}</p>}
+          <Link className="text-link" to={`/candidate/companies/${company.data.id}`}>
+            Voir toutes les offres de {company.data.name}
+          </Link>
         </section>
       )}
     </article>

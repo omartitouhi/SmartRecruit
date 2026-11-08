@@ -7,6 +7,7 @@ import org.springframework.web.client.RestClient;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,7 +15,9 @@ import java.util.UUID;
 @Component
 public class JobDirectoryClient {
 
-    public record JobSummary(UUID id, UUID companyId, String title, String status, Instant updatedAt) {
+    /** {@code applicationDeadline}: last day to apply, null when none (EXT-JOB-01). */
+    public record JobSummary(UUID id, UUID companyId, String title, String status, Instant updatedAt,
+                             LocalDate applicationDeadline) {
     }
 
     private final RestClient client;

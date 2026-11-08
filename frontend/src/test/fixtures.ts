@@ -1,5 +1,16 @@
 import type { JobSummary } from '../api/jobs';
-import type { Account, Application, CandidateProfile, Company, Invitation, MatchScore, PaginatedResponse } from '../types';
+import type {
+  Account,
+  Application,
+  ApplicationNote,
+  CandidateProfile,
+  Company,
+  CompanyStats,
+  GlobalStats,
+  Invitation,
+  MatchScore,
+  PaginatedResponse,
+} from '../types';
 
 export const makeAccount = (role: Account['role'] = 'CANDIDATE', overrides: Partial<Account> = {}): Account => ({
   id: `${role.toLowerCase()}-id`,
@@ -44,8 +55,14 @@ export const makeJob = (overrides: Partial<JobSummary> = {}): JobSummary => ({
   publishedAt: '2026-10-01T09:00:00Z',
   updatedAt: '2026-10-01T09:00:00Z',
   moderationReason: null,
+  workMode: 'ON_SITE',
+  salaryMin: null,
+  salaryMax: null,
+  applicationDeadline: null,
+  positions: 1,
   companyName: 'Carthage Fret',
   applicationsCount: null,
+  saved: null,
   ...overrides,
 });
 
@@ -67,6 +84,10 @@ export const makeApplication = (overrides: Partial<Application> = {}): Applicati
   matchScore: makeMatch(),
   appliedAt: '2026-10-05T09:00:00Z',
   statusHistory: [{ status: 'RECEIVED', changedAt: '2026-10-05T09:00:00Z', changedBy: 'candidate-id' }],
+  coverLetter: null,
+  interview: null,
+  notesCount: null,
+  averageRating: null,
   ...overrides,
 });
 
@@ -95,5 +116,39 @@ export const page = <T,>(content: T[], overrides: Partial<PaginatedResponse<T>> 
   size: 20,
   totalElements: content.length,
   totalPages: 1,
+  ...overrides,
+});
+
+export const makeNote = (overrides: Partial<ApplicationNote> = {}): ApplicationNote => ({
+  id: 'note-1',
+  applicationId: 'app-1',
+  authorId: 'recruiter-id',
+  content: 'Très bon échange.',
+  rating: 4,
+  createdAt: '2026-10-06T10:00:00Z',
+  ...overrides,
+});
+
+export const makeCompanyStats = (overrides: Partial<CompanyStats> = {}): CompanyStats => ({
+  publishedJobs: 3,
+  applicationsReceived: 12,
+  acceptedApplications: 2,
+  acceptanceRate: 0.5,
+  applicationsByStatus: { RECEIVED: 4, IN_REVIEW: 3, INTERVIEW: 1, ACCEPTED: 2, REJECTED: 2 },
+  averageDecisionDays: 6.5,
+  upcomingInterviews: 1,
+  jobsClosingSoon: 1,
+  ...overrides,
+});
+
+export const makeGlobalStats = (overrides: Partial<GlobalStats> = {}): GlobalStats => ({
+  activeJobs: 7,
+  totalApplications: 11,
+  totalUsers: 9,
+  usersByRole: { CANDIDATE: 6, RECRUITER: 2, ADMIN: 1 },
+  averageMatchScore: 64.2,
+  applicationsByStatus: { RECEIVED: 4, IN_REVIEW: 3, INTERVIEW: 2, ACCEPTED: 1, REJECTED: 1 },
+  averageDecisionDays: 7.5,
+  jobsClosingSoon: 2,
   ...overrides,
 });

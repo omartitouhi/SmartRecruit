@@ -12,9 +12,13 @@ import java.util.UUID;
 @Component
 public class ApplicationServiceClient {
 
-    /** {@code averageMatchScore} and {@code acceptanceRate} are null when nothing can be averaged yet. */
+    /**
+     * {@code averageMatchScore}, {@code acceptanceRate} and {@code averageDecisionDays} are null when nothing can be
+     * averaged yet; {@code averageDecisionDays} and {@code upcomingInterviews} come from EXT-DASH-01.
+     */
     public record ApplicationStats(long total, Map<String, Long> byStatus, Double averageMatchScore, long accepted,
-                                   long decided, Double acceptanceRate) {
+                                   long decided, Double acceptanceRate, Double averageDecisionDays,
+                                   Long upcomingInterviews) {
     }
 
     private final RestClient client;

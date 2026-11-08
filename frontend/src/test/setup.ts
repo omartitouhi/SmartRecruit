@@ -2,9 +2,10 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
 
-// Recent Node versions ship an experimental global localStorage that shadows jsdom's and has no clear():
+// Recent Node versions ship an experimental global localStorage that shadows jsdom's: without a storage file it is
+// undefined (Node 26) or has no clear() (Node 22-25).
 // fall back to an in-memory Storage so the tests behave the same on every Node.
-if (typeof localStorage.clear !== 'function') {
+if (typeof globalThis.localStorage?.clear !== 'function') {
   const data = new Map<string, string>();
   vi.stubGlobal('localStorage', {
     getItem: (key: string) => data.get(key) ?? null,

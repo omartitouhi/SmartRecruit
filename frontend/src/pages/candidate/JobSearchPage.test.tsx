@@ -37,6 +37,8 @@ describe('job search', () => {
       skills: [],
       contractType: '',
       experienceLevel: '',
+      workMode: '',
+      minSalary: '',
       page: 0,
       size: 20,
     });

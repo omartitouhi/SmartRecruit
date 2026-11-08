@@ -14,7 +14,8 @@ import java.util.UUID;
 
 /**
  * Propagates account deletions to every service holding the candidate's personal data
- * (BE-SEC-02): auth-service (account) and ai-service (analysis results). user-service's own data
+ * (BE-SEC-02): auth-service (account), ai-service (analysis results), job-service (saved offers) and
+ * application-service (cover letters, recruiter notes — EXT-*). user-service's own data
  * is already gone (BE-USER-04). Each step is retried until it succeeds; a deletion still
  * incomplete after its 30-day deadline is logged as an error so it can be handled manually.
  */
@@ -77,6 +78,22 @@ public class PersonalDataErasureProcessor {
                 deletion.setAiErasedAt(clock.instant());
             } catch (RestClientException e) {
                 errors.append("ai-service: ").append(e.getMessage()).append("; ");
+            }
+        }
+        if (deletion.getJobsErasedAt() == null) {
+            try {
+                client.eraseSavedJobs(deletion.getId());
+                deletion.setJobsErasedAt(clock.instant());
+            } catch (RestClientException e) {
+                errors.append("job-service: ").append(e.getMessage()).append("; ");
+            }
+        }
+        if (deletion.getApplicationsErasedAt() == null) {
+            try {
+                client.eraseApplicationData(deletion.getId());
+                deletion.setApplicationsErasedAt(clock.instant());
+            } catch (RestClientException e) {
+                errors.append("application-service: ").append(e.getMessage()).append("; ");
             }
         }
 

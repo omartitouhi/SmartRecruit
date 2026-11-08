@@ -4,6 +4,7 @@ import com.smartrecruit.job.model.ContractType;
 import com.smartrecruit.job.model.ExperienceLevel;
 import com.smartrecruit.job.model.Job;
 import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.model.WorkMode;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
@@ -40,6 +41,23 @@ public final class JobSpecifications {
 
     public static Specification<Job> hasExperienceLevel(ExperienceLevel experienceLevel) {
         return (root, query, cb) -> cb.equal(root.get("experienceLevel"), experienceLevel);
+    }
+
+    /** EXT-JOB-01: rows created before the field have no work mode and count as ON_SITE. */
+    public static Specification<Job> hasWorkMode(WorkMode workMode) {
+        return (root, query, cb) -> workMode == WorkMode.ON_SITE
+                ? cb.or(cb.equal(root.get("workMode"), workMode), cb.isNull(root.get("workMode")))
+                : cb.equal(root.get("workMode"), workMode);
+    }
+
+    /**
+     * EXT-JOB-01: the offer may pay at least {@code minSalary}: its maximum reaches it or, without a
+     * maximum, its minimum does. Offers without any salary are excluded.
+     */
+    public static Specification<Job> paysAtLeast(int minSalary) {
+        return (root, query, cb) -> cb.or(
+                cb.greaterThanOrEqualTo(root.get("salaryMax"), minSalary),
+                cb.and(cb.isNull(root.get("salaryMax")), cb.greaterThanOrEqualTo(root.get("salaryMin"), minSalary)));
     }
 
     /** Title or description contains the keyword. */

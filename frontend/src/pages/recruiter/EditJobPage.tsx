@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { jobsApi, type JobCreateRequest, type JobSummary } from '../../api/jobs';
+import { jobsApi, type JobSummary } from '../../api/jobs';
 import { JobForm } from '../../components/domain/JobForm';
+import type { JobFormValues } from '../../lib/jobForm';
+import type { Job } from '../../types';
 import { Alert, ErrorState, PageSkeleton } from '../../components/ui/States';
 import { useToast } from '../../components/ui/toast';
 import { HttpError, toUiError } from '../../lib/errors';
@@ -9,19 +11,37 @@ import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 
 const LOCKED = 'Offre clôturée ou retirée : non modifiable.';
 
-const FIELDS: (keyof JobCreateRequest)[] = ['title', 'description', 'requiredSkills', 'experienceLevel', 'contractType', 'location'];
+const FIELDS: (keyof JobFormValues)[] = [
+  'title',
+  'description',
+  'requiredSkills',
+  'experienceLevel',
+  'contractType',
+  'location',
+  'workMode',
+  'salaryMin',
+  'salaryMax',
+  'applicationDeadline',
+  'positions',
+];
 
-const toDraft = (job: JobCreateRequest): JobCreateRequest => ({
+/** An offer saved before EXT-JOB-01 may lack the new fields: they read as their defaults. */
+const toDraft = (job: Job): JobFormValues => ({
   title: job.title,
   description: job.description,
   requiredSkills: job.requiredSkills,
   experienceLevel: job.experienceLevel,
   contractType: job.contractType,
   location: job.location,
+  workMode: job.workMode ?? 'ON_SITE',
+  salaryMin: job.salaryMin ?? null,
+  salaryMax: job.salaryMax ?? null,
+  applicationDeadline: job.applicationDeadline ?? null,
+  positions: job.positions ?? 1,
 });
 
-/** Merge patch (API_CONTRACTS.md §2): only the fields that differ from the saved offer. */
-const changes = (saved: JobCreateRequest, next: JobCreateRequest) =>
+/** Merge patch (API_CONTRACTS.md §2, §7.1): only the fields that differ from the saved offer; null removes an optional one. */
+const changes = (saved: JobFormValues, next: JobFormValues) =>
   Object.fromEntries(FIELDS.filter((k) => JSON.stringify(saved[k]) !== JSON.stringify(next[k])).map((k) => [k, next[k]]));
 
 /** Modification d'une offre PUBLISHED ou DRAFT ; une offre CLOSED ou MODERATED n'est plus modifiable. */
@@ -50,14 +70,14 @@ export function EditJobPage() {
 
 function Editor({ job }: { job: JobSummary }) {
   const notify = useToast();
-  const [saved, setSaved] = useState<JobCreateRequest>(toDraft(job));
+  const [saved, setSaved] = useState<JobFormValues>(toDraft(job));
   const [done, setDone] = useState(false);
 
   if (job.status === 'CLOSED' || job.status === 'MODERATED') {
     return <Alert tone="error">{LOCKED}</Alert>;
   }
 
-  async function save(values: JobCreateRequest) {
+  async function save(values: JobFormValues) {
     const patch = changes(saved, values);
     if (!Object.keys(patch).length) {
       notify('Aucune modification à enregistrer.');

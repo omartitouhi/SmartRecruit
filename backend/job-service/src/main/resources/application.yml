@@ -37,3 +37,9 @@ services:
   user-service-uri: ${USER_SERVICE_URI:http://localhost:8082}
   # BE-JOB-05: number of applications per offer, for the recruiter's own listing.
   application-service-uri: ${APPLICATION_SERVICE_URI:http://localhost:8084}
+
+jobs:
+  expiry:
+    # EXT-JOB-01: close published offers whose application deadline is over.
+    enabled: ${JOBS_EXPIRY_ENABLED:true}
+    interval: ${JOBS_EXPIRY_INTERVAL:5m}

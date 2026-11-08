@@ -5,6 +5,7 @@ import type {
   JobStatus,
   PaginatedResponse,
   RecommendedJob,
+  WorkMode,
 } from '../types';
 import { apiClient, isMocked } from './client';
 import { mockJobsApi } from './mock/jobs';
@@ -13,6 +14,8 @@ import { mockJobsApi } from './mock/jobs';
 export interface JobSummary extends Job {
   companyName: string | null;
   applicationsCount: number | null;
+  /** EXT-SAVED-01 : true/false pour un candidat (offre en favori), null pour les autres rôles. */
+  saved: boolean | null;
 }
 
 export interface JobSearchParams {
@@ -27,6 +30,9 @@ export interface JobSearchParams {
   companyId?: string;
   /** Réservé à l'admin et à `companyId=me`. */
   status?: JobStatus | '';
+  workMode?: WorkMode | '';
+  /** Salaire mensuel minimum (TND) : une offre sans salaire est exclue. */
+  minSalary?: number | '';
   page?: number;
   size?: number;
 }
@@ -39,6 +45,15 @@ export interface JobCreateRequest {
   experienceLevel: ExperienceLevel;
   contractType: ContractType;
   location: string;
+  /** EXT-JOB-01, facultatifs à la création — ON_SITE par défaut côté serveur. */
+  workMode?: WorkMode;
+  /** Salaire brut mensuel en TND, min ≤ max ; null = non communiqué. */
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  /** `YYYY-MM-DD`, aujourd'hui ou plus tard ; null = pas de date limite. */
+  applicationDeadline?: string | null;
+  /** 1..100, 1 par défaut. */
+  positions?: number;
 }
 
 export interface JobsApi {
@@ -50,6 +65,14 @@ export interface JobsApi {
   update(jobId: string, patch: Partial<JobCreateRequest>): Promise<Job>;
   /** DRAFT→PUBLISHED, PUBLISHED→CLOSED, CLOSED→PUBLISHED ; autre transition 400, offre MODERATED 403. */
   updateStatus(jobId: string, status: JobStatus): Promise<Job>;
+  /** Copie en brouillon (« (copie) »), sans date limite ; 409 si l'offre est MODERATED. */
+  duplicate(jobId: string): Promise<Job>;
+  /** Candidat : ajoute l'offre (PUBLISHED) à ses favoris, idempotent ; 404 sinon, 409 au-delà de 200. */
+  save(jobId: string): Promise<void>;
+  /** Candidat : retire l'offre de ses favoris, idempotent. */
+  unsave(jobId: string): Promise<void>;
+  /** Candidat : favoris encore PUBLISHED ou CLOSED, plus récemment ajoutés d'abord. */
+  saved(): Promise<JobSummary[]>;
 }
 
 const clean = (params: object) =>
@@ -78,6 +101,19 @@ export const httpJobsApi: JobsApi = {
   },
   async updateStatus(jobId, status) {
     return (await apiClient.patch<Job>(`/jobs/${jobId}/status`, { status })).data;
+  },
+  // EXT-JOB-01 / EXT-SAVED-01 — API_CONTRACTS.md §7.1, §7.2.
+  async duplicate(jobId) {
+    return (await apiClient.post<Job>(`/jobs/${jobId}/duplicate`)).data;
+  },
+  async save(jobId) {
+    await apiClient.put(`/jobs/${jobId}/saved`);
+  },
+  async unsave(jobId) {
+    await apiClient.delete(`/jobs/${jobId}/saved`);
+  },
+  async saved() {
+    return (await apiClient.get<JobSummary[]>('/jobs/saved')).data;
   },
 };
 

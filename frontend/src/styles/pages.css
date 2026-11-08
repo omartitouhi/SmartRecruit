@@ -1114,3 +1114,471 @@ aside .alert {
   padding: 0;
   margin: var(--space-3) 0 0;
 }
+
+/* ───── Business extensions (API_CONTRACTS.md §7) ───── */
+
+/* Job rows with a favourite toggle next to the link (a button cannot sit inside a link). */
+.job-list__item {
+  display: flex;
+  align-items: center;
+}
+
+.job-list__item > .job-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.job-list__item > .save-toggle {
+  margin-right: var(--space-4);
+}
+
+.job-row--muted {
+  color: var(--muted);
+}
+
+.job-row--muted:hover {
+  background: none;
+}
+
+.job-meta__salary {
+  font-size: var(--text-sm);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.save-toggle {
+  gap: var(--space-2);
+}
+
+.save-toggle[aria-pressed='true'] {
+  color: var(--yellow-ink);
+}
+
+.save-toggle--compact {
+  width: 36px;
+  padding: 0;
+  justify-content: center;
+  flex: none;
+}
+
+/* Apply with an optional cover letter */
+.apply-box {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.apply-box__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.apply-box__letter {
+  display: block;
+  max-width: 68ch;
+}
+
+.cover-letter {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.cover-letter summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--strong);
+}
+
+.cover-letter__text {
+  margin: var(--space-2) 0 0;
+  white-space: pre-line;
+  color: var(--ink);
+}
+
+.timeline__message {
+  margin: var(--space-1) 0 0;
+  padding: var(--space-2) var(--space-3);
+  border-left: 2px solid var(--line-strong);
+  background: var(--paper-soft);
+  color: var(--ink);
+  white-space: pre-line;
+}
+
+/* Interviews */
+.interview-fields {
+  gap: var(--space-3);
+}
+
+.interview-fields legend {
+  margin-bottom: var(--space-2);
+}
+
+.interview-summary__location {
+  overflow-wrap: anywhere;
+}
+
+.status-change {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.agenda {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.agenda__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-sm);
+}
+
+.agenda__item + .agenda__item {
+  border-top: 1px solid var(--line); /* taste-skill-ignore: option D (minimalist-ui) separates with 1px #EAEAEA dividers */
+}
+
+.agenda__when {
+  min-width: 15ch;
+  font-weight: 500;
+  color: var(--strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.agenda__what {
+  flex: 1;
+  min-width: 0;
+}
+
+.agenda__where {
+  display: block;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+/* Dashboards */
+.dash-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin-top: var(--space-7, var(--space-6));
+}
+
+.tiles--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tile__value--sm {
+  font-size: 1.5rem;
+}
+
+.hbars__bar--grey {
+  background: var(--faint);
+}
+
+.hbars__bar--blue {
+  background: var(--blue-ink);
+}
+
+.hbars__bar--yellow {
+  background: var(--yellow-ink);
+}
+
+.hbars__bar--green {
+  background: var(--green-ink);
+}
+
+.hbars__bar--red {
+  background: var(--red-ink);
+}
+
+/* Ranking: filters + list/pipeline switch, team notes */
+.ranking-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0 var(--space-4);
+}
+
+.ranking-bar__hint {
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-sm);
+}
+
+.row-actions {
+  text-align: right;
+}
+
+.row-actions .btn {
+  margin-left: var(--space-1);
+}
+
+.team-rating {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.stars {
+  color: var(--yellow-ink);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.stars__off {
+  color: var(--line-strong);
+}
+
+.notes {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line); /* taste-skill-ignore: option D (minimalist-ui) separates with 1px #EAEAEA dividers */
+  display: grid;
+  gap: var(--space-3);
+}
+
+.notes .detail-sub {
+  margin-top: 0;
+}
+
+.notes__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.notes__item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--paper-soft);
+  font-size: var(--text-sm);
+}
+
+.notes__meta,
+.notes__content {
+  margin: 0;
+}
+
+.notes__content {
+  margin-top: var(--space-1);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.notes__form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.notes__form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.notes__form-row .field {
+  flex: 1 1 180px;
+}
+
+/* Kanban pipeline: the board scrolls inside its own frame, never the page. */
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(200px, 1fr));
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  scroll-snap-type: x proximity;
+}
+
+.board__column {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  min-height: 180px;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--sunken);
+  scroll-snap-align: start;
+  transition: background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.board__column[data-drop='allowed'] {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+.board__column[data-drop='over'] {
+  background: var(--green);
+  box-shadow: inset 0 0 0 1px var(--green-ink);
+}
+
+.board__column[data-drop='blocked'] {
+  opacity: 0.55;
+}
+
+.board__title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--strong);
+}
+
+.board__cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.board__card {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--line); /* taste-skill-ignore: option D (minimalist-ui) bordered surface */
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  font-size: var(--text-sm);
+}
+
+.board__card[draggable='true'] {
+  cursor: grab;
+}
+
+.board__card[aria-current='true'] {
+  border-color: var(--strong);
+}
+
+.board__open {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.board__name {
+  overflow-wrap: anywhere;
+}
+
+.board__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.board__moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.board__move {
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--line); /* taste-skill-ignore: option D (minimalist-ui) bordered surface */
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.board__move:hover {
+  border-color: var(--line-strong);
+  color: var(--strong);
+}
+
+.board__open:focus-visible,
+.board__move:focus-visible {
+  outline: 2px solid var(--strong);
+  outline-offset: 2px;
+}
+
+.board__empty {
+  padding: var(--space-3) 0;
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+/* Public company page */
+.company-head__id {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.company-head__logo {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  background: var(--paper);
+}
+
+.company-head__logo--initials {
+  display: grid;
+  place-items: center;
+  background: var(--sunken);
+  font-weight: 600;
+  color: var(--strong);
+}
+
+.company-intro__text {
+  margin: var(--space-3) 0 0;
+  max-width: 68ch;
+  white-space: pre-line;
+}
+
+@media (max-width: 900px) {
+  .dash-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .tiles--two,
+  .tiles--three {
+    grid-template-columns: 1fr;
+  }
+
+  .row-actions {
+    text-align: left;
+  }
+
+  .agenda__item {
+    padding: var(--space-4);
+  }
+
+  .job-list__item > .save-toggle {
+    margin-right: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board__column {
+    transition: none;
+  }
+}

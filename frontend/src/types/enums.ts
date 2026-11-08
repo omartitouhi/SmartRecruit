@@ -24,6 +24,12 @@ export type ContractType = 'CDI' | 'CDD' | 'STAGE' | 'ALTERNANCE' | 'FREELANCE';
 
 export type ExperienceLevel = 'JUNIOR' | 'INTERMEDIATE' | 'SENIOR' | 'LEAD';
 
+/** Présentiel, hybride ou télétravail (EXT-JOB-01, API_CONTRACTS.md §7.1). */
+export type WorkMode = 'ON_SITE' | 'HYBRID' | 'REMOTE';
+
+/** Format d'un entretien planifié (EXT-APP-02, API_CONTRACTS.md §7.3). */
+export type InterviewMode = 'VIDEO' | 'ON_SITE' | 'PHONE';
+
 export type ApplicationStatus =
   | 'RECEIVED'
   | 'IN_REVIEW'
@@ -41,3 +47,7 @@ export const APPLICATION_STATUS_TRANSITIONS: Record<ApplicationStatus, Applicati
   REJECTED: [],
   WITHDRAWN: [],
 };
+
+/** Statuts suivis par l'entonnoir de recrutement (EXT-DASH-01) : tout sauf WITHDRAWN. */
+export const FUNNEL_STATUSES = ['RECEIVED', 'IN_REVIEW', 'INTERVIEW', 'ACCEPTED', 'REJECTED'] as const;
+export type FunnelStatus = (typeof FUNNEL_STATUSES)[number];

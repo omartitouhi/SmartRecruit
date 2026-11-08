@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { applicationsApi } from '../../api/applications';
 import { jobsApi, type JobSummary } from '../../api/jobs';
+import { InterviewSummary } from '../../components/domain/InterviewSummary';
+import { StatusTimeline } from '../../components/domain/StatusTimeline';
 import { Button, ButtonLink } from '../../components/ui/Button';
 import { ScoreBreakdown, ScoreChip } from '../../components/ui/ScoreBreakdown';
 import { Alert, EmptyState, ErrorState, SkeletonRows } from '../../components/ui/States';
 import { ApplicationStatusTag } from '../../components/ui/Tag';
 import { useToast } from '../../components/ui/toast';
 import { toUiError } from '../../lib/errors';
-import { APPLICATION_STATUS, formatDateShort, formatDateTime, formatScore } from '../../lib/format';
+import { formatDateShort, formatScore } from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import { APPLICATION_STATUS_TRANSITIONS, type Application } from '../../types';
 
@@ -67,7 +69,7 @@ export function ApplicationsPage() {
     setActionError(null);
     try {
       await applicationsApi.withdraw(application.id);
-      const entry = { status: 'WITHDRAWN' as const, changedAt: new Date().toISOString(), changedBy: application.candidateId };
+      const entry = { status: 'WITHDRAWN' as const, changedAt: new Date().toISOString(), changedBy: application.candidateId, message: null };
       rows.setData((prev) =>
         (prev ?? []).map((r) =>
           r.application.id === application.id
@@ -138,6 +140,9 @@ export function ApplicationsPage() {
                       </td>
                       <td>
                         <ApplicationStatusTag status={application.status} />
+                        {application.status === 'INTERVIEW' && application.interview && (
+                          <div className="muted">Le {formatDateShort(application.interview.scheduledAt)}</div>
+                        )}
                       </td>
                       <td className="muted">{formatDateShort(application.appliedAt)}</td>
                       <td>
@@ -175,18 +180,22 @@ export function ApplicationsPage() {
                 <Alert tone="info">Le score est en cours de calcul par le service d’analyse.</Alert>
               )}
 
+              {selected.application.interview && selected.application.status === 'INTERVIEW' && (
+                <>
+                  <h3 className="detail-sub">Votre entretien</h3>
+                  <InterviewSummary interview={selected.application.interview} />
+                </>
+              )}
+
               <h3 className="detail-sub">Historique</h3>
-              <ol className="timeline">
-                {selected.application.statusHistory.map((h, i) => (
-                  <li key={i}>
-                    <span className="timeline__dot" aria-hidden="true" />
-                    <span>
-                      <span className="cell-strong">{APPLICATION_STATUS[h.status].label}</span>
-                      <span className="muted"> · {formatDateTime(h.changedAt)}</span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
+              <StatusTimeline history={selected.application.statusHistory} messageLabel="Message du recruteur" />
+
+              {selected.application.coverLetter && (
+                <details className="cover-letter">
+                  <summary>Ma lettre de motivation</summary>
+                  <p className="cover-letter__text">{selected.application.coverLetter}</p>
+                </details>
+              )}
 
               <div className="detail-actions">
                 {selected.job && (

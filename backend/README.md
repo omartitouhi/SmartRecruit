@@ -15,16 +15,18 @@ routés via un API Gateway. Lancement de toute la stack, déploiement et CI : vo
 ## Données de démonstration
 
 Avec la stack démarrée (`docker compose up --build` à la racine) : `python backend/seed/seed_demo.py` crée
-5 entreprises, 25 offres, 19 candidats (CV PDF analysés par le service IA), une cinquantaine de candidatures à tous
-les statuts, une offre modérée et une offre clôturée. Rejouable sans doublon. Comptes (mot de passe `Motdepasse123`) :
+5 entreprises, 25 offres (salaires, modes de travail, dates limites dont certaines dans la semaine), 19 candidats
+(CV PDF analysés par le service IA), une cinquantaine de candidatures à tous les statuts (lettres de motivation,
+décisions motivées, entretiens planifiés, notes d'équipe), des offres favorites pour `candidat@`, une offre modérée et
+une offre clôturée. Rejouable sans doublon. Comptes (mot de passe `Motdepasse123`) :
 `candidat@smartrecruit.test`, `recruteur@smartrecruit.test` (Acme Tech), `recruteur2` à `recruteur5@smartrecruit.test` ;
 administrateur : voir `.env.example` à la racine. Repartir d'une base vide : `docker compose down -v`.
 
 ## Tests
 
 - **Par service** : `mvn test` dans chaque module (H2 en mémoire, services voisins simulés).
-- **De bout en bout** (environ 100 vérifications sur la stack démarrée : comptes, entreprises, offres, candidatures,
-  matching, tableau de bord, administration, audit, contrôle d'accès) :
+- **De bout en bout** (environ 145 vérifications sur la stack démarrée : comptes, entreprises, offres, candidatures,
+  matching, tableau de bord, administration, audit, contrôle d'accès, offres enrichies, favoris, entretiens, notes) :
 
 ```bash
 pip install -r backend/e2e/requirements.txt

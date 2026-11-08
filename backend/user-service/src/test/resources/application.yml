@@ -23,6 +23,8 @@ gdpr:
     immediate: false
     auth-service-uri: http://localhost:1
     ai-service-uri: http://localhost:1
+    job-service-uri: http://localhost:1
+    application-service-uri: http://localhost:1
 
 cv-analysis:
   enabled: false

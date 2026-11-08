@@ -38,6 +38,8 @@ JobStatus       = DRAFT | PUBLISHED | CLOSED | MODERATED
 ContractType    = CDI | CDD | STAGE | ALTERNANCE | FREELANCE
 ExperienceLevel = JUNIOR | INTERMEDIATE | SENIOR | LEAD
 ApplicationStatus = RECEIVED | IN_REVIEW | INTERVIEW | ACCEPTED | REJECTED | WITHDRAWN
+WorkMode        = ON_SITE | HYBRID | REMOTE                (EXT-JOB-01, backend + frontend, pas l'IA)
+InterviewMode   = VIDEO | ON_SITE | PHONE                  (EXT-APP-02, backend + frontend, pas l'IA)
 ```
 
 Transitions autorisées pour `ApplicationStatus` (cf. `BE-APP-04`) :
@@ -105,6 +107,12 @@ Contrats complets des entreprises, invitations, offres, candidatures, statistiqu
 | publishedAt | datetime \| null | |
 | updatedAt | datetime | dernière modification ; sert aussi d'invalidation au cache des scores |
 | moderationReason | string \| null | raison du retrait par un admin (`BE-ADMIN-02`), visible du propriétaire et des admins seulement |
+| workMode | WorkMode | présentiel / hybride / télétravail, défaut `ON_SITE` (`EXT-JOB-01`) |
+| salaryMin, salaryMax | integer \| null | salaire brut mensuel en TND, `salaryMin ≤ salaryMax` (`EXT-JOB-01`) |
+| applicationDeadline | date \| null | dernier jour de candidature ; l'offre passe en `CLOSED` le lendemain (`EXT-JOB-01`) |
+| positions | integer | nombre de postes, 1..100, défaut 1 (`EXT-JOB-01`) |
+
+**SavedJob** (`EXT-SAVED-01`) : `{candidateId, jobId, savedAt}`, unique par couple, 200 au plus par candidat.
 
 ### 3.4 `application-service` (Kadhem) — base `application_db`
 
@@ -118,7 +126,12 @@ Contrats complets des entreprises, invitations, offres, candidatures, statistiqu
 | status | ApplicationStatus | |
 | matchScore | MatchScore \| null | voir §4 — objet complet, pas juste le nombre ; `null` tant que l'IA n'a pas répondu ou si elle a échoué |
 | appliedAt | datetime | |
-| statusHistory | `{ status, changedAt, changedBy }[]` | pour l'audit (`BE-ADMIN-03`) |
+| statusHistory | `{ status, changedAt, changedBy, message\|null }[]` | pour l'audit (`BE-ADMIN-03`) ; `message` = explication au candidat (`EXT-APP-01`) |
+| coverLetter | string \| null | lettre de motivation, ≤ 5000 caractères (`EXT-APP-01`) |
+| interview | `{ scheduledAt, durationMinutes, mode: InterviewMode, location\|null }` \| null | entretien planifié (`EXT-APP-02`) |
+| notesCount, averageRating | integer, number \| null | vue recruteur/admin seulement, `null` pour le candidat (`EXT-APP-03`) |
+
+**ApplicationNote** (`EXT-APP-03`) : `{id, applicationId, authorId, content, rating (1..5)|null, createdAt}`, jamais visible du candidat.
 
 ### 3.5 `dashboard-service` (Omar pour Dashboard, Kadhem pour Administration) — base `dashboard_db`
 

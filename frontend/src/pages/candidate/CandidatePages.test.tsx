@@ -16,7 +16,17 @@ import { RecommendationsPage } from './RecommendationsPage';
 
 vi.mock('../../api/jobs', async (original) => ({
   ...(await original<typeof import('../../api/jobs')>()),
-  jobsApi: { search: vi.fn(), get: vi.fn(), recommendations: vi.fn(), create: vi.fn(), update: vi.fn(), updateStatus: vi.fn() },
+  jobsApi: {
+    search: vi.fn(),
+    get: vi.fn(),
+    recommendations: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    updateStatus: vi.fn(),
+    saved: vi.fn(),
+    save: vi.fn(),
+    unsave: vi.fn(),
+  },
 }));
 vi.mock('../../api/applications', async (original) => ({
   ...(await original<typeof import('../../api/applications')>()),
@@ -52,6 +62,7 @@ beforeEach(() => {
   applications.skillGap.mockResolvedValue({ missingSkills: [] });
   candidates.getMyProfile.mockResolvedValue(analysed);
   jobs.get.mockResolvedValue(makeJob());
+  jobs.saved.mockResolvedValue([]);
 });
 
 describe('job detail page', () => {

@@ -7,18 +7,46 @@ import { ButtonLink } from '../../components/ui/Button';
 import { ScoreChip } from '../../components/ui/ScoreBreakdown';
 import { Alert, EmptyState, ErrorState, Skeleton, SkeletonRows } from '../../components/ui/States';
 import { toUiError } from '../../lib/errors';
-import { formatInt, formatScore } from '../../lib/format';
+import { formatDateTimeLong, formatDuration, formatInt, formatScore, INTERVIEW_MODE_LABEL } from '../../lib/format';
+import { isLink } from '../../lib/interview';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
-import type { Application } from '../../types';
+import type { Application, Interview } from '../../types';
 
 const ACTIVE: Application['status'][] = ['RECEIVED', 'IN_REVIEW', 'INTERVIEW'];
 const RECOMMENDED_SHOWN = 3;
+
+interface UpcomingRow {
+  application: Application;
+  interview: Interview;
+  title: string | null;
+  companyName: string | null;
+}
+
+/** EXT-APP-02 : entretiens à venir du candidat, plus proches d'abord, avec l'intitulé de l'offre. */
+async function loadUpcoming(applications: Application[]): Promise<UpcomingRow[]> {
+  const now = Date.now();
+  const upcoming = applications
+    .filter((a) => a.status === 'INTERVIEW' && a.interview && new Date(a.interview.scheduledAt).getTime() >= now)
+    .sort((a, b) => a.interview!.scheduledAt.localeCompare(b.interview!.scheduledAt));
+  const jobs = await Promise.all(upcoming.map((a) => jobsApi.get(a.jobId).catch(() => null)));
+  return upcoming.map((application, i) => ({
+    application,
+    interview: application.interview!,
+    title: jobs[i]?.title ?? null,
+    companyName: jobs[i]?.companyName ?? null,
+  }));
+}
 
 /** FE-DASH-01 : où j'en suis (candidatures actives, dernier score) et ce que je devrais regarder ensuite. */
 export function CandidateDashboardPage() {
   useDocumentTitle('Tableau de bord');
   const applications = useAsync(() => applicationsApi.mine(), []);
   const recommendations = useAsync(() => jobsApi.recommendations(RECOMMENDED_SHOWN), []);
+  const saved = useAsync(() => jobsApi.saved(), []);
+  const upcoming = useAsync(
+    () => (applications.data ? loadUpcoming(applications.data) : Promise.resolve([])),
+    [applications.data],
+  );
   const profile = useAsync(
     () => candidatesApi.getMyProfile().catch((e) => (toUiError(e).status === 404 ? null : Promise.reject(e))),
     [],
@@ -54,7 +82,7 @@ export function CandidateDashboardPage() {
       {applications.error ? (
         <ErrorState error={applications.error} onRetry={applications.reload} />
       ) : (
-        <div className="tiles tiles--three">
+        <div className="tiles">
           <div className="panel tile">
             <p className="tile__label">Candidatures actives</p>
             <p className="tile__value">{applications.loading ? <Skeleton width={48} height={32} /> : formatInt(active)}</p>
@@ -86,7 +114,53 @@ export function CandidateDashboardPage() {
               Voir les recommandations
             </Link>
           </div>
+          <div className="panel tile">
+            <p className="tile__label">Offres en favori</p>
+            <p className="tile__value">
+              {saved.loading ? <Skeleton width={48} height={32} /> : saved.error ? '—' : formatInt(saved.data?.length ?? 0)}
+            </p>
+            <Link className="text-link" to="/candidate/saved">
+              Voir mes favoris
+            </Link>
+          </div>
         </div>
+      )}
+
+      {upcoming.data && upcoming.data.length > 0 && (
+        <section className="stack" aria-labelledby="interviews-title" style={{ marginTop: 'var(--space-7, var(--space-6))' }}>
+          <h2 className="section-title" id="interviews-title">
+            Entretiens à venir
+          </h2>
+          <ul className="agenda panel panel--flush">
+            {upcoming.data.map(({ application, interview, title, companyName }) => (
+              <li key={application.id} className="agenda__item">
+                <span className="agenda__when">{formatDateTimeLong(interview.scheduledAt)}</span>
+                <span className="agenda__what">
+                  <span className="cell-strong">{title ?? 'Offre'}</span>
+                  {companyName && <span className="muted"> · {companyName}</span>}
+                  <span className="muted">
+                    {' '}
+                    · {INTERVIEW_MODE_LABEL[interview.mode]}, {formatDuration(interview.durationMinutes)}
+                  </span>
+                  {interview.location && (
+                    <span className="agenda__where">
+                      {isLink(interview.location) ? (
+                        <a className="text-link" href={interview.location.trim()} target="_blank" rel="noopener noreferrer">
+                          Rejoindre la visio
+                        </a>
+                      ) : (
+                        interview.location
+                      )}
+                    </span>
+                  )}
+                </span>
+                <Link className="text-link" to={`/candidate/applications?id=${application.id}`}>
+                  Voir la candidature
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       <section className="stack" aria-labelledby="reco-title" style={{ marginTop: 'var(--space-7, var(--space-6))' }}>

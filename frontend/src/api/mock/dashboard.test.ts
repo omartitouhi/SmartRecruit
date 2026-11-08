@@ -29,6 +29,12 @@ describe('mock stats', () => {
       applicationsReceived: 8,
       acceptedApplications: 1,
       acceptanceRate: 1,
+      // EXT-DASH-01: the funnel, the decision delay (4 steps, 2.5 days apart), the planned interview and the offer
+      // closing within 7 days.
+      applicationsByStatus: { RECEIVED: 3, IN_REVIEW: 3, INTERVIEW: 1, ACCEPTED: 1, REJECTED: 0 },
+      averageDecisionDays: 7.5,
+      upcomingInterviews: 1,
+      jobsClosingSoon: 1,
     });
     loginAs(EMAIL.admin);
     expect((await dashboard.companyStats(fret.id)).applicationsReceived).toBe(8);

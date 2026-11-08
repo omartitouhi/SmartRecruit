@@ -20,10 +20,11 @@ class GlobalStatsIntegrationTest extends AbstractUpstreamIntegrationTest {
                 {"total": 10, "byRole": {"CANDIDATE": 7, "RECRUITER": 2, "ADMIN": 1},
                  "byStatus": {"ACTIVE": 9, "DISABLED": 1, "DELETED": 0}}""");
         FAKE.respond("GET", "/internal/v1/jobs/stats", 200,
-                "{\"total\": 8, \"draft\": 1, \"published\": 5, \"closed\": 1, \"moderated\": 1}");
+                "{\"total\": 8, \"draft\": 1, \"published\": 5, \"closed\": 1, \"moderated\": 1, \"closingSoon\": 3}");
         FAKE.respond("GET", "/internal/v1/applications/stats", 200, """
-                {"total": 42, "byStatus": {"PENDING": 40, "ACCEPTED": 2}, "averageMatchScore": 71.5,
-                 "accepted": 2, "decided": 4, "acceptanceRate": 0.5}""");
+                {"total": 42, "byStatus": {"RECEIVED": 30, "IN_REVIEW": 6, "INTERVIEW": 2, "ACCEPTED": 2, "REJECTED": 2},
+                 "averageMatchScore": 71.5, "accepted": 2, "decided": 4, "acceptanceRate": 0.5,
+                 "averageDecisionDays": 6.3, "upcomingInterviews": 1}""");
     }
 
     @Test
@@ -38,7 +39,14 @@ class GlobalStatsIntegrationTest extends AbstractUpstreamIntegrationTest {
                 .andExpect(jsonPath("$.usersByRole.CANDIDATE").value(7))
                 .andExpect(jsonPath("$.usersByRole.RECRUITER").value(2))
                 .andExpect(jsonPath("$.usersByRole.ADMIN").value(1))
-                .andExpect(jsonPath("$.averageMatchScore").value(71.5));
+                .andExpect(jsonPath("$.averageMatchScore").value(71.5))
+                .andExpect(jsonPath("$.applicationsByStatus.RECEIVED").value(30))
+                .andExpect(jsonPath("$.applicationsByStatus.IN_REVIEW").value(6))
+                .andExpect(jsonPath("$.applicationsByStatus.INTERVIEW").value(2))
+                .andExpect(jsonPath("$.applicationsByStatus.ACCEPTED").value(2))
+                .andExpect(jsonPath("$.applicationsByStatus.REJECTED").value(2))
+                .andExpect(jsonPath("$.averageDecisionDays").value(6.3))
+                .andExpect(jsonPath("$.jobsClosingSoon").value(3));
 
         assertThat(FAKE.callsTo("GET", "/internal/v1/jobs/stats").getFirst().target()).doesNotContain("companyId");
         assertThat(FAKE.calls()).allSatisfy(call -> {
@@ -91,7 +99,10 @@ class GlobalStatsIntegrationTest extends AbstractUpstreamIntegrationTest {
                 .andExpect(jsonPath("$.activeJobs").value(org.hamcrest.Matchers.nullValue()))
                 .andExpect(jsonPath("$.totalApplications").value(org.hamcrest.Matchers.nullValue()))
                 .andExpect(jsonPath("$.totalUsers").value(org.hamcrest.Matchers.nullValue()))
-                .andExpect(jsonPath("$.averageMatchScore").value(org.hamcrest.Matchers.nullValue()));
+                .andExpect(jsonPath("$.averageMatchScore").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.applicationsByStatus").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.averageDecisionDays").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.jobsClosingSoon").value(org.hamcrest.Matchers.nullValue()));
     }
 
     @Test

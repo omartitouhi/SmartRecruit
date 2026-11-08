@@ -10,12 +10,14 @@ import java.util.Objects;
 /**
  * Counters over the non-withdrawn applications. {@code decided} = ACCEPTED + REJECTED and
  * {@code acceptanceRate} = accepted / decided as a 0..1 ratio, null while nothing is decided.
+ * {@code averageDecisionDays} (null while nothing is decided) and {@code upcomingInterviews} come from EXT-DASH-01.
  */
 public record ApplicationStatsResponse(long total, Map<ApplicationStatus, Long> byStatus, Double averageMatchScore,
-                                       long accepted, long decided, Double acceptanceRate) {
+                                       long accepted, long decided, Double acceptanceRate,
+                                       Double averageDecisionDays, long upcomingInterviews) {
 
     /** @param rows {@code [ApplicationStatus, MatchScoreDto|null]} rows of non-withdrawn applications */
-    public static ApplicationStatsResponse from(List<Object[]> rows) {
+    public static ApplicationStatsResponse from(List<Object[]> rows, Double averageDecisionDays, long upcomingInterviews) {
         Map<ApplicationStatus, Long> byStatus = new EnumMap<>(ApplicationStatus.class);
         for (ApplicationStatus status : ApplicationStatus.values()) {
             if (status != ApplicationStatus.WITHDRAWN) {
@@ -28,6 +30,6 @@ public record ApplicationStatsResponse(long total, Map<ApplicationStatus, Long> 
         long accepted = byStatus.get(ApplicationStatus.ACCEPTED);
         long decided = accepted + byStatus.get(ApplicationStatus.REJECTED);
         return new ApplicationStatsResponse(rows.size(), byStatus, average, accepted, decided,
-                decided == 0 ? null : (double) accepted / decided);
+                decided == 0 ? null : (double) accepted / decided, averageDecisionDays, upcomingInterviews);
     }
 }

@@ -1,7 +1,8 @@
 import { dashboardApi } from '../../api/dashboard';
+import { Funnel } from '../../components/domain/Funnel';
 import { ButtonLink } from '../../components/ui/Button';
 import { ErrorState, Skeleton } from '../../components/ui/States';
-import { formatInt, formatScore, ROLE_LABEL } from '../../lib/format';
+import { formatDays, formatInt, formatScore, ROLE_LABEL } from '../../lib/format';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import type { GlobalStats, Role } from '../../types';
 
@@ -61,6 +62,11 @@ function Overview({ stats }: { stats: GlobalStats }) {
     },
   ];
   const max = Math.max(...ROLES.map((r) => stats.usersByRole[r] ?? 0), 1);
+  // EXT-DASH-01: null when the source service is down.
+  const pace = [
+    { label: 'Délai moyen de décision', value: stats.averageDecisionDays == null ? '—' : formatDays(stats.averageDecisionDays) },
+    { label: 'Offres clôturées sous 7 jours', value: stats.jobsClosingSoon == null ? '—' : formatInt(stats.jobsClosingSoon) },
+  ];
 
   return (
     <>
@@ -75,6 +81,19 @@ function Overview({ stats }: { stats: GlobalStats }) {
           </div>
         ))}
       </div>
+      <div className="tiles tiles--two" style={{ marginTop: 'var(--space-3)' }}>
+        {pace.map((t) => (
+          <div className="panel tile" key={t.label}>
+            <p className="tile__label">{t.label}</p>
+            <p className="tile__value tile__value--sm">{t.value}</p>
+          </div>
+        ))}
+      </div>
+      {stats.applicationsByStatus && (
+        <div style={{ marginTop: 'var(--space-5)' }}>
+          <Funnel byStatus={stats.applicationsByStatus} title="Entonnoir des candidatures (plateforme)" />
+        </div>
+      )}
       <section className="panel chart" aria-labelledby="roles-title">
         <h2 className="panel__title" id="roles-title">
           Utilisateurs par rôle

@@ -15,3 +15,8 @@ services:
   ai-service-uri: http://localhost:1
   user-service-uri: http://localhost:1
   application-service-uri: http://localhost:1
+
+jobs:
+  expiry:
+    # EXT-JOB-01: the scheduler is off in tests, which call JobExpiryService directly.
+    enabled: false

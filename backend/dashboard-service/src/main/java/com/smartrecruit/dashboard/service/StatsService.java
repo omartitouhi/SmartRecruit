@@ -16,16 +16,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
 /**
- * BE-DASH-01 / BE-DASH-02 — figures aggregated from the other services. Each source is best effort: when one is down
+ * BE-DASH-01 / BE-DASH-02 (enriched by EXT-DASH-01) — figures aggregated from the other services. Each source is best effort: when one is down
  * its values are null and the rest of the response is still returned.
  */
 @Service
 @RequiredArgsConstructor
 public class StatsService {
+
+    /** Steps of the hiring funnel, in order; withdrawn applications are left out (EXT-DASH-01). */
+    static final List<String> FUNNEL = List.of("RECEIVED", "IN_REVIEW", "INTERVIEW", "ACCEPTED", "REJECTED");
 
     private final AuthServiceClient authClient;
     private final UserServiceClient userClient;
@@ -41,7 +47,10 @@ public class StatsService {
                 from(applications, ApplicationStats::total),
                 from(accounts, AccountStats::total),
                 from(accounts, AccountStats::byRole),
-                from(applications, ApplicationStats::averageMatchScore));
+                from(applications, ApplicationStats::averageMatchScore),
+                from(applications, StatsService::funnel),
+                from(applications, ApplicationStats::averageDecisionDays),
+                from(jobs, JobStats::closingSoon));
     }
 
     /** A recruiter only sees their own company (membership checked in user-service); admins see any. */
@@ -60,7 +69,19 @@ public class StatsService {
                 from(jobs, JobStats::published),
                 from(applications, ApplicationStats::total),
                 from(applications, ApplicationStats::accepted),
-                from(applications, ApplicationStats::acceptanceRate));
+                from(applications, ApplicationStats::acceptanceRate),
+                from(applications, StatsService::funnel),
+                from(applications, ApplicationStats::averageDecisionDays),
+                from(applications, ApplicationStats::upcomingInterviews),
+                from(jobs, JobStats::closingSoon));
+    }
+
+    /** The five funnel steps in order, 0 for a step the source did not report. */
+    private static Map<String, Long> funnel(ApplicationStats stats) {
+        Map<String, Long> funnel = new LinkedHashMap<>();
+        Map<String, Long> byStatus = stats.byStatus() == null ? Map.of() : stats.byStatus();
+        FUNNEL.forEach(status -> funnel.put(status, byStatus.getOrDefault(status, 0L)));
+        return funnel;
     }
 
     private static <S, T> T from(S source, Function<S, T> field) {

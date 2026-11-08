@@ -3,9 +3,11 @@ import type {
   ApplicationStatus,
   ContractType,
   ExperienceLevel,
+  InterviewMode,
   InvitationStatus,
   JobStatus,
   Role,
+  WorkMode,
 } from '../types';
 
 export type Tone = 'grey' | 'blue' | 'green' | 'yellow' | 'red';
@@ -29,6 +31,18 @@ export const LEVEL_LABEL: Record<ExperienceLevel, string> = {
   INTERMEDIATE: 'Confirmé·e',
   SENIOR: 'Senior',
   LEAD: 'Lead',
+};
+
+export const WORK_MODE_LABEL: Record<WorkMode, string> = {
+  ON_SITE: 'Sur site',
+  HYBRID: 'Hybride',
+  REMOTE: 'Télétravail',
+};
+
+export const INTERVIEW_MODE_LABEL: Record<InterviewMode, string> = {
+  VIDEO: 'Visioconférence',
+  ON_SITE: 'Sur place',
+  PHONE: 'Téléphone',
 };
 
 export const APPLICATION_STATUS: Record<ApplicationStatus, { label: string; tone: Tone }> = {
@@ -66,6 +80,7 @@ export const AUDIT_ACTION_LABEL: Record<string, string> = {
   APPLICATION_STATUS_CHANGED: 'Statut de candidature modifié',
   USER_STATUS_CHANGED: 'Statut de compte modifié',
   JOB_MODERATED: 'Offre modérée',
+  INTERVIEW_SCHEDULED: 'Entretien planifié',
 };
 
 /** Tranche de score pour le badge de classement (FE-MATCH-02). */
@@ -131,3 +146,57 @@ export function initials(source: string) {
 export function pluralize(count: number, singular: string, plural = `${singular}s`) {
   return `${formatInt(count)} ${count > 1 ? plural : singular}`;
 }
+
+/** Salaire brut mensuel en TND : « 2 500 – 3 500 TND / mois », « À partir de… », « Jusqu’à… » ; null sans salaire. */
+export function formatSalary(min: number | null | undefined, max: number | null | undefined): string | null {
+  const has = (n: number | null | undefined): n is number => typeof n === 'number';
+  if (has(min) && has(max)) return min === max ? `${integer.format(min)} TND / mois` : `${integer.format(min)} – ${integer.format(max)} TND / mois`;
+  if (has(min)) return `À partir de ${integer.format(min)} TND / mois`;
+  if (has(max)) return `Jusqu’à ${integer.format(max)} TND / mois`;
+  return null;
+}
+
+/** Jour calendaire `YYYY-MM-DD` (UTC) d'aujourd'hui, décalé de `offset` jours. */
+export function isoDay(offset = 0, from: Date = new Date()) {
+  return new Date(from.getTime() + offset * 86400000).toISOString().slice(0, 10);
+}
+
+/** `YYYY-MM-DD` → « 20 novembre 2026 » (lu à midi UTC pour ne jamais changer de jour). */
+export const formatDay = (day: string | null | undefined) => (day ? dateLong.format(new Date(`${day}T12:00:00Z`)) : '—');
+export const formatDayShort = (day: string | null | undefined) => (day ? dateShort.format(new Date(`${day}T12:00:00Z`)) : '—');
+
+/** Jours restants avant une date limite incluse : 0 = dernier jour, négatif = passée. */
+export function daysUntil(day: string, from: Date = new Date()) {
+  return Math.round((new Date(`${day}T00:00:00Z`).getTime() - new Date(`${isoDay(0, from)}T00:00:00Z`).getTime()) / 86400000);
+}
+
+/** « Jusqu’au 20 nov. », « Dernier jour », « Clôture dépassée » pour une date limite de candidature. */
+export function deadlineLabel(day: string | null | undefined, from: Date = new Date()): { label: string; tone: Tone } | null {
+  if (!day) return null;
+  const left = daysUntil(day, from);
+  if (left < 0) return { label: 'Date limite dépassée', tone: 'red' };
+  if (left === 0) return { label: 'Dernier jour pour postuler', tone: 'yellow' };
+  if (left <= 7) return { label: `Clôture dans ${pluralize(left, 'jour')}`, tone: 'yellow' };
+  return { label: `Jusqu’au ${formatDayShort(day)}`, tone: 'grey' };
+}
+
+/** 4.5 → « 4,5 jours » */
+export const formatDays = (days: number) => `${decimal.format(days)} ${days > 1 ? 'jours' : 'jour'}`;
+
+/** 75 → « 1 h 15 », 30 → « 30 min » */
+export function formatDuration(minutes: number) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (!h) return `${m} min`;
+  return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`;
+}
+
+const dateTimeLong = new Intl.DateTimeFormat('fr-FR', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+/** « mardi 18 novembre, 10:00 » */
+export const formatDateTimeLong = (iso: string | null | undefined) => (iso ? dateTimeLong.format(new Date(iso)) : '—');

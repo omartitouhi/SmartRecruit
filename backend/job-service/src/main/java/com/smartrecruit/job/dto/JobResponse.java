@@ -4,12 +4,14 @@ import com.smartrecruit.job.model.ContractType;
 import com.smartrecruit.job.model.ExperienceLevel;
 import com.smartrecruit.job.model.Job;
 import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.model.WorkMode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +34,13 @@ public class JobResponse {
     private Instant updatedAt;
     /** Only shown to the owning company and admins; null for everybody else. */
     private String moderationReason;
+    /** EXT-JOB-01: never null, ON_SITE for offers created before the field existed. */
+    private WorkMode workMode;
+    private Integer salaryMin;
+    private Integer salaryMax;
+    private LocalDate applicationDeadline;
+    /** EXT-JOB-01: never null, 1 for offers created before the field existed. */
+    private Integer positions;
 
     /** Public view of the offer: without the moderation reason. */
     public static JobResponse from(Job job) {
@@ -53,6 +62,11 @@ public class JobResponse {
                 .publishedAt(job.getPublishedAt())
                 .updatedAt(job.getUpdatedAt())
                 .moderationReason(withModerationReason ? job.getModerationReason() : null)
+                .workMode(job.getWorkMode() == null ? WorkMode.ON_SITE : job.getWorkMode())
+                .salaryMin(job.getSalaryMin())
+                .salaryMax(job.getSalaryMax())
+                .applicationDeadline(job.getApplicationDeadline())
+                .positions(job.getPositions() == null ? 1 : job.getPositions())
                 .build();
     }
 }
