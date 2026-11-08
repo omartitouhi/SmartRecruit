@@ -1,4 +1,5 @@
 # Cluster local (kind) : petites ressources, Kibana exposé par l'Ingress NGINX.
+# Réservations CPU basses : une VM de 2 vCPU doit accueillir Kubernetes, le monitoring, ELK et l'application.
 # Ajouter "127.0.0.1 kibana.smartrecruit.local" au fichier hosts.
 elasticsearch:
   javaOpts: "-Xms512m -Xmx512m"
@@ -11,7 +12,7 @@ elasticsearch:
     size: 2Gi
   resources:
     requests:
-      cpu: 100m
+      cpu: 50m
       memory: 768Mi
     limits:
       memory: 1280Mi
@@ -20,7 +21,7 @@ logstash:
   javaOpts: "-Xms256m -Xmx256m"
   resources:
     requests:
-      cpu: 50m
+      cpu: 25m
       memory: 384Mi
     limits:
       memory: 768Mi
@@ -28,7 +29,7 @@ logstash:
 filebeat:
   resources:
     requests:
-      cpu: 20m
+      cpu: 10m
       memory: 64Mi
     limits:
       memory: 200Mi
@@ -36,7 +37,7 @@ filebeat:
 kibana:
   resources:
     requests:
-      cpu: 50m
+      cpu: 25m
       memory: 384Mi
     limits:
       memory: 900Mi

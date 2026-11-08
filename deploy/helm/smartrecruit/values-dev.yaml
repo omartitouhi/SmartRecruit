@@ -36,6 +36,21 @@ ingress:
 postgres:
   storage:
     size: 2Gi
+  resources:
+    requests: { cpu: 50m, memory: 256Mi }
+    limits: { memory: 512Mi }
+
+# Réservations CPU basses (pas de limite CPU) : sur une VM de 2 vCPU, Kubernetes, le monitoring et ELK réservent
+# déjà l'essentiel ; les services consomment peu au repos et peuvent dépasser leur réservation au démarrage.
+services:
+  auth-service: { resources: { requests: { cpu: 25m } } }
+  user-service: { resources: { requests: { cpu: 25m } } }
+  job-service: { resources: { requests: { cpu: 25m } } }
+  application-service: { resources: { requests: { cpu: 25m } } }
+  dashboard-service: { resources: { requests: { cpu: 25m } } }
+  api-gateway: { resources: { requests: { cpu: 25m } } }
+  ai-service: { resources: { requests: { cpu: 25m } } }
+  frontend: { resources: { requests: { cpu: 10m } } }
 
 cvStorage:
   size: 1Gi
