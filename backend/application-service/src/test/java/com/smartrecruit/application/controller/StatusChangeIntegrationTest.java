@@ -138,7 +138,10 @@ class StatusChangeIntegrationTest extends ApiTestSupport {
         change(application.getId(), ApplicationStatus.RECEIVED).andExpect(status().isBadRequest());
 
         Thread.sleep(200);
-        assertThat(FakeServices.calls(AUDIT)).isEmpty();
+        // Les événements d'audit partent en asynchrone : un événement d'un test précédent peut arriver pendant
+        // l'attente. On vérifie donc qu'aucun ne concerne CETTE candidature.
+        String applicationId = application.getId().toString();
+        assertThat(FakeServices.calls(AUDIT)).noneMatch(call -> call.body() != null && call.body().contains(applicationId));
     }
 
     @Test
