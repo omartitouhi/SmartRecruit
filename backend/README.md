@@ -48,6 +48,11 @@ Repartir d'une base vide : `docker compose down -v`.
 Manifestes Kustomize, cluster local kind et overlay de production : voir [k8s/README.md](k8s/README.md)
 (`k8s/scripts/dev.sh up`).
 
+## DevOps (Helm, Terraform, Ansible, Prometheus/Grafana, ELK)
+
+Chart Helm de la plateforme, stack de logs ELK, monitoring Prometheus/Grafana, infrastructure Terraform
+(kind + releases Helm) et playbook Ansible : voir [DEVOPS.md](DEVOPS.md).
+
 ## Tests
 
 - **Par service** : `mvn test` dans chaque module (H2 en mémoire, services voisins simulés).
@@ -138,5 +143,7 @@ l'architecture distribuée. Points d'attention :
 
 ## CI
 
-Un seul workflow (`.github/workflows/ci.yml`) construit et teste chaque microservice
-(matrice Maven), déclenché sur push/PR vers `main`/`develop`.
+- `.github/workflows/ci.yml` construit et teste chaque microservice (matrice Maven), sur push/PR vers `main`/`develop`.
+- `.github/workflows/images.yml` publie les images sur ghcr.io.
+- `.github/workflows/k8s.yml` valide les manifestes Kustomize ; `.github/workflows/infra.yml` valide les charts Helm,
+  Terraform et Ansible.

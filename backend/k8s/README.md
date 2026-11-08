@@ -1,5 +1,8 @@
 # SmartRecruit sur Kubernetes
 
+> Les mêmes ressources existent aussi sous forme de chart Helm (`helm/smartrecruit`), installé avec monitoring et logs
+> par Terraform : voir [DEVOPS.md](../DEVOPS.md). Kustomize reste la voie rapide (`k8s/scripts/dev.sh up`).
+
 Manifestes [Kustomize](https://kustomize.io) de toute la plateforme (6 services Java, service IA, frontend,
 Postgres). `docker-compose.yml` reste l'outil de développement au quotidien ; ce dossier sert à tester
 le déploiement sur un cluster et à préparer la production.
@@ -69,5 +72,6 @@ kubectl apply -k .
   disputer la création des tables : déployer d'abord avec une réplique, ou ajouter Flyway.
 - **Limite de requêtes du gateway en mémoire** : elle s'applique par exemplaire de gateway.
 - **NetworkPolicies** : sans règle de sortie, et non vérifiables sur kind (son CNI ne les applique pas).
-- **Pas de métriques Prometheus** (`/actuator/prometheus` demande une dépendance de plus).
+- **Métriques Prometheus** : exposées (`/actuator/prometheus`, `/metrics` pour l'IA) mais collectées seulement par le chart
+  Helm (`monitoring.enabled`, voir [DEVOPS.md](../DEVOPS.md)) ; ces manifestes Kustomize ne créent pas de ServiceMonitor.
 - Le frontend (nginx) tourne en root : image officielle `nginx:alpine`.
