@@ -4,8 +4,8 @@ Passe uniquement par l'API du gateway (les CV sont analysés par le service IA, 
 Rejouable : un compte, une entreprise ou une offre déjà présents est réutilisé, pas dupliqué.
 
     pip install -r e2e/requirements.txt
-    python seed/seed_demo.py                 # gateway sur http://localhost:8080
-    GATEWAY=http://localhost:8080 python seed/seed_demo.py
+    python backend/seed/seed_demo.py                 # gateway sur http://localhost:8080
+    GATEWAY=http://localhost:8080 python backend/seed/seed_demo.py
 
 Tous les comptes ont le mot de passe `Motdepasse123`.
 """

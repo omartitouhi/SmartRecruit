@@ -1,0 +1,64 @@
+---
+- name: Créer le dossier d'installation
+  ansible.builtin.file:
+    path: "{{ smartrecruit_install_dir }}"
+    state: directory
+    owner: "{{ smartrecruit_user }}"
+    group: "{{ smartrecruit_user }}"
+    mode: "0755"
+
+# Dépôt privé : jeton GitHub en lecture seule dans le vault (vault_github_token), jamais affiché.
+- name: Cloner ou mettre à jour le monorepo
+  ansible.builtin.git:
+    repo: >-
+      {{ smartrecruit_repo_url | regex_replace('^https://', 'https://x-access-token:' ~ smartrecruit_github_token ~ '@')
+         if smartrecruit_github_token else smartrecruit_repo_url }}
+    dest: "{{ smartrecruit_project_dir }}"
+    version: "{{ smartrecruit_git_branch }}"
+    update: true
+  become: true
+  become_user: "{{ smartrecruit_user }}"
+  no_log: "{{ smartrecruit_github_token | length > 0 }}"
+
+- name: Générer le .env (docker compose, deploy/k8s/scripts/dev.sh)
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ smartrecruit_project_dir }}/.env"
+    owner: "{{ smartrecruit_user }}"
+    group: "{{ smartrecruit_user }}"
+    mode: "0600"
+  no_log: true
+  diff: false
+
+- name: Résoudre les noms SmartRecruit vers la machine locale (Ingress kind)
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} SMARTRECRUIT (ansible)"
+    block: "127.0.0.1 {{ smartrecruit_hosts_entries | join(' ') }}"
+  when: smartrecruit_deploy_method == "terraform"
+
+- name: Créer le dossier du kubeconfig
+  ansible.builtin.file:
+    path: "{{ smartrecruit_user_home }}/.kube"
+    state: directory
+    owner: "{{ smartrecruit_user }}"
+    group: "{{ smartrecruit_user }}"
+    mode: "0700"
+  when: smartrecruit_deploy_method != "compose"
+
+# Images locales smartrecruit-<service>:latest (nom de projet compose : smartrecruit).
+# Le cache de construction rend l'étape rapide quand rien n'a changé ; elle est donc signalée « ok ».
+- name: Construire les images avec docker compose
+  ansible.builtin.command: docker compose build
+  args:
+    chdir: "{{ smartrecruit_project_dir }}"
+  async: "{{ 0 if ansible_check_mode else smartrecruit_deploy_timeout }}"  # async interdit en --check
+  poll: 15
+  changed_when: false
+  when: smartrecruit_deploy_method != "terraform" or smartrecruit_load_local_images | bool
+
+- name: Déployer selon la méthode choisie ({{ smartrecruit_deploy_method }})
+  ansible.builtin.include_tasks: "deploy-{{ smartrecruit_deploy_method }}.yml"
+
+- name: Vérifier les accès
+  ansible.builtin.include_tasks: verify.yml

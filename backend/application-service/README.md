@@ -15,7 +15,7 @@ Candidatures, suivi de statut, historique.
 ./mvnw spring-boot:run
 ```
 
-Nécessite une instance PostgreSQL locale (voir `docker-compose.yml` à la racine de ce dépôt pour lancer toute la stack).
+Nécessite une instance PostgreSQL locale (voir `docker-compose.yml` à la racine du monorepo pour lancer toute la stack).
 
 ## Structure
 

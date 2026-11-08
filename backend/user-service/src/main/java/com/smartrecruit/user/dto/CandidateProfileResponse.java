@@ -15,7 +15,7 @@ import java.util.UUID;
 
 /**
  * Public shape of {@link CandidateProfile}, as consumed by the frontend
- * (see {@code src/types/entities.ts} in {@code smartrecruit-frontend}).
+ * (see {@code src/types/entities.ts} in {@code frontend/}).
  * Never exposes the internal {@code cvStorageKey}.
  */
 @Getter

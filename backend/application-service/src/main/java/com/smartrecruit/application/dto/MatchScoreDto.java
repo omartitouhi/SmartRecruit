@@ -10,11 +10,11 @@ import java.util.List;
 
 /**
  * Mirrors {@code MatchScore} in {@code DATA_MODEL.md} §4.1 — the response shape of
- * {@code POST /api/v1/ai/matching/score} in {@code smartrecruit-ia}, embedded verbatim
+ * {@code POST /api/v1/ai/matching/score} in {@code ai-service}, embedded verbatim
  * into {@link com.smartrecruit.application.model.Application#getMatchScore()}.
  *
  * Any field added here must also be added to the Pydantic {@code MatchScore}
- * (smartrecruit-ia/app/schemas/common.py) and to {@code MatchScore} in the frontend's
+ * (ai-service/app/schemas/common.py) and to {@code MatchScore} in the frontend's
  * {@code src/types/contracts.ts} — see DATA_MODEL.md §5.
  */
 @Getter

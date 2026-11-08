@@ -1,0 +1,264 @@
+# Valeurs par défaut du chart SmartRecruit.
+# Surcharger par environnement : helm upgrade --install smartrecruit ./helm/smartrecruit -f values-dev.yaml
+# (ou values-prod.yaml), et ponctuellement avec --set clé=valeur.
+
+nameOverride: ""
+fullnameOverride: ""
+
+# --- Images ------------------------------------------------------------------
+# Image d'un service = <registry>/<prefix><service>:<tag>
+# registry vide => images locales (ex. smartrecruit-auth-service:latest chargée dans kind).
+images:
+  registry: ghcr.io/omartitouhi
+  prefix: smartrecruit-
+  # Vide => .Chart.AppVersion
+  tag: latest
+  pullPolicy: IfNotPresent
+  # Dépôts ghcr.io privés : nom(s) d'un Secret docker-registry existant.
+  pullSecrets: []
+
+postgres:
+  image: postgres:16
+  storage:
+    size: 5Gi
+    # Vide => StorageClass par défaut du cluster (provisionnement dynamique, cf. TP PV/PVC).
+    storageClass: ""
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { memory: 512Mi }
+  # Bases logiques créées au premier démarrage (une par microservice).
+  databases: [auth_db, user_db, job_db, application_db, dashboard_db, ai_db]
+
+# --- Configuration non secrète (ConfigMap <release>-config, injectée par envFrom) ---
+config:
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  AUTH_SERVICE_URI: http://auth-service:8081
+  USER_SERVICE_URI: http://user-service:8082
+  JOB_SERVICE_URI: http://job-service:8083
+  APPLICATION_SERVICE_URI: http://application-service:8084
+  DASHBOARD_SERVICE_URI: http://dashboard-service:8085
+  AI_SERVICE_URI: http://ai-service:8000
+  AI_ENGINE: rules
+  OPENROUTER_MODEL: anthropic/claude-haiku-5.5
+  RATE_LIMIT_MAX_REQUESTS: "10"
+  SERVER_SHUTDOWN: graceful
+  SPRING_LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE: 20s
+
+# Logs JSON (format ECS) sur la sortie standard des services Spring : directement exploitables par
+# Filebeat/Logstash (chart deploy/helm/elk). Ajoute LOGGING_STRUCTURED_FORMAT_CONSOLE=ecs à la ConfigMap.
+structuredLogs: true
+
+# --- Secrets (Secret <release>-secrets, injecté clé par clé via secretKeyRef) ---
+secrets:
+  # true : le chart crée le Secret à partir de `values` (encodage base64 par b64enc).
+  # false : utiliser un Secret existant (créé à la main, Sealed Secrets, External Secrets...).
+  create: true
+  existingSecret: ""
+  values:
+    DB_USER: smartrecruit
+    DB_PASSWORD: ""
+    JWT_SECRET: ""
+    INTERNAL_AUTH_SECRET: ""
+    # 32 octets en base64 (openssl rand -base64 32)
+    CV_ENCRYPTION_KEY: ""
+    ADMIN_EMAIL: admin@smartrecruit.local
+    ADMIN_PASSWORD: ""
+    OPENROUTER_API_KEY: ""
+
+# --- Sécurité commune aux conteneurs applicatifs (UID 10001 des Dockerfiles) ---
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: ["ALL"]
+
+# Stratégie de déploiement par défaut (RollingUpdate : un pod de plus, aucun de moins => zéro interruption).
+# Un service peut la remplacer (user-service : Recreate, son volume est ReadWriteOnce).
+defaultStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+# Nombre d'anciens ReplicaSets conservés pour `kubectl rollout undo` / historique.
+revisionHistoryLimit: 10
+
+# --- Services ----------------------------------------------------------------
+# type : spring (sondes actuator, métriques /actuator/prometheus), python (service IA, /metrics),
+#        web (nginx, pas de métriques).
+# tier : utilisé par les NetworkPolicies (web, api, service).
+services:
+  auth-service:
+    enabled: true
+    type: spring
+    tier: service
+    port: 8081
+    replicas: 1
+    database: auth_db
+    secretEnv: [DB_USER, DB_PASSWORD, JWT_SECRET, INTERNAL_AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD]
+    resources:
+      requests: { cpu: 100m, memory: 320Mi }
+      limits: { memory: 640Mi }
+
+  user-service:
+    enabled: true
+    type: spring
+    tier: service
+    port: 8082
+    # Toujours 1 : les CV chiffrés sont sur un volume ReadWriteOnce.
+    replicas: 1
+    database: user_db
+    strategy:
+      type: Recreate
+    secretEnv: [DB_USER, DB_PASSWORD, INTERNAL_AUTH_SECRET, CV_ENCRYPTION_KEY]
+    env:
+      CV_STORAGE_DIR: /data/cvs
+    cvStorage: true
+    resources:
+      requests: { cpu: 100m, memory: 320Mi }
+      limits: { memory: 640Mi }
+
+  job-service:
+    enabled: true
+    type: spring
+    tier: service
+    port: 8083
+    replicas: 1
+    database: job_db
+    secretEnv: [DB_USER, DB_PASSWORD, INTERNAL_AUTH_SECRET]
+    resources:
+      requests: { cpu: 100m, memory: 320Mi }
+      limits: { memory: 640Mi }
+
+  application-service:
+    enabled: true
+    type: spring
+    tier: service
+    port: 8084
+    replicas: 1
+    database: application_db
+    secretEnv: [DB_USER, DB_PASSWORD, INTERNAL_AUTH_SECRET]
+    resources:
+      requests: { cpu: 100m, memory: 320Mi }
+      limits: { memory: 640Mi }
+
+  dashboard-service:
+    enabled: true
+    type: spring
+    tier: service
+    port: 8085
+    replicas: 1
+    database: dashboard_db
+    secretEnv: [DB_USER, DB_PASSWORD, INTERNAL_AUTH_SECRET]
+    resources:
+      requests: { cpu: 100m, memory: 320Mi }
+      limits: { memory: 640Mi }
+
+  api-gateway:
+    enabled: true
+    type: spring
+    tier: api
+    port: 8080
+    replicas: 1
+    secretEnv: [JWT_SECRET, INTERNAL_AUTH_SECRET]
+    resources:
+      requests: { cpu: 100m, memory: 320Mi }
+      limits: { memory: 640Mi }
+
+  ai-service:
+    enabled: true
+    type: python
+    tier: service
+    port: 8000
+    replicas: 1
+    database: ai_db
+    secretEnv: [DB_USER, DB_PASSWORD, OPENROUTER_API_KEY]
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: { memory: 512Mi }
+
+  frontend:
+    enabled: true
+    type: web
+    tier: web
+    port: 80
+    replicas: 1
+    # Image officielle nginx : tourne en root, système de fichiers en écriture.
+    podSecurityContext: {}
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+    resources:
+      requests: { cpu: 20m, memory: 32Mi }
+      limits: { memory: 128Mi }
+
+# Type des Services Kubernetes (ClusterIP : accès interne ; l'extérieur passe par l'Ingress).
+# Un service peut définir `serviceType: NodePort` et `nodePort: 30080` (cf. Lab 1).
+serviceType: ClusterIP
+
+# --- Volume des CV chiffrés (PVC) --------------------------------------------
+cvStorage:
+  size: 2Gi
+  storageClass: ""
+  accessModes: ["ReadWriteOnce"]
+
+# --- Ingress (contrôleur ingress-nginx) --------------------------------------
+# /api -> api-gateway, / -> frontend
+ingress:
+  enabled: false
+  className: nginx
+  host: smartrecruit.local
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 6m
+  tls:
+    enabled: false
+    secretName: smartrecruit-tls
+    # ClusterIssuer cert-manager (vide => pas d'annotation cert-manager).
+    clusterIssuer: ""
+
+# --- Mise à l'échelle automatique (nécessite metrics-server) ------------------
+autoscaling:
+  enabled: false
+  targetCPUUtilizationPercentage: 70
+  services:
+    api-gateway: { minReplicas: 2, maxReplicas: 6 }
+    ai-service: { minReplicas: 2, maxReplicas: 5 }
+
+# --- Budgets de disponibilité ------------------------------------------------
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  services: [api-gateway, ai-service, frontend]
+
+# --- Isolation réseau (CNI compatible : Calico, Cilium...) -------------------
+networkPolicies:
+  enabled: false
+  ingressControllerNamespace: ingress-nginx
+  # Namespace de Prometheus, autorisé à lire les métriques.
+  monitoringNamespace: monitoring
+
+# --- Observabilité (nécessite kube-prometheus-stack : CRDs ServiceMonitor / PrometheusRule) ---
+monitoring:
+  enabled: false
+  # Label lu par le sélecteur de Prometheus (release du chart kube-prometheus-stack).
+  labels:
+    release: monitoring
+  interval: 15s
+  # Tableau de bord Grafana (ConfigMap détectée par le sidecar de Grafana).
+  dashboard:
+    enabled: true
+  # Règles d'alerte Prometheus.
+  alerts:
+    enabled: true
+    errorRateThreshold: 0.05
+    latencyP95Seconds: 1
+
+# --- Test Helm (helm test smartrecruit) --------------------------------------
+tests:
+  image: curlimages/curl:8.10.1

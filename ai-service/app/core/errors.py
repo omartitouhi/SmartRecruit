@@ -10,7 +10,7 @@ from app.services.llm_client import LLMError, LLMNotConfiguredError
 
 
 def error_response(request: Request, status_code: int, message: str) -> JSONResponse:
-    """Corps d'erreur au format Spring Boot, commun aux 3 dépôts (DATA_MODEL.md §1) :
+    """Corps d'erreur au format Spring Boot, commun à tous les services (DATA_MODEL.md §1) :
     {timestamp, status, error, message, path}."""
     return JSONResponse(
         status_code=status_code,

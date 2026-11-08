@@ -1,5 +1,5 @@
 // Contrats inter-services critiques — DATA_MODEL.md §4. Ce sont les réponses de
-// smartrecruit-ia, consommées telles quelles par le frontend (via application-service
+// ai-service, consommées telles quelles par le frontend (via application-service
 // pour MatchScore, directement pour les autres).
 
 import type { ContractType, ExperienceLevel } from './enums';

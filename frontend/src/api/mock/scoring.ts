@@ -1,5 +1,5 @@
-// Stand-in for smartrecruit-ia's matching (§4.1) so the demo shows real explained scores.
-// Weights mirror smartrecruit-ia (scoring.py): skills 50 %, experience 30 %, education 20 %.
+// Stand-in for ai-service's matching (§4.1) so the demo shows real explained scores.
+// Weights mirror ai-service (scoring.py): skills 50 %, experience 30 %, education 20 %.
 
 import type { CandidateProfile, ExperienceLevel, Job, MatchCriterion, MatchScore } from '../../types';
 

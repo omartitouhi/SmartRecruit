@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Test de bout en bout de toute la plateforme via le gateway et le frontend (nginx).
 
-Usage : python e2e/e2e_full.py                   (docker compose, ports par défaut)
-        E2E_TARGET=k8s python e2e/e2e_full.py    (kind : les logs sont lus avec kubectl)
-Prérequis : pip install -r e2e/requirements.txt, et la stack démarrée avec OPENROUTER_API_KEY.
+Usage : python backend/e2e/e2e_full.py                   (docker compose, ports par défaut)
+        E2E_TARGET=k8s python backend/e2e/e2e_full.py    (kind : les logs sont lus avec kubectl)
+Prérequis : pip install -r backend/e2e/requirements.txt, et la stack démarrée avec OPENROUTER_API_KEY.
 """
 import io, os, re, subprocess, sys, time, uuid
 import httpx
@@ -12,7 +12,8 @@ from reportlab.pdfgen import canvas
 GW = os.environ.get("E2E_GATEWAY", "http://localhost:8080") + "/api/v1"
 WEB = os.environ.get("E2E_WEB", "http://localhost:8090") + "/api/v1"
 TARGET = os.environ.get("E2E_TARGET", "compose")
-BACKEND = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Racine du monorepo (docker-compose.yml) : backend/e2e/ -> ../..
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@smartrecruit.local")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "Admin-Dev-2026!")
 PW = "Motdepasse123"
@@ -39,7 +40,7 @@ def user_service_logs():
         cmd = ["kubectl", "-n", "smartrecruit", "logs", "deploy/user-service", "--tail=400"]
     else:
         cmd = ["docker", "compose", "logs", "--tail", "400", "user-service"]
-    return subprocess.run(cmd, cwd=BACKEND, capture_output=True, text=True, encoding="utf-8", errors="replace").stdout
+    return subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace").stdout
 
 
 c = httpx.Client(timeout=90)

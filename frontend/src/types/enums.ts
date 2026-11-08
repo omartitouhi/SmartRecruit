@@ -1,5 +1,5 @@
-// Mirrors DATA_MODEL.md §2 (smartrecruit-backend). Keep these union types in sync
-// with the Java enums (backend) and the Python Enum/Literal types (smartrecruit-ia).
+// Mirrors docs/DATA_MODEL.md §2. Keep these union types in sync
+// with the Java enums (backend) and the Python Enum/Literal types (ai-service).
 
 export type Role = 'CANDIDATE' | 'RECRUITER' | 'ADMIN';
 

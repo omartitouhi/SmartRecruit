@@ -1,5 +1,5 @@
 // Point d'entrée unique : `import { Job, MatchScore, Role } from '@/types'`.
-// Voir DATA_MODEL.md (smartrecruit-backend) pour la source de vérité.
+// Voir docs/DATA_MODEL.md pour la source de vérité.
 
 export * from './enums';
 export * from './entities';

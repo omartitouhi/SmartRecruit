@@ -1,0 +1,85 @@
+# Production : images publiées sur ghcr.io, Ingress, mise à l'échelle, isolation réseau.
+# Les secrets ne sont PAS dans le dépôt : créer `app-secrets` avant le déploiement (voir deploy/k8s/README.md).
+# CI : `kustomize edit set image ghcr.io/omartitouhi/smartrecruit-<service>=...:<sha>` fige les versions.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: smartrecruit
+resources:
+  - ../../base
+  - ingress.yaml
+  - hpa.yaml
+  - pdb.yaml
+  - networkpolicies.yaml
+images:
+  - name: ghcr.io/omartitouhi/smartrecruit-auth-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-user-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-job-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-application-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-dashboard-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-api-gateway
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-ai-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-frontend
+    newTag: latest
+replicas:
+  - name: auth-service
+    count: 2
+  - name: job-service
+    count: 2
+  - name: application-service
+    count: 2
+  - name: dashboard-service
+    count: 2
+  - name: api-gateway
+    count: 2
+  - name: ai-service
+    count: 2
+  - name: frontend
+    count: 2
+  # user-service reste à 1 : son volume de CV est ReadWriteOnce (voir base/cv-storage.yaml).
+patches:
+  - target:
+      kind: Deployment
+      name: "(auth|user|job|application|dashboard)-service|api-gateway"
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            memory: 1Gi
+  - target:
+      kind: Deployment
+      name: ai-service
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            memory: 768Mi
+  - target:
+      kind: StatefulSet
+      name: postgres
+    patch: |-
+      - op: replace
+        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
+        value: 20Gi
+  # Derrière l'Ingress, l'IP réelle du client est la première de X-Forwarded-For (le gateway n'est pas joignable autrement).
+  - target:
+      kind: ConfigMap
+      name: app-config
+    patch: |-
+      - op: add
+        path: /data/RATE_LIMIT_TRUST_FORWARDED_FOR
+        value: "true"

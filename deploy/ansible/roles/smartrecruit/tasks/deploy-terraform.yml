@@ -1,0 +1,41 @@
+---
+- name: Générer terraform.tfvars (lu automatiquement par Terraform)
+  ansible.builtin.template:
+    src: terraform.tfvars.j2
+    dest: "{{ smartrecruit_terraform_dir }}/terraform.tfvars"
+    owner: "{{ smartrecruit_user }}"
+    group: "{{ smartrecruit_user }}"
+    mode: "0600"
+  no_log: true
+  diff: false
+
+# terraform init + plan + apply ; idempotent : « ok » si l'état correspond déjà à la configuration.
+# État local : deploy/terraform/state/terraform.tfstate (backend "local" déclaré dans le code Terraform).
+- name: Appliquer la configuration Terraform (cluster kind, chart Helm, monitoring, logging)
+  community.general.terraform:
+    project_path: "{{ smartrecruit_terraform_dir }}"
+    binary_path: /usr/local/bin/terraform
+    state: present
+    force_init: true
+  environment: "{{ smartrecruit_deploy_env }}"
+  async: "{{ 0 if ansible_check_mode else smartrecruit_deploy_timeout }}"  # async interdit en --check
+  poll: 15
+  register: smartrecruit_tf
+
+- name: Rendre l'état Terraform et le kubeconfig à l'utilisateur
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+    owner: "{{ smartrecruit_user }}"
+    group: "{{ smartrecruit_user }}"
+  loop:
+    - "{{ smartrecruit_terraform_dir }}"
+    - "{{ smartrecruit_user_home }}/.kube"
+
+- name: Afficher les sorties Terraform (hors valeurs sensibles)
+  ansible.builtin.debug:
+    msg: "{{ item.key }} = {{ item.value.value }}"
+  loop: "{{ smartrecruit_tf.outputs | default({}) | dict2items | rejectattr('value.sensitive') | list }}"
+  loop_control:
+    label: "{{ item.key }}"

@@ -12,8 +12,8 @@ finale de recrutement (human-in-the-loop). Les résultats de matching doivent ê
 par un schéma JSON strict et rester explicables.
 
 > **Structures de données partagées :** les schémas Pydantic (`app/schemas/`) doivent rester
-> synchronisés avec `DATA_MODEL.md` dans `smartrecruit-backend` — c'est la référence commune
-> aux 3 dépôts pour `MatchScore`, `CVParsingResult`, `JobAnalysisResult`, etc.
+> synchronisés avec `DATA_MODEL.md` dans `docs/` — c'est la référence commune
+> aux 3 composants pour `MatchScore`, `CVParsingResult`, `JobAnalysisResult`, etc.
 
 ## Stack
 - Python 3.12, FastAPI, Uvicorn
@@ -32,7 +32,7 @@ uvicorn app.main:app --reload
 ```
 
 Nécessite une instance PostgreSQL (voir
-`docker-compose.yml` du dépôt `smartrecruit-backend` pour lancer toute la stack).
+`docker-compose.yml` à la racine du monorepo pour lancer toute la stack).
 
 ## Moteur : règles (défaut) ou LLM
 
@@ -84,7 +84,7 @@ tests/
 - `GET /api/v1/ai/ready` — disponibilité : `200` si `ai_db` répond, sinon `503` (sonde Kubernetes)
 - `GET /metrics` — métriques Prometheus : HTTP (`http_requests_total`, `http_request_duration_seconds`) et métier
   (`smartrecruit_ai_match_requests_total`, `smartrecruit_ai_match_score`, `smartrecruit_ai_llm_calls_in_progress`) ;
-  collectées par le ServiceMonitor du chart Helm (voir `DEVOPS.md` du dépôt backend). Hors schéma OpenAPI.
+  collectées par le ServiceMonitor du chart Helm (voir `docs/DEVOPS.md`). Hors schéma OpenAPI.
 - `POST /api/v1/ai/cv-parsing/parse` — IA-01 : multipart, champ `file` (PDF, 5 Mo max) ->
   `CVParsingResult`. Fichier invalide (type, vide, trop gros, corrompu, scanné sans texte) -> `422`.
   Champ optionnel `candidateId` : le résultat est stocké dans `ai_db` (table `parsed_cvs`) et lié au
@@ -107,6 +107,6 @@ tests/
   compétences requises par l'offre absentes du profil, selon le LLM (équivalences prises en compte,
   ex. Postgres = PostgreSQL). Toute compétence qui ne figure pas dans l'offre est rejetée.
 
-Les erreurs suivent le format commun aux 3 dépôts (`DATA_MODEL.md` §1) :
+Les erreurs suivent le format commun aux 3 composants (`DATA_MODEL.md` §1) :
 `{ "timestamp", "status", "error", "message", "path" }`.
 

@@ -1,0 +1,22 @@
+---
+# Cluster kind + overlay Kustomize dev (deploy/k8s/scripts/dev.sh). kubectl apply affiche « unchanged » si rien ne change.
+- name: Déployer avec deploy/k8s/scripts/dev.sh up
+  ansible.builtin.command: bash deploy/k8s/scripts/dev.sh up
+  args:
+    chdir: "{{ smartrecruit_project_dir }}"
+  environment: "{{ smartrecruit_deploy_env }}"
+  async: "{{ 0 if ansible_check_mode else smartrecruit_deploy_timeout }}"  # async interdit en --check
+  poll: 15
+  register: smartrecruit_kind_script
+  changed_when: smartrecruit_kind_script.stdout is search(' (created|configured)$', multiline=True)
+
+- name: Rendre le kubeconfig et les fichiers générés à l'utilisateur
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+    owner: "{{ smartrecruit_user }}"
+    group: "{{ smartrecruit_user }}"
+  loop:
+    - "{{ smartrecruit_project_dir }}/deploy/k8s/overlays/dev"
+    - "{{ smartrecruit_user_home }}/.kube"

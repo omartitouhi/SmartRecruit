@@ -1,57 +1,24 @@
 # SmartRecruit — Backend (microservices)
 
 Backend applicatif de SmartRecruit : un microservice Spring Boot par module fonctionnel,
-routés via un API Gateway. Ce dépôt contient également l'orchestration Docker Compose de
-toute la stack (backend + frontend + service IA + base de données).
+routés via un API Gateway. Lancement de toute la stack, déploiement et CI : voir le
+[README du monorepo](../README.md).
 
-> **Avant de coder un endpoint ou un champ, lisez [DATA_MODEL.md](DATA_MODEL.md)** — c'est
-> la référence commune aux 3 dépôts (backend, frontend, ia) pour les structures de données,
+> **Avant de coder un endpoint ou un champ, lisez [DATA_MODEL.md](../docs/DATA_MODEL.md)** — c'est
+> la référence commune au backend, au frontend et au service IA pour les structures de données,
 > les enums et les contrats API partagés (notamment `MatchScore`, l'objet qui porte le score
 > de compatibilité expliqué).
 
 > Contrats d'API entre services et vers le frontend (entreprises, offres, candidatures, tableau de bord) :
-> [API_CONTRACTS.md](API_CONTRACTS.md).
-
-## Prérequis
-
-Ce dépôt suppose que `smartrecruit-frontend/` et `smartrecruit-ia/` sont clonés **à côté**
-de `smartrecruit-backend/` (même parent) :
-
-```
-Recruitement/
-  smartrecruit-backend/     <- ce dépôt
-  smartrecruit-frontend/
-  smartrecruit-ia/
-```
-
-## Lancer toute la stack
-
-```bash
-cd smartrecruit-backend
-docker compose up --build
-```
-
-Copier `.env.example` en `.env` et renseigner `OPENROUTER_API_KEY` (sans clé, les fonctions IA répondent 503).
-Interface : http://localhost:5173 (ou `FRONTEND_HOST_PORT`), API : http://localhost:8080. Un compte administrateur de
-développement est créé au démarrage (`ADMIN_EMAIL` / `ADMIN_PASSWORD`, voir `.env.example`).
+> [API_CONTRACTS.md](../docs/API_CONTRACTS.md).
 
 ## Données de démonstration
 
-Avec la stack démarrée : `python seed/seed_demo.py` crée 5 entreprises, 25 offres, 19 candidats (CV PDF analysés par le
-service IA), une cinquantaine de candidatures à tous les statuts, une offre modérée et une offre clôturée. Rejouable
-sans doublon. Comptes (mot de passe `Motdepasse123`) : `candidat@smartrecruit.test`, `recruteur@smartrecruit.test`
-(Acme Tech), `recruteur2` à `recruteur5@smartrecruit.test` ; administrateur : voir `.env.example`.
-Repartir d'une base vide : `docker compose down -v`.
-
-## Kubernetes
-
-Manifestes Kustomize, cluster local kind et overlay de production : voir [k8s/README.md](k8s/README.md)
-(`k8s/scripts/dev.sh up`).
-
-## DevOps (Helm, Terraform, Ansible, Prometheus/Grafana, ELK)
-
-Chart Helm de la plateforme, stack de logs ELK, monitoring Prometheus/Grafana, infrastructure Terraform
-(kind + releases Helm) et playbook Ansible : voir [DEVOPS.md](DEVOPS.md).
+Avec la stack démarrée (`docker compose up --build` à la racine) : `python backend/seed/seed_demo.py` crée
+5 entreprises, 25 offres, 19 candidats (CV PDF analysés par le service IA), une cinquantaine de candidatures à tous
+les statuts, une offre modérée et une offre clôturée. Rejouable sans doublon. Comptes (mot de passe `Motdepasse123`) :
+`candidat@smartrecruit.test`, `recruteur@smartrecruit.test` (Acme Tech), `recruteur2` à `recruteur5@smartrecruit.test` ;
+administrateur : voir `.env.example` à la racine. Repartir d'une base vide : `docker compose down -v`.
 
 ## Tests
 
@@ -60,16 +27,16 @@ Chart Helm de la plateforme, stack de logs ELK, monitoring Prometheus/Grafana, i
   matching, tableau de bord, administration, audit, contrôle d'accès) :
 
 ```bash
-pip install -r e2e/requirements.txt
-python e2e/e2e_full.py                  # docker compose
-E2E_TARGET=k8s python e2e/e2e_full.py   # cluster kind
+pip install -r backend/e2e/requirements.txt
+python backend/e2e/e2e_full.py                  # docker compose
+E2E_TARGET=k8s python backend/e2e/e2e_full.py   # cluster kind
 ```
 
 ## Architecture
 
 ```
                     ┌──────────────┐
-                    │   Frontend    │  React SPA (:5173)        [repo smartrecruit-frontend/]
+                    │   Frontend    │  React SPA (:5173)        [frontend/]
                     └──────┬───────┘
                            │
                     ┌──────▼───────┐
@@ -79,7 +46,7 @@ E2E_TARGET=k8s python e2e/e2e_full.py   # cluster kind
         ▼          ▼       ▼       ▼           ▼           ▼
    auth-service user-service job-service application- dashboard-  ai-service
       :8081       :8082    :8083   service:8084  service:8085   :8000 (FastAPI)
-        │          │        │         │             │        [repo smartrecruit-ia/]
+        │          │        │         │             │        [ai-service/]
         └──────────┴────────┴─────────┴─────────────┴─────────────┘
                                    │
                           PostgreSQL + pgvector (:5432)
@@ -87,7 +54,7 @@ E2E_TARGET=k8s python e2e/e2e_full.py   # cluster kind
                    job_db, application_db, dashboard_db, ai_db)
 ```
 
-## Microservices (dans ce dépôt)
+## Microservices (dans ce dossier)
 
 | Service | Port | Rôle |
 | --- | --- | --- |
@@ -116,7 +83,7 @@ L'équipe a choisi de partir sur de **vraies microservices** pour approfondir
 l'architecture distribuée. Points d'attention :
 
 - Pas de service discovery (Eureka) pour l'instant — résolution statique via variables
-  d'environnement / noms Docker Compose (voir `docker-compose.yml`).
+  d'environnement / noms Docker Compose (voir `docker-compose.yml` à la racine).
 - Chaque service a sa propre base logique (isolation des données), mais partage la même
   instance PostgreSQL en local pour simplifier le développement.
 - La validation JWT est **centralisée au niveau du gateway** (`BE-SEC-04`) : une requête
@@ -143,7 +110,5 @@ l'architecture distribuée. Points d'attention :
 
 ## CI
 
-- `.github/workflows/ci.yml` construit et teste chaque microservice (matrice Maven), sur push/PR vers `main`/`develop`.
-- `.github/workflows/images.yml` publie les images sur ghcr.io.
-- `.github/workflows/k8s.yml` valide les manifestes Kustomize ; `.github/workflows/infra.yml` valide les charts Helm,
-  Terraform et Ansible.
+Workflow `.github/workflows/backend.yml` à la racine du monorepo : build et tests Maven de chaque microservice
+(matrice), déclenché par les changements sous `backend/`.

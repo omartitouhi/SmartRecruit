@@ -1,10 +1,10 @@
 # SmartRecruit — Frontend
 
-SPA React consommant l'API via le gateway du dépôt `smartrecruit-backend` (`api-gateway`).
+SPA React consommant l'API via le gateway du monorepo (`api-gateway`).
 
 > **Structures de données partagées :** avant de créer un type TypeScript pour une entité
-> ou une réponse API, consultez `DATA_MODEL.md` dans `smartrecruit-backend` — c'est la
-> référence commune aux 3 dépôts (noms de champs, enums, contrats IA comme `MatchScore`).
+> ou une réponse API, consultez `DATA_MODEL.md` dans `docs/` — c'est la
+> référence commune aux 3 composants (noms de champs, enums, contrats IA comme `MatchScore`).
 
 ## Stack
 - React 19, TypeScript, Vite
@@ -102,7 +102,7 @@ src/
 
 ## Contrats d'API
 
-Les chemins appelés sont ceux de `API_CONTRACTS.md` (dépôt `smartrecruit-backend`), qui fait foi ; les formes
+Les chemins appelés sont ceux de `docs/API_CONTRACTS.md`, qui fait foi ; les formes
 de données sont dans `DATA_MODEL.md`. Un module par service dans `src/api/` (`auth`, `candidates`, `companies`,
 `jobs`, `applications`, `dashboard`) ; `src/api/mock/` suit les mêmes règles (codes 400/403/404/409/410/422,
 transitions de statut, 409 sur les doublons) pour que la démonstration se comporte comme le vrai backend.

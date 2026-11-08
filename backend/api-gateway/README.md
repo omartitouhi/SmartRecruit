@@ -25,7 +25,7 @@ variables d'environnement / noms de services Docker Compose).
 ./mvnw spring-boot:run
 ```
 
-Voir `docker-compose.yml` à la racine de ce dépôt pour lancer toute la stack (gateway + microservices + DB).
+Voir `docker-compose.yml` à la racine du monorepo pour lancer toute la stack (gateway + microservices + DB).
 
 ## Authentification (BE-SEC-04)
 

@@ -21,7 +21,7 @@ base64, à générer avec `openssl rand -base64 32` ; la valeur par défaut ne s
 Le service refuse de démarrer sans clé valide. Les CV ne sont déchiffrés que lors d'un
 téléchargement autorisé ; un fichier altéré est détecté (tag GCM) et n'est pas servi.
 
-Nécessite une instance PostgreSQL locale (voir `docker-compose.yml` à la racine de ce dépôt pour lancer toute la stack).
+Nécessite une instance PostgreSQL locale (voir `docker-compose.yml` à la racine du monorepo pour lancer toute la stack).
 
 ## Structure
 

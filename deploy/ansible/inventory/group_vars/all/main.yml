@@ -1,0 +1,58 @@
+# Variables communes à toutes les machines du groupe `smartrecruit`.
+# Les secrets sont dans vault.yml (chiffré avec ansible-vault, jamais commité) : voir vault.yml.example.
+---
+# Utilisateur qui exploitera la plateforme (groupe docker, kubeconfig, propriétaire des dépôts).
+# Par défaut : l'utilisateur SSH de l'inventaire, sinon celui qui lance ansible (connexion locale).
+smartrecruit_user: "{{ ansible_user | default(lookup('ansible.builtin.env', 'USER')) }}"
+
+# Versions épinglées des outils (rôle k8s_tools).
+kubectl_version: "1.33.3"
+kind_version: "0.29.0"
+helm_version: "3.18.4"
+terraform_version: "1.12.2"
+
+# Monorepo (backend/, frontend/, ai-service/, deploy/) cloné dans smartrecruit_install_dir.
+smartrecruit_install_dir: /opt/smartrecruit
+smartrecruit_repo_url: https://github.com/omartitouhi/SmartRecruit.git
+smartrecruit_git_branch: main
+# Dépôt privé : jeton GitHub (lecture seule du contenu) dans le vault ; vide pour un dépôt public.
+smartrecruit_github_token: "{{ vault_github_token | default('') }}"
+
+# Déploiement.
+smartrecruit_environment: dev            # dev | prod
+smartrecruit_base_domain: smartrecruit.local
+# terraform   : cluster kind + chart Helm + deploy/monitoring/logging (dossier deploy/terraform/ du backend)
+# compose     : docker compose up -d (développement simple, sans Kubernetes)
+# kind-script : deploy/k8s/scripts/dev.sh up (Kustomize, overlay dev)
+smartrecruit_deploy_method: terraform
+
+# Options Terraform (écrites dans deploy/terraform/terraform.tfvars).
+# Nom distinct du cluster de deploy/k8s/scripts/dev.sh (« smartrecruit ») pour que les deux puissent coexister.
+smartrecruit_cluster_name: smartrecruit-tf
+# Vide = images locales smartrecruit-<service>:<tag> (construites par docker compose, chargées dans kind).
+# Pour tirer les images publiées : ghcr.io/omartitouhi et smartrecruit_load_local_images: false.
+smartrecruit_image_registry: ""
+smartrecruit_image_tag: latest
+smartrecruit_load_local_images: true     # construit les images avec docker compose et les charge dans kind
+smartrecruit_enable_monitoring: true     # Prometheus + Grafana
+smartrecruit_enable_logging: true        # Elasticsearch + Logstash + Kibana + Filebeat
+
+# Options docker compose (fichier .env à la racine du monorepo).
+smartrecruit_ai_engine: rules            # rules | llm
+smartrecruit_openrouter_model: anthropic/claude-haiku-5.5
+smartrecruit_admin_email: admin@smartrecruit.local
+smartrecruit_rate_limit_max_requests: 10
+smartrecruit_postgres_host_port: 5432
+smartrecruit_ai_host_port: 8000
+smartrecruit_frontend_host_port: 5173
+
+# Secrets : valeurs du vault, avec repli de développement si vault.yml est absent.
+smartrecruit_openrouter_api_key: "{{ vault_openrouter_api_key | default('') }}"
+smartrecruit_admin_password: "{{ vault_admin_password | default('Admin-Dev-2026!') }}"
+smartrecruit_db_password: "{{ vault_db_password | default('smartrecruit') }}"
+
+# Noms ajoutés à /etc/hosts (Ingress du cluster kind publié sur 127.0.0.1).
+smartrecruit_hosts_entries:
+  - "{{ smartrecruit_base_domain }}"
+  - "grafana.{{ smartrecruit_base_domain }}"
+  - "kibana.{{ smartrecruit_base_domain }}"

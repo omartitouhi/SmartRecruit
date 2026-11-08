@@ -1,0 +1,23 @@
+# Racine du monorepo (frontend/ et ai-service/ ont aussi leur propre .gitignore).
+
+# Variables locales de docker compose (copier .env.example)
+.env
+
+# Éditeurs
+.idea/
+*.iml
+.vscode/
+
+# Secrets locaux Kubernetes (overlay Kustomize dev)
+deploy/k8s/overlays/*/secrets.env
+deploy/k8s/overlays/*/config.env
+
+# Ansible : secrets chiffrés et fichiers de reprise
+deploy/ansible/**/vault.yml
+deploy/ansible/*.retry
+
+# Terraform (le fichier .terraform.lock.hcl reste versionné)
+deploy/terraform/**/.terraform/
+deploy/terraform/**/*.tfstate*
+deploy/terraform/state/
+deploy/terraform/**/terraform.tfvars
