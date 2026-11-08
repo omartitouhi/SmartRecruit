@@ -1,0 +1,48 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:auth_db}
+    username: ${DB_USER:smartrecruit}
+    password: ${DB_PASSWORD:smartrecruit}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    distribution:
+      # Buckets d'histogramme pour la latence HTTP (histogram_quantile() dans Prometheus/Grafana).
+      percentiles-histogram:
+        http.server.requests: true
+
+auth:
+  jwt:
+    secret: ${JWT_SECRET:change-me-in-production-this-is-a-dev-only-secret-key}
+    access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:1h}
+    refresh-token-ttl: ${JWT_REFRESH_TOKEN_TTL:7d}
+  lockout:
+    max-attempts: 5
+    window: 15m
+    duration: 15m
+  password-reset:
+    token-ttl: 30m
+    link-base-url: ${PASSWORD_RESET_LINK_BASE_URL:http://localhost:5173/reset-password}
+  bootstrap-admin:
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}
+
+internal-auth:
+  # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
+  secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}

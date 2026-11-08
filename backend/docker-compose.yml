@@ -1,0 +1,160 @@
+name: smartrecruit
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: smartrecruit
+      POSTGRES_PASSWORD: smartrecruit
+      POSTGRES_DB: postgres
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartrecruit"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: auth_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+      JWT_SECRET: dev-only-secret-change-in-production
+      INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      # Administrateur de démarrage (développement uniquement : surcharger dans .env).
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@smartrecruit.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin-Dev-2026!}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: user_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+      INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      CV_STORAGE_DIR: /data/cvs
+      AUTH_SERVICE_URI: http://auth-service:8081
+      AI_SERVICE_URI: http://ai-service:8000
+      DASHBOARD_SERVICE_URI: http://dashboard-service:8085
+      CV_ENCRYPTION_KEY: c21hcnRyZWNydWl0LWRldi1vbmx5LWN2LWtleS0zMmI=
+    volumes:
+      - cv_data:/data/cvs
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  job-service:
+    build: ./job-service
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: job_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+      INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      AI_SERVICE_URI: http://ai-service:8000
+      USER_SERVICE_URI: http://user-service:8082
+      APPLICATION_SERVICE_URI: http://application-service:8084
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  application-service:
+    build: ./application-service
+    ports:
+      - "8084:8084"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: application_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+      INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      JOB_SERVICE_URI: http://job-service:8083
+      USER_SERVICE_URI: http://user-service:8082
+      AI_SERVICE_URI: http://ai-service:8000
+      DASHBOARD_SERVICE_URI: http://dashboard-service:8085
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  dashboard-service:
+    build: ./dashboard-service
+    ports:
+      - "8085:8085"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: dashboard_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+      INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      AUTH_SERVICE_URI: http://auth-service:8081
+      USER_SERVICE_URI: http://user-service:8082
+      JOB_SERVICE_URI: http://job-service:8083
+      APPLICATION_SERVICE_URI: http://application-service:8084
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ai-service:
+    build: ../smartrecruit-ia
+    ports:
+      - "${AI_HOST_PORT:-8000}:8000"
+    environment:
+      DB_HOST: postgres
+      DB_NAME: ai_db
+      DB_USER: smartrecruit
+      DB_PASSWORD: smartrecruit
+      AI_ENGINE: ${AI_ENGINE:-rules}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-haiku-5.5}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      AUTH_SERVICE_URI: http://auth-service:8081
+      USER_SERVICE_URI: http://user-service:8082
+      JOB_SERVICE_URI: http://job-service:8083
+      APPLICATION_SERVICE_URI: http://application-service:8084
+      DASHBOARD_SERVICE_URI: http://dashboard-service:8085
+      AI_SERVICE_URI: http://ai-service:8000
+      JWT_SECRET: dev-only-secret-change-in-production
+      INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-10}
+    depends_on:
+      - auth-service
+      - user-service
+      - job-service
+      - application-service
+      - dashboard-service
+      - ai-service
+
+  frontend:
+    build: ../smartrecruit-frontend
+    ports:
+      - "${FRONTEND_HOST_PORT:-5173}:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  postgres_data:
+  cv_data:

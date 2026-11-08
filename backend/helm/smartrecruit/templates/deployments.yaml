@@ -1,0 +1,164 @@
+{{- /*
+Un Deployment par service déclaré dans .Values.services (boucle range).
+Sondes selon le type : spring (actuator), python (service IA), web (nginx).
+*/}}
+{{- $root := . }}
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "smartrecruit.componentLabels" (dict "root" $root "name" $name) | nindent 4 }}
+    tier: {{ $svc.tier }}
+spec:
+  {{- $hpa := and $root.Values.autoscaling.enabled (hasKey $root.Values.autoscaling.services $name) }}
+  {{- if not $hpa }}
+  replicas: {{ $svc.replicas | default 1 }}
+  {{- end }}
+  revisionHistoryLimit: {{ $root.Values.revisionHistoryLimit }}
+  strategy:
+    {{- toYaml ($svc.strategy | default $root.Values.defaultStrategy) | nindent 4 }}
+  selector:
+    matchLabels:
+      {{- include "smartrecruit.selectorLabels" (dict "root" $root "name" $name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "smartrecruit.componentLabels" (dict "root" $root "name" $name) | nindent 8 }}
+        tier: {{ $svc.tier }}
+      annotations:
+        # Redémarre les pods quand la configuration change (helm upgrade).
+        checksum/config: {{ include (print $root.Template.BasePath "/configmap.yaml") $root | sha256sum }}
+        {{- if $root.Values.secrets.create }}
+        checksum/secrets-values: {{ toYaml $root.Values.secrets.values | sha256sum }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: 30
+      {{- with $root.Values.images.pullSecrets }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+      {{- $podSc := $root.Values.podSecurityContext }}
+      {{- if hasKey $svc "podSecurityContext" }}{{ $podSc = $svc.podSecurityContext }}{{ end }}
+      {{- with $podSc }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $svc.database }}
+      initContainers:
+        # Attend Postgres avant de démarrer (évite les CrashLoopBackOff au premier déploiement).
+        - name: wait-for-postgres
+          image: {{ $root.Values.postgres.image }}
+          command: ["sh", "-c"]
+          args:
+            - |
+              until pg_isready -h postgres -p 5432 -U "$DB_USER"; do echo "waiting for postgres"; sleep 2; done
+          env:
+            {{- include "smartrecruit.secretEnv" (dict "root" $root "key" "DB_USER") | nindent 12 }}
+          resources:
+            requests: { cpu: 10m, memory: 16Mi }
+            limits: { memory: 64Mi }
+          {{- with $root.Values.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: {{ include "smartrecruit.image" (dict "root" $root "name" $name) }}
+          imagePullPolicy: {{ $root.Values.images.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $svc.port }}
+          {{- if ne $svc.type "web" }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "smartrecruit.configName" $root }}
+          env:
+            {{- if $svc.database }}
+            - name: DB_NAME
+              value: {{ $svc.database }}
+            {{- end }}
+            {{- range $k, $val := $svc.env }}
+            - name: {{ $k }}
+              value: {{ $val | toString | quote }}
+            {{- end }}
+            {{- range $svc.secretEnv }}
+            {{- include "smartrecruit.secretEnv" (dict "root" $root "key" .) | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if eq $svc.type "spring" }}
+          startupProbe:
+            httpGet: { path: /actuator/health/liveness, port: http }
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet: { path: /actuator/health/liveness, port: http }
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet: { path: /actuator/health/readiness, port: http }
+            periodSeconds: 5
+            failureThreshold: 3
+          {{- else if eq $svc.type "python" }}
+          startupProbe:
+            httpGet: { path: /api/v1/ai/ping, port: http }
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet: { path: /api/v1/ai/ping, port: http }
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet: { path: /api/v1/ai/ready, port: http }
+            periodSeconds: 5
+            failureThreshold: 3
+          {{- else }}
+          startupProbe:
+            httpGet: { path: /, port: http }
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet: { path: /, port: http }
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet: { path: /, port: http }
+            periodSeconds: 5
+            failureThreshold: 3
+          {{- end }}
+          resources:
+            {{- toYaml $svc.resources | nindent 12 }}
+          {{- $sc := $root.Values.containerSecurityContext }}
+          {{- if hasKey $svc "containerSecurityContext" }}{{ $sc = $svc.containerSecurityContext }}{{ end }}
+          {{- with $sc }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if ne $svc.type "web" }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            {{- if $svc.cvStorage }}
+            - name: cv-data
+              mountPath: /data/cvs
+            {{- end }}
+          {{- end }}
+      {{- if ne $svc.type "web" }}
+      volumes:
+        # Système de fichiers racine en lecture seule : /tmp en mémoire.
+        - name: tmp
+          emptyDir: {}
+        {{- if $svc.cvStorage }}
+        - name: cv-data
+          persistentVolumeClaim:
+            claimName: {{ include "smartrecruit.fullname" $root }}-cv-data
+        {{- end }}
+      {{- end }}
+{{- end }}
+{{- end }}

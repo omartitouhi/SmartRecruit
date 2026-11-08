@@ -1,0 +1,39 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: job-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:job_db}
+    username: ${DB_USER:smartrecruit}
+    password: ${DB_PASSWORD:smartrecruit}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    distribution:
+      # Buckets d'histogramme pour la latence HTTP (histogram_quantile() dans Prometheus/Grafana).
+      percentiles-histogram:
+        http.server.requests: true
+
+internal-auth:
+  # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
+  secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}
+
+services:
+  # BE-REC-01: AI recommendations, enriched with company names from user-service.
+  ai-service-uri: ${AI_SERVICE_URI:http://localhost:8000}
+  user-service-uri: ${USER_SERVICE_URI:http://localhost:8082}
+  # BE-JOB-05: number of applications per offer, for the recruiter's own listing.
+  application-service-uri: ${APPLICATION_SERVICE_URI:http://localhost:8084}

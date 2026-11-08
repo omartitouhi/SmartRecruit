@@ -1,0 +1,28 @@
+---
+- name: Mettre à jour le cache apt et installer les paquets de base
+  ansible.builtin.apt:
+    name: "{{ common_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Définir le fuseau horaire
+  community.general.timezone:
+    name: "{{ common_timezone }}"
+  when: common_timezone | length > 0
+
+- name: Calculer l'architecture des binaires à télécharger
+  ansible.builtin.set_fact:
+    smartrecruit_arch: "{{ common_arch_map[ansible_architecture] | default(ansible_architecture) }}"
+  tags: always
+
+- name: Lire le dossier personnel de l'utilisateur d'exploitation
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ smartrecruit_user }}"
+  tags: always
+
+- name: Mémoriser le dossier personnel de l'utilisateur
+  ansible.builtin.set_fact:
+    smartrecruit_user_home: "{{ ansible_facts.getent_passwd[smartrecruit_user][4] }}"
+  tags: always

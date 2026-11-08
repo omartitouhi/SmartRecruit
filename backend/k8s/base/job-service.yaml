@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-service
+  labels:
+    app.kubernetes.io/name: job-service
+    app.kubernetes.io/part-of: smartrecruit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: job-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: job-service
+        app.kubernetes.io/part-of: smartrecruit
+        tier: service
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16
+          command: ["sh", "-c"]
+          args:
+            - |
+              until pg_isready -h postgres -p 5432 -U "$DB_USER"; do echo "waiting for postgres"; sleep 2; done
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_USER
+      containers:
+        - name: job-service
+          image: ghcr.io/omartitouhi/smartrecruit-job-service:latest
+          ports:
+            - name: http
+              containerPort: 8083
+          envFrom:
+            - configMapRef:
+                name: app-config
+          env:
+            - name: DB_NAME
+              value: job_db
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_PASSWORD
+            - name: INTERNAL_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: INTERNAL_AUTH_SECRET
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 320Mi
+            limits:
+              memory: 640Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: job-service
+  labels:
+    app.kubernetes.io/name: job-service
+    app.kubernetes.io/part-of: smartrecruit
+spec:
+  selector:
+    app.kubernetes.io/name: job-service
+  ports:
+    - name: http
+      port: 8083
+      targetPort: http

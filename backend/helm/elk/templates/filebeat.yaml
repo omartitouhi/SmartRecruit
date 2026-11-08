@@ -1,0 +1,135 @@
+{{- $fb := .Values.filebeat -}}
+{{- $name := include "elk.componentName" (dict "ctx" . "component" "filebeat") -}}
+# Filebeat : agent léger qui lit les fichiers de logs des conteneurs sur chaque nœud.
+# DaemonSet = un pod par nœud, ajouté automatiquement aux nouveaux nœuds (comme le Node Exporter du cours).
+# Droits en lecture sur l'API Kubernetes : nécessaires à add_kubernetes_metadata (pod, namespace, labels).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "filebeat") | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ $name }}-{{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "filebeat") | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "namespaces", "nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $name }}-{{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "filebeat") | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $name }}-{{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $name }}
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "filebeat") | nindent 4 }}
+data:
+  filebeat.yml: |
+    {{- include "elk.filebeat.config" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ $name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "elk.labels" (dict "ctx" . "component" "filebeat") | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "elk.selectorLabels" (dict "ctx" . "component" "filebeat") | nindent 6 }}
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        {{- include "elk.labels" (dict "ctx" . "component" "filebeat") | nindent 8 }}
+      annotations:
+        checksum/config: {{ include "elk.filebeat.config" . | sha256sum }}
+    spec:
+      serviceAccountName: {{ $name }}
+      terminationGracePeriodSeconds: 30
+      {{- with $fb.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: filebeat
+          image: {{ include "elk.image" (dict "ctx" . "image" $fb.image) }}
+          imagePullPolicy: IfNotPresent
+          args: ["-c", "/etc/filebeat.yml", "-e"]
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          # root : les fichiers de /var/log/pods appartiennent à root sur le nœud.
+          securityContext:
+            runAsUser: 0
+          resources:
+            {{- toYaml $fb.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/filebeat.yml
+              subPath: filebeat.yml
+              readOnly: true
+            - name: data
+              mountPath: /usr/share/filebeat/data
+            - name: varlogcontainers
+              mountPath: /var/log/containers
+              readOnly: true
+            - name: varlogpods
+              mountPath: /var/log/pods
+              readOnly: true
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: {{ $name }}-config
+            # Filebeat refuse un fichier de configuration modifiable par d'autres utilisateurs.
+            defaultMode: 0640
+        - name: data
+          hostPath:
+            path: {{ $fb.dataHostPath }}
+            type: DirectoryOrCreate
+        # /var/log/containers : liens symboliques <pod>_<namespace>_<conteneur>-<id>.log vers /var/log/pods.
+        - name: varlogcontainers
+          hostPath:
+            path: /var/log/containers
+        - name: varlogpods
+          hostPath:
+            path: /var/log/pods
+        # Runtime Docker (les nœuds containerd, dont kind, n'utilisent pas ce dossier).
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+            type: DirectoryOrCreate

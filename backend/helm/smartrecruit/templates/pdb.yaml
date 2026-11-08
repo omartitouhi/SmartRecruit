@@ -1,0 +1,20 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+{{- /* Au moins un exemplaire reste disponible pendant les maintenances du cluster (drain de nœud). */}}
+{{- $root := . }}
+{{- range $name := .Values.podDisruptionBudget.services }}
+{{- if (index $root.Values.services $name).enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "smartrecruit.componentLabels" (dict "root" $root "name" $name) | nindent 4 }}
+spec:
+  minAvailable: {{ $root.Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "smartrecruit.selectorLabels" (dict "root" $root "name" $name) | nindent 6 }}
+{{- end }}
+{{- end }}
+{{- end }}

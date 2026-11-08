@@ -1,0 +1,40 @@
+package com.smartrecruit.dashboard.client;
+
+import com.smartrecruit.dashboard.security.InternalIdentityVerifier;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+import java.time.Clock;
+import java.util.Map;
+import java.util.UUID;
+
+/** application-service internals ({@code /internal/v1/applications}). Calls throw RestClientException on failure. */
+@Component
+public class ApplicationServiceClient {
+
+    /** {@code averageMatchScore} and {@code acceptanceRate} are null when nothing can be averaged yet. */
+    public record ApplicationStats(long total, Map<String, Long> byStatus, Double averageMatchScore, long accepted,
+                                   long decided, Double acceptanceRate) {
+    }
+
+    private final RestClient client;
+
+    public ApplicationServiceClient(ServiceEndpointsProperties endpoints, InternalIdentityVerifier signer,
+                                    Clock clock) {
+        this.client = ServiceRestClients.create(endpoints.applicationServiceUri(), signer, clock);
+    }
+
+    /** @param companyId restricts the statistics to one company; null means platform-wide */
+    public ApplicationStats stats(UUID companyId) {
+        return client.get()
+                .uri(uri -> {
+                    uri.path("/internal/v1/applications/stats");
+                    if (companyId != null) {
+                        uri.queryParam("companyId", companyId);
+                    }
+                    return uri.build();
+                })
+                .retrieve()
+                .body(ApplicationStats.class);
+    }
+}

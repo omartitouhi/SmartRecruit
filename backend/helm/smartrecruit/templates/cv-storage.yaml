@@ -1,0 +1,23 @@
+{{- if (index .Values.services "user-service").enabled }}
+# Disque des CV chiffrés (BE-SEC-01), monté par user-service sur /data/cvs.
+# ReadWriteOnce => un seul nœud (et donc un seul exemplaire de user-service).
+# storageClass vide => StorageClass par défaut (provisionnement dynamique, cf. TP PV/PVC).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "smartrecruit.fullname" . }}-cv-data
+  labels:
+    {{- include "smartrecruit.componentLabels" (dict "root" . "name" "user-service") | nindent 4 }}
+  annotations:
+    # Les CV survivent à un helm uninstall.
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+    {{- toYaml .Values.cvStorage.accessModes | nindent 4 }}
+  {{- with .Values.cvStorage.storageClass }}
+  storageClassName: {{ . }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.cvStorage.size }}
+{{- end }}

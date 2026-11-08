@@ -1,0 +1,58 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: api-gateway
+
+services:
+  auth-service:
+    uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+  user-service:
+    uri: ${USER_SERVICE_URI:http://localhost:8082}
+  job-service:
+    uri: ${JOB_SERVICE_URI:http://localhost:8083}
+  application-service:
+    uri: ${APPLICATION_SERVICE_URI:http://localhost:8084}
+  dashboard-service:
+    uri: ${DASHBOARD_SERVICE_URI:http://localhost:8085}
+  ai-service:
+    uri: ${AI_SERVICE_URI:http://localhost:8000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,gateway
+  metrics:
+    distribution:
+      # Buckets d'histogramme pour la latence HTTP (histogram_quantile() dans Prometheus/Grafana).
+      percentiles-histogram:
+        http.server.requests: true
+
+security:
+  jwt:
+    # Same secret as auth-service: the gateway validates access tokens once (BE-SEC-04).
+    secret: ${JWT_SECRET:change-me-in-production-this-is-a-dev-only-secret-key}
+  internal-auth:
+    # Signs the identity headers forwarded to the microservices. Must match INTERNAL_AUTH_SECRET
+    # in every backend service and never be shared with clients.
+    secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}
+  public-paths:
+    - /api/v1/auth/register
+    - /api/v1/auth/login
+    - /api/v1/auth/refresh
+    - /api/v1/auth/logout
+    - /api/v1/auth/forgot-password
+    - /api/v1/auth/reset-password
+  rate-limit:
+    # BE-SEC-05: max requests per client IP and per path in the sliding window, then 429.
+    max-requests: ${RATE_LIMIT_MAX_REQUESTS:10}
+    window: ${RATE_LIMIT_WINDOW:5m}
+    trust-forwarded-for: ${RATE_LIMIT_TRUST_FORWARDED_FOR:false}
+    paths:
+      - /api/v1/auth/login
+      - /api/v1/auth/register
+      - /api/v1/auth/refresh
+      - /api/v1/auth/forgot-password
+      - /api/v1/auth/reset-password

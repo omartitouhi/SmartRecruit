@@ -1,0 +1,5 @@
+---
+# Chaque version est installée dans son propre dossier, puis liée dans /usr/local/bin :
+# relancer le playbook ne retélécharge rien, changer une version installe la nouvelle à côté.
+k8s_tools_dir: /usr/local/lib/smartrecruit-tools
+k8s_tools_bin_dir: /usr/local/bin

@@ -1,0 +1,81 @@
+# Développement local sur kind : images construites par docker compose et chargées dans le cluster.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: smartrecruit
+resources:
+  - ../../base
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+  - name: app-config
+    behavior: merge
+    envs:
+      - config.env
+secretGenerator:
+  - name: app-secrets
+    envs:
+      - secrets.env
+images:
+  - name: ghcr.io/omartitouhi/smartrecruit-auth-service
+    newName: smartrecruit-auth-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-user-service
+    newName: smartrecruit-user-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-job-service
+    newName: smartrecruit-job-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-application-service
+    newName: smartrecruit-application-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-dashboard-service
+    newName: smartrecruit-dashboard-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-api-gateway
+    newName: smartrecruit-api-gateway
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-ai-service
+    newName: smartrecruit-ai-service
+    newTag: latest
+  - name: ghcr.io/omartitouhi/smartrecruit-frontend
+    newName: smartrecruit-frontend
+    newTag: latest
+patches:
+  # Les images viennent du docker local : ne jamais tenter de les tirer d'un registre.
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: IfNotPresent
+  # Ports publiés par kind-config.yaml.
+  - target:
+      kind: Service
+      name: frontend
+    patch: |-
+      - op: replace
+        path: /spec/type
+        value: NodePort
+      - op: add
+        path: /spec/ports/0/nodePort
+        value: 30090
+  - target:
+      kind: Service
+      name: api-gateway
+    patch: |-
+      - op: replace
+        path: /spec/type
+        value: NodePort
+      - op: add
+        path: /spec/ports/0/nodePort
+        value: 30080
+  - target:
+      kind: Service
+      name: ai-service
+    patch: |-
+      - op: replace
+        path: /spec/type
+        value: NodePort
+      - op: add
+        path: /spec/ports/0/nodePort
+        value: 30001

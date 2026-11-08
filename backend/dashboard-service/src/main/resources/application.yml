@@ -1,0 +1,38 @@
+server:
+  port: ${SERVER_PORT:8085}
+
+spring:
+  application:
+    name: dashboard-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:dashboard_db}
+    username: ${DB_USER:smartrecruit}
+    password: ${DB_PASSWORD:smartrecruit}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    distribution:
+      # Buckets d'histogramme pour la latence HTTP (histogram_quantile() dans Prometheus/Grafana).
+      percentiles-histogram:
+        http.server.requests: true
+
+services:
+  auth-service-uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+  user-service-uri: ${USER_SERVICE_URI:http://localhost:8082}
+  job-service-uri: ${JOB_SERVICE_URI:http://localhost:8083}
+  application-service-uri: ${APPLICATION_SERVICE_URI:http://localhost:8084}
+
+internal-auth:
+  # Verifies the identity headers signed by the api-gateway (BE-SEC-04).
+  secret: ${INTERNAL_AUTH_SECRET:dev-only-internal-auth-secret-change-in-production}

@@ -1,0 +1,90 @@
+# Production :
+#   helm upgrade --install smartrecruit ./helm/smartrecruit -n smartrecruit --create-namespace \
+#     -f helm/smartrecruit/values-prod.yaml --set images.tag=<sha>
+# Prérequis : ingress-nginx, cert-manager (ClusterIssuer letsencrypt), metrics-server, kube-prometheus-stack,
+# et le Secret applicatif créé AVANT l'installation (jamais dans le dépôt) :
+#   kubectl -n smartrecruit create secret generic app-secrets --from-literal=DB_USER=... (voir k8s/README.md)
+
+images:
+  registry: ghcr.io/omartitouhi
+  # Figer une version (SHA du commit publié par images.yml) plutôt que latest.
+  tag: latest
+  pullPolicy: IfNotPresent
+  # pullSecrets: [ghcr-pull]
+
+config:
+  # Derrière l'Ingress, l'IP réelle du client est la première de X-Forwarded-For.
+  RATE_LIMIT_TRUST_FORWARDED_FOR: "true"
+
+secrets:
+  create: false
+  existingSecret: app-secrets
+
+services:
+  auth-service:
+    replicas: 2
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { memory: 1Gi }
+  user-service:
+    # Reste à 1 : volume des CV en ReadWriteOnce.
+    replicas: 1
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { memory: 1Gi }
+  job-service:
+    replicas: 2
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { memory: 1Gi }
+  application-service:
+    replicas: 2
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { memory: 1Gi }
+  dashboard-service:
+    replicas: 2
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { memory: 1Gi }
+  api-gateway:
+    replicas: 2
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { memory: 1Gi }
+  ai-service:
+    replicas: 2
+    resources:
+      requests: { cpu: 250m, memory: 256Mi }
+      limits: { memory: 768Mi }
+  frontend:
+    replicas: 2
+
+postgres:
+  storage:
+    size: 20Gi
+
+cvStorage:
+  size: 10Gi
+
+ingress:
+  enabled: true
+  className: nginx
+  # Remplacer par le vrai nom de domaine.
+  host: smartrecruit.example.com
+  tls:
+    enabled: true
+    secretName: smartrecruit-tls
+    clusterIssuer: letsencrypt
+
+autoscaling:
+  enabled: true
+
+podDisruptionBudget:
+  enabled: true
+
+networkPolicies:
+  enabled: true
+
+monitoring:
+  enabled: true

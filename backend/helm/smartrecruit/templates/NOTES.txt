@@ -1,0 +1,36 @@
+SmartRecruit {{ .Chart.AppVersion }} est déployé (release « {{ .Release.Name }} », révision {{ .Release.Revision }}, namespace « {{ .Release.Namespace }} »).
+
+1. État des pods :
+   kubectl -n {{ .Release.Namespace }} get pods,svc,ingress,pvc
+
+{{- if .Values.ingress.enabled }}
+
+2. Interface : http{{ if .Values.ingress.tls.enabled }}s{{ end }}://{{ .Values.ingress.host }}
+   (en local, ajouter « 127.0.0.1 {{ .Values.ingress.host }} » au fichier hosts)
+{{- else }}
+
+2. Accès sans Ingress (port-forward) :
+   kubectl -n {{ .Release.Namespace }} port-forward svc/frontend 8090:80
+   kubectl -n {{ .Release.Namespace }} port-forward svc/api-gateway 8080:8080
+{{- end }}
+
+3. Compte administrateur :
+{{- if .Values.secrets.create }}
+   e-mail       : kubectl -n {{ .Release.Namespace }} get secret {{ include "smartrecruit.secretName" . }} -o jsonpath='{.data.ADMIN_EMAIL}' | base64 --decode
+   mot de passe : kubectl -n {{ .Release.Namespace }} get secret {{ include "smartrecruit.secretName" . }} -o jsonpath='{.data.ADMIN_PASSWORD}' | base64 --decode
+{{- else }}
+   voir le Secret existant « {{ .Values.secrets.existingSecret }} ».
+{{- end }}
+
+4. Vérifier le déploiement : helm test {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+5. Historique et retour arrière :
+   helm history {{ .Release.Name }} -n {{ .Release.Namespace }}
+   helm rollback {{ .Release.Name }} <révision> -n {{ .Release.Namespace }}
+   kubectl -n {{ .Release.Namespace }} rollout history deployment/api-gateway
+
+{{- if .Values.monitoring.enabled }}
+
+6. Métriques : ServiceMonitors, alertes et tableau de bord « SmartRecruit - Vue d'ensemble » créés.
+   kubectl -n monitoring port-forward svc/monitoring-grafana 3000:80
+{{- end }}

@@ -1,0 +1,34 @@
+# Point d'entrée unique. /api va directement au gateway (l'Ingress voit l'IP réelle du client, utile à la
+# limite de requêtes) ; tout le reste est servi par le frontend.
+# Prérequis : ingress-nginx et cert-manager (ClusterIssuer "letsencrypt"). Remplacer le nom d'hôte.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: smartrecruit
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/proxy-body-size: 6m
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - smartrecruit.example.com
+      secretName: smartrecruit-tls
+  rules:
+    - host: smartrecruit.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  name: http
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  name: http

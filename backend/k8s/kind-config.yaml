@@ -1,0 +1,18 @@
+# Cluster local : les NodePorts de l'overlay dev sont publiés sur la machine hôte.
+#   8090 -> frontend, 8080 -> api-gateway, 8001 -> ai-service
+# Arrêter docker compose avant (mêmes ports).
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: smartrecruit
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30090
+        hostPort: 8090
+        protocol: TCP
+      - containerPort: 30080
+        hostPort: 8080
+        protocol: TCP
+      - containerPort: 30001
+        hostPort: 8001
+        protocol: TCP

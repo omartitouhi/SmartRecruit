@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:dashboard_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+services:
+  auth-service-uri: http://localhost:9
+  user-service-uri: http://localhost:9
+  job-service-uri: http://localhost:9
+  application-service-uri: http://localhost:9
+
+internal-auth:
+  secret: test-only-internal-auth-secret

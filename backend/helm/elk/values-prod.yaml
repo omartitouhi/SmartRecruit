@@ -1,0 +1,54 @@
+# Production : plus de mémoire et de disque, Kibana en HTTPS derrière une authentification basique NGINX.
+# shortcut: la sécurité Elasticsearch (xpack.security) reste désactivée ; Elasticsearch n'est joignable
+# que dans le cluster. Activer xpack.security (TLS + comptes) avant d'y mettre des données sensibles.
+# Prérequis : ingress-nginx, cert-manager (ClusterIssuer "letsencrypt") et le secret d'authentification :
+#   htpasswd -c auth admin && kubectl -n logging create secret generic kibana-basic-auth --from-file=auth
+elasticsearch:
+  javaOpts: "-Xms2g -Xmx2g"
+  persistence:
+    size: 30Gi
+  resources:
+    requests:
+      cpu: "1"
+      memory: 4Gi
+    limits:
+      memory: 4Gi
+
+logstash:
+  javaOpts: "-Xms512m -Xmx512m"
+  replicas: 2
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      memory: 1536Mi
+
+filebeat:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 400Mi
+
+kibana:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1Gi
+    limits:
+      memory: 1536Mi
+  ingress:
+    enabled: true
+    className: nginx
+    host: kibana.smartrecruit.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: kibana-basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: "SmartRecruit - logs"
+    tls:
+      - secretName: kibana-tls
+        hosts:
+          - kibana.smartrecruit.example.com

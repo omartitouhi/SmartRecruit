@@ -1,0 +1,62 @@
+# Isolation réseau (nécessite un CNI qui applique les NetworkPolicies : Calico, Cilium...).
+# Chaîne autorisée : Ingress -> frontend et api-gateway ; api-gateway -> services ; services -> services ; services -> Postgres.
+# shortcut: aucune règle de sortie (egress) ; ajouter, notamment pour limiter ai-service à OpenRouter, une fois le CNI validé.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress"]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-controller-to-edge
+spec:
+  podSelector:
+    matchExpressions:
+      - key: tier
+        operator: In
+        values: ["web", "api"]
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api-and-services-to-services
+spec:
+  podSelector:
+    matchLabels:
+      tier: service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: tier
+                operator: In
+                values: ["api", "service"]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-services-to-postgres
+spec:
+  podSelector:
+    matchLabels:
+      tier: data
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              tier: service
+      ports:
+        - protocol: TCP
+          port: 5432

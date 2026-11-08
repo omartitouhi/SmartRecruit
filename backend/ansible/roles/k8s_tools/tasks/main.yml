@@ -1,0 +1,67 @@
+---
+- name: Créer le dossier des outils versionnés
+  ansible.builtin.file:
+    path: "{{ k8s_tools_dir }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "kubectl-{{ kubectl_version }}"
+    - "kind-{{ kind_version }}"
+    - "helm-{{ helm_version }}"
+    - "terraform-{{ terraform_version }}"
+
+- name: Télécharger kubectl (somme de contrôle vérifiée)
+  ansible.builtin.get_url:
+    url: "https://dl.k8s.io/release/v{{ kubectl_version }}/bin/linux/{{ smartrecruit_arch }}/kubectl"
+    checksum: "sha256:https://dl.k8s.io/release/v{{ kubectl_version }}/bin/linux/{{ smartrecruit_arch }}/kubectl.sha256"
+    dest: "{{ k8s_tools_dir }}/kubectl-{{ kubectl_version }}/kubectl"
+    mode: "0755"
+
+- name: Télécharger kind (somme de contrôle vérifiée)
+  ansible.builtin.get_url:
+    url: "https://kind.sigs.k8s.io/dl/v{{ kind_version }}/kind-linux-{{ smartrecruit_arch }}"
+    checksum: "sha256:https://kind.sigs.k8s.io/dl/v{{ kind_version }}/kind-linux-{{ smartrecruit_arch }}.sha256sum"
+    dest: "{{ k8s_tools_dir }}/kind-{{ kind_version }}/kind"
+    mode: "0755"
+
+- name: Télécharger et extraire Helm
+  ansible.builtin.unarchive:
+    src: "https://get.helm.sh/helm-v{{ helm_version }}-linux-{{ smartrecruit_arch }}.tar.gz"
+    dest: "{{ k8s_tools_dir }}/helm-{{ helm_version }}"
+    remote_src: true
+    creates: "{{ k8s_tools_dir }}/helm-{{ helm_version }}/linux-{{ smartrecruit_arch }}/helm"
+
+- name: Télécharger et extraire Terraform
+  ansible.builtin.unarchive:
+    src: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_{{ smartrecruit_arch }}.zip"
+    dest: "{{ k8s_tools_dir }}/terraform-{{ terraform_version }}"
+    remote_src: true
+    creates: "{{ k8s_tools_dir }}/terraform-{{ terraform_version }}/terraform"
+
+- name: Lier les versions choisies dans {{ k8s_tools_bin_dir }}
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ k8s_tools_bin_dir }}/{{ item.name }}"
+    state: link
+    force: true
+  loop:
+    - { name: kubectl, src: "{{ k8s_tools_dir }}/kubectl-{{ kubectl_version }}/kubectl" }
+    - { name: kind, src: "{{ k8s_tools_dir }}/kind-{{ kind_version }}/kind" }
+    - { name: helm, src: "{{ k8s_tools_dir }}/helm-{{ helm_version }}/linux-{{ smartrecruit_arch }}/helm" }
+    - { name: terraform, src: "{{ k8s_tools_dir }}/terraform-{{ terraform_version }}/terraform" }
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Vérifier les versions installées
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - kubectl version --client
+    - kind version
+    - helm version --short
+    - terraform version
+  register: k8s_tools_versions
+  changed_when: false
+
+- name: Afficher les versions
+  ansible.builtin.debug:
+    msg: "{{ k8s_tools_versions.results | map(attribute='stdout_lines') | map('first') | list }}"
