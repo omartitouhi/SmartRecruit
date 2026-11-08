@@ -117,6 +117,12 @@ variable "local_images_revision" {
   default     = "1"
 }
 
+variable "local_image_ids" {
+  description = "Identifiant Docker (sha256:...) de chaque image locale, par dépôt (smartrecruit-<service>). Une image reconstruite est rechargée dans kind et seuls ses pods redémarrent. Renseigné par Ansible ; vide = rechargement manuel (local_images_revision)."
+  type        = map(string)
+  default     = {}
+}
+
 ########################################
 # Composants de la plateforme
 ########################################

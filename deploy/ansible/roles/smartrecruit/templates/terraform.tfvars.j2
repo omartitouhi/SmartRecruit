@@ -10,6 +10,7 @@ cluster_name      = {{ hcl(smartrecruit_cluster_name) }}
 image_registry    = {{ hcl(smartrecruit_image_registry) }}
 image_tag         = {{ hcl(smartrecruit_image_tag) }}
 load_local_images = {{ smartrecruit_load_local_images | bool | lower }}
+local_image_ids   = {{ smartrecruit_local_image_ids | default({}) | to_json }}
 enable_monitoring = {{ smartrecruit_enable_monitoring | bool | lower }}
 enable_logging    = {{ smartrecruit_enable_logging | bool | lower }}
 base_domain       = {{ hcl(smartrecruit_base_domain) }}

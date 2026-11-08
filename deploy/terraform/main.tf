@@ -148,6 +148,7 @@ module "smartrecruit" {
 
   load_local_images     = local.load_local_images
   local_images_revision = var.local_images_revision
+  local_image_ids       = var.local_image_ids
   image_registry        = var.image_registry
   image_tag             = var.image_tag
   image_pull_policy     = local.image_pull_policy

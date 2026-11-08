@@ -1,4 +1,28 @@
 ---
+# Les images locales gardent le tag latest : leur identifiant indique à Terraform lesquelles recharger dans kind
+# et quels pods redémarrer. Lecture seule, donc exécutée aussi en --check.
+- name: Lire l'identifiant des images construites
+  ansible.builtin.command:
+    argv:
+      - docker
+      - image
+      - ls
+      - --no-trunc
+      - --filter
+      - "reference=smartrecruit-*:{{ smartrecruit_image_tag }}"
+      - --format
+      - json
+  register: smartrecruit_local_images
+  changed_when: false
+  check_mode: false
+  when: smartrecruit_load_local_images | bool and smartrecruit_image_registry == ""
+
+- name: Mémoriser l'identifiant de chaque image
+  ansible.builtin.set_fact:
+    smartrecruit_local_image_ids: >-
+      {{ smartrecruit_local_images.stdout_lines | default([]) | map('from_json')
+         | items2dict(key_name='Repository', value_name='ID') }}
+
 - name: Générer terraform.tfvars (lu automatiquement par Terraform)
   ansible.builtin.template:
     src: terraform.tfvars.j2

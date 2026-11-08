@@ -90,8 +90,10 @@ Le module `smartrecruit` exécute `kind load docker-image <image> --name <cluste
 propre à un shell : elle tourne sous `/bin/sh` (Linux, macOS, WSL) comme sous `cmd.exe` (Windows, Git Bash) ;
 seul `kind` doit être dans le `PATH`.
 
-Après un nouveau `docker compose build`, les images portent toujours le tag `latest` : Terraform ne voit pas le
-changement. Forcer le rechargement puis redémarrer les pods :
+Après un nouveau `docker compose build`, les images portent toujours le tag `latest`. Le déploiement Ansible (et
+donc le pipeline) passe l'identifiant de chaque image dans `local_image_ids` : Terraform recharge dans kind les
+seules images reconstruites et leurs pods redémarrent (annotation `smartrecruit/image-id`). En lançant Terraform à
+la main sans cette variable, forcer le rechargement puis redémarrer les pods :
 
 ```bash
 terraform apply -var-file=envs/dev.tfvars -var local_images_revision=2

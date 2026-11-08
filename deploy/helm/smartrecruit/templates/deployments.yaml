@@ -35,6 +35,10 @@ spec:
         {{- if $root.Values.secrets.create }}
         checksum/secrets-values: {{ toYaml $root.Values.secrets.values | sha256sum }}
         {{- end }}
+        {{- with index (default (dict) $root.Values.images.revisions) $name }}
+        # Redémarre les pods quand l'image locale au tag fixe (latest) a été reconstruite.
+        smartrecruit/image-id: {{ . | quote }}
+        {{- end }}
     spec:
       terminationGracePeriodSeconds: 30
       {{- with $root.Values.images.pullSecrets }}

@@ -7,6 +7,13 @@ locals {
     var.extra_local_images,
   )) : toset([])
 
+  # Identifiant de l'image locale de chaque service : annotation des pods, qui redémarrent quand une image
+  # au tag fixe (latest) a été reconstruite. Vide avec un registre : le tag suffit.
+  image_revisions = var.load_local_images ? {
+    for s in var.services : s => var.local_image_ids["smartrecruit-${s}"]
+    if contains(keys(var.local_image_ids), "smartrecruit-${s}")
+  } : {}
+
   app_chart       = "${var.charts_dir}/smartrecruit"
   app_values_file = "${local.app_chart}/values-${var.environment}.yaml"
   elk_chart       = "${var.charts_dir}/elk"
@@ -23,9 +30,10 @@ locals {
 resource "null_resource" "kind_load" {
   for_each = local.local_images
 
-  # Rejoué si l'image, le cluster ou la révision change.
+  # Rejoué si l'image (nom ou contenu), le cluster ou la révision change.
   triggers = {
     image    = each.value
+    image_id = lookup(var.local_image_ids, split(":", each.value)[0], "")
     cluster  = var.cluster_name
     revision = var.local_images_revision
   }
@@ -71,6 +79,9 @@ resource "helm_release" "smartrecruit" {
     [yamlencode({
       secrets = {
         values = var.app_secrets
+      }
+      images = {
+        revisions = local.image_revisions
       }
     })],
   )

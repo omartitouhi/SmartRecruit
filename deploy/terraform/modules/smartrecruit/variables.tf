@@ -36,6 +36,12 @@ variable "local_images_revision" {
   default     = "1"
 }
 
+variable "local_image_ids" {
+  description = "Identifiant Docker de chaque image locale, par dépôt (smartrecruit-<service>) : rechargement dans kind et redémarrage des pods des seules images modifiées."
+  type        = map(string)
+  default     = {}
+}
+
 variable "extra_local_images" {
   description = "Images tierces à charger aussi dans kind. Vide par défaut : le nœud télécharge lui-même les images publiques (postgres:16), car « kind load » échoue sur les images multi-architectures."
   type        = list(string)

@@ -17,6 +17,9 @@ images:
   pullPolicy: IfNotPresent
   # Dépôts ghcr.io privés : nom(s) d'un Secret docker-registry existant.
   pullSecrets: []
+  # Images locales au tag fixe : identifiant Docker par service (renseigné par Terraform), en annotation des pods
+  # pour qu'ils redémarrent quand l'image a été reconstruite.
+  revisions: {}
 
 postgres:
   image: postgres:16
