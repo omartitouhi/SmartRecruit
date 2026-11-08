@@ -1,0 +1,15 @@
+# Configuration non secrète partagée par les services (noms DNS = noms des Services Kubernetes).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "smartrecruit.configName" . }}
+  labels:
+    {{- include "smartrecruit.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.config }}
+  {{ $key }}: {{ $value | toString | quote }}
+  {{- end }}
+  {{- if .Values.structuredLogs }}
+  # Logs Spring Boot en JSON ECS (lus par Filebeat -> Logstash -> Elasticsearch).
+  LOGGING_STRUCTURED_FORMAT_CONSOLE: ecs
+  {{- end }}

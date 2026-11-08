@@ -1,0 +1,44 @@
+# Développement local (kind / minikube) :
+#   helm upgrade --install smartrecruit ./helm/smartrecruit -n smartrecruit --create-namespace -f helm/smartrecruit/values-dev.yaml
+# Images construites par `docker compose build` puis chargées dans le cluster (kind load docker-image ...).
+
+images:
+  registry: ""
+  tag: latest
+  pullPolicy: IfNotPresent
+
+config:
+  # Tous les clients partagent l'IP du proxy en local : pas de limite réaliste.
+  RATE_LIMIT_MAX_REQUESTS: "500"
+
+# Valeurs de développement uniquement (identiques à k8s/overlays/dev/secrets.env.example).
+secrets:
+  create: true
+  values:
+    DB_USER: smartrecruit
+    DB_PASSWORD: smartrecruit
+    JWT_SECRET: dev-only-secret-change-in-production
+    INTERNAL_AUTH_SECRET: dev-only-internal-secret-change-in-production
+    CV_ENCRYPTION_KEY: c21hcnRyZWNydWl0LWRldi1vbmx5LWN2LWtleS0zMmI=
+    ADMIN_EMAIL: admin@smartrecruit.local
+    ADMIN_PASSWORD: Admin-Dev-2026!
+    OPENROUTER_API_KEY: ""
+
+# Ingress en local aussi (cf. Lab 2) : http://smartrecruit.local
+# Prérequis : contrôleur ingress-nginx (minikube addons enable ingress, ou Terraform pour kind)
+# et « 127.0.0.1 smartrecruit.local » dans le fichier hosts.
+ingress:
+  enabled: true
+  className: nginx
+  host: smartrecruit.local
+
+postgres:
+  storage:
+    size: 2Gi
+
+cvStorage:
+  size: 1Gi
+
+# Activé par Terraform quand kube-prometheus-stack est installé (CRDs ServiceMonitor/PrometheusRule).
+monitoring:
+  enabled: false

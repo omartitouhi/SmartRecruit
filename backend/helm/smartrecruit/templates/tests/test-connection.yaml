@@ -1,0 +1,37 @@
+# Test Helm : `helm test <release>` lance ce pod et vérifie que le gateway, le service IA et le frontend répondent.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "smartrecruit.fullname" . }}-test-connection
+  labels:
+    {{- include "smartrecruit.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 100
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: curl
+      image: {{ .Values.tests.image }}
+      command: ["sh", "-c"]
+      args:
+        - |
+          set -e
+          curl -fsS http://api-gateway:{{ (index .Values.services "api-gateway").port }}/actuator/health/readiness
+          echo
+          curl -fsS http://ai-service:{{ (index .Values.services "ai-service").port }}/api/v1/ai/ready
+          echo
+          curl -fsS -o /dev/null http://frontend:{{ (index .Values.services "frontend").port }}/
+          echo "SmartRecruit OK"
+      resources:
+        requests: { cpu: 10m, memory: 16Mi }
+        limits: { memory: 64Mi }
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]

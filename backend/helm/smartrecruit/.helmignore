@@ -1,0 +1,10 @@
+# Fichiers ignorés par `helm package`.
+.DS_Store
+.git/
+.gitignore
+.idea/
+.vscode/
+*.tmp
+*.orig
+*~
+README.md

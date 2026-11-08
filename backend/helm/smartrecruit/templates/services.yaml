@@ -1,0 +1,32 @@
+{{- /*
+Un Service par composant : IP et nom DNS stables devant des pods éphémères, avec répartition de charge.
+Le label `metrics` indique aux ServiceMonitors où lire les métriques Prometheus.
+*/}}
+{{- $root := . }}
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "smartrecruit.componentLabels" (dict "root" $root "name" $name) | nindent 4 }}
+    {{- if eq $svc.type "spring" }}
+    metrics: actuator
+    {{- else if eq $svc.type "python" }}
+    metrics: fastapi
+    {{- end }}
+spec:
+  type: {{ $svc.serviceType | default $root.Values.serviceType }}
+  selector:
+    {{- include "smartrecruit.selectorLabels" (dict "root" $root "name" $name) | nindent 4 }}
+  ports:
+    - name: http
+      port: {{ $svc.port }}
+      targetPort: http
+      {{- if and $svc.nodePort (eq ($svc.serviceType | default $root.Values.serviceType) "NodePort") }}
+      nodePort: {{ $svc.nodePort }}
+      {{- end }}
+{{- end }}
+{{- end }}

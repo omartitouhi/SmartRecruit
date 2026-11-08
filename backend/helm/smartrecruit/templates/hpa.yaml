@@ -1,0 +1,29 @@
+{{- if .Values.autoscaling.enabled }}
+{{- /* Mise à l'échelle sur le CPU (nécessite metrics-server). Les requêtes CPU servent de référence. */}}
+{{- $root := . }}
+{{- range $name, $hpa := .Values.autoscaling.services }}
+{{- if (index $root.Values.services $name).enabled }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "smartrecruit.componentLabels" (dict "root" $root "name" $name) | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $name }}
+  minReplicas: {{ $hpa.minReplicas }}
+  maxReplicas: {{ $hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ $hpa.targetCPUUtilizationPercentage | default $root.Values.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
+{{- end }}
+{{- end }}
