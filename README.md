@@ -48,6 +48,7 @@ un LLM. Données de démonstration : `python backend/seed/seed_demo.py` (voir [b
 | Helm | `helm upgrade --install smartrecruit ./deploy/helm/smartrecruit -n smartrecruit --create-namespace -f deploy/helm/smartrecruit/values-dev.yaml` | Chart sur un cluster existant |
 | Terraform | `cd deploy/terraform && terraform init && terraform apply -var-file=envs/dev.tfvars` | Cluster kind + Ingress + Prometheus/Grafana + ELK + application |
 | Ansible | `cd deploy/ansible && ansible-playbook site.yml -K --ask-vault-pass` | Machine Ubuntu vierge (VM cloud) → tout ce qui précède |
+| VM cloud (Azure...) | `deploy/scripts/deploy-vm.sh azureuser@<ip> -i <clé.pem>` | Copie le code par SSH et lance Ansible sur la VM : http://&lt;ip&gt;.nip.io |
 
 Détails, correspondance avec le cours DevOps et commandes de démonstration : [docs/DEVOPS.md](docs/DEVOPS.md).
 

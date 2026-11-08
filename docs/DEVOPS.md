@@ -87,6 +87,28 @@ Avec Terraform ou Ansible, ajouter au fichier hosts (`/etc/hosts` ou `C:\Windows
 | http://grafana.smartrecruit.local | Grafana (utilisateur `admin`, mot de passe : `terraform output grafana_admin_password_command`) |
 | http://kibana.smartrecruit.local | Kibana (Discover, data view `smartrecruit-*`) |
 
+## Déployer sur une VM cloud (Azure for Students)
+
+`deploy/scripts/deploy-vm.sh` déploie tout depuis ce poste (Git Bash, WSL, Linux, macOS), sans jeton GitHub :
+
+```bash
+deploy/scripts/deploy-vm.sh azureuser@<ip-publique> -i ~/.ssh/smartrecruit_azure.pem
+deploy/scripts/deploy-vm.sh azureuser@<ip-publique> -i ~/.ssh/smartrecruit_azure.pem --status   # état
+```
+
+1. Vérifie la VM (Ubuntu/Debian, RAM, disque) et choisit les options selon la RAM : monitoring à partir de 8 Go,
+   ELK à partir de 14 Go (forcer avec `--monitoring`, `--logging`, ou désactiver avec `--no-...`).
+2. Copie le code commité (`git archive HEAD`) dans `/opt/smartrecruit`.
+3. Installe Ansible sur la VM, ajoute 4 Go de swap si besoin, génère les secrets propres à la VM
+   (`deploy/ansible/inventory/group_vars/all/vault.yml`, lisible par l'utilisateur seulement).
+4. Lance `deploy/ansible/site.yml` en local sur la VM (méthode `terraform` par défaut : kind + Helm + Ingress).
+   Le déploiement continue même si la connexion SSH coupe (journal `/opt/smartrecruit/deploy.log`).
+
+Adresses avec [nip.io](https://nip.io) (aucun DNS à configurer) : `http://<ip>.nip.io`, `http://grafana.<ip>.nip.io`,
+`http://kibana.<ip>.nip.io`. Côté Azure, ouvrir dans le groupe de sécurité réseau de la VM le port **22** (votre IP)
+et le port **80** (Internet). Taille conseillée : 8 Go de RAM au minimum (ex. B2ms), 16 Go pour activer ELK ;
+disque de 64 Go (le disque de 30 Go par défaut est juste pour les images Docker).
+
 ## Helm
 
 ```bash

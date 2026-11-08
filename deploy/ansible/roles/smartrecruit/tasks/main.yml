@@ -19,6 +19,17 @@
   become: true
   become_user: "{{ smartrecruit_user }}"
   no_log: "{{ smartrecruit_github_token | length > 0 }}"
+  when: smartrecruit_source == "git"
+
+# smartrecruit_source=local : le code a été copié sur la machine (deploy/scripts/deploy-vm.sh).
+- name: Rendre le code copié à l'utilisateur d'exploitation
+  ansible.builtin.file:
+    path: "{{ smartrecruit_project_dir }}"
+    state: directory
+    recurse: true
+    owner: "{{ smartrecruit_user }}"
+    group: "{{ smartrecruit_user }}"
+  when: smartrecruit_source == "local"
 
 - name: Générer le .env (docker compose, deploy/k8s/scripts/dev.sh)
   ansible.builtin.template:
