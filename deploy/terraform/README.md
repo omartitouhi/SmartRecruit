@@ -39,8 +39,9 @@ Machine de dev : prévoir **8 Go de RAM libres pour Docker** si le monitoring et
 ## Développement local (kind)
 
 ```bash
-# 1. Construire les images (backend, service IA et frontend) : depuis la racine du monorepo
+# 1. Construire les images (backend, service IA et frontend) et télécharger Postgres : depuis la racine du monorepo
 docker compose build
+docker compose pull postgres
 
 # 2. Déployer
 cd deploy/terraform

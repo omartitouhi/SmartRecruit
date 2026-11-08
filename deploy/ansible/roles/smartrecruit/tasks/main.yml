@@ -68,6 +68,15 @@
   changed_when: false
   when: smartrecruit_deploy_method != "terraform" or smartrecruit_load_local_images | bool
 
+# Images tierces chargées dans kind avec les nôtres (postgres:16, même version que docker-compose.yml) :
+# docker compose build ne les télécharge pas, et « kind load » n'accepte que des images présentes localement.
+- name: Télécharger l'image Postgres (docker compose pull postgres)
+  ansible.builtin.command: docker compose pull --quiet postgres
+  args:
+    chdir: "{{ smartrecruit_project_dir }}"
+  changed_when: false
+  when: smartrecruit_deploy_method != "terraform" or smartrecruit_load_local_images | bool
+
 - name: Déployer selon la méthode choisie ({{ smartrecruit_deploy_method }})
   ansible.builtin.include_tasks: "deploy-{{ smartrecruit_deploy_method }}.yml"
 
