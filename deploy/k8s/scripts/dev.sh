@@ -55,7 +55,8 @@ load_images() {
   for s in "${SERVICES[@]}"; do
     kind load docker-image "smartrecruit-$s:latest" --name "$CLUSTER"
   done
-  kind load docker-image postgres:16 --name "$CLUSTER"
+  # postgres:16 n'est pas préchargé : image multi-architecture que « kind load » ne sait pas importer ;
+  # le nœud la télécharge lui-même depuis Docker Hub.
 }
 
 case "${1:-}" in

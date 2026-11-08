@@ -37,9 +37,9 @@ variable "local_images_revision" {
 }
 
 variable "extra_local_images" {
-  description = "Images tierces à charger aussi dans kind (évite un téléchargement depuis le nœud)."
+  description = "Images tierces à charger aussi dans kind. Vide par défaut : le nœud télécharge lui-même les images publiques (postgres:16), car « kind load » échoue sur les images multi-architectures."
   type        = list(string)
-  default     = ["postgres:16"]
+  default     = []
 }
 
 variable "image_registry" {
