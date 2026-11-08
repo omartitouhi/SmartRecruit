@@ -18,6 +18,10 @@
     state: present
     force_init: true
   environment: "{{ smartrecruit_deploy_env }}"
+  vars:
+    # Statut async dans un chemin absolu : avec HOME redirigé, « ~/.ansible_async » serait résolu chez
+    # l'utilisateur par la tâche mais chez root par le suivi (« could not find job »).
+    ansible_async_dir: /root/.ansible_async
   async: "{{ 0 if ansible_check_mode else smartrecruit_deploy_timeout }}"  # async interdit en --check
   poll: 15
   register: smartrecruit_tf

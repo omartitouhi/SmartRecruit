@@ -2,6 +2,15 @@
 #   - label ingress-ready=true sur le nœud (le contrôleur y est épinglé par nodeSelector) ;
 #   - ports 80/443 du nœud publiés sur la machine hôte (hostPort du contrôleur).
 
+locals {
+  ingress_ready_patch = <<-EOT
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  EOT
+}
+
 resource "kind_cluster" "this" {
   name            = var.cluster_name
   node_image      = var.node_image != "" ? var.node_image : null
@@ -15,14 +24,8 @@ resource "kind_cluster" "this" {
     node {
       role = "control-plane"
 
-      kubeadm_config_patches = [
-        <<-EOT
-        kind: InitConfiguration
-        nodeRegistration:
-          kubeletExtraArgs:
-            node-labels: "ingress-ready=true"
-        EOT
-      ]
+      # replace : patch identique (LF) même si le code vient d'une copie de travail Windows (CRLF).
+      kubeadm_config_patches = [replace(local.ingress_ready_patch, "\r", "")]
 
       extra_port_mappings {
         container_port = 80
@@ -36,5 +39,11 @@ resource "kind_cluster" "this" {
         protocol       = "TCP"
       }
     }
+  }
+
+  # Ce patch ne s'applique qu'à la création du nœud : une différence de forme (fins de ligne) ne doit jamais
+  # détruire le cluster et toutes ses données.
+  lifecycle {
+    ignore_changes = [kind_config[0].node[0].kubeadm_config_patches]
   }
 }

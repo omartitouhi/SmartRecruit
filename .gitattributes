@@ -1,6 +1,6 @@
-# Fins de ligne normalisées dans le dépôt ; les scripts exécutés sous Linux (conteneurs, VM, kind)
-# gardent LF même sur une copie de travail Windows.
-* text=auto
+# LF partout, y compris dans les copies de travail Windows et les archives (git archive) : le code déployé sur la VM
+# est identique quel que soit le poste (Terraform compare les heredocs octet par octet).
+* text=auto eol=lf
 *.sh text eol=lf
 *.j2 text eol=lf
 mvnw text eol=lf

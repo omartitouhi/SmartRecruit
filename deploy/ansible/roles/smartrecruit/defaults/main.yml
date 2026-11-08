@@ -7,9 +7,6 @@ smartrecruit_terraform_dir: "{{ smartrecruit_project_dir }}/deploy/terraform"
 smartrecruit_deploy_env:
   HOME: "{{ smartrecruit_user_home }}"
   KUBECONFIG: "{{ smartrecruit_user_home }}/.kube/config"
-  # Les tâches async écrivent leur statut dans $HOME/.ansible_async ; HOME étant redirigé, on fixe le dossier
-  # que lit async_status (root), sinon Ansible perd la trace de la tâche (« could not find job »).
-  ANSIBLE_ASYNC_DIR: /root/.ansible_async
 # Durée maximale d'un déploiement (construction des images + démarrage du cluster), en secondes.
 smartrecruit_deploy_timeout: 2700
 # Page d'accueil vérifiée à la fin, selon la méthode de déploiement.
