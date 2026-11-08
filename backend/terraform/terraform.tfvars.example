@@ -1,0 +1,24 @@
+# Copier en terraform.tfvars (ignoré par git) : chargé automatiquement par plan/apply.
+# Toutes les variables sont décrites dans variables.tf.
+
+environment    = "dev"
+create_cluster = true
+cluster_name   = "smartrecruit-tf"
+
+# http_port  = 8081   # si le port 80 de la machine est déjà utilisé
+# https_port = 8443
+
+image_registry = ""        # "" = images locales ; "ghcr.io/omartitouhi" = images publiées
+image_tag      = "latest"
+
+enable_monitoring = true
+enable_logging    = true
+
+base_domain = "smartrecruit.local"
+
+ai_engine        = "rules" # "llm" pour OpenRouter
+openrouter_model = "anthropic/claude-haiku-5.5"
+# openrouter_api_key = "sk-or-..."   # préférer : export TF_VAR_openrouter_api_key=...
+
+admin_email = "admin@smartrecruit.local"
+# admin_password = "Un-mot-de-passe-long"   # 12 caractères minimum ; vide = généré
