@@ -39,7 +39,7 @@ Après une modification du code : `docker compose build <service>` puis `deploy/
 
 ## Production
 
-1. Publier les images : les workflows `images.yml` des trois dépôts les poussent sur `ghcr.io` (dépôts privés :
+1. Publier les images : l'étape « 3 · Images Docker » de `.github/workflows/pipeline.yml` les pousse sur `ghcr.io` (dépôts privés :
    créer un `imagePullSecret` ou rendre les paquets lisibles par le cluster).
 2. Installer `ingress-nginx` et `cert-manager` (ClusterIssuer `letsencrypt`) ; remplacer le nom d'hôte dans
    `overlays/prod/ingress.yaml`.

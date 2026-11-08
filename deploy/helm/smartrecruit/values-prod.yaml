@@ -7,7 +7,7 @@
 
 images:
   registry: ghcr.io/omartitouhi
-  # Figer une version (SHA du commit publié par images.yml) plutôt que latest.
+  # Figer une version (SHA du commit publié par l'étape « 3 · Images Docker » du pipeline) plutôt que latest.
   tag: latest
   pullPolicy: IfNotPresent
   # pullSecrets: [ghcr-pull]

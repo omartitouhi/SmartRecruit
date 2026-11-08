@@ -18,7 +18,7 @@ SmartRecruit/
 │   └── ansible/         Provisionnement d'une machine Ubuntu et déploiement
 ├── docs/                DATA_MODEL.md, API_CONTRACTS.md, DEVOPS.md
 ├── docker-compose.yml   Toute la stack en local
-└── .github/workflows/   CI par composant, images ghcr.io, validation de deploy/
+└── .github/workflows/   pipeline.yml : tests → validation IaC → images → déploiement → tests de fumée
 ```
 
 ## Lancer toute la stack

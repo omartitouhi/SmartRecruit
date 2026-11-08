@@ -1,4 +1,4 @@
-# Production : cluster existant (kubeconfig), images publiées sur ghcr.io par images.yml, TLS par cert-manager.
+# Production : cluster existant (kubeconfig), images publiées sur ghcr.io par le pipeline CI/CD, TLS par cert-manager.
 #   terraform apply -var-file=envs/prod.tfvars -var image_tag=<sha du commit>
 # État séparé du dev grâce aux workspaces : terraform workspace new prod (puis terraform workspace select prod).
 environment    = "prod"

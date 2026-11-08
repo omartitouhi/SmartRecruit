@@ -121,7 +121,7 @@ Le cluster kind est supprimé avec toutes ses données (Postgres, CV, métriques
 ## Production
 
 `envs/prod.tfvars` cible un cluster existant (`kubeconfig_path`, `kube_context`), utilise les images publiées sur
-`ghcr.io` par les workflows `images.yml`, active TLS (ClusterIssuer cert-manager `letsencrypt` à installer) et
+`ghcr.io` par le pipeline (`.github/workflows/pipeline.yml`), active TLS (ClusterIssuer cert-manager `letsencrypt` à installer) et
 **ne crée pas les secrets** : `app-secrets` doit exister avant l'apply (voir `deploy/k8s/README.md`, Sealed Secrets ou
 External Secrets), ce qui évite de les écrire dans l'état Terraform.
 

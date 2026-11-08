@@ -84,7 +84,7 @@ variable "image_registry" {
 }
 
 variable "image_tag" {
-  description = "Tag des images des services (en production : le SHA du commit publié par images.yml)."
+  description = "Tag des images des services (en production : le SHA du commit publié par le pipeline CI/CD)."
   type        = string
   default     = "latest"
 

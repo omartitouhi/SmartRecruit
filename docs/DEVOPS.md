@@ -32,7 +32,7 @@ Terraform, Ansible, Prometheus/Grafana, ELK) à son implémentation dans le proj
 | `deploy/monitoring/` | Valeurs du chart kube-prometheus-stack (Prometheus, Grafana, Alertmanager) |
 | `deploy/terraform/` | Infrastructure as Code : cluster + toutes les releases Helm — [README](../deploy/terraform/README.md) |
 | `deploy/ansible/` | Provisionnement d'une machine Ubuntu et déploiement — [README](../deploy/ansible/README.md) |
-| `.github/workflows/` | CI par composant (`backend.yml`, `frontend.yml`, `ai-service.yml`), images ghcr.io (`images.yml`), validation de `deploy/` (`deploy.yml`) |
+| `.github/workflows/pipeline.yml` | Pipeline CI/CD unique : tests → validation IaC → images ghcr.io → déploiement VM → tests de fumée |
 
 ## Correspondance cours → projet
 
@@ -275,17 +275,31 @@ Détails : [deploy/helm/elk/README.md](../deploy/helm/elk/README.md).
 - Avec `logstash.enabled=false`, Filebeat écrit directement dans Elasticsearch : c'est le compromis
   « Filebeat ou Logstash ? » vu en cours.
 
-## CI
+## CI/CD
 
-Chaque workflow ne se déclenche que si son dossier change (filtres `paths`) :
+Un seul workflow, [`.github/workflows/pipeline.yml`](../.github/workflows/pipeline.yml). Chaque étape est un job relié
+à la suivante par `needs` : l'onglet *Actions* de GitHub affiche le pipeline sous forme de graphe fléché, et une
+étape ne démarre que si toutes les précédentes ont réussi.
 
-| Workflow | Déclenché par | Vérifie |
-|---|---|---|
-| `backend.yml` | `backend/**` | Build et tests Maven des 6 services (matrice) |
-| `frontend.yml` | `frontend/**` | Lint, tests Vitest, build |
-| `ai-service.yml` | `ai-service/**` | ruff + pytest |
-| `deploy.yml` | `deploy/**` | Overlays Kustomize + kubeconform ; `helm lint` / `helm template` + kubeconform (CRDs comprises) ; `terraform fmt` + `validate` ; `ansible-playbook --syntax-check` + ansible-lint (informatif) |
-| `images.yml` | push sur `main`, tags `v*` | Publication des 8 images sur ghcr.io (`sha`, `latest`, tags) |
+```
+1 · Tests backend (×6) ─┐                     ┌─ 2 · Validation Kustomize ─┐
+1 · Tests frontend ─────┼────────────────────►├─ 2 · Validation Helm ──────┼──► 3 · Images Docker (×8) ──► 4 · Déploiement VM Azure ──► 5 · Tests de fumée
+1 · Tests service IA ───┘                     ├─ 2 · Validation Terraform ─┤
+                                              └─ 2 · Validation Ansible ───┘
+```
+
+| Étape | Contenu |
+|---|---|
+| 1 · Tests | Maven `verify` des 6 services (matrice), lint + Vitest + build du frontend, ruff + pytest du service IA |
+| 2 · Validation IaC | Overlays Kustomize + kubeconform ; `helm lint` / `helm template` + kubeconform (CRDs comprises) ; `terraform fmt` + `validate` ; yamllint + `ansible-playbook --syntax-check` (+ ansible-lint informatif) |
+| 3 · Images Docker | Construction des 8 images ; publication sur ghcr.io (`sha`, `latest`) uniquement depuis `main` et les tags `v*` |
+| 4 · Déploiement | `deploy/scripts/deploy-vm.sh` vers la VM Azure, depuis `main` uniquement, environnement GitHub `azure-vm` |
+| 5 · Tests de fumée | L'interface, l'API (via l'Ingress), Grafana et Kibana répondent sur `http://<ip>.nip.io` |
+
+Activer le déploiement (sinon les étapes 4 et 5 apparaissent « skipped ») : dans *Settings → Secrets and variables →
+Actions*, créer les variables `DEPLOY_ENABLED=true`, `VM_HOST` (IP publique), `VM_USER`, et le secret `VM_SSH_KEY`
+(clé privée autorisée sur la VM). Les machines de GitHub Actions doivent pouvoir joindre la VM en SSH : la règle du
+groupe de sécurité réseau qui limite le port 22 à une seule IP les bloque.
 
 ## Limites connues
 

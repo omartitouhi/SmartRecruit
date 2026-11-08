@@ -110,5 +110,5 @@ l'architecture distribuée. Points d'attention :
 
 ## CI
 
-Workflow `.github/workflows/backend.yml` à la racine du monorepo : build et tests Maven de chaque microservice
-(matrice), déclenché par les changements sous `backend/`.
+Étape « 1 · Tests backend » du pipeline `.github/workflows/pipeline.yml` (racine du monorepo) : build et tests
+Maven de chaque microservice (matrice).
