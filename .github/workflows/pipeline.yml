@@ -288,4 +288,6 @@ jobs:
       - name: Grafana
         run: curl -fsS --retry 5 --retry-delay 10 --retry-all-errors "http://grafana.$DOMAIN/api/health"
       - name: Kibana
-        run: curl -fsS --retry 5 --retry-delay 10 --retry-all-errors -o /dev/null "http://kibana.$DOMAIN/api/status"
+        # Kibana redémarre à chaque déploiement et met ~8 min à repasser « available » (503 entre-temps) sur la VM
+        # 2 vCPU : on l'attend jusqu'à 15 min.
+        run: curl -fsS --retry 90 --retry-delay 10 --retry-all-errors -o /dev/null "http://kibana.$DOMAIN/api/status"

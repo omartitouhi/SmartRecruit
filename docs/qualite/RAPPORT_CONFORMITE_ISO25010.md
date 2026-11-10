@@ -190,8 +190,8 @@ Rapports HTML : `quality/reports/coverage/<composant>/index.html`.
   `ed0779b`, branche `feat/iso25010-quality`) : 20 jobs sur 20 réussis (tests des 8 composants avec couverture, Bandit,
   pip-audit et npm audit ; validation de l'infrastructure ; construction des 8 images). Le déploiement et les tests de
   fumée ne s'exécutent que depuis `main` : leur dernière exécution réussie est
-  [42530810230](https://github.com/omartitouhi/SmartRecruit/actions/runs/42530810230) (commit `3b4cd95`, 22 jobs sur
-  22, dont « 4 · Déploiement VM Azure » et « 5 · Tests de fumée »).
+  [42530810230, tentative 2](https://github.com/omartitouhi/SmartRecruit/actions/runs/42530810230/attempts/2) (commit
+  `3b4cd95`, 22 jobs sur 22, dont « 4 · Déploiement VM Azure » et « 5 · Tests de fumée »).
 - **Script d'installation documenté** : [GUIDE_INSTALLATION.md](GUIDE_INSTALLATION.md) et `quality/run-all.sh install`.
 
 ## Limites et éléments non vérifiés
@@ -199,5 +199,9 @@ Rapports HTML : `quality/reports/coverage/<composant>/index.html`.
 - Firefox non exécutable sur le poste de l'équipe (voir 6.3).
 - La version finale (`ed0779b`) passe toute la CI de la branche, mais n'est pas encore déployée sur la VM Azure : le
   déploiement et les tests de fumée ne s'exécutent qu'après fusion dans `main` (dernier déploiement vérifié : `3b4cd95`).
+- La tentative 3 du même run (relance du 10/11, 18:28 UTC) a échoué au test de fumée Kibana : le redéploiement venait de
+  redémarrer Kibana, qui répondait encore 503, et le test ne l'attendait que 50 s. Kibana était « available » vers
+  18:37, soit environ 1 min après l'échec. Le test l'attend désormais jusqu'à 15 min. Ce correctif sera vérifié au
+  prochain déploiement depuis `main`.
 - Tests de charge sur un poste de développement (toute la stack sur une seule machine) : les valeurs absolues dépendent
   du matériel ; le seuil est tenu avec une marge (350 ms contre 500 ms, sur 3 068 offres).
