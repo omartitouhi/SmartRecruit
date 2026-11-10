@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CompanyDirectoryClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.client</a> &gt; <span class="el_source">CompanyDirectoryClient.java</span></div><h1>CompanyDirectoryClient.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.client;
+
+import com.smartrecruit.job.security.InternalIdentityVerifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
+
+import java.time.Clock;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+/**
+ * Company data from user-service: names by id ({@code GET /internal/v1/companies?ids=...}) and the
+ * company of a recruiter ({@code GET /internal/v1/companies/by-member/{accountId}}).
+ */
+@Component
+public class CompanyDirectoryClient {
+
+<span class="fc" id="L24">    public record CompanySummary(UUID id, String name, String logoUrl) {</span>
+    }
+
+    private final RestClient client;
+
+<span class="fc" id="L29">    public CompanyDirectoryClient(ServiceEndpointsProperties endpoints, InternalIdentityVerifier signer, Clock clock) {</span>
+<span class="fc" id="L30">        this.client = ServiceRestClients.create(endpoints.userServiceUri(), signer, clock);</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * @return company name by id; unknown ids are absent
+     * @throws org.springframework.web.client.RestClientException if user-service fails or is unreachable
+     */
+    public Map&lt;UUID, String&gt; namesOf(Collection&lt;UUID&gt; companyIds) {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (companyIds.isEmpty()) {</span>
+<span class="fc" id="L39">            return Map.of();</span>
+        }
+<span class="fc" id="L41">        List&lt;CompanySummary&gt; companies = client.get()</span>
+<span class="fc" id="L42">                .uri(uri -&gt; uri.path(&quot;/internal/v1/companies&quot;).queryParam(&quot;ids&quot;, companyIds.toArray()).build())</span>
+<span class="fc" id="L43">                .retrieve()</span>
+<span class="fc" id="L44">                .body(new ParameterizedTypeReference&lt;&gt;() {</span>
+                });
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if (companies == null) {</span>
+<span class="nc" id="L47">            return Map.of();</span>
+        }
+<span class="fc" id="L49">        return companies.stream()</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                .filter(company -&gt; company.name() != null)</span>
+<span class="pc" id="L51">                .collect(Collectors.toMap(CompanySummary::id, CompanySummary::name, (first, second) -&gt; first));</span>
+    }
+
+    /**
+     * @return the company the account belongs to, empty if it has none (404)
+     * @throws org.springframework.web.client.RestClientException if user-service fails or is unreachable
+     */
+    public Optional&lt;CompanySummary&gt; companyOf(UUID accountId) {
+        try {
+<span class="fc" id="L60">            return Optional.ofNullable(client.get()</span>
+<span class="fc" id="L61">                    .uri(&quot;/internal/v1/companies/by-member/{accountId}&quot;, accountId)</span>
+<span class="fc" id="L62">                    .retrieve()</span>
+<span class="fc" id="L63">                    .body(CompanySummary.class));</span>
+<span class="fc" id="L64">        } catch (HttpClientErrorException.NotFound e) {</span>
+<span class="fc" id="L65">            return Optional.empty();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

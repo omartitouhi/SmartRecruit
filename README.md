@@ -70,6 +70,8 @@ Détails, correspondance avec le cours DevOps et commandes de démonstration : [
 | [docs/DATA_MODEL.md](docs/DATA_MODEL.md) | Structures de données, enums et contrats partagés (référence commune aux 3 composants) |
 | [docs/API_CONTRACTS.md](docs/API_CONTRACTS.md) | Contrats d'API entre services et vers le frontend |
 | [docs/DEVOPS.md](docs/DEVOPS.md) | Docker, Kubernetes, Helm, Terraform, Ansible, Prometheus/Grafana, ELK, CI |
+| [docs/qualite/](docs/qualite/) | Projet ISO/IEC 25010 : conception, matrice de traçabilité, rapport de conformité, guide d'installation et des tests, soutenance |
+| [quality/](quality/) | Tests E2E Playwright, charge k6, fiabilité, script `run-all.sh` et rapports d'exécution (`quality/reports/`) |
 | [backend/README.md](backend/README.md) | Architecture des microservices, sécurité, tests de bout en bout |
 | [frontend/README.md](frontend/README.md) | Application React, mode mock, structure |
 | [ai-service/README.md](ai-service/README.md) | Moteurs règles / LLM, endpoints IA, métriques |

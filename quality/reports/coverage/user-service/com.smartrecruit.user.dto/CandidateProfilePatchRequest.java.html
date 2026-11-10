@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CandidateProfilePatchRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.dto</a> &gt; <span class="el_source">CandidateProfilePatchRequest.java</span></div><h1>CandidateProfilePatchRequest.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.dto;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Values of a {@code PATCH /api/v1/users/candidates/me} body (BE-USER-03). A {@code null} here can mean
+ * &quot;absent&quot; or &quot;sent as null&quot;: {@link #presentFields} tells them apart (JSON Merge Patch semantics):
+ * &lt;ul&gt;
+ *     &lt;li&gt;absent field → value kept;&lt;/li&gt;
+ *     &lt;li&gt;field sent as {@code null} → value cleared (rejected for firstName, lastName, email);&lt;/li&gt;
+ *     &lt;li&gt;field sent with a value → value replaced (lists are replaced as a whole).&lt;/li&gt;
+ * &lt;/ul&gt;
+ */
+<span class="fc" id="L22">public record CandidateProfilePatchRequest(</span>
+        @Pattern(regexp = &quot;.*\\S.*&quot;, message = &quot;Le prénom est obligatoire&quot;)
+        @Size(max = 100, message = &quot;Le prénom ne doit pas dépasser 100 caractères&quot;)
+        String firstName,
+
+        @Pattern(regexp = &quot;.*\\S.*&quot;, message = &quot;Le nom est obligatoire&quot;)
+        @Size(max = 100, message = &quot;Le nom ne doit pas dépasser 100 caractères&quot;)
+        String lastName,
+
+        @Email(message = &quot;L'email n'est pas valide&quot;)
+        @Pattern(regexp = &quot;.*\\S.*&quot;, message = &quot;L'email est obligatoire&quot;)
+        @Size(max = 255, message = &quot;L'email ne doit pas dépasser 255 caractères&quot;)
+        String email,
+
+        @Pattern(regexp = &quot;^\\+?[0-9 .()-]{6,20}$&quot;, message = &quot;Le numéro de téléphone n'est pas valide&quot;)
+        String phone,
+
+        @Size(max = 100, message = &quot;La ville ne doit pas dépasser 100 caractères&quot;)
+        String location,
+
+        @Size(max = 100, message = &quot;100 compétences maximum&quot;)
+        List&lt;@NotBlank(message = &quot;Une compétence ne peut pas être vide&quot;)
+        @Size(max = 100, message = &quot;Une compétence ne doit pas dépasser 100 caractères&quot;) String&gt; skills,
+
+        @Size(max = 50, message = &quot;50 expériences maximum&quot;)
+        List&lt;@NotNull(message = &quot;Expérience vide&quot;) @Valid ExperienceRequest&gt; experiences,
+
+        @Size(max = 30, message = &quot;30 formations maximum&quot;)
+        List&lt;@NotNull(message = &quot;Formation vide&quot;) @Valid EducationRequest&gt; education,
+
+        @Size(max = 30, message = &quot;30 langues maximum&quot;)
+        List&lt;@NotBlank(message = &quot;Une langue ne peut pas être vide&quot;)
+        @Size(max = 50, message = &quot;Une langue ne doit pas dépasser 50 caractères&quot;) String&gt; languages,
+
+        Set&lt;String&gt; presentFields
+) {
+
+    /** Fields that may not be removed from a profile. */
+<span class="fc" id="L60">    public static final Set&lt;String&gt; MANDATORY_FIELDS = Set.of(&quot;firstName&quot;, &quot;lastName&quot;, &quot;email&quot;);</span>
+
+    public boolean has(String field) {
+<span class="fc" id="L63">        return presentFields.contains(field);</span>
+    }
+
+    public CandidateProfilePatchRequest withPresentFields(Set&lt;String&gt; fields) {
+<span class="fc" id="L67">        return new CandidateProfilePatchRequest(firstName, lastName, email, phone, location, skills, experiences,</span>
+<span class="fc" id="L68">                education, languages, Set.copyOf(fields));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

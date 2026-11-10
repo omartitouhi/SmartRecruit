@@ -56,7 +56,7 @@ async def compute_match_score(
         result = await score_match(cv, job, llm)
     except InsufficientDataError as exc:
         MATCH_REQUESTS.labels(engine=engine, outcome="insufficient_data").inc()
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
     except Exception:
         MATCH_REQUESTS.labels(engine=engine, outcome="error").inc()
         raise

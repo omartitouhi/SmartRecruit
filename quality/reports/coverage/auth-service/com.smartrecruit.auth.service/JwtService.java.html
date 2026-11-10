@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auth-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.auth.service</a> &gt; <span class="el_source">JwtService.java</span></div><h1>JwtService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.auth.service;
+
+import com.smartrecruit.auth.config.AuthProperties;
+import com.smartrecruit.auth.model.Account;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+
+/**
+ * Issues and parses access JWTs. Claims follow {@code DATA_MODEL.md} §1: {@code sub} = account id,
+ * {@code role}, {@code exp}.
+ */
+@Service
+public class JwtService {
+
+    public static final String ROLE_CLAIM = &quot;role&quot;;
+
+    private final SecretKey key;
+    private final Duration accessTokenTtl;
+    private final Clock clock;
+
+<span class="fc" id="L30">    public JwtService(AuthProperties properties, Clock clock) {</span>
+<span class="fc" id="L31">        this.key = Keys.hmacShaKeyFor(properties.jwt().secret().getBytes(StandardCharsets.UTF_8));</span>
+<span class="fc" id="L32">        this.accessTokenTtl = properties.jwt().accessTokenTtl();</span>
+<span class="fc" id="L33">        this.clock = clock;</span>
+<span class="fc" id="L34">    }</span>
+
+    public String generateAccessToken(Account account) {
+<span class="fc" id="L37">        Instant now = clock.instant();</span>
+<span class="fc" id="L38">        return Jwts.builder()</span>
+<span class="fc" id="L39">                .subject(account.getId().toString())</span>
+<span class="fc" id="L40">                .claim(ROLE_CLAIM, account.getRole().name())</span>
+<span class="fc" id="L41">                .issuedAt(Date.from(now))</span>
+<span class="fc" id="L42">                .expiration(Date.from(now.plus(accessTokenTtl)))</span>
+<span class="fc" id="L43">                .signWith(key)</span>
+<span class="fc" id="L44">                .compact();</span>
+    }
+
+    /**
+     * @throws io.jsonwebtoken.JwtException if the token is malformed, badly signed or expired
+     */
+    public Claims parse(String token) {
+<span class="fc" id="L51">        return Jwts.parser()</span>
+<span class="fc" id="L52">                .verifyWith(key)</span>
+<span class="fc" id="L53">                .clock(() -&gt; Date.from(clock.instant()))</span>
+<span class="fc" id="L54">                .build()</span>
+<span class="fc" id="L55">                .parseSignedClaims(token)</span>
+<span class="fc" id="L56">                .getPayload();</span>
+    }
+
+    public Duration getAccessTokenTtl() {
+<span class="fc" id="L60">        return accessTokenTtl;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

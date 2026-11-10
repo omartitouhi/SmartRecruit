@@ -1,0 +1,1 @@
+oxlint : aucun avertissement ni erreur

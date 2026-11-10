@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecommendationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.service</a> &gt; <span class="el_source">RecommendationService.java</span></div><h1>RecommendationService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.service;
+
+import com.smartrecruit.job.client.AiRecommendationClient;
+import com.smartrecruit.job.client.AiRecommendationClient.AiRecommendation;
+import com.smartrecruit.job.client.CompanyDirectoryClient;
+import com.smartrecruit.job.dto.RecommendedJobResponse;
+import com.smartrecruit.job.exception.ApiException;
+import com.smartrecruit.job.model.Job;
+import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.repository.JobRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+/**
+ * BE-REC-01: joins the AI recommendations (job id + score) with the offer details and the company
+ * name, so the frontend gets a list ready to display.
+ */
+<span class="fc" id="L32">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class RecommendationService {
+
+    private final AiRecommendationClient aiClient;
+    private final CompanyDirectoryClient companyClient;
+    private final JobRepository jobRepository;
+
+    /**
+     * @return at most {@code limit} published offers, best score first
+     */
+    @Transactional(readOnly = true)
+    public List&lt;RecommendedJobResponse&gt; recommendFor(UUID candidateId, int limit) {
+        List&lt;AiRecommendation&gt; recommendations;
+        try {
+<span class="fc" id="L48">            recommendations = aiClient.recommendJobs(candidateId);</span>
+<span class="fc" id="L49">        } catch (RestClientException e) {</span>
+<span class="fc" id="L50">            log.warn(&quot;ai-service indisponible pour les recommandations du candidat {} : {}&quot;, candidateId, e.getMessage());</span>
+<span class="fc" id="L51">            throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE,</span>
+                    &quot;Les recommandations sont temporairement indisponibles, réessayez plus tard&quot;);
+<span class="fc" id="L53">        }</span>
+
+        // Best score per job, in case the AI returns a job twice.
+<span class="fc" id="L56">        Map&lt;UUID, Double&gt; scoreByJob = recommendations.stream()</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                .filter(recommendation -&gt; recommendation.jobId() != null)</span>
+<span class="fc" id="L58">                .collect(Collectors.toMap(AiRecommendation::jobId, AiRecommendation::score, Math::max, LinkedHashMap::new));</span>
+<span class="fc" id="L59">        Map&lt;UUID, Job&gt; publishedJobs = jobRepository.findAllById(scoreByJob.keySet()).stream()</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">                .filter(job -&gt; job.getStatus() == JobStatus.PUBLISHED)</span>
+<span class="fc" id="L61">                .collect(Collectors.toMap(Job::getId, Function.identity()));</span>
+
+<span class="fc" id="L63">        List&lt;Job&gt; selected = scoreByJob.entrySet().stream()</span>
+<span class="fc" id="L64">                .filter(entry -&gt; publishedJobs.containsKey(entry.getKey()))</span>
+<span class="fc" id="L65">                .sorted(Map.Entry.&lt;UUID, Double&gt;comparingByValue(Comparator.reverseOrder()))</span>
+<span class="fc" id="L66">                .limit(limit)</span>
+<span class="fc" id="L67">                .map(entry -&gt; publishedJobs.get(entry.getKey()))</span>
+<span class="fc" id="L68">                .toList();</span>
+
+<span class="fc" id="L70">        Map&lt;UUID, String&gt; companyNames = companyNames(selected);</span>
+<span class="fc" id="L71">        return selected.stream()</span>
+<span class="fc" id="L72">                .map(job -&gt; RecommendedJobResponse.of(job, companyNames.get(job.getCompanyId()), scoreByJob.get(job.getId())))</span>
+<span class="fc" id="L73">                .toList();</span>
+    }
+
+    /** Company names are a nice-to-have: without user-service the list is still returned. */
+    private Map&lt;UUID, String&gt; companyNames(List&lt;Job&gt; jobs) {
+<span class="fc" id="L78">        Set&lt;UUID&gt; companyIds = jobs.stream().map(Job::getCompanyId).filter(Objects::nonNull).collect(Collectors.toSet());</span>
+        try {
+<span class="fc" id="L80">            return companyClient.namesOf(companyIds);</span>
+<span class="fc" id="L81">        } catch (RestClientException e) {</span>
+<span class="fc" id="L82">            log.warn(&quot;user-service indisponible, recommandations renvoyées sans nom d'entreprise : {}&quot;, e.getMessage());</span>
+<span class="fc" id="L83">            return Map.of();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

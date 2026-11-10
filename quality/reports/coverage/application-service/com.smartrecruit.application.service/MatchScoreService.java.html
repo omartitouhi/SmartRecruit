@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MatchScoreService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">application-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.application.service</a> &gt; <span class="el_source">MatchScoreService.java</span></div><h1>MatchScoreService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.application.service;
+
+import com.smartrecruit.application.client.AiMatchingClient;
+import com.smartrecruit.application.dto.MatchScoreDto;
+import com.smartrecruit.application.model.MatchScoreCacheEntry;
+import com.smartrecruit.application.repository.MatchScoreCacheRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
+import java.util.UUID;
+
+/** BE-MATCH-01/02: the score of a candidate for a job, from the cache when its inputs are unchanged. */
+@Service
+@RequiredArgsConstructor
+<span class="fc" id="L21">@Slf4j</span>
+public class MatchScoreService {
+
+    private final MatchScoreCacheRepository cache;
+    private final AiMatchingClient ai;
+    private final Clock clock;
+
+    /**
+     * @param cvParsedAt   when the candidate's CV was last analysed (user-service)
+     * @param jobUpdatedAt when the job was last modified (job-service)
+     * @throws com.smartrecruit.application.exception.ApiException 503 if the cache misses and ai-service fails
+     */
+    public MatchScoreDto scoreFor(UUID candidateId, UUID jobId, Instant cvParsedAt, Instant jobUpdatedAt) {
+<span class="fc" id="L34">        var cached = cache.findByCandidateIdAndJobId(candidateId, jobId);</span>
+<span class="fc bfc" id="L35" title="All 4 branches covered.">        if (cached.isPresent() &amp;&amp; sameInstant(cached.get().getCvParsedAt(), cvParsedAt)</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">                &amp;&amp; sameInstant(cached.get().getJobUpdatedAt(), jobUpdatedAt)) {</span>
+<span class="fc" id="L37">            return cached.get().getMatchScore();</span>
+        }
+<span class="fc" id="L39">        MatchScoreDto score = ai.score(candidateId, jobId);</span>
+<span class="fc" id="L40">        MatchScoreCacheEntry entry = cached.orElseGet(MatchScoreCacheEntry::new);</span>
+<span class="fc" id="L41">        entry.setCandidateId(candidateId);</span>
+<span class="fc" id="L42">        entry.setJobId(jobId);</span>
+<span class="fc" id="L43">        entry.setCvParsedAt(truncate(cvParsedAt));</span>
+<span class="fc" id="L44">        entry.setJobUpdatedAt(truncate(jobUpdatedAt));</span>
+<span class="fc" id="L45">        entry.setMatchScore(score);</span>
+<span class="fc" id="L46">        entry.setComputedAt(clock.instant());</span>
+        try {
+<span class="fc" id="L48">            cache.save(entry);</span>
+<span class="nc" id="L49">        } catch (DataIntegrityViolationException e) {</span>
+<span class="nc" id="L50">            log.debug(&quot;Concurrent match score computation for the same pair, keeping the other entry&quot;);</span>
+<span class="fc" id="L51">        }</span>
+<span class="fc" id="L52">        return score;</span>
+    }
+
+    /** Databases keep microseconds (and may round), JSON carries nanoseconds: store and compare truncated. */
+    private static boolean sameInstant(Instant stored, Instant current) {
+<span class="fc" id="L57">        return Objects.equals(truncate(stored), truncate(current));</span>
+    }
+
+    private static Instant truncate(Instant instant) {
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        return instant == null ? null : instant.truncatedTo(ChronoUnit.MICROS);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

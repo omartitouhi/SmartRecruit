@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityErrorHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auth-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.auth.security</a> &gt; <span class="el_source">SecurityErrorHandler.java</span></div><h1>SecurityErrorHandler.java</h1><pre class="source lang-java linenums">package com.smartrecruit.auth.security;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+
+/**
+ * Writes 401 / 403 security errors in the shared error format ({@code DATA_MODEL.md} §1).
+ */
+@Component
+<span class="fc" id="L21">public class SecurityErrorHandler implements AuthenticationEntryPoint, AccessDeniedHandler {</span>
+
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex)
+            throws IOException {
+<span class="fc" id="L26">        write(response, request, HttpStatus.UNAUTHORIZED, &quot;Authentification requise : token absent, invalide ou expiré&quot;);</span>
+<span class="fc" id="L27">    }</span>
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException ex)
+            throws IOException {
+<span class="fc" id="L32">        write(response, request, HttpStatus.FORBIDDEN, &quot;Accès refusé : rôle insuffisant pour cette ressource&quot;);</span>
+<span class="fc" id="L33">    }</span>
+
+    private static void write(HttpServletResponse response, HttpServletRequest request, HttpStatus status,
+                              String message) throws IOException {
+<span class="fc" id="L37">        response.setStatus(status.value());</span>
+<span class="fc" id="L38">        response.setContentType(MediaType.APPLICATION_JSON_VALUE);</span>
+<span class="fc" id="L39">        response.setCharacterEncoding(StandardCharsets.UTF_8.name());</span>
+<span class="fc" id="L40">        response.getWriter().write(&quot;{\&quot;timestamp\&quot;:\&quot;%s\&quot;,\&quot;status\&quot;:%d,\&quot;error\&quot;:\&quot;%s\&quot;,\&quot;message\&quot;:\&quot;%s\&quot;,\&quot;path\&quot;:\&quot;%s\&quot;}&quot;</span>
+<span class="fc" id="L41">                .formatted(Instant.now(), status.value(), status.getReasonPhrase(), escape(message),</span>
+<span class="fc" id="L42">                        escape(request.getRequestURI())));</span>
+<span class="fc" id="L43">    }</span>
+
+    private static String escape(String value) {
+<span class="fc" id="L46">        return value.replace(&quot;\\&quot;, &quot;\\\\&quot;).replace(&quot;\&quot;&quot;, &quot;\\\&quot;&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

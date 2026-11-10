@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">application-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.application.controller</a> &gt; <span class="el_source">ApplicationController.java</span></div><h1>ApplicationController.java</h1><pre class="source lang-java linenums">package com.smartrecruit.application.controller;
+
+import com.smartrecruit.application.dto.ApplicationResponse;
+import com.smartrecruit.application.dto.ApplyRequest;
+import com.smartrecruit.application.dto.InterviewRequest;
+import com.smartrecruit.application.dto.MatchScoreDto;
+import com.smartrecruit.application.dto.NoteRequest;
+import com.smartrecruit.application.dto.NoteResponse;
+import com.smartrecruit.application.dto.NoteSummary;
+import com.smartrecruit.application.dto.StatusChangeRequest;
+import com.smartrecruit.application.dto.UpcomingInterviewResponse;
+import com.smartrecruit.application.model.Application;
+import com.smartrecruit.application.security.AuthenticatedUser;
+import com.smartrecruit.application.service.ApplicationNoteService;
+import com.smartrecruit.application.service.ApplicationService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+@RestController
+@RequestMapping(&quot;/api/v1/applications&quot;)
+@RequiredArgsConstructor
+public class ApplicationController {
+
+    private final ApplicationService applicationService;
+    private final ApplicationNoteService noteService;
+
+    /** BE-APP-01, with an optional cover letter (EXT-APP-01). */
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(&quot;hasRole('CANDIDATE')&quot;)
+    public ApplicationResponse apply(@AuthenticationPrincipal AuthenticatedUser user, @Valid @RequestBody ApplyRequest request) {
+<span class="fc" id="L50">        return ApplicationResponse.from(applicationService.apply(user.id(), request.jobId(), request.coverLetter()));</span>
+    }
+
+    /** BE-APP-03, each application with its team notes summary (EXT-APP-03). */
+    @GetMapping
+    @PreAuthorize(&quot;hasAnyRole('RECRUITER', 'ADMIN')&quot;)
+    public List&lt;ApplicationResponse&gt; receivedFor(@AuthenticationPrincipal AuthenticatedUser user, @RequestParam UUID jobId) {
+<span class="fc" id="L57">        List&lt;Application&gt; received = applicationService.receivedFor(user, jobId);</span>
+<span class="fc" id="L58">        Map&lt;UUID, NoteSummary&gt; notes = noteService.summaries(received.stream().map(Application::getId).toList());</span>
+<span class="fc" id="L59">        return received.stream()</span>
+<span class="fc" id="L60">                .map(application -&gt; ApplicationResponse.forTeam(application,</span>
+<span class="fc" id="L61">                        notes.getOrDefault(application.getId(), NoteSummary.NONE)))</span>
+<span class="fc" id="L62">                .toList();</span>
+    }
+
+    @GetMapping(&quot;/me&quot;)
+    @PreAuthorize(&quot;hasRole('CANDIDATE')&quot;)
+    public List&lt;ApplicationResponse&gt; mine(@AuthenticationPrincipal AuthenticatedUser user) {
+<span class="fc" id="L68">        return applicationService.mine(user.id()).stream().map(ApplicationResponse::from).toList();</span>
+    }
+
+    @GetMapping(&quot;/match-preview&quot;)
+    @PreAuthorize(&quot;hasRole('CANDIDATE')&quot;)
+    public MatchScoreDto matchPreview(@AuthenticationPrincipal AuthenticatedUser user, @RequestParam UUID jobId) {
+<span class="fc" id="L74">        return applicationService.matchPreview(user.id(), jobId);</span>
+    }
+
+    /** EXT-APP-02 — upcoming interviews of the recruiter's company. */
+    @GetMapping(&quot;/interviews/upcoming&quot;)
+    @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
+    public List&lt;UpcomingInterviewResponse&gt; upcomingInterviews(@AuthenticationPrincipal AuthenticatedUser user) {
+<span class="fc" id="L81">        return applicationService.upcomingInterviews(user.id()).stream().map(UpcomingInterviewResponse::from).toList();</span>
+    }
+
+    /** BE-APP-04, with a message for the candidate (EXT-APP-01) and an optional interview (EXT-APP-02). */
+    @PatchMapping(&quot;/{id}/status&quot;)
+    @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
+    public ApplicationResponse changeStatus(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
+                                            @Valid @RequestBody StatusChangeRequest request) {
+<span class="fc" id="L89">        Application changed = applicationService.changeStatus(user.id(), id, request.status(), request.message(),</span>
+<span class="fc" id="L90">                request.interview());</span>
+<span class="fc" id="L91">        return ApplicationResponse.forTeam(changed, noteService.summaryOf(changed.getId()));</span>
+    }
+
+    /** EXT-APP-02 — plans or reschedules the interview of an application in INTERVIEW. */
+    @PutMapping(&quot;/{id}/interview&quot;)
+    @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
+    public ApplicationResponse scheduleInterview(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
+                                                 @Valid @RequestBody InterviewRequest request) {
+<span class="fc" id="L99">        Application scheduled = applicationService.scheduleInterview(user.id(), id, request);</span>
+<span class="fc" id="L100">        return ApplicationResponse.forTeam(scheduled, noteService.summaryOf(scheduled.getId()));</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize(&quot;hasRole('CANDIDATE')&quot;)
+    public void withdraw(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
+<span class="fc" id="L107">        applicationService.withdraw(user.id(), id);</span>
+<span class="fc" id="L108">    }</span>
+
+    /** EXT-APP-03 — team notes, oldest first; never for the candidate. */
+    @GetMapping(&quot;/{id}/notes&quot;)
+    @PreAuthorize(&quot;hasAnyRole('RECRUITER', 'ADMIN')&quot;)
+    public List&lt;NoteResponse&gt; notes(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
+<span class="fc" id="L114">        return noteService.list(user, id).stream().map(NoteResponse::from).toList();</span>
+    }
+
+    @PostMapping(&quot;/{id}/notes&quot;)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
+    public NoteResponse addNote(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
+                                @Valid @RequestBody NoteRequest request) {
+<span class="fc" id="L122">        return NoteResponse.from(noteService.add(user.id(), id, request));</span>
+    }
+
+    @DeleteMapping(&quot;/{id}/notes/{noteId}&quot;)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
+    public void deleteNote(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
+                           @PathVariable UUID noteId) {
+<span class="fc" id="L130">        noteService.delete(user.id(), id, noteId);</span>
+<span class="fc" id="L131">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

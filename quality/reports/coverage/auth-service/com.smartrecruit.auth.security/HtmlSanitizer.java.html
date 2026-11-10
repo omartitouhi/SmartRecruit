@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HtmlSanitizer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auth-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.auth.security</a> &gt; <span class="el_source">HtmlSanitizer.java</span></div><h1>HtmlSanitizer.java</h1><pre class="source lang-java linenums">package com.smartrecruit.auth.security;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
+import org.jsoup.safety.Safelist;
+
+/**
+ * Turns user input into plain text (BE-SEC-03): HTML tags, scripts, event handlers and comments are
+ * removed, the text content is kept as is (line breaks included). The result is stored as plain
+ * text, not as HTML entities, so the frontend escapes it once on display.
+ */
+public final class HtmlSanitizer {
+
+<span class="fc" id="L15">    private static final Document.OutputSettings OUTPUT = new Document.OutputSettings().prettyPrint(false);</span>
+    private static final int MAX_PASSES = 5;
+
+    private HtmlSanitizer() {
+    }
+
+    public static String toPlainText(String input) {
+<span class="fc bfc" id="L22" title="All 6 branches covered.">        if (input == null || (input.indexOf('&lt;') &lt; 0 &amp;&amp; input.indexOf('&amp;') &lt; 0)) {</span>
+<span class="fc" id="L23">            return input;</span>
+        }
+<span class="fc" id="L25">        String current = input;</span>
+        // Repeated because decoding entities can reveal new markup (&quot;&amp;lt;script&amp;gt;&quot; → &quot;&lt;script&gt;&quot;).
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        for (int pass = 0; pass &lt; MAX_PASSES; pass++) {</span>
+<span class="fc" id="L28">            String cleaned = Parser.unescapeEntities(Jsoup.clean(current, &quot;&quot;, Safelist.none(), OUTPUT), false);</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">            if (cleaned.equals(current)) {</span>
+<span class="fc" id="L30">                return cleaned;</span>
+            }
+<span class="fc" id="L32">            current = cleaned;</span>
+        }
+<span class="nc" id="L34">        return current.replace(&quot;&lt;&quot;, &quot;&quot;).replace(&quot;&gt;&quot;, &quot;&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

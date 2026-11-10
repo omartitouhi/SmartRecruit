@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatusHistoryEntry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">application-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.application.model</a> &gt; <span class="el_source">StatusHistoryEntry.java</span></div><h1>StatusHistoryEntry.java</h1><pre class="source lang-java linenums">package com.smartrecruit.application.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * Mirrors the {@code statusHistory} entry shape in {@code DATA_MODEL.md} §3.4
+ * (used for the audit trail — BE-ADMIN-03). {@code message} is the explanation addressed to the
+ * candidate when a recruiter changes the status (EXT-APP-01).
+ */
+@Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class StatusHistoryEntry {
+
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
+
+    private Instant changedAt;
+
+    private UUID changedBy;
+
+    /** Explanation for the candidate (≤ 2000), null when none was given (EXT-APP-01). */
+    @Column(length = 2000)
+    private String message;
+
+    public StatusHistoryEntry(ApplicationStatus status, Instant changedAt, UUID changedBy) {
+<span class="fc" id="L41">        this(status, changedAt, changedBy, null);</span>
+<span class="fc" id="L42">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,289 @@
+10:37:32.603 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.application.ApplicationServiceApplicationTests]: ApplicationServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:37:32.844 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.ApplicationServiceApplicationTests
+10:37:33.094 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.application.ApplicationServiceApplicationTests]: ApplicationServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:37:33.096 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.ApplicationServiceApplicationTests
+10:37:33.287 [main] INFO org.springframework.boot.devtools.restart.RestartApplicationListener -- Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:37:33.895+01:00  INFO 10440 --- [           main] c.s.a.ApplicationServiceApplicationTests : Starting ApplicationServiceApplicationTests using Java 25.0.3 with PID 10440 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\application-service)
+2026-11-10T10:37:33.897+01:00  INFO 10440 --- [           main] c.s.a.ApplicationServiceApplicationTests : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:37:36.484+01:00  INFO 10440 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:37:36.650+01:00  INFO 10440 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 141 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:37:38.489+01:00  INFO 10440 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:37:38.654+01:00  INFO 10440 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-11-10T10:37:39.767+01:00  INFO 10440 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:37:39.850+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-10T10:37:40.408+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:application_db user=SA
+2026-11-10T10:37:40.411+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-10T10:37:40.580+01:00  INFO 10440 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:application_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: APPLICATION_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:37:42.695+01:00  INFO 10440 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:37:42.828+01:00  INFO 10440 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:37:43.560+01:00  INFO 10440 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-10T10:37:46.061+01:00  WARN 10440 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:37:46.255+01:00  WARN 10440 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: bf369ccf-635e-4905-9bb0-f5e8fb88484e
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:37:46.264+01:00  INFO 10440 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:37:47.523+01:00  INFO 10440 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:37:47.620+01:00  INFO 10440 --- [           main] c.s.a.ApplicationServiceApplicationTests : Started ApplicationServiceApplicationTests in 14.358 seconds (process running for 17.792)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (C:\Users\oti\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.15\byte-buddy-agent-1.18.15.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+2026-11-10T10:37:48.269+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.ApplyIntegrationTest]: ApplyIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:48.313+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.ApplyIntegrationTest
+2026-11-10T10:37:48.315+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.ApplyIntegrationTest]: ApplyIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:48.316+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:48.321+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.ApplyIntegrationTest
+2026-11-10T10:37:48.330+01:00  INFO 10440 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:37:48.365+01:00  INFO 10440 --- [           main] c.s.a.controller.ApplyIntegrationTest    : Starting ApplyIntegrationTest using Java 25.0.3 with PID 10440 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\application-service)
+2026-11-10T10:37:48.365+01:00  INFO 10440 --- [           main] c.s.a.controller.ApplyIntegrationTest    : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:37:48.851+01:00  INFO 10440 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:37:48.910+01:00  INFO 10440 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 55 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:37:49.177+01:00  INFO 10440 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:37:49.228+01:00  INFO 10440 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:37:49.231+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-11-10T10:37:49.235+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:application_db user=SA
+2026-11-10T10:37:49.236+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-11-10T10:37:49.238+01:00  INFO 10440 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:application_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: APPLICATION_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:37:49.438+01:00  INFO 10440 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:37:49.470+01:00  INFO 10440 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:37:49.766+01:00  WARN 10440 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:37:49.838+01:00  WARN 10440 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 13adb91f-67d1-4f27-a2b2-11edf50f5cd0
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:37:49.841+01:00  INFO 10440 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:37:50.150+01:00  INFO 10440 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:37:50.150+01:00  INFO 10440 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:37:50.159+01:00  INFO 10440 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:37:50.169+01:00  INFO 10440 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 19 ms
+2026-11-10T10:37:50.241+01:00  INFO 10440 --- [           main] c.s.a.controller.ApplyIntegrationTest    : Started ApplyIntegrationTest in 1.911 seconds (process running for 20.413)
+2026-11-10T10:37:51.808+01:00  WARN 10440 --- [         task-1] c.s.a.service.ApplicationScoring         : Match score unavailable for application abc4cb20-9196-46cf-91ec-9798fdb5d892: ai-service indisponible
+2026-11-10T10:37:51.930+01:00  WARN 10440 --- [         task-2] c.s.a.service.ApplicationScoring         : Match score unavailable for application 24dec8f1-0f11-4520-a29b-1a69b40986eb: ai-service indisponible
+2026-11-10T10:37:52.047+01:00  WARN 10440 --- [         task-3] c.s.a.service.ApplicationScoring         : Match score unavailable for application 18782623-df73-4c19-8659-527803efadaf: ai-service indisponible
+2026-11-10T10:37:52.104+01:00  WARN 10440 --- [         task-4] c.s.a.service.ApplicationScoring         : Match score unavailable for application ded2d195-ff15-4f9e-b8cd-5446fd3a897d: ai-service indisponible
+2026-11-10T10:37:52.125+01:00  WARN 10440 --- [         task-5] c.s.a.service.ApplicationScoring         : Match score unavailable for application 99b145aa-a018-485d-9995-b403df74418c: ai-service indisponible
+2026-11-10T10:37:52.284+01:00  WARN 10440 --- [         task-6] c.s.a.service.ApplicationScoring         : Match score unavailable for application e071ac4c-6555-4c73-9a80-ccdce7981c20: ai-service indisponible
+2026-11-10T10:37:52.313+01:00  WARN 10440 --- [         task-7] c.s.a.service.ApplicationScoring         : Match score unavailable for application 2d1093e8-1649-4d4e-bb6e-080f3d6edf6b: ai-service indisponible
+2026-11-10T10:37:52.317+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.ApplyScoringIntegrationTest]: ApplyScoringIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:52.320+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.ApplyScoringIntegrationTest
+2026-11-10T10:37:52.321+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.ApplyScoringIntegrationTest]: ApplyScoringIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:52.321+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:52.323+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.ApplyScoringIntegrationTest
+2026-11-10T10:37:53.356+01:00  WARN 10440 --- [         task-3] c.s.a.service.ApplicationScoring         : Match score unavailable for application 2a9dda66-01f2-41cd-9e21-54ccc538ec7e: ai-service indisponible
+2026-11-10T10:37:53.771+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.CoverLetterAndDecisionIntegrationTest]: CoverLetterAndDecisionIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:53.772+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.CoverLetterAndDecisionIntegrationTest
+2026-11-10T10:37:53.773+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.CoverLetterAndDecisionIntegrationTest]: CoverLetterAndDecisionIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:53.774+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:53.774+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.CoverLetterAndDecisionIntegrationTest
+2026-11-10T10:37:54.064+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.InternalCandidateDataIntegrationTest]: InternalCandidateDataIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.068+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.InternalCandidateDataIntegrationTest
+2026-11-10T10:37:54.069+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.InternalCandidateDataIntegrationTest]: InternalCandidateDataIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.069+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.071+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.InternalCandidateDataIntegrationTest
+2026-11-10T10:37:54.179+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.InternalCountsIntegrationTest]: InternalCountsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.181+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.InternalCountsIntegrationTest
+2026-11-10T10:37:54.182+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.InternalCountsIntegrationTest]: InternalCountsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.183+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.184+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.InternalCountsIntegrationTest
+2026-11-10T10:37:54.282+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.InternalStatsIntegrationTest]: InternalStatsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.285+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.InternalStatsIntegrationTest
+2026-11-10T10:37:54.286+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.InternalStatsIntegrationTest]: InternalStatsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.287+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.290+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.InternalStatsIntegrationTest
+2026-11-10T10:37:54.608+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.InterviewIntegrationTest]: InterviewIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.610+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.InterviewIntegrationTest
+2026-11-10T10:37:54.611+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.InterviewIntegrationTest]: InterviewIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.611+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:54.615+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.InterviewIntegrationTest
+2026-11-10T10:37:55.119+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.MatchPreviewIntegrationTest]: MatchPreviewIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.120+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.MatchPreviewIntegrationTest
+2026-11-10T10:37:55.121+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.MatchPreviewIntegrationTest]: MatchPreviewIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.121+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.122+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.MatchPreviewIntegrationTest
+2026-11-10T10:37:55.523+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.MyApplicationsIntegrationTest]: MyApplicationsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.528+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.MyApplicationsIntegrationTest
+2026-11-10T10:37:55.530+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.MyApplicationsIntegrationTest]: MyApplicationsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.532+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.535+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.MyApplicationsIntegrationTest
+2026-11-10T10:37:55.641+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.NotesIntegrationTest]: NotesIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.649+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.NotesIntegrationTest
+2026-11-10T10:37:55.651+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.NotesIntegrationTest]: NotesIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.652+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:55.655+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.NotesIntegrationTest
+2026-11-10T10:37:56.201+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.ReceivedApplicationsIntegrationTest]: ReceivedApplicationsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:56.204+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.ReceivedApplicationsIntegrationTest
+2026-11-10T10:37:56.205+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.ReceivedApplicationsIntegrationTest]: ReceivedApplicationsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:56.205+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:56.207+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.ReceivedApplicationsIntegrationTest
+2026-11-10T10:37:56.554+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.StatusChangeIntegrationTest]: StatusChangeIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:56.557+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.StatusChangeIntegrationTest
+2026-11-10T10:37:56.559+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.StatusChangeIntegrationTest]: StatusChangeIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:56.560+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:56.565+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.StatusChangeIntegrationTest
+2026-11-10T10:37:57.143+01:00  WARN 10440 --- [         task-3] c.s.application.client.AuditClient       : Audit event APPLICATION_STATUS_CHANGED not delivered: 500 Internal Server Error: [no body]
+2026-11-10T10:37:58.541+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.WithdrawIntegrationTest]: WithdrawIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:58.544+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.WithdrawIntegrationTest
+2026-11-10T10:37:58.544+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.controller.WithdrawIntegrationTest]: WithdrawIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:58.546+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:58.551+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.controller.WithdrawIntegrationTest
+2026-11-10T10:37:58.873+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.model.ApplicationPersistenceTest]: ApplicationPersistenceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:58.904+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.model.ApplicationPersistenceTest
+2026-11-10T10:37:58.907+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.model.ApplicationPersistenceTest]: ApplicationPersistenceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:58.910+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.model.ApplicationPersistenceTest
+2026-11-10T10:37:59.263+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.security.InputSecurityIntegrationTest
+2026-11-10T10:37:59.269+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.security.InputSecurityIntegrationTest
+2026-11-10T10:37:59.274+01:00  INFO 10440 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:37:59.314+01:00  INFO 10440 --- [           main] c.s.a.s.InputSecurityIntegrationTest     : Starting InputSecurityIntegrationTest using Java 25.0.3 with PID 10440 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\application-service)
+2026-11-10T10:37:59.314+01:00  INFO 10440 --- [           main] c.s.a.s.InputSecurityIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:37:59.658+01:00  INFO 10440 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:37:59.673+01:00  INFO 10440 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 13 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:37:59.762+01:00  INFO 10440 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:37:59.784+01:00  INFO 10440 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:37:59.786+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-11-10T10:37:59.787+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection conn20: url=jdbc:h2:mem:application_db user=SA
+2026-11-10T10:37:59.788+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-11-10T10:37:59.788+01:00  INFO 10440 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:application_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: APPLICATION_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:37:59.859+01:00  INFO 10440 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:37:59.872+01:00  INFO 10440 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:38:00.020+01:00  WARN 10440 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:38:00.056+01:00  WARN 10440 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 44669a5b-c555-40de-95c2-c018b23c524e
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:38:00.057+01:00  INFO 10440 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:38:00.186+01:00  INFO 10440 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:38:00.186+01:00  INFO 10440 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:38:00.191+01:00  INFO 10440 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:38:00.198+01:00  INFO 10440 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 12 ms
+2026-11-10T10:38:00.250+01:00  INFO 10440 --- [           main] c.s.a.s.InputSecurityIntegrationTest     : Started InputSecurityIntegrationTest in 0.975 seconds (process running for 30.422)
+2026-11-10T10:38:00.310+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.security.RbacIntegrationTest
+2026-11-10T10:38:00.316+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.security.RbacIntegrationTest
+2026-11-10T10:38:00.324+01:00  INFO 10440 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:38:00.393+01:00  INFO 10440 --- [           main] c.s.a.security.RbacIntegrationTest       : Starting RbacIntegrationTest using Java 25.0.3 with PID 10440 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\application-service)
+2026-11-10T10:38:00.393+01:00  INFO 10440 --- [           main] c.s.a.security.RbacIntegrationTest       : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:38:00.839+01:00  INFO 10440 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:38:00.882+01:00  INFO 10440 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 40 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:38:01.015+01:00  INFO 10440 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:38:01.054+01:00  INFO 10440 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:38:01.055+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2026-11-10T10:38:01.057+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection conn30: url=jdbc:h2:mem:application_db user=SA
+2026-11-10T10:38:01.057+01:00  INFO 10440 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2026-11-10T10:38:01.058+01:00  INFO 10440 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:application_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: APPLICATION_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:38:01.159+01:00  INFO 10440 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:38:01.173+01:00  INFO 10440 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:38:01.378+01:00  WARN 10440 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:38:01.437+01:00  WARN 10440 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 49f99740-192c-4801-8656-9fef05f9df12
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:38:01.440+01:00  INFO 10440 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:38:01.883+01:00  INFO 10440 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:38:01.883+01:00  INFO 10440 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:38:01.900+01:00  INFO 10440 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:38:01.929+01:00  INFO 10440 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 46 ms
+2026-11-10T10:38:02.066+01:00  INFO 10440 --- [           main] c.s.a.security.RbacIntegrationTest       : Started RbacIntegrationTest in 1.743 seconds (process running for 32.239)
+2026-11-10T10:38:02.412+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.security.ServiceIdentityTest]: ServiceIdentityTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:38:02.425+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.security.ServiceIdentityTest
+2026-11-10T10:38:02.432+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.security.ServiceIdentityTest]: ServiceIdentityTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:38:02.435+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:38:02.449+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.security.ServiceIdentityTest
+2026-11-10T10:38:02.528+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.service.MatchScoreServiceTest]: MatchScoreServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:38:02.588+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.service.MatchScoreServiceTest
+2026-11-10T10:38:02.591+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.service.MatchScoreServiceTest]: MatchScoreServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:38:02.592+01:00  INFO 10440 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.application.support.ApiTestSupport]: ApiTestSupport does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:38:02.598+01:00  INFO 10440 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.application.ApplicationServiceApplication for test class com.smartrecruit.application.service.MatchScoreServiceTest

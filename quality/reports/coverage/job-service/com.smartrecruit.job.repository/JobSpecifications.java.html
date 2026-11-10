@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JobSpecifications.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.repository</a> &gt; <span class="el_source">JobSpecifications.java</span></div><h1>JobSpecifications.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.repository;
+
+import com.smartrecruit.job.model.ContractType;
+import com.smartrecruit.job.model.ExperienceLevel;
+import com.smartrecruit.job.model.Job;
+import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.model.WorkMode;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.util.Collection;
+import java.util.Locale;
+import java.util.UUID;
+
+/**
+ * Filters of the offer search (BE-JOB-04). Text matches are case-insensitive &quot;contains&quot; and the
+ * user's text is escaped so {@code %} and {@code _} are matched literally.
+ */
+public final class JobSpecifications {
+
+    private static final char ESCAPE = '\\';
+
+    private JobSpecifications() {
+    }
+
+    public static Specification&lt;Job&gt; hasStatus(JobStatus status) {
+<span class="fc" id="L31">        return (root, query, cb) -&gt; cb.equal(root.get(&quot;status&quot;), status);</span>
+    }
+
+    public static Specification&lt;Job&gt; ownedBy(UUID companyId) {
+<span class="fc" id="L35">        return (root, query, cb) -&gt; cb.equal(root.get(&quot;companyId&quot;), companyId);</span>
+    }
+
+    public static Specification&lt;Job&gt; hasContractType(ContractType contractType) {
+<span class="fc" id="L39">        return (root, query, cb) -&gt; cb.equal(root.get(&quot;contractType&quot;), contractType);</span>
+    }
+
+    public static Specification&lt;Job&gt; hasExperienceLevel(ExperienceLevel experienceLevel) {
+<span class="fc" id="L43">        return (root, query, cb) -&gt; cb.equal(root.get(&quot;experienceLevel&quot;), experienceLevel);</span>
+    }
+
+    /** EXT-JOB-01: rows created before the field have no work mode and count as ON_SITE. */
+    public static Specification&lt;Job&gt; hasWorkMode(WorkMode workMode) {
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        return (root, query, cb) -&gt; workMode == WorkMode.ON_SITE</span>
+<span class="fc" id="L49">                ? cb.or(cb.equal(root.get(&quot;workMode&quot;), workMode), cb.isNull(root.get(&quot;workMode&quot;)))</span>
+<span class="fc" id="L50">                : cb.equal(root.get(&quot;workMode&quot;), workMode);</span>
+    }
+
+    /**
+     * EXT-JOB-01: the offer may pay at least {@code minSalary}: its maximum reaches it or, without a
+     * maximum, its minimum does. Offers without any salary are excluded.
+     */
+    public static Specification&lt;Job&gt; paysAtLeast(int minSalary) {
+<span class="fc" id="L58">        return (root, query, cb) -&gt; cb.or(</span>
+<span class="fc" id="L59">                cb.greaterThanOrEqualTo(root.get(&quot;salaryMax&quot;), minSalary),</span>
+<span class="fc" id="L60">                cb.and(cb.isNull(root.get(&quot;salaryMax&quot;)), cb.greaterThanOrEqualTo(root.get(&quot;salaryMin&quot;), minSalary)));</span>
+    }
+
+    /** Title or description contains the keyword. */
+    public static Specification&lt;Job&gt; mentions(String keyword) {
+<span class="fc" id="L65">        return (root, query, cb) -&gt; {</span>
+<span class="fc" id="L66">            String pattern = contains(keyword);</span>
+<span class="fc" id="L67">            return cb.or(</span>
+<span class="fc" id="L68">                    cb.like(cb.lower(root.get(&quot;title&quot;)), pattern, ESCAPE),</span>
+<span class="fc" id="L69">                    cb.like(cb.lower(root.get(&quot;description&quot;)), pattern, ESCAPE));</span>
+        };
+    }
+
+    public static Specification&lt;Job&gt; locatedIn(String location) {
+<span class="fc" id="L74">        return (root, query, cb) -&gt; cb.like(cb.lower(root.get(&quot;location&quot;)), contains(location), ESCAPE);</span>
+    }
+
+    /** The offer requires at least one of the skills (case-insensitive). */
+    public static Specification&lt;Job&gt; requiresAnyOf(Collection&lt;String&gt; skills) {
+<span class="fc" id="L79">        return (root, query, cb) -&gt; {</span>
+<span class="fc" id="L80">            Subquery&lt;UUID&gt; matching = query.subquery(UUID.class);</span>
+<span class="fc" id="L81">            Root&lt;Job&gt; job = matching.from(Job.class);</span>
+<span class="fc" id="L82">            Join&lt;Job, String&gt; skill = job.join(&quot;requiredSkills&quot;);</span>
+<span class="fc" id="L83">            Expression&lt;String&gt; lowered = cb.lower(skill);</span>
+<span class="fc" id="L84">            matching.select(job.get(&quot;id&quot;)).where(lowered.in(skills.stream().map(s -&gt; s.toLowerCase(Locale.ROOT)).toList()));</span>
+<span class="fc" id="L85">            return root.get(&quot;id&quot;).in(matching);</span>
+        };
+    }
+
+    private static String contains(String text) {
+<span class="fc" id="L90">        String escaped = text.toLowerCase(Locale.ROOT).strip()</span>
+<span class="fc" id="L91">                .replace(&quot;\\&quot;, &quot;\\\\&quot;).replace(&quot;%&quot;, &quot;\\%&quot;).replace(&quot;_&quot;, &quot;\\_&quot;);</span>
+<span class="fc" id="L92">        return &quot;%&quot; + escaped + &quot;%&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

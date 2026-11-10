@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CvSuggestionsService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.service</a> &gt; <span class="el_source">CvSuggestionsService.java</span></div><h1>CvSuggestionsService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.service;
+
+import com.smartrecruit.user.ai.CvAnalysisClient;
+import com.smartrecruit.user.ai.ParsedCv;
+import com.smartrecruit.user.dto.CvSuggestionsResponse;
+import com.smartrecruit.user.exception.ApiException;
+import com.smartrecruit.user.model.Education;
+import com.smartrecruit.user.model.Experience;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Proposes the data the AI extracted from the candidate's CV (BE-CV-02). Nothing is written to the
+ * profile: the candidate validates and saves it with PUT/PATCH {@code /candidates/me}.
+ */
+<span class="fc" id="L25">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class CvSuggestionsService {
+
+    private final CvAnalysisClient aiClient;
+
+    /** 404 if no CV was analysed for the candidate, 503 if ai-service cannot be reached. */
+    public CvSuggestionsResponse suggestionsFor(UUID candidateId) {
+        ParsedCv parsed;
+        try {
+<span class="fc" id="L36">            parsed = aiClient.findParsedCv(candidateId).orElse(null);</span>
+<span class="fc" id="L37">        } catch (RestClientException e) {</span>
+<span class="fc" id="L38">            log.warn(&quot;Suggestions de CV du candidat {} : ai-service indisponible ({})&quot;, candidateId, e.getClass().getSimpleName());</span>
+<span class="fc" id="L39">            throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, &quot;Le service d'analyse de CV est momentanément indisponible&quot;);</span>
+<span class="fc" id="L40">        }</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (parsed == null) {</span>
+<span class="fc" id="L42">            throw new ApiException(HttpStatus.NOT_FOUND, &quot;Aucun CV analysé pour ce candidat&quot;);</span>
+        }
+<span class="fc" id="L44">        return new CvSuggestionsResponse(</span>
+<span class="fc" id="L45">                CandidateProfileService.nullToEmpty(parsed.skills()),</span>
+<span class="fc" id="L46">                CandidateProfileService.nullToEmpty(parsed.experiences()).stream().map(CvSuggestionsService::toExperience).toList(),</span>
+<span class="fc" id="L47">                CandidateProfileService.nullToEmpty(parsed.education()).stream().map(CvSuggestionsService::toEducation).toList(),</span>
+<span class="fc" id="L48">                CandidateProfileService.nullToEmpty(parsed.languages()));</span>
+    }
+
+    private static Experience toExperience(ParsedCv.Experience experience) {
+<span class="fc" id="L52">        return Experience.builder()</span>
+<span class="fc" id="L53">                .title(experience.title())</span>
+<span class="fc" id="L54">                .company(experience.company())</span>
+<span class="fc" id="L55">                .startDate(toYearMonth(experience.startDate()))</span>
+<span class="fc" id="L56">                .endDate(toYearMonth(experience.endDate()))</span>
+<span class="fc" id="L57">                .description(experience.description())</span>
+<span class="fc" id="L58">                .build();</span>
+    }
+
+    private static Education toEducation(ParsedCv.Education education) {
+<span class="fc" id="L62">        return Education.builder()</span>
+<span class="fc" id="L63">                .degree(education.degree())</span>
+<span class="fc" id="L64">                .institution(education.institution())</span>
+<span class="fc" id="L65">                .year(education.year())</span>
+<span class="fc" id="L66">                .build();</span>
+    }
+
+    /**
+     * {@code YYYY-MM-DD} (what the AI sends) to {@code YYYY-MM}; {@code YYYY-MM} is accepted as is.
+     * A missing or unreadable date gives null: the candidate fills it in during validation.
+     */
+    static YearMonth toYearMonth(String date) {
+<span class="fc bfc" id="L74" title="All 4 branches covered.">        if (date == null || date.isBlank()) {</span>
+<span class="fc" id="L75">            return null;</span>
+        }
+        try {
+<span class="fc" id="L78">            String value = date.trim();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            return value.length() &gt; 7 ? YearMonth.from(LocalDate.parse(value)) : YearMonth.parse(value);</span>
+<span class="fc" id="L80">        } catch (DateTimeParseException e) {</span>
+<span class="fc" id="L81">            return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GatewayErrorWriter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api-gateway</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.gateway.security</a> &gt; <span class="el_source">GatewayErrorWriter.java</span></div><h1>GatewayErrorWriter.java</h1><pre class="source lang-java linenums">package com.smartrecruit.gateway.security;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+
+/**
+ * Errors produced by the gateway itself, in the shared error format ({@code DATA_MODEL.md} §1).
+ */
+public final class GatewayErrorWriter {
+
+    private GatewayErrorWriter() {
+    }
+
+    public static void write(HttpServletResponse response, HttpServletRequest request, HttpStatus status,
+                             String message) throws IOException {
+<span class="fc" id="L22">        response.setStatus(status.value());</span>
+<span class="fc" id="L23">        response.setContentType(MediaType.APPLICATION_JSON_VALUE);</span>
+<span class="fc" id="L24">        response.setCharacterEncoding(StandardCharsets.UTF_8.name());</span>
+<span class="fc" id="L25">        response.getWriter().write(&quot;{\&quot;timestamp\&quot;:\&quot;%s\&quot;,\&quot;status\&quot;:%d,\&quot;error\&quot;:\&quot;%s\&quot;,\&quot;message\&quot;:\&quot;%s\&quot;,\&quot;path\&quot;:\&quot;%s\&quot;}&quot;</span>
+<span class="fc" id="L26">                .formatted(Instant.now(), status.value(), status.getReasonPhrase(), escape(message),</span>
+<span class="fc" id="L27">                        escape(request.getRequestURI())));</span>
+<span class="fc" id="L28">    }</span>
+
+    private static String escape(String value) {
+<span class="fc" id="L31">        return value.replace(&quot;\\&quot;, &quot;\\\\&quot;).replace(&quot;\&quot;&quot;, &quot;\\\&quot;&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

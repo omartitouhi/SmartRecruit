@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JobPatchRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.dto</a> &gt; <span class="el_source">JobPatchRequest.java</span></div><h1>JobPatchRequest.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.dto;
+
+import com.smartrecruit.job.model.ContractType;
+import com.smartrecruit.job.model.ExperienceLevel;
+import com.smartrecruit.job.model.WorkMode;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Values of a {@code PATCH /api/v1/jobs/{id}} body (BE-JOB-02), JSON Merge Patch semantics: a
+ * {@code null} here means &quot;absent&quot; or &quot;sent as null&quot;, {@link #presentFields} tells them apart.
+ * Absent fields keep their value; every field of an offer is mandatory, so sending one as
+ * {@code null} is rejected; lists are replaced as a whole. Same limits as {@link JobCreateRequest}.
+ * EXT-JOB-01: the salary bounds and the deadline are optional and may be removed with {@code null}
+ * ({@link #NULLABLE_FIELDS}); {@code workMode} and {@code positions} may not.
+ */
+<span class="fc" id="L24">public record JobPatchRequest(</span>
+        @Pattern(regexp = &quot;.*\\S.*&quot;, message = &quot;Le titre est obligatoire&quot;)
+        @Size(max = 255, message = &quot;Le titre ne doit pas dépasser 255 caractères&quot;)
+        String title,
+
+        @Pattern(regexp = &quot;(?s).*\\S.*&quot;, message = &quot;La description est obligatoire&quot;)
+        @Size(min = 20, max = 20000, message = &quot;La description doit contenir entre 20 et 20000 caractères&quot;)
+        String description,
+
+        @Size(min = 1, max = 50, message = &quot;Entre 1 et 50 compétences requises&quot;)
+        List&lt;@NotBlank(message = &quot;Une compétence ne peut pas être vide&quot;)
+        @Size(max = 100, message = &quot;Une compétence ne doit pas dépasser 100 caractères&quot;) String&gt; requiredSkills,
+
+        ExperienceLevel experienceLevel,
+
+        ContractType contractType,
+
+        @Pattern(regexp = &quot;.*\\S.*&quot;, message = &quot;La localisation est obligatoire&quot;)
+        @Size(max = 255, message = &quot;La localisation ne doit pas dépasser 255 caractères&quot;)
+        String location,
+
+        WorkMode workMode,
+
+        @Min(value = 0, message = &quot;Le salaire minimum doit être positif&quot;)
+        @Max(value = 1_000_000, message = &quot;Le salaire minimum ne doit pas dépasser 1 000 000&quot;)
+        Integer salaryMin,
+
+        @Min(value = 0, message = &quot;Le salaire maximum doit être positif&quot;)
+        @Max(value = 1_000_000, message = &quot;Le salaire maximum ne doit pas dépasser 1 000 000&quot;)
+        Integer salaryMax,
+
+        LocalDate applicationDeadline,
+
+        @Min(value = 1, message = &quot;Il faut au moins un poste&quot;)
+        @Max(value = 100, message = &quot;100 postes au plus&quot;)
+        Integer positions,
+
+        Set&lt;String&gt; presentFields
+) {
+
+<span class="fc" id="L64">    public static final Set&lt;String&gt; FIELDS = Set.of(&quot;title&quot;, &quot;description&quot;, &quot;requiredSkills&quot;, &quot;experienceLevel&quot;,</span>
+            &quot;contractType&quot;, &quot;location&quot;, &quot;workMode&quot;, &quot;salaryMin&quot;, &quot;salaryMax&quot;, &quot;applicationDeadline&quot;, &quot;positions&quot;);
+
+    /** Optional fields of an offer: sending them as {@code null} removes the value (EXT-JOB-01). */
+<span class="fc" id="L68">    public static final Set&lt;String&gt; NULLABLE_FIELDS = Set.of(&quot;salaryMin&quot;, &quot;salaryMax&quot;, &quot;applicationDeadline&quot;);</span>
+
+    public boolean has(String field) {
+<span class="fc" id="L71">        return presentFields.contains(field);</span>
+    }
+
+    public JobPatchRequest withPresentFields(Set&lt;String&gt; fields) {
+<span class="fc" id="L75">        return new JobPatchRequest(title, description, requiredSkills, experienceLevel, contractType, location,</span>
+<span class="fc" id="L76">                workMode, salaryMin, salaryMax, applicationDeadline, positions, Set.copyOf(fields));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

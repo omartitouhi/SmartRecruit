@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CvAnalysisJob.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.ai</a> &gt; <span class="el_source">CvAnalysisJob.java</span></div><h1>CvAnalysisJob.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.ai;
+
+import com.smartrecruit.user.repository.CandidateProfileRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.time.Clock;
+import java.util.UUID;
+import java.util.function.Supplier;
+
+/**
+ * Runs the AI analysis of a freshly uploaded CV outside the upload request (BE-CV-01). It is
+ * best-effort: on failure the upload stays valid, the status becomes FAILED and
+ * {@code cvParsedAt} stays null (degraded mode).
+ */
+<span class="fc" id="L19">@Slf4j</span>
+@Component
+public class CvAnalysisJob {
+
+    private final CvAnalysisClient client;
+    private final CandidateProfileRepository profileRepository;
+    private final TransactionTemplate transaction;
+    private final Clock clock;
+    private final boolean enabled;
+
+    public CvAnalysisJob(CvAnalysisClient client, CandidateProfileRepository profileRepository,
+                         TransactionTemplate transaction, Clock clock,
+<span class="fc" id="L31">                         @Value(&quot;${cv-analysis.enabled:true}&quot;) boolean enabled) {</span>
+<span class="fc" id="L32">        this.client = client;</span>
+<span class="fc" id="L33">        this.profileRepository = profileRepository;</span>
+<span class="fc" id="L34">        this.transaction = transaction;</span>
+<span class="fc" id="L35">        this.clock = clock;</span>
+<span class="fc" id="L36">        this.enabled = enabled;</span>
+<span class="fc" id="L37">    }</span>
+
+    /**
+     * Must be called after the upload committed. The result is recorded only if the profile still
+     * points to the analysed CV, so a newer upload or a deleted account is never marked as analysed
+     * (DONE with {@code cvParsedAt}) or failed.
+     */
+    @Async
+    public void analyse(UUID candidateId, String storageKey, byte[] pdf) {
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (!enabled) {</span>
+<span class="fc" id="L47">            return;</span>
+        }
+        try {
+<span class="fc" id="L50">            client.parse(candidateId, pdf);</span>
+<span class="fc" id="L51">        } catch (RuntimeException e) {</span>
+<span class="fc" id="L52">            log.warn(&quot;Analyse IA du CV du candidat {} indisponible, mode dégradé ({})&quot;, candidateId, e.getClass().getSimpleName());</span>
+<span class="fc" id="L53">            record(candidateId, () -&gt; profileRepository.markAnalysisFailed(candidateId, storageKey));</span>
+<span class="fc" id="L54">            return;</span>
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">        record(candidateId, () -&gt; profileRepository.markParsed(candidateId, storageKey, clock.instant()));</span>
+<span class="fc" id="L57">    }</span>
+
+    private void record(UUID candidateId, Supplier&lt;Integer&gt; update) {
+<span class="fc" id="L60">        Integer updated = transaction.execute(status -&gt; update.get());</span>
+<span class="pc bpc" id="L61" title="1 of 4 branches missed.">        if (updated == null || updated == 0) {</span>
+<span class="fc" id="L62">            log.info(&quot;Résultat de l'analyse du CV du candidat {} ignoré : CV remplacé ou compte supprimé&quot;, candidateId);</span>
+        }
+<span class="fc" id="L64">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

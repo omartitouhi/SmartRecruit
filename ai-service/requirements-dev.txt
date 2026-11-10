@@ -1,4 +1,5 @@
 -r requirements.txt
-pytest==8.3.3
+pytest==9.0.3
 ruff==0.6.9
 reportlab==4.2.5                # génère des PDF de test (AI-CV-01)
+pytest-cov==7.0.0             # couverture de code (rapport ISO 25010 - maintenabilité)

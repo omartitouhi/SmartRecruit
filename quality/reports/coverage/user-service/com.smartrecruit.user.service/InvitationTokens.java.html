@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvitationTokens.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.service</a> &gt; <span class="el_source">InvitationTokens.java</span></div><h1>InvitationTokens.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.service;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.HexFormat;
+
+/**
+ * Random opaque invitation tokens and the SHA-256 hash under which they are stored: a database leak
+ * does not reveal usable links (same scheme as the password reset tokens of auth-service).
+ */
+final class InvitationTokens {
+
+    private static final int TOKEN_BYTES = 32;
+<span class="fc" id="L17">    private static final SecureRandom SECURE_RANDOM = new SecureRandom();</span>
+
+    private InvitationTokens() {
+    }
+
+    static String generate() {
+<span class="fc" id="L23">        byte[] bytes = new byte[TOKEN_BYTES];</span>
+<span class="fc" id="L24">        SECURE_RANDOM.nextBytes(bytes);</span>
+<span class="fc" id="L25">        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);</span>
+    }
+
+    static String hash(String rawToken) {
+        try {
+<span class="fc" id="L30">            byte[] digest = MessageDigest.getInstance(&quot;SHA-256&quot;).digest(rawToken.getBytes(StandardCharsets.UTF_8));</span>
+<span class="fc" id="L31">            return HexFormat.of().formatHex(digest);</span>
+<span class="nc" id="L32">        } catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L33">            throw new IllegalStateException(&quot;SHA-256 indisponible&quot;, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

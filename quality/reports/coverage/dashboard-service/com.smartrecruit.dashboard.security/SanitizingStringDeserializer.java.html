@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SanitizingStringDeserializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">dashboard-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.dashboard.security</a> &gt; <span class="el_source">SanitizingStringDeserializer.java</span></div><h1>SanitizingStringDeserializer.java</h1><pre class="source lang-java linenums">package com.smartrecruit.dashboard.security;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.jdk.StringDeserializer;
+
+/**
+ * Replaces Jackson's default {@code String} deserializer: every string of every JSON request body
+ * is turned into plain text by {@link HtmlSanitizer} before reaching a controller (BE-SEC-03),
+ * including list elements. Fields annotated {@link RawText} are left untouched.
+ */
+public class SanitizingStringDeserializer extends ValueDeserializer&lt;String&gt; {
+
+<span class="fc" id="L17">    public static final SanitizingStringDeserializer INSTANCE = new SanitizingStringDeserializer(false);</span>
+<span class="fc" id="L18">    static final SanitizingStringDeserializer RAW = new SanitizingStringDeserializer(true);</span>
+
+    private final boolean raw;
+
+<span class="fc" id="L22">    private SanitizingStringDeserializer(boolean raw) {</span>
+<span class="fc" id="L23">        this.raw = raw;</span>
+<span class="fc" id="L24">    }</span>
+
+    @Override
+    public String deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
+<span class="fc" id="L28">        String value = StringDeserializer.instance.deserialize(parser, context);</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        return raw ? value : HtmlSanitizer.toPlainText(value);</span>
+    }
+
+    @Override
+    public ValueDeserializer&lt;?&gt; createContextual(DeserializationContext context, BeanProperty property) {
+<span class="fc bfc" id="L34" title="All 4 branches covered.">        boolean rawProperty = property != null &amp;&amp; property.getAnnotation(RawText.class) != null;</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        return rawProperty ? RAW : INSTANCE;</span>
+    }
+
+    @Override
+    public Object getNullValue(DeserializationContext context) {
+<span class="fc" id="L40">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

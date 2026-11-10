@@ -1,0 +1,10 @@
+# Semgrep 1.140.0 - règles p/owasp-top-ten, p/java, p/typescript, p/python, p/secrets (code de production, tests exclus)
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 0 (0 blocking)
+ • Rules run: 355
+ • Targets scanned: 496
+ • Parsed lines: ~99.9%
+ • Scan skipped: 
+   ◦ Matching --exclude patterns: 32
+   ◦ Files matching .semgrepignore patterns: 136

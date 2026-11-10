@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CompanyInvitationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.service</a> &gt; <span class="el_source">CompanyInvitationService.java</span></div><h1>CompanyInvitationService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.service;
+
+import com.smartrecruit.user.dto.CompanyResponse;
+import com.smartrecruit.user.dto.InvitationRequest;
+import com.smartrecruit.user.dto.InvitationResponse;
+import com.smartrecruit.user.exception.ApiException;
+import com.smartrecruit.user.model.Company;
+import com.smartrecruit.user.model.CompanyInvitation;
+import com.smartrecruit.user.model.InvitationStatus;
+import com.smartrecruit.user.repository.CompanyInvitationRepository;
+import com.smartrecruit.user.repository.CompanyRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+
+/**
+ * Invitations of recruiters to a company (BE-COMP-03). Only members can invite and list; the
+ * invitation token is random, stored hashed and only ever sent through the notifier.
+ */
+@Service
+@RequiredArgsConstructor
+public class CompanyInvitationService {
+
+    private final CompanyInvitationRepository invitationRepository;
+    private final CompanyRepository companyRepository;
+    private final CompanyService companyService;
+    private final CompanyInvitationNotifier notifier;
+    private final CompanyInvitationProperties properties;
+    private final Clock clock;
+
+    /** Creates a PENDING invitation and notifies the invitee; 409 if one is already pending for this email. */
+    @Transactional
+    public InvitationResponse invite(UUID accountId, UUID companyId, InvitationRequest request) {
+<span class="fc" id="L43">        Company company = companyService.findForMember(accountId, companyId);</span>
+<span class="fc" id="L44">        String email = request.email().trim().toLowerCase(Locale.ROOT);</span>
+<span class="fc" id="L45">        Instant now = clock.instant();</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (invitationRepository.existsByCompanyIdAndEmailAndStatusAndExpiresAtAfter(</span>
+                companyId, email, InvitationStatus.PENDING, now)) {
+<span class="fc" id="L48">            throw new ApiException(HttpStatus.CONFLICT, &quot;Une invitation est déjà en attente pour cet email&quot;);</span>
+        }
+
+<span class="fc" id="L51">        String token = InvitationTokens.generate();</span>
+<span class="fc" id="L52">        CompanyInvitation invitation = invitationRepository.saveAndFlush(CompanyInvitation.builder()</span>
+<span class="fc" id="L53">                .companyId(companyId)</span>
+<span class="fc" id="L54">                .email(email)</span>
+<span class="fc" id="L55">                .tokenHash(InvitationTokens.hash(token))</span>
+<span class="fc" id="L56">                .status(InvitationStatus.PENDING)</span>
+<span class="fc" id="L57">                .expiresAt(now.plus(properties.tokenTtl()))</span>
+<span class="fc" id="L58">                .build());</span>
+
+<span class="fc" id="L60">        String link = UriComponentsBuilder.fromUriString(properties.linkBaseUrl())</span>
+<span class="fc" id="L61">                .queryParam(&quot;token&quot;, token)</span>
+<span class="fc" id="L62">                .toUriString();</span>
+<span class="fc" id="L63">        notifier.sendInvitation(email, company.getName(), link);</span>
+<span class="fc" id="L64">        return InvitationResponse.from(invitation, now);</span>
+    }
+
+    /**
+     * Attaches the connected recruiter to the inviting company. 400 for an unknown token, 410 for an
+     * expired or already used one, 409 if the recruiter already belongs to a company. The token alone
+     * proves the invitation: recruiter emails are not known to user-service, so it is not compared.
+     */
+    @Transactional
+    public CompanyResponse accept(UUID accountId, String token) {
+<span class="fc" id="L74">        CompanyInvitation invitation = invitationRepository.findByTokenHash(InvitationTokens.hash(token.trim()))</span>
+<span class="fc" id="L75">                .orElseThrow(() -&gt; new ApiException(HttpStatus.BAD_REQUEST, &quot;Jeton d'invitation invalide&quot;));</span>
+<span class="fc bfc" id="L76" title="All 3 branches covered.">        switch (invitation.statusAt(clock.instant())) {</span>
+<span class="fc" id="L77">            case ACCEPTED -&gt; throw new ApiException(HttpStatus.GONE, &quot;Cette invitation a déjà été utilisée&quot;);</span>
+<span class="fc" id="L78">            case EXPIRED -&gt; throw new ApiException(HttpStatus.GONE, &quot;Cette invitation a expiré&quot;);</span>
+            default -&gt; { }
+        }
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (companyRepository.findByMember(accountId).isPresent()) {</span>
+<span class="fc" id="L82">            throw new ApiException(HttpStatus.CONFLICT, CompanyService.ALREADY_IN_COMPANY);</span>
+        }
+<span class="fc" id="L84">        Company company = companyRepository.findById(invitation.getCompanyId())</span>
+<span class="pc" id="L85">                .orElseThrow(() -&gt; new ApiException(HttpStatus.GONE, &quot;L'entreprise de cette invitation n'existe plus&quot;));</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (invitationRepository.markAccepted(invitation.getId()) == 0) {</span>
+<span class="nc" id="L87">            throw new ApiException(HttpStatus.GONE, &quot;Cette invitation a déjà été utilisée&quot;);</span>
+        }
+<span class="fc" id="L89">        company.getMembers().add(accountId);</span>
+        try {
+<span class="fc" id="L91">            return CompanyResponse.from(companyRepository.saveAndFlush(company));</span>
+<span class="nc" id="L92">        } catch (DataIntegrityViolationException e) {</span>
+<span class="nc" id="L93">            throw new ApiException(HttpStatus.CONFLICT, CompanyService.ALREADY_IN_COMPANY);</span>
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;InvitationResponse&gt; list(UUID accountId, UUID companyId) {
+<span class="fc" id="L99">        companyService.findForMember(accountId, companyId);</span>
+<span class="fc" id="L100">        Instant now = clock.instant();</span>
+<span class="fc" id="L101">        return invitationRepository.findByCompanyIdOrderByCreatedAtDesc(companyId).stream()</span>
+<span class="fc" id="L102">                .map(invitation -&gt; InvitationResponse.from(invitation, now))</span>
+<span class="fc" id="L103">                .toList();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

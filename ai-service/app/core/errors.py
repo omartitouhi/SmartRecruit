@@ -39,7 +39,7 @@ def register_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError):
-        return error_response(request, status.HTTP_422_UNPROCESSABLE_ENTITY, _validation_message(exc))
+        return error_response(request, status.HTTP_422_UNPROCESSABLE_CONTENT, _validation_message(exc))
 
     @app.exception_handler(LLMNotConfiguredError)
     async def llm_not_configured(request: Request, exc: LLMNotConfiguredError):

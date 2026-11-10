@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JobQueryService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.service</a> &gt; <span class="el_source">JobQueryService.java</span></div><h1>JobQueryService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.service;
+
+import com.smartrecruit.job.client.ApplicationCountsClient;
+import com.smartrecruit.job.client.CompanyDirectoryClient;
+import com.smartrecruit.job.dto.JobResponse;
+import com.smartrecruit.job.dto.JobSummaryResponse;
+import com.smartrecruit.job.dto.PageResponse;
+import com.smartrecruit.job.exception.ApiException;
+import com.smartrecruit.job.model.Job;
+import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.repository.JobRepository;
+import com.smartrecruit.job.repository.JobSpecifications;
+import com.smartrecruit.job.security.AuthenticatedUser;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.client.RestClientException;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+/**
+ * Read side of the offers: search (BE-JOB-04) and a recruiter's own listing (BE-JOB-05). What a caller
+ * may see depends on the role: candidates and recruiters browsing see published offers only, admins
+ * see every status, a recruiter sees every status of their own company with {@code companyId=me}.
+ */
+<span class="fc" id="L38">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class JobQueryService {
+
+    private static final String ME = &quot;me&quot;;
+
+    /** Newest publication first; drafts (no publication date) last; id keeps pages stable. */
+<span class="fc" id="L46">    private static final Sort NEWEST_FIRST =</span>
+<span class="fc" id="L47">            Sort.by(Sort.Order.desc(&quot;publishedAt&quot;).nullsLast(), Sort.Order.desc(&quot;updatedAt&quot;), Sort.Order.asc(&quot;id&quot;));</span>
+
+    private final JobRepository jobRepository;
+    private final CompanyDirectoryClient companyClient;
+    private final ApplicationCountsClient countsClient;
+    private final RecruiterCompanies recruiterCompanies;
+    private final TransactionTemplate transaction;
+    private final SavedJobService savedJobs;
+
+    public PageResponse&lt;JobSummaryResponse&gt; search(AuthenticatedUser user, JobSearchCriteria criteria, int page, int size) {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        boolean mine = ME.equalsIgnoreCase(criteria.companyId() == null ? &quot;&quot; : criteria.companyId().strip());</span>
+        Specification&lt;Job&gt; scope;
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (mine) {</span>
+<span class="fc" id="L60">            Optional&lt;UUID&gt; company = ownCompanyId(user);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            if (company.isEmpty()) {</span>
+<span class="fc" id="L62">                return new PageResponse&lt;&gt;(List.of(), page, size, 0, 0);</span>
+            }
+<span class="fc" id="L64">            scope = JobSpecifications.ownedBy(company.get());</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            if (criteria.status() != null) {</span>
+<span class="fc" id="L66">                scope = scope.and(JobSpecifications.hasStatus(criteria.status()));</span>
+            }
+<span class="fc" id="L68">        } else {</span>
+<span class="fc" id="L69">            scope = visibility(user, criteria);</span>
+        }
+<span class="fc" id="L71">        Specification&lt;Job&gt; filter = filters(criteria).and(scope);</span>
+        // Admins and a company's own listing may read why an offer was moderated.
+<span class="fc bfc" id="L73" title="All 4 branches covered.">        boolean withModerationReason = mine || &quot;ADMIN&quot;.equals(user.role());</span>
+<span class="fc" id="L74">        Page&lt;JobResponse&gt; found = transaction.execute(status -&gt;</span>
+<span class="fc" id="L75">                jobRepository.findAll(filter, PageRequest.of(page, size, NEWEST_FIRST))</span>
+<span class="fc" id="L76">                        .map(job -&gt; JobResponse.from(job, withModerationReason)));</span>
+
+<span class="fc" id="L78">        Map&lt;UUID, String&gt; companyNames = companyNames(found.getContent());</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        Map&lt;UUID, Long&gt; counts = mine ? applicationCounts(found.getContent()) : null;</span>
+<span class="fc" id="L80">        Set&lt;UUID&gt; saved = savedJobIds(user, found.getContent());</span>
+<span class="fc" id="L81">        return PageResponse.of(found, job -&gt; new JobSummaryResponse(job, companyNames.get(job.getCompanyId()),</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                counts == null ? null : counts.getOrDefault(job.getId(), 0L),</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                saved == null ? null : saved.contains(job.getId())));</span>
+    }
+
+    /**
+     * One offer. Published offers are public; any other status exists only for admins and the owning
+     * company, everybody else gets 404 as if it did not exist.
+     */
+    public JobSummaryResponse get(AuthenticatedUser user, UUID jobId) {
+        // The reason is only ever present on non-published offers, which are only served to owner/admin below.
+<span class="fc" id="L92">        JobResponse job = transaction.execute(status -&gt; jobRepository.findById(jobId)</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                        .map(found -&gt; JobResponse.from(found, found.getStatus() != JobStatus.PUBLISHED)))</span>
+<span class="fc" id="L94">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Offre introuvable&quot;));</span>
+<span class="fc bfc" id="L95" title="All 4 branches covered.">        if (job.getStatus() != JobStatus.PUBLISHED &amp;&amp; !mayViewUnpublished(user, job)) {</span>
+<span class="fc" id="L96">            throw new ApiException(HttpStatus.NOT_FOUND, &quot;Offre introuvable&quot;);</span>
+        }
+<span class="fc" id="L98">        Set&lt;UUID&gt; saved = savedJobIds(user, List.of(job));</span>
+<span class="fc" id="L99">        return new JobSummaryResponse(job, companyNames(List.of(job)).get(job.getCompanyId()), null,</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                saved == null ? null : saved.contains(job.getId()));</span>
+    }
+
+    /** EXT-SAVED-01: which of the offers the candidate bookmarked; null for other roles (no {@code saved} flag). */
+    private Set&lt;UUID&gt; savedJobIds(AuthenticatedUser user, List&lt;JobResponse&gt; jobs) {
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (!&quot;CANDIDATE&quot;.equals(user.role())) {</span>
+<span class="fc" id="L106">            return null;</span>
+        }
+<span class="fc" id="L108">        return savedJobs.savedAmong(user.id(), jobs.stream().map(JobResponse::getId).toList());</span>
+    }
+
+    private boolean mayViewUnpublished(AuthenticatedUser user, JobResponse job) {
+<span class="fc bfc" id="L112" title="All 3 branches covered.">        return switch (user.role()) {</span>
+<span class="fc" id="L113">            case &quot;ADMIN&quot; -&gt; true;</span>
+<span class="fc" id="L114">            case &quot;RECRUITER&quot; -&gt; recruiterCompanies.companyIdOf(user.id()).filter(job.getCompanyId()::equals).isPresent();</span>
+<span class="fc" id="L115">            default -&gt; false;</span>
+        };
+    }
+
+    /** {@code companyId=me} only makes sense for a recruiter; empty if they have no company yet. */
+    private Optional&lt;UUID&gt; ownCompanyId(AuthenticatedUser user) {
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if (!&quot;RECRUITER&quot;.equals(user.role())) {</span>
+<span class="fc" id="L122">            throw new ApiException(HttpStatus.FORBIDDEN, &quot;companyId=me est réservé aux recruteurs&quot;);</span>
+        }
+<span class="fc" id="L124">        return recruiterCompanies.companyIdOf(user.id());</span>
+    }
+
+    private Specification&lt;Job&gt; visibility(AuthenticatedUser user, JobSearchCriteria criteria) {
+<span class="fc" id="L128">        Specification&lt;Job&gt; visible = Specification.unrestricted();</span>
+<span class="fc" id="L129">        boolean admin = &quot;ADMIN&quot;.equals(user.role());</span>
+<span class="fc bfc" id="L130" title="All 4 branches covered.">        if (admin &amp;&amp; criteria.status() != null) {</span>
+<span class="fc" id="L131">            visible = visible.and(JobSpecifications.hasStatus(criteria.status()));</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        } else if (!admin) {</span>
+<span class="fc" id="L133">            visible = visible.and(JobSpecifications.hasStatus(JobStatus.PUBLISHED));</span>
+        }
+<span class="pc bpc" id="L135" title="1 of 4 branches missed.">        if (criteria.companyId() != null &amp;&amp; !criteria.companyId().isBlank()) {</span>
+<span class="fc" id="L136">            visible = visible.and(JobSpecifications.ownedBy(parseCompanyId(criteria.companyId())));</span>
+        }
+<span class="fc" id="L138">        return visible;</span>
+    }
+
+    private Specification&lt;Job&gt; filters(JobSearchCriteria criteria) {
+<span class="fc" id="L142">        Specification&lt;Job&gt; spec = Specification.unrestricted();</span>
+<span class="pc bpc" id="L143" title="1 of 4 branches missed.">        if (criteria.keyword() != null &amp;&amp; !criteria.keyword().isBlank()) {</span>
+<span class="fc" id="L144">            spec = spec.and(JobSpecifications.mentions(criteria.keyword()));</span>
+        }
+<span class="pc bpc" id="L146" title="1 of 4 branches missed.">        if (criteria.location() != null &amp;&amp; !criteria.location().isBlank()) {</span>
+<span class="fc" id="L147">            spec = spec.and(JobSpecifications.locatedIn(criteria.location()));</span>
+        }
+<span class="fc" id="L149">        List&lt;String&gt; skills = cleaned(criteria.skills());</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (!skills.isEmpty()) {</span>
+<span class="fc" id="L151">            spec = spec.and(JobSpecifications.requiresAnyOf(skills));</span>
+        }
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (criteria.contractType() != null) {</span>
+<span class="fc" id="L154">            spec = spec.and(JobSpecifications.hasContractType(criteria.contractType()));</span>
+        }
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if (criteria.experienceLevel() != null) {</span>
+<span class="fc" id="L157">            spec = spec.and(JobSpecifications.hasExperienceLevel(criteria.experienceLevel()));</span>
+        }
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if (criteria.workMode() != null) {</span>
+<span class="fc" id="L160">            spec = spec.and(JobSpecifications.hasWorkMode(criteria.workMode()));</span>
+        }
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if (criteria.minSalary() != null) {</span>
+<span class="fc" id="L163">            spec = spec.and(JobSpecifications.paysAtLeast(criteria.minSalary()));</span>
+        }
+<span class="fc" id="L165">        return spec;</span>
+    }
+
+    private static List&lt;String&gt; cleaned(List&lt;String&gt; skills) {
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        return skills == null ? List.of()</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                : skills.stream().filter(Objects::nonNull).map(String::strip).filter(s -&gt; !s.isEmpty()).toList();</span>
+    }
+
+    private static UUID parseCompanyId(String companyId) {
+        try {
+<span class="fc" id="L175">            return UUID.fromString(companyId.strip());</span>
+<span class="fc" id="L176">        } catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L177">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;companyId doit être un identifiant d'entreprise valide&quot;);</span>
+        }
+    }
+
+    /** Company names are a nice-to-have: without user-service the page is still returned. */
+    private Map&lt;UUID, String&gt; companyNames(List&lt;JobResponse&gt; jobs) {
+<span class="fc" id="L183">        Set&lt;UUID&gt; companyIds = jobs.stream().map(JobResponse::getCompanyId).filter(Objects::nonNull).collect(Collectors.toSet());</span>
+        try {
+<span class="fc" id="L185">            return companyClient.namesOf(companyIds);</span>
+<span class="fc" id="L186">        } catch (RestClientException e) {</span>
+<span class="fc" id="L187">            log.warn(&quot;user-service indisponible, offres renvoyées sans nom d'entreprise : {}&quot;, e.getMessage());</span>
+<span class="fc" id="L188">            return Map.of();</span>
+        }
+    }
+
+    /** Application counts are a nice-to-have: without application-service every offer shows 0. */
+    private Map&lt;UUID, Long&gt; applicationCounts(List&lt;JobResponse&gt; jobs) {
+        try {
+<span class="fc" id="L195">            return countsClient.countsOf(jobs.stream().map(JobResponse::getId).toList());</span>
+<span class="fc" id="L196">        } catch (RestClientException e) {</span>
+<span class="fc" id="L197">            log.warn(&quot;application-service indisponible, nombre de candidatures mis à 0 : {}&quot;, e.getMessage());</span>
+<span class="fc" id="L198">            return Map.of();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

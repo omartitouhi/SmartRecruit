@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErasureClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.gdpr</a> &gt; <span class="el_source">ErasureClient.java</span></div><h1>ErasureClient.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.gdpr;
+
+import com.smartrecruit.user.security.InternalIdentityVerifier;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+import java.net.http.HttpClient;
+import java.time.Duration;
+import java.util.UUID;
+
+/**
+ * Calls the services that hold personal data of a candidate to erase it (BE-SEC-02). Requests carry
+ * a signed {@code SERVICE} identity, the same mechanism the api-gateway uses (BE-SEC-04).
+ */
+@Component
+public class ErasureClient {
+
+    private final RestClient authService;
+    private final RestClient aiService;
+    private final RestClient jobService;
+    private final RestClient applicationService;
+    private final InternalIdentityVerifier signer;
+
+<span class="fc" id="L25">    public ErasureClient(GdprErasureProperties properties, InternalIdentityVerifier signer) {</span>
+<span class="fc" id="L26">        HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(Duration.ofSeconds(5)).build();</span>
+<span class="fc" id="L27">        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);</span>
+<span class="fc" id="L28">        requestFactory.setReadTimeout(Duration.ofSeconds(10));</span>
+<span class="fc" id="L29">        this.authService = RestClient.builder().baseUrl(properties.authServiceUri()).requestFactory(requestFactory).build();</span>
+<span class="fc" id="L30">        this.aiService = RestClient.builder().baseUrl(properties.aiServiceUri()).requestFactory(requestFactory).build();</span>
+<span class="fc" id="L31">        this.jobService = RestClient.builder().baseUrl(properties.jobServiceUri()).requestFactory(requestFactory).build();</span>
+<span class="fc" id="L32">        this.applicationService = RestClient.builder().baseUrl(properties.applicationServiceUri())</span>
+<span class="fc" id="L33">                .requestFactory(requestFactory).build();</span>
+<span class="fc" id="L34">        this.signer = signer;</span>
+<span class="fc" id="L35">    }</span>
+
+    /** Anonymizes the account in auth-service. Any non-2xx answer throws. */
+    public void eraseAccount(UUID accountId) {
+<span class="fc" id="L39">        delete(authService, &quot;/internal/v1/accounts/{id}&quot;, accountId);</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Removes CV parsing results, embeddings and matching data from ai-service. Contract documented in
+     * {@code DATA_MODEL.md} §4.6. Any non-2xx answer throws.
+     */
+    public void eraseAiData(UUID candidateId) {
+<span class="fc" id="L47">        delete(aiService, &quot;/api/v1/ai/candidates/{id}/data&quot;, candidateId);</span>
+<span class="fc" id="L48">    }</span>
+
+    /** Removes the candidate's saved offers from job-service (EXT-SAVED-01). Any non-2xx answer throws. */
+    public void eraseSavedJobs(UUID candidateId) {
+<span class="fc" id="L52">        delete(jobService, &quot;/internal/v1/candidates/{id}/saved-jobs&quot;, candidateId);</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Removes cover letters and recruiter notes about the candidate from application-service
+     * (EXT-APP-01, EXT-APP-03). Any non-2xx answer throws.
+     */
+    public void eraseApplicationData(UUID candidateId) {
+<span class="fc" id="L60">        delete(applicationService, &quot;/internal/v1/candidates/{id}/data&quot;, candidateId);</span>
+<span class="fc" id="L61">    }</span>
+
+    private void delete(RestClient client, String path, UUID id) {
+<span class="fc" id="L64">        client.delete()</span>
+<span class="fc" id="L65">                .uri(path, id)</span>
+<span class="fc" id="L66">                .headers(signer::addServiceIdentity)</span>
+<span class="fc" id="L67">                .retrieve()</span>
+<span class="fc" id="L68">                .toBodilessEntity();</span>
+<span class="fc" id="L69">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

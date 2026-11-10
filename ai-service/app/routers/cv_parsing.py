@@ -21,7 +21,7 @@ PDF_MAGIC = b"%PDF-"
 
 
 def _invalid_file(message: str) -> HTTPException:
-    return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=message)
+    return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=message)
 
 
 async def _read_pdf(file: UploadFile) -> bytes:

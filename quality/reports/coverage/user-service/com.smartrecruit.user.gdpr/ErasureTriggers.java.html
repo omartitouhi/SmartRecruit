@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErasureTriggers.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.gdpr</a> &gt; <span class="el_source">ErasureTriggers.java</span></div><h1>ErasureTriggers.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.gdpr;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
+
+/**
+ * When the erasure is propagated (BE-SEC-02): right after the deletion is committed, then
+ * periodically until every service confirmed.
+ */
+public final class ErasureTriggers {
+
+    private ErasureTriggers() {
+    }
+
+    /** Published by user-service when a candidate deletes their account. */
+<span class="fc" id="L23">    public record AccountDeletedEvent(java.util.UUID accountId) {</span>
+    }
+
+    @Component
+    @RequiredArgsConstructor
+    @ConditionalOnProperty(prefix = &quot;gdpr.erasure&quot;, name = &quot;immediate&quot;, havingValue = &quot;true&quot;)
+    static class Immediate {
+
+        private final PersonalDataErasureProcessor processor;
+
+        /** Asynchronous: the candidate's DELETE request does not wait for the other services. */
+        @Async
+        @TransactionalEventListener
+        public void onAccountDeleted(AccountDeletedEvent event) {
+<span class="fc" id="L37">            processor.process(event.accountId());</span>
+<span class="fc" id="L38">        }</span>
+    }
+
+    @Component
+    @RequiredArgsConstructor
+    @ConditionalOnProperty(prefix = &quot;gdpr.erasure&quot;, name = &quot;scheduler-enabled&quot;, havingValue = &quot;true&quot;)
+    static class Retry {
+
+        private final PersonalDataErasureProcessor processor;
+
+        @Scheduled(fixedDelayString = &quot;${gdpr.erasure.retry-interval}&quot;, initialDelayString = &quot;${gdpr.erasure.retry-interval}&quot;)
+        public void retryPending() {
+<span class="nc" id="L50">            processor.processPending();</span>
+<span class="nc" id="L51">        }</span>
+    }
+
+    @Configuration
+    @EnableAsync
+    @EnableScheduling
+<span class="fc" id="L57">    static class Enable {</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

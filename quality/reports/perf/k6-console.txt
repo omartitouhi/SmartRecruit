@@ -1,0 +1,7 @@
+requêtes : 4529 (73.4/s)
+durée (ms) : moy 100.0 | médiane 59.8 | p90 215.5 | p95 321.4 | max 1117.8
+taux d'erreur HTTP : 0.00 %
+checks réussis : 100.00 %
+seuil http_req_duration p(95)<500 : OK
+seuil checks rate>0.99 : OK
+seuil http_req_failed rate<0.01 : OK

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JobModerationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.service</a> &gt; <span class="el_source">JobModerationService.java</span></div><h1>JobModerationService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.service;
+
+import com.smartrecruit.job.dto.JobResponse;
+import com.smartrecruit.job.exception.ApiException;
+import com.smartrecruit.job.model.Job;
+import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.repository.JobRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * Withdrawal of an offer by an admin, requested by dashboard-service (BE-ADMIN-02). A moderated offer
+ * leaves candidate search and can no longer be edited or reopened by its company.
+ */
+@Service
+@RequiredArgsConstructor
+public class JobModerationService {
+
+    private final JobRepository jobRepository;
+    private final Clock clock;
+
+    /** Moderating again an already moderated offer replaces the reason. */
+    @Transactional
+    public JobResponse moderate(UUID jobId, String reason) {
+<span class="fc" id="L31">        Job job = jobRepository.findById(jobId)</span>
+<span class="fc" id="L32">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Offre introuvable&quot;));</span>
+<span class="fc" id="L33">        Instant now = clock.instant();</span>
+<span class="fc" id="L34">        job.setStatus(JobStatus.MODERATED);</span>
+<span class="fc" id="L35">        job.setModerationReason(reason);</span>
+<span class="fc" id="L36">        job.setModeratedAt(now);</span>
+<span class="fc" id="L37">        job.setUpdatedAt(now);</span>
+<span class="fc" id="L38">        return JobResponse.from(jobRepository.save(job), true);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

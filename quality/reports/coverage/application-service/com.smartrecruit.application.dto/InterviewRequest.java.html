@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InterviewRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">application-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.application.dto</a> &gt; <span class="el_source">InterviewRequest.java</span></div><h1>InterviewRequest.java</h1><pre class="source lang-java linenums">package com.smartrecruit.application.dto;
+
+import com.smartrecruit.application.model.InterviewMode;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.time.Instant;
+
+/**
+ * Interview to plan (EXT-APP-02). {@code scheduledAt} must be in the future (checked against the service
+ * clock), {@code durationMinutes} defaults to 60.
+ */
+<span class="fc" id="L15">public record InterviewRequest(</span>
+        @NotNull(message = &quot;La date de l'entretien est obligatoire&quot;) Instant scheduledAt,
+        @Min(value = 15, message = &quot;Un entretien dure au moins 15 minutes&quot;)
+        @Max(value = 480, message = &quot;Un entretien dure au plus 480 minutes&quot;) Integer durationMinutes,
+        @NotNull(message = &quot;Le mode de l'entretien est obligatoire&quot;) InterviewMode mode,
+        @Size(max = 500, message = &quot;Le lieu ou le lien ne doit pas dépasser 500 caractères&quot;) String location) {
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

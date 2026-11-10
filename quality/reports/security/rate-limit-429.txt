@@ -1,0 +1,2 @@
+# Preuve BE-SEC-05 : limitation des tentatives (10 / 5 min / IP) déclenchée pendant la campagne de tests du 2026-11-09T18:29:02+01:00
+AssertionError: ('rec4', 429, '{"timestamp":"2026-11-09T17:28:52.602177891Z","status":429,"error":"Too Many Requests","message":"Trop de tentatives depuis cette adresse, réessayez plus tard","path":"/api/v1/auth/register"}')

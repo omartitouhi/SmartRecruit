@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JobStatus.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.model</a> &gt; <span class="el_source">JobStatus.java</span></div><h1>JobStatus.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.model;
+
+/**
+ * Mirrors the {@code JobStatus} enum documented in {@code DATA_MODEL.md} (§2).
+ */
+<span class="fc" id="L6">public enum JobStatus {</span>
+<span class="fc" id="L7">    DRAFT,</span>
+<span class="fc" id="L8">    PUBLISHED,</span>
+<span class="fc" id="L9">    CLOSED,</span>
+<span class="fc" id="L10">    MODERATED;</span>
+
+    /**
+     * Transitions a recruiter may request: publish a draft, close a published offer, reopen a closed
+     * one. {@code MODERATED} is only entered through moderation and never left.
+     */
+    public boolean canBecome(JobStatus next) {
+<span class="pc bpc" id="L17" title="1 of 4 branches missed.">        return switch (this) {</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">            case DRAFT -&gt; next == PUBLISHED;</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">            case PUBLISHED -&gt; next == CLOSED;</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">            case CLOSED -&gt; next == PUBLISHED;</span>
+<span class="nc" id="L21">            case MODERATED -&gt; false;</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InternalApplicationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">application-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.application.controller</a> &gt; <span class="el_source">InternalApplicationController.java</span></div><h1>InternalApplicationController.java</h1><pre class="source lang-java linenums">package com.smartrecruit.application.controller;
+
+import com.smartrecruit.application.dto.ApplicationStatsResponse;
+import com.smartrecruit.application.model.Application;
+import com.smartrecruit.application.model.ApplicationStatus;
+import com.smartrecruit.application.model.StatusHistoryEntry;
+import com.smartrecruit.application.repository.ApplicationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.Set;
+import java.util.UUID;
+
+/**
+ * Backend-to-backend endpoints. {@code /internal/**} is not routed by the api-gateway and requires
+ * a signed {@code SERVICE} identity.
+ */
+@RestController
+@RequestMapping(&quot;/internal/v1/applications&quot;)
+@PreAuthorize(&quot;hasRole('SERVICE')&quot;)
+@RequiredArgsConstructor
+public class InternalApplicationController {
+
+<span class="fc" id="L38">    private static final Set&lt;ApplicationStatus&gt; DECIDED = Set.of(ApplicationStatus.ACCEPTED, ApplicationStatus.REJECTED);</span>
+    private static final double SECONDS_PER_DAY = 86_400d;
+
+    private final ApplicationRepository applications;
+    private final Clock clock;
+
+    /** Applications per job, withdrawn ones excluded; every requested job is present (0 when none). */
+    @GetMapping(&quot;/counts&quot;)
+    @Transactional(readOnly = true)
+    public Map&lt;UUID, Long&gt; counts(@RequestParam List&lt;UUID&gt; jobIds) {
+<span class="fc" id="L48">        Map&lt;UUID, Long&gt; counts = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L49">        jobIds.forEach(jobId -&gt; counts.put(jobId, 0L));</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (!jobIds.isEmpty()) {</span>
+<span class="fc" id="L51">            applications.countByJob(jobIds, ApplicationStatus.WITHDRAWN)</span>
+<span class="fc" id="L52">                    .forEach(row -&gt; counts.put((UUID) row[0], (Long) row[1]));</span>
+        }
+<span class="fc" id="L54">        return counts;</span>
+    }
+
+    /**
+     * Statistics over every application, or only those of {@code companyId} when given; with the decision delay
+     * and the number of upcoming interviews (EXT-DASH-01).
+     */
+    @GetMapping(&quot;/stats&quot;)
+    @Transactional(readOnly = true)
+    public ApplicationStatsResponse stats(@RequestParam(required = false) UUID companyId) {
+<span class="fc" id="L64">        Instant now = clock.instant();</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (companyId == null) {</span>
+<span class="fc" id="L66">            return ApplicationStatsResponse.from(applications.statusAndScore(ApplicationStatus.WITHDRAWN),</span>
+<span class="fc" id="L67">                    averageDecisionDays(applications.findByStatusIn(DECIDED)),</span>
+<span class="fc" id="L68">                    applications.countUpcomingInterviews(ApplicationStatus.INTERVIEW, now));</span>
+        }
+<span class="fc" id="L70">        return ApplicationStatsResponse.from(applications.statusAndScoreOfCompany(companyId, ApplicationStatus.WITHDRAWN),</span>
+<span class="fc" id="L71">                averageDecisionDays(applications.findByCompanyIdAndStatusIn(companyId, DECIDED)),</span>
+<span class="fc" id="L72">                applications.countUpcomingInterviewsOfCompany(companyId, ApplicationStatus.INTERVIEW, now));</span>
+    }
+
+    /** Mean days from {@code appliedAt} to the first ACCEPTED/REJECTED history entry, 1 decimal; null when none. */
+    static Double averageDecisionDays(List&lt;Application&gt; decided) {
+<span class="fc" id="L77">        OptionalDouble average = decided.stream()</span>
+<span class="fc" id="L78">                .map(InternalApplicationController::decisionDays)</span>
+<span class="fc" id="L79">                .flatMap(Optional::stream)</span>
+<span class="fc" id="L80">                .mapToDouble(Double::doubleValue)</span>
+<span class="fc" id="L81">                .average();</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        return average.isPresent() ? Math.round(average.getAsDouble() * 10) / 10.0 : null;</span>
+    }
+
+    private static Optional&lt;Double&gt; decisionDays(Application application) {
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (application.getAppliedAt() == null) {</span>
+<span class="nc" id="L87">            return Optional.empty();</span>
+        }
+<span class="fc" id="L89">        return application.getStatusHistory().stream()</span>
+<span class="fc" id="L90">                .filter(entry -&gt; DECIDED.contains(entry.getStatus()))</span>
+<span class="fc" id="L91">                .map(StatusHistoryEntry::getChangedAt)</span>
+<span class="fc" id="L92">                .filter(Objects::nonNull)</span>
+<span class="fc" id="L93">                .findFirst()</span>
+<span class="fc" id="L94">                .map(decidedAt -&gt; Duration.between(application.getAppliedAt(), decidedAt).toSeconds() / SECONDS_PER_DAY);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

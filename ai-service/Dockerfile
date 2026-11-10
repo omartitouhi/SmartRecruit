@@ -10,6 +10,9 @@ RUN --mount=type=cache,id=smartrecruit-pip,target=/root/.cache/pip \
       echo "pip a échoué (essai $i/5), nouvelle tentative..."; sleep 10; \
     done; exit 1
 
+# pip ne sert plus à l'exécution ; il embarque ses propres urllib3/certifi/msgpack signalés par Trivy (SCA).
+RUN python -m pip uninstall -y pip
+
 COPY app ./app
 
 # Sans privilèges, UID fixe (requis par runAsNonRoot sous Kubernetes).

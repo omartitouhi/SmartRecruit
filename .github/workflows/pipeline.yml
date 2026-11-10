@@ -47,15 +47,18 @@ jobs:
       - name: Build et tests Maven
         working-directory: backend/${{ matrix.service }}
         # chmod : le bit exécutable du wrapper se perd parfois avec des commits faits sous Windows.
+        # JaCoCo (couverture, ISO 25010 maintenabilité) appelé en ligne de commande : aucun pom à modifier.
         run: |
           chmod +x mvnw
-          ./mvnw -B -ntp verify
-      - name: Rapports de tests
-        if: failure()
+          ./mvnw -B -ntp org.jacoco:jacoco-maven-plugin:0.8.14:prepare-agent verify org.jacoco:jacoco-maven-plugin:0.8.14:report
+      - name: Rapports de tests et de couverture
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: test-reports-${{ matrix.service }}
-          path: backend/${{ matrix.service }}/target/surefire-reports/
+          path: |
+            backend/${{ matrix.service }}/target/surefire-reports/
+            backend/${{ matrix.service }}/target/site/jacoco/
           if-no-files-found: ignore
 
   frontend:
@@ -74,8 +77,10 @@ jobs:
       - run: npm ci
       - name: Lint
         run: npm run lint
-      - name: Tests (Vitest)
-        run: npm test
+      - name: Tests (Vitest) + couverture
+        run: npm run test:coverage
+      - name: Dépendances vulnérables (npm audit, SCA)
+        run: npm audit --omit=dev --audit-level=high
       - name: Build
         run: npm run build
 
@@ -95,8 +100,13 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - name: Lint (ruff)
         run: ruff check .
-      - name: Tests (pytest)
-        run: pytest
+      - name: Tests (pytest) + couverture
+        run: pytest --cov=app --cov-branch
+      - name: Sécurité (Bandit SAST, pip-audit SCA)
+        run: |
+          pip install bandit==1.8.6 pip-audit==2.9.0
+          bandit -r app -q
+          pip-audit -r requirements.txt
 
   # ------------------------------------------------------- 2. Validation IaC
   kustomize:

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JobResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.dto</a> &gt; <span class="el_source">JobResponse.java</span></div><h1>JobResponse.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.dto;
+
+import com.smartrecruit.job.model.ContractType;
+import com.smartrecruit.job.model.ExperienceLevel;
+import com.smartrecruit.job.model.Job;
+import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.model.WorkMode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class JobResponse {
+
+    private UUID id;
+    private UUID companyId;
+    private String title;
+    private String description;
+    private List&lt;String&gt; requiredSkills;
+    private ExperienceLevel experienceLevel;
+    private ContractType contractType;
+    private String location;
+    private JobStatus status;
+    private Instant publishedAt;
+    private Instant updatedAt;
+    /** Only shown to the owning company and admins; null for everybody else. */
+    private String moderationReason;
+    /** EXT-JOB-01: never null, ON_SITE for offers created before the field existed. */
+    private WorkMode workMode;
+    private Integer salaryMin;
+    private Integer salaryMax;
+    private LocalDate applicationDeadline;
+    /** EXT-JOB-01: never null, 1 for offers created before the field existed. */
+    private Integer positions;
+
+    /** Public view of the offer: without the moderation reason. */
+    public static JobResponse from(Job job) {
+<span class="fc" id="L47">        return from(job, false);</span>
+    }
+
+    /** @param withModerationReason true for the owning company and admins */
+    public static JobResponse from(Job job, boolean withModerationReason) {
+<span class="fc" id="L52">        return JobResponse.builder()</span>
+<span class="fc" id="L53">                .id(job.getId())</span>
+<span class="fc" id="L54">                .companyId(job.getCompanyId())</span>
+<span class="fc" id="L55">                .title(job.getTitle())</span>
+<span class="fc" id="L56">                .description(job.getDescription())</span>
+<span class="fc" id="L57">                .requiredSkills(job.getRequiredSkills())</span>
+<span class="fc" id="L58">                .experienceLevel(job.getExperienceLevel())</span>
+<span class="fc" id="L59">                .contractType(job.getContractType())</span>
+<span class="fc" id="L60">                .location(job.getLocation())</span>
+<span class="fc" id="L61">                .status(job.getStatus())</span>
+<span class="fc" id="L62">                .publishedAt(job.getPublishedAt())</span>
+<span class="fc" id="L63">                .updatedAt(job.getUpdatedAt())</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                .moderationReason(withModerationReason ? job.getModerationReason() : null)</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                .workMode(job.getWorkMode() == null ? WorkMode.ON_SITE : job.getWorkMode())</span>
+<span class="fc" id="L66">                .salaryMin(job.getSalaryMin())</span>
+<span class="fc" id="L67">                .salaryMax(job.getSalaryMax())</span>
+<span class="fc" id="L68">                .applicationDeadline(job.getApplicationDeadline())</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                .positions(job.getPositions() == null ? 1 : job.getPositions())</span>
+<span class="fc" id="L70">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,12 @@
+{
+  "name": "smartrecruit-e2e-ui",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "report": "playwright show-report ../reports/e2e-ui/html"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.56.1"
+  }
+}

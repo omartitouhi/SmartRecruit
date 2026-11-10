@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auth-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.auth.config</a> &gt; <span class="el_source">SecurityConfig.java</span></div><h1>SecurityConfig.java</h1><pre class="source lang-java linenums">package com.smartrecruit.auth.config;
+
+import com.smartrecruit.auth.security.GatewayIdentityFilter;
+import com.smartrecruit.auth.security.SecurityErrorHandler;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+/**
+ * RBAC (BE-AUTH-04): every endpoint requires an identity validated by the api-gateway (BE-SEC-04)
+ * except the public ones below.
+ * Role restrictions are declared on controllers with {@code @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)}.
+ */
+@Configuration
+@EnableMethodSecurity
+<span class="fc" id="L23">public class SecurityConfig {</span>
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+<span class="fc" id="L27">        return new BCryptPasswordEncoder();</span>
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, GatewayIdentityFilter gatewayIdentityFilter,
+                                                   SecurityErrorHandler securityErrorHandler) throws Exception {
+<span class="fc" id="L33">        http</span>
+                // CSRF does not apply (BE-SEC-03): the identity travels in headers set by the gateway from
+                // the Authorization header, never in a cookie, and no session is created.
+<span class="fc" id="L36">                .csrf(csrf -&gt; csrf.disable())</span>
+<span class="fc" id="L37">                .sessionManagement(session -&gt; session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))</span>
+                // BE-SEC-03: JSON-only API, nothing may be rendered or framed from its responses.
+<span class="fc" id="L39">                .headers(headers -&gt; headers</span>
+<span class="fc" id="L40">                        .contentSecurityPolicy(csp -&gt; csp.policyDirectives(&quot;default-src 'none'; frame-ancestors 'none'&quot;))</span>
+                )
+<span class="fc" id="L42">                .authorizeHttpRequests(auth -&gt; auth</span>
+<span class="fc" id="L43">                        .requestMatchers(&quot;/api/v1/ping&quot;, &quot;/actuator/**&quot;, &quot;/error&quot;,</span>
+                                &quot;/api/v1/auth/register&quot;, &quot;/api/v1/auth/login&quot;, &quot;/api/v1/auth/refresh&quot;,
+<span class="fc" id="L45">                                &quot;/api/v1/auth/logout&quot;, &quot;/api/v1/auth/forgot-password&quot;, &quot;/api/v1/auth/reset-password&quot;).permitAll()</span>
+<span class="fc" id="L46">                        .anyRequest().authenticated()</span>
+                )
+<span class="fc" id="L48">                .exceptionHandling(errors -&gt; errors</span>
+<span class="fc" id="L49">                        .authenticationEntryPoint(securityErrorHandler)</span>
+<span class="fc" id="L50">                        .accessDeniedHandler(securityErrorHandler)</span>
+                )
+<span class="fc" id="L52">                .addFilterBefore(gatewayIdentityFilter, UsernamePasswordAuthenticationFilter.class);</span>
+<span class="fc" id="L53">        return http.build();</span>
+    }
+
+    /** The filter is wired into the security chain only, not registered a second time as a servlet filter. */
+    @Bean
+    public FilterRegistrationBean&lt;GatewayIdentityFilter&gt; gatewayIdentityFilterRegistration(GatewayIdentityFilter filter) {
+<span class="fc" id="L59">        FilterRegistrationBean&lt;GatewayIdentityFilter&gt; registration = new FilterRegistrationBean&lt;&gt;(filter);</span>
+<span class="fc" id="L60">        registration.setEnabled(false);</span>
+<span class="fc" id="L61">        return registration;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

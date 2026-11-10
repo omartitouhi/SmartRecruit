@@ -1,0 +1,871 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="398" failures="0" errors="0" time="102.7399375">
+    <testsuite name="src/App.test.tsx" timestamp="2026-11-09T17:16:46.490Z" hostname="LAPTOP-OTI2" tests="13" failures="0" errors="0" skipped="0" time="8.3847803">
+        <testcase classname="src/App.test.tsx" name="demo mode end to end &gt; logs in with the Candidat·e demo account and lands on its dashboard" time="1.1588546">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="demo mode end to end &gt; logs in with the Recruteur·se demo account and lands on its dashboard" time="0.3988502">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="demo mode end to end &gt; logs in with the Admin demo account and lands on its dashboard" time="0.3752146">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="demo mode end to end &gt; refuses a wrong password with the generic message" time="0.997961">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="demo mode end to end &gt; registers, goes to the login page with a confirmation, then logs in as the new account" time="1.7918278">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="route guards with a restored session &gt; sends an anonymous visitor to /login" time="0.0737213">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="route guards with a restored session &gt; shows a candidate the 403 page on an admin route" time="0.0687661">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="route guards with a restored session &gt; keeps a recruiter out of the candidate space" time="0.0567084">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="route guards with a restored session &gt; drops an invalid session and asks to log in again" time="0.0840568">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="route guards with a restored session &gt; bounces a signed-in user away from /login to their own space" time="0.1680895">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="route guards with a restored session &gt; shows the 404 page for an unknown route" time="0.0376815">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="journeys on the mock backend &gt; lets the demo candidate open an offer and apply, then find it in &quot;Mes candidatures&quot;" time="0.3646091">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="journeys on the mock backend &gt; lets the demo recruiter publish an offer that then shows up in &quot;Mes offres&quot;" time="2.8027027">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/client.test.ts" timestamp="2026-11-09T17:16:46.501Z" hostname="LAPTOP-OTI2" tests="15" failures="0" errors="0" skipped="0" time="0.097277">
+        <testcase classname="src/api/client.test.ts" name="parseMockModules &gt; simulates every module when VITE_USE_MOCKS is true" time="0.0063279">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="parseMockModules &gt; simulates only the listed modules, ignoring spaces and unknown names" time="0.0006219">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="parseMockModules &gt; simulates nothing by default" time="0.0004216">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; adds the bearer token to every call" time="0.0080036">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; sends no Authorization header without a session" time="0.0013652">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; refreshes once on a 401 and retries with the new token" time="0.0208215">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; shares one refresh between concurrent 401s (refresh tokens are single-use)" time="0.0141454">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; clears the session and signals expiry when the refresh is refused" time="0.0191543">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; expires the session on a 401 when there is no refresh token" time="0.0039974">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; does not try to refresh when /auth/login answers 401 (wrong credentials, not an expired token)" time="0.0041274">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; does not try to refresh when /auth/register answers 401 (wrong credentials, not an expired token)" time="0.0023852">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; does not try to refresh when /auth/refresh answers 401 (wrong credentials, not an expired token)" time="0.0024955">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; does not try to refresh when /auth/forgot-password answers 401 (wrong credentials, not an expired token)" time="0.0030156">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; does refresh on a 401 from /auth/me, so a reload with an expired access token keeps the session" time="0.0025623">
+        </testcase>
+        <testcase classname="src/api/client.test.ts" name="token interceptor &gt; passes other errors through untouched" time="0.0025366">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/http.test.ts" timestamp="2026-11-09T17:16:46.506Z" hostname="LAPTOP-OTI2" tests="13" failures="0" errors="0" skipped="0" time="0.1020458">
+        <testcase classname="src/api/http.test.ts" name="auth-service calls &gt; sends register, login, me, logout and the password flow to /auth" time="0.0432693">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="user-service candidate calls &gt; reads and saves the profile and fetches the CV suggestions" time="0.0042824">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="user-service candidate calls &gt; uploads the CV as multipart field &quot;file&quot; and reports progress" time="0.0065647">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="user-service candidate calls &gt; downloads a CV as a blob and deletes the account with confirm=true" time="0.0086826">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="user-service company calls &gt; creates, reads, patches and invites per contract" time="0.0056551">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="job-service calls &gt; searches with keyword and comma-joined skills, dropping empty filters" time="0.0020192">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="job-service calls &gt; omits an empty skills list" time="0.0011923">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="job-service calls &gt; creates without a companyId, patches, changes status and reads one job" time="0.0074574">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="application-service calls &gt; applies, lists, changes status and withdraws per contract" time="0.0046618">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="application-service calls &gt; asks application-service for the match preview and ai-service for the skill gap" time="0.001982">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="dashboard-service calls &gt; reads global and company stats" time="0.002144">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="dashboard-service calls &gt; lists users with filters and changes a status" time="0.003502">
+        </testcase>
+        <testcase classname="src/api/http.test.ts" name="dashboard-service calls &gt; moderates a job with a reason and filters the audit log" time="0.0037283">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/auth/AuthProvider.test.tsx" timestamp="2026-11-09T17:16:46.518Z" hostname="LAPTOP-OTI2" tests="8" failures="0" errors="0" skipped="0" time="0.3311873">
+        <testcase classname="src/auth/AuthProvider.test.tsx" name="AuthProvider &gt; is anonymous without a stored token and does not call the API" time="0.1164522">
+        </testcase>
+        <testcase classname="src/auth/AuthProvider.test.tsx" name="AuthProvider &gt; restores the session from a stored token" time="0.0384837">
+        </testcase>
+        <testcase classname="src/auth/AuthProvider.test.tsx" name="AuthProvider &gt; clears an unusable stored token" time="0.0571703">
+        </testcase>
+        <testcase classname="src/auth/AuthProvider.test.tsx" name="AuthProvider &gt; stores the tokens and loads the account on login, trimming the email" time="0.0139842">
+        </testcase>
+        <testcase classname="src/auth/AuthProvider.test.tsx" name="AuthProvider &gt; does not keep the tokens when the account cannot be loaded after login" time="0.0101297">
+        </testcase>
+        <testcase classname="src/auth/AuthProvider.test.tsx" name="AuthProvider &gt; registers without logging the user in" time="0.008233">
+        </testcase>
+        <testcase classname="src/auth/AuthProvider.test.tsx" name="AuthProvider &gt; logs out locally first, then revokes the refresh token, even if the call fails" time="0.0536446">
+        </testcase>
+        <testcase classname="src/auth/AuthProvider.test.tsx" name="AuthProvider &gt; becomes anonymous when the session expires during use" time="0.0279036">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/auth/RequireRole.test.tsx" timestamp="2026-11-09T17:16:46.520Z" hostname="LAPTOP-OTI2" tests="5" failures="0" errors="0" skipped="0" time="0.6507372">
+        <testcase classname="src/auth/RequireRole.test.tsx" name="RequireRole &gt; sends an anonymous visitor to /login, remembering where they were going" time="0.1532989">
+        </testcase>
+        <testcase classname="src/auth/RequireRole.test.tsx" name="RequireRole &gt; shows the 403 page to a signed-in user of another role" time="0.437669">
+        </testcase>
+        <testcase classname="src/auth/RequireRole.test.tsx" name="RequireRole &gt; renders the page for an allowed role" time="0.0091547">
+        </testcase>
+        <testcase classname="src/auth/RequireRole.test.tsx" name="RequireRole &gt; accepts any of several roles" time="0.0058806">
+        </testcase>
+        <testcase classname="src/auth/RequireRole.test.tsx" name="RequireRole &gt; shows a loading skeleton while the session is restored, not a redirect" time="0.0391947">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/errors.test.ts" timestamp="2026-11-09T17:16:46.524Z" hostname="LAPTOP-OTI2" tests="6" failures="0" errors="0" skipped="0" time="0.0140299">
+        <testcase classname="src/lib/errors.test.ts" name="toUiError &gt; uses the API message and field errors of a 400" time="0.0064152">
+        </testcase>
+        <testcase classname="src/lib/errors.test.ts" name="toUiError &gt; falls back to a French message when the body is empty (gateway down)" time="0.0013182">
+        </testcase>
+        <testcase classname="src/lib/errors.test.ts" name="toUiError &gt; reports a network failure with a null status" time="0.0005501">
+        </testcase>
+        <testcase classname="src/lib/errors.test.ts" name="toUiError &gt; reads the status and message of a mock HttpError" time="0.0007968">
+        </testcase>
+        <testcase classname="src/lib/errors.test.ts" name="toUiError &gt; handles anything else generically" time="0.0004716">
+        </testcase>
+        <testcase classname="src/lib/errors.test.ts" name="isStatus &gt; compares the normalised status" time="0.000589">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/extensions.test.ts" timestamp="2026-11-09T17:16:46.526Z" hostname="LAPTOP-OTI2" tests="15" failures="0" errors="0" skipped="0" time="0.0334377">
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-JOB-01 formatting &gt; formats a monthly salary range, a floor or a ceiling, and nothing without salary" time="0.006752">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-JOB-01 formatting &gt; labels a deadline by how close it is" time="0.0033565">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-JOB-01 formatting &gt; formats days and durations" time="0.0010817">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-JOB-01 job form rules &gt; accepts a complete offer without the optional fields" time="0.0007959">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-JOB-01 job form rules &gt; checks the salary bounds and their order, and the number of positions" time="0.0010391">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-JOB-01 job form rules &gt; refuses a new past deadline but keeps an unchanged one" time="0.000656">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-APP-02 interview rules &gt; accepts a future interview with defaults" time="0.0007188">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-APP-02 interview rules &gt; requires a future date, a 15 to 480 minute duration, a mode and a short location" time="0.0009546">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-APP-02 interview rules &gt; converts a draft both ways and validates it" time="0.0035274">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="EXT-APP-02 interview rules &gt; tells a visio link from an address" time="0.000683">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="Kanban moves &gt; only allows the forward transitions, never a withdrawal" time="0.0015274">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="Kanban moves &gt; groups cards by status in their ranking order, withdrawn ones left out" time="0.0016187">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="team notes &gt; counts notes and averages the rated ones to one decimal" time="0.0008443">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="CSV export &gt; writes a UTF-8 BOM, semicolons, CRLF and escapes quotes, separators and formulas" time="0.000867">
+        </testcase>
+        <testcase classname="src/lib/extensions.test.ts" name="CSV export &gt; exports the ranking in order with French numbers, without the personal data of a deleted account" time="0.0031614">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/format.test.ts" timestamp="2026-11-09T17:16:46.530Z" hostname="LAPTOP-OTI2" tests="8" failures="0" errors="0" skipped="0" time="0.0188608">
+        <testcase classname="src/lib/format.test.ts" name="format helpers &gt; formats a score with one decimal and a comma" time="0.0058589">
+        </testcase>
+        <testcase classname="src/lib/format.test.ts" name="format helpers &gt; formats file sizes in o, Ko and Mo" time="0.0011643">
+        </testcase>
+        <testcase classname="src/lib/format.test.ts" name="format helpers &gt; formats an acceptance rate given as a fraction or a percentage" time="0.0012365">
+        </testcase>
+        <testcase classname="src/lib/format.test.ts" name="format helpers &gt; maps scores to bands at 25, 50 and 75" time="0.0025355">
+        </testcase>
+        <testcase classname="src/lib/format.test.ts" name="format helpers &gt; formats year-month and handles an open end date" time="0.0009058">
+        </testcase>
+        <testcase classname="src/lib/format.test.ts" name="format helpers &gt; shows a dash for a missing date" time="0.0005556">
+        </testcase>
+        <testcase classname="src/lib/format.test.ts" name="format helpers &gt; builds initials from an email or a name" time="0.0008673">
+        </testcase>
+        <testcase classname="src/lib/format.test.ts" name="format helpers &gt; pluralizes with a French thousands separator" time="0.0007333">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/storage.test.ts" timestamp="2026-11-09T17:16:46.532Z" hostname="LAPTOP-OTI2" tests="2" failures="0" errors="0" skipped="0" time="0.0143952">
+        <testcase classname="src/lib/storage.test.ts" name="storage &gt; stores, reads and removes values" time="0.0057367">
+        </testcase>
+        <testcase classname="src/lib/storage.test.ts" name="storage &gt; never throws when localStorage is blocked" time="0.0046655">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/mock/applications.test.ts" timestamp="2026-11-09T17:16:46.533Z" hostname="LAPTOP-OTI2" tests="18" failures="0" errors="0" skipped="0" time="0.1054337">
+        <testcase classname="src/api/mock/applications.test.ts" name="mock apply &gt; creates a RECEIVED application with its history and no score yet" time="0.0145546">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock apply &gt; scores the application in the background" time="0.0424938">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock apply &gt; answers 404 for an unknown offer and 409 for an offer that is not PUBLISHED" time="0.0026141">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock apply &gt; answers 422 without a profile or without a CV" time="0.0025273">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock apply &gt; answers 409 for a duplicate, but allows applying again after a withdrawal" time="0.0040355">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock apply &gt; is reserved to candidates" time="0.0015539">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock applications lists &gt; lists the candidate applications newest first, withdrawn ones included" time="0.0031495">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock applications lists &gt; ranks the received applications by score, unscored last, without withdrawn ones" time="0.0034009">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock applications lists &gt; answers 403 to another company and 404 for an unknown offer, and lets an admin read" time="0.0027278">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock application status &gt; follows the allowed transitions and records the history and an audit event" time="0.003519">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock application status &gt; answers 400 for a skipped step, a decided application or WITHDRAWN" time="0.0020846">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock application status &gt; answers 403 to candidates and other companies, 404 for an unknown application" time="0.0018269">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock withdraw &gt; withdraws from RECEIVED or IN_REVIEW and records it" time="0.0021116">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock withdraw &gt; answers 409 once the application is further along" time="0.0015657">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock withdraw &gt; answers 403 for somebody else application and 404 for an unknown one" time="0.0018495">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock match preview &gt; returns the explained score once the CV is analysed" time="0.0042565">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock match preview &gt; answers 422 until the CV is analysed, 404 for an unknown offer" time="0.0027061">
+        </testcase>
+        <testcase classname="src/api/mock/applications.test.ts" name="mock match preview &gt; lists the skills the candidate lacks" time="0.0025833">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/mock/auth.test.ts" timestamp="2026-11-09T17:16:46.538Z" hostname="LAPTOP-OTI2" tests="10" failures="0" errors="0" skipped="0" time="0.0436088">
+        <testcase classname="src/api/mock/auth.test.ts" name="mock auth &gt; registers an account with the chosen role and never exposes the password" time="0.0128616">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock auth &gt; answers 409 for an email already used (case-insensitive) and 400 with field errors" time="0.0033202">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock auth &gt; logs in with the demo password and resolves the account behind the token" time="0.0031722">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock auth &gt; answers 401 for a wrong password, an unknown email and a disabled account" time="0.0018954">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock auth &gt; answers 401 for me() without a valid token" time="0.0018839">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock auth &gt; reads the caller from a real JWT when auth is not simulated" time="0.0063652">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock auth &gt; validates the password reset like the backend" time="0.0032944">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock scoring &gt; explains the score criterion by criterion with weights summing to 1" time="0.0029975">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock scoring &gt; scores 100 for a profile covering everything" time="0.0014195">
+        </testcase>
+        <testcase classname="src/api/mock/auth.test.ts" name="mock scoring &gt; lists missing skills ignoring case and accents" time="0.001332">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/mock/candidates.test.ts" timestamp="2026-11-09T17:16:46.542Z" hostname="LAPTOP-OTI2" tests="12" failures="0" errors="0" skipped="0" time="0.0996579">
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock candidate profile &gt; creates then updates the profile, keeping the CV fields" time="0.0134418">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock candidate profile &gt; answers 404 before the profile exists and 400 with field errors for bad data" time="0.0030329">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock candidate profile &gt; is reserved to candidates" time="0.0015302">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock CV upload and analysis &gt; rejects a non-PDF (400), a file over 5 Mo (413) and a missing profile (404)" time="0.0355293">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock CV upload and analysis &gt; reports progress and puts the analysis back to PENDING" time="0.0042938">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock CV upload and analysis &gt; moves PENDING to DONE a few seconds later" time="0.0095229">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock CV upload and analysis &gt; ends in FAILED for a file the AI cannot read, without a parse date" time="0.004128">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock CV upload and analysis &gt; answers 404 for cv-suggestions until a CV is analysed, then returns the extracted data" time="0.0075579">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock CV upload and analysis &gt; lets a candidate download their own CV but not somebody else" time="0.0039976">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock recruiter view and erasure &gt; shows recruiters a profile, or the deleted marker after erasure" time="0.0064684">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock recruiter view and erasure &gt; forbids candidates from reading other profiles" time="0.0017478">
+        </testcase>
+        <testcase classname="src/api/mock/candidates.test.ts" name="mock recruiter view and erasure &gt; erases the account: profile and CV gone, account DELETED and login refused" time="0.0026206">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/mock/companies.test.ts" timestamp="2026-11-09T17:16:46.544Z" hostname="LAPTOP-OTI2" tests="13" failures="0" errors="0" skipped="0" time="0.0780676">
+        <testcase classname="src/api/mock/companies.test.ts" name="mock company creation and reads &gt; creates the company with the caller as first member" time="0.0135925">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock company creation and reads &gt; answers 409 when the recruiter already has a company, 403 to other roles" time="0.0026819">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock company creation and reads &gt; validates the fields: name, sector, description length and logo scheme" time="0.0035911">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock company creation and reads &gt; answers 404 for getMine without a company" time="0.0014187">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock company creation and reads &gt; shows any signed-in user the public view, without members" time="0.0035285">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock company update &gt; merges the patch and keeps the other fields" time="0.0027165">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock company update &gt; answers 403 to a non-member, 404 for an unknown company, 400 for a bad value" time="0.0017676">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock invitations &gt; creates a PENDING invitation valid for 7 days, without exposing the token" time="0.0311451">
+            <system-out>
+[mock] invitation pour colleague@demo.tn : http://localhost:3000/accept-invitation?token=371d5d01-624a-470c-8f72-da99e6131cf4
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock invitations &gt; answers 409 for a duplicate PENDING invitation, 400 for a bad email, 403 to a non-member" time="0.0026686">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock invitations &gt; reports an invitation as EXPIRED once past its date and allows inviting again" time="0.0032643">
+            <system-out>
+[mock] invitation pour nouveau.recruteur@demo.tn : http://localhost:3000/accept-invitation?token=27e3c1be-8790-482e-a218-ad4241670071
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock invitations &gt; attaches the caller to the company on accept, then refuses to reuse the token" time="0.0027255">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock invitations &gt; answers 400 for an unknown token, 410 for an expired one, 409 when already in a company" time="0.0018355">
+        </testcase>
+        <testcase classname="src/api/mock/companies.test.ts" name="mock invitations &gt; is reserved to recruiters" time="0.0011823">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/mock/dashboard.test.ts" timestamp="2026-11-09T17:16:46.548Z" hostname="LAPTOP-OTI2" tests="14" failures="0" errors="0" skipped="0" time="0.1026163">
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock stats &gt; aggregates the platform for an admin only" time="0.010748">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock stats &gt; computes company figures for a member and an admin, 403 for anyone else" time="0.0045842">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock stats &gt; gives a null acceptance rate when nothing is decided yet" time="0.0015552">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock admin users &gt; filters by role and status and pages the result" time="0.0375553">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock admin users &gt; is reserved to admins" time="0.0028725">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock admin users &gt; disables an account, audits it, and then refuses its login" time="0.0087037">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock admin users &gt; answers 400 when an admin disables themselves, 404 for an unknown account, 409 for a deleted one" time="0.0019832">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock job moderation &gt; withdraws the offer with its reason, audits it and hides it from candidates" time="0.0073285">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock job moderation &gt; requires a reason of at most 500 characters" time="0.0036244">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock job moderation &gt; answers 404 for an unknown offer and 403 to non-admins" time="0.0017127">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock audit log &gt; lists the most recent events first" time="0.0026225">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock audit log &gt; filters by action, actor and period" time="0.0029187">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock audit log &gt; paginates and is reserved to admins" time="0.0020284">
+        </testcase>
+        <testcase classname="src/api/mock/dashboard.test.ts" name="mock audit log &gt; records recruiter reads of a profile and a CV" time="0.0088035">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/mock/extensions.test.ts" timestamp="2026-11-09T17:16:46.553Z" hostname="LAPTOP-OTI2" tests="14" failures="0" errors="0" skipped="0" time="0.1041134">
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-JOB-01 enriched offers (mock) &gt; applies the defaults of the optional fields on creation" time="0.0119466">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-JOB-01 enriched offers (mock) &gt; rejects an inverted salary range, a past deadline and a bad number of positions (400 with fieldErrors)" time="0.0033306">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-JOB-01 enriched offers (mock) &gt; checks the salary order of a patch against the saved bound and lets an optional field be removed" time="0.0030502">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-JOB-01 enriched offers (mock) &gt; filters by work mode and minimum monthly salary" time="0.0345932">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-JOB-01 enriched offers (mock) &gt; closes a published offer once its deadline has passed and refuses to reopen it" time="0.0036372">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-JOB-01 enriched offers (mock) &gt; duplicates an offer as a draft without deadline, but not a moderated one" time="0.0036661">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-SAVED-01 favourites (mock) &gt; saves and unsaves idempotently, flags the offers and lists the newest first" time="0.0057087">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-SAVED-01 favourites (mock) &gt; answers 404 for an unpublished offer, keeps closed favourites and hides the flag from other roles" time="0.0028645">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-APP-01/02 cover letters, messages and interviews (mock) &gt; stores the cover letter and refuses an offer past its deadline" time="0.0037996">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-APP-01/02 cover letters, messages and interviews (mock) &gt; records the message and the interview of a status change, and audits the interview" time="0.0049972">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-APP-01/02 cover letters, messages and interviews (mock) &gt; refuses an interview with another status (400), a past interview (400) and a reschedule outside INTERVIEW (409)" time="0.0045368">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-APP-01/02 cover letters, messages and interviews (mock) &gt; lists the upcoming interviews of the recruiter’s company only, soonest first" time="0.0027771">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-APP-03 team notes (mock) &gt; lets the team read, add and delete its own notes, with the count and average in the recruiter view" time="0.0086438">
+        </testcase>
+        <testcase classname="src/api/mock/extensions.test.ts" name="EXT-APP-03 team notes (mock) &gt; validates the note, protects others’ notes and other companies, and never shows notes to the candidate" time="0.0046632">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/mock/jobs.test.ts" timestamp="2026-11-09T17:16:46.558Z" hostname="LAPTOP-OTI2" tests="22" failures="0" errors="0" skipped="0" time="0.1089234">
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; shows candidates only PUBLISHED offers" time="0.0389502">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; matches the keyword in the title or description only" time="0.0055429">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; keeps offers that need at least one of the requested skills" time="0.0025739">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; filters by location, contract and level" time="0.0028317">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; caps the page size at 50 and paginates" time="0.0034247">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; sorts by publication date, newest first" time="0.0020078">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; gives a recruiter every status of their company, with application counts, for companyId=me" time="0.0031499">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; filters companyId=me by status" time="0.002508">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job search &gt; lets an admin see and filter every status, but refuses companyId=me to a candidate" time="0.0073993">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job detail &gt; hides a draft from candidates (404) but not from its company" time="0.003219">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job detail &gt; answers 404 for an unknown id" time="0.0019301">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job creation &gt; publishes immediately under the recruiter company" time="0.0054786">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job creation &gt; answers 403 when the recruiter has no company" time="0.0017949">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job creation &gt; answers 403 to a candidate" time="0.0013837">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job creation &gt; answers 400 with a message per invalid field" time="0.0037076">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job creation &gt; rejects more than 50 skills and skills over 100 characters" time="0.0019066">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job update &gt; patches only the given fields and bumps updatedAt" time="0.0026807">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job update &gt; answers 403 for another company, 409 for a closed or moderated offer, 400 for a bad field" time="0.0028049">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job status &gt; allows DRAFT→PUBLISHED, PUBLISHED→CLOSED and CLOSED→PUBLISHED" time="0.0032552">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job status &gt; removes a closed offer from candidate search" time="0.002482">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job status &gt; answers 400 for any other transition" time="0.0016673">
+        </testcase>
+        <testcase classname="src/api/mock/jobs.test.ts" name="mock job status &gt; answers 403 for a moderated offer, another company or a non-recruiter" time="0.001735">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/domain/ApplyButton.test.tsx" timestamp="2026-11-09T17:16:46.563Z" hostname="LAPTOP-OTI2" tests="10" failures="0" errors="0" skipped="0" time="2.6065844">
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton &gt; sends the application, confirms with a toast and becomes &quot;Candidature envoyée&quot;" time="0.7671844">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton &gt; shows &quot;Candidature envoyée&quot; straight away when the candidate already applied" time="0.1203722">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton &gt; offers to apply again after a withdrawal" time="0.0524335">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton &gt; ignores applications to other offers" time="0.0320569">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton &gt; explains a 409 (already applied or closed) and refreshes the state" time="0.1711172">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton &gt; redirects to the profile with an explanation on a 422 (profile incomplete or no CV)" time="0.1040172">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton &gt; shows any other failure inline and lets the candidate retry" time="0.1093627">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton with a cover letter (EXT-APP-01) &gt; sends the optional letter with the application" time="0.5683147">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton with a cover letter (EXT-APP-01) &gt; applies without a letter once it is removed, and counts the characters" time="0.5724002">
+        </testcase>
+        <testcase classname="src/components/domain/ApplyButton.test.tsx" name="ApplyButton with a cover letter (EXT-APP-01) &gt; shows a 409 for an offer past its deadline" time="0.1038717">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/domain/KanbanBoard.test.tsx" timestamp="2026-11-09T17:16:46.566Z" hostname="LAPTOP-OTI2" tests="4" failures="0" errors="0" skipped="0" time="1.2004483">
+        <testcase classname="src/components/domain/KanbanBoard.test.tsx" name="Kanban pipeline &gt; shows one column per status with its count, without withdrawn applications" time="0.5858442">
+        </testcase>
+        <testcase classname="src/components/domain/KanbanBoard.test.tsx" name="Kanban pipeline &gt; offers only the allowed moves as buttons, and nothing once decided" time="0.2903496">
+        </testcase>
+        <testcase classname="src/components/domain/KanbanBoard.test.tsx" name="Kanban pipeline &gt; accepts a drop on an allowed column and ignores one on a forbidden column" time="0.1826522">
+        </testcase>
+        <testcase classname="src/components/domain/KanbanBoard.test.tsx" name="Kanban pipeline &gt; opens a card on click" time="0.1319775">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/domain/SaveJobButton.test.tsx" timestamp="2026-11-09T17:16:46.567Z" hostname="LAPTOP-OTI2" tests="3" failures="0" errors="0" skipped="0" time="0.9667788">
+        <testcase classname="src/components/domain/SaveJobButton.test.tsx" name="favourite toggle (EXT-SAVED-01) &gt; saves the offer, says so and reports the new state" time="0.7603397">
+        </testcase>
+        <testcase classname="src/components/domain/SaveJobButton.test.tsx" name="favourite toggle (EXT-SAVED-01) &gt; removes a saved offer" time="0.1083845">
+        </testcase>
+        <testcase classname="src/components/domain/SaveJobButton.test.tsx" name="favourite toggle (EXT-SAVED-01) &gt; goes back to the previous state when the API refuses" time="0.090988">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ui/Forms.test.tsx" timestamp="2026-11-09T17:16:46.568Z" hostname="LAPTOP-OTI2" tests="8" failures="0" errors="0" skipped="0" time="2.8247269">
+        <testcase classname="src/components/ui/Forms.test.tsx" name="form fields &gt; ties the label, hint and error to the control for screen readers" time="0.5023627">
+        </testcase>
+        <testcase classname="src/components/ui/Forms.test.tsx" name="form fields &gt; shows the hint while there is no error" time="0.0340019">
+        </testcase>
+        <testcase classname="src/components/ui/Forms.test.tsx" name="form fields &gt; renders a select with a placeholder option" time="0.2421194">
+        </testcase>
+        <testcase classname="src/components/ui/Forms.test.tsx" name="TagInput &gt; adds on Enter or comma, ignoring blanks and duplicates (case-insensitive)" time="1.0909958">
+        </testcase>
+        <testcase classname="src/components/ui/Forms.test.tsx" name="TagInput &gt; adds a pending word on blur, removes with the button and with Backspace" time="0.4625889">
+        </testcase>
+        <testcase classname="src/components/ui/Forms.test.tsx" name="TagInput &gt; stops at the maximum" time="0.21685">
+        </testcase>
+        <testcase classname="src/components/ui/Forms.test.tsx" name="Pager &gt; renders nothing for a single page" time="0.0035101">
+        </testcase>
+        <testcase classname="src/components/ui/Forms.test.tsx" name="Pager &gt; moves one page at a time and disables the ends" time="0.2665949">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ui/ScoreBreakdown.test.tsx" timestamp="2026-11-09T17:16:46.570Z" hostname="LAPTOP-OTI2" tests="7" failures="0" errors="0" skipped="0" time="0.7400006">
+        <testcase classname="src/components/ui/ScoreBreakdown.test.tsx" name="ScoreBreakdown &gt; shows every criterion with its weight, points and explanation" time="0.1701785">
+        </testcase>
+        <testcase classname="src/components/ui/ScoreBreakdown.test.tsx" name="ScoreBreakdown &gt; exposes each contribution as an accessible meter relative to its weight" time="0.4144901">
+        </testcase>
+        <testcase classname="src/components/ui/ScoreBreakdown.test.tsx" name="ScoreBreakdown &gt; can hide the explanations and the maximum in compact lists" time="0.0286556">
+        </testcase>
+        <testcase classname="src/components/ui/ScoreBreakdown.test.tsx" name="ScoreBreakdown &gt; caps the bar at 100 % when a contribution exceeds its weight" time="0.0321997">
+        </testcase>
+        <testcase classname="src/components/ui/ScoreBreakdown.test.tsx" name="score summaries &gt; formats the total with its label and optional action" time="0.0656696">
+        </testcase>
+        <testcase classname="src/components/ui/ScoreBreakdown.test.tsx" name="score summaries &gt; shows a dash for a missing score" time="0.0060304">
+        </testcase>
+        <testcase classname="src/components/ui/ScoreBreakdown.test.tsx" name="score summaries &gt; labels the band of a score and renders nothing without one" time="0.0169939">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/auth/AuthPages.test.tsx" timestamp="2026-11-09T17:16:46.571Z" hostname="LAPTOP-OTI2" tests="15" failures="0" errors="0" skipped="0" time="11.2055492">
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="RegisterPage &gt; shows no error before a field is visited, then validates it live" time="1.583973">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="RegisterPage &gt; flags a password that is too short or too long" time="1.7500346">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="RegisterPage &gt; does not call the API while the form is invalid, and shows every error on submit" time="0.1769713">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="RegisterPage &gt; redirects to the login page with a confirmation once the account is created" time="1.0654411">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="RegisterPage &gt; explains a duplicate email and keeps the form usable" time="0.9194571">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; sends a CANDIDATE to /candidate after login" time="0.7850362">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; sends a RECRUITER to /recruiter after login" time="0.7680571">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; sends a ADMIN to /admin after login" time="0.6549543">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; goes back to the page the user came from, but only for internal paths" time="0.817707">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; ignores an external next target" time="0.7209385">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; shows one generic message for bad credentials and leaves the form usable" time="1.0313963">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; tells a locked-out user to wait" time="0.7955572">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; asks for both fields without calling the API" time="0.0952708">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; confirms the account creation after registration" time="0.023754">
+        </testcase>
+        <testcase classname="src/pages/auth/AuthPages.test.tsx" name="LoginPage &gt; sends an already signed-in visitor to their space" time="0.0115573">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/auth/PasswordPages.test.tsx" timestamp="2026-11-09T17:16:46.582Z" hostname="LAPTOP-OTI2" tests="6" failures="0" errors="0" skipped="0" time="3.2729009">
+        <testcase classname="src/pages/auth/PasswordPages.test.tsx" name="forgot password &gt; confirms with a generic message that does not reveal whether the account exists" time="0.9826997">
+        </testcase>
+        <testcase classname="src/pages/auth/PasswordPages.test.tsx" name="forgot password &gt; asks for the email first" time="0.1361354">
+        </testcase>
+        <testcase classname="src/pages/auth/PasswordPages.test.tsx" name="reset password &gt; shows the new-password form when the link carries a token, and sends it" time="0.9363363">
+        </testcase>
+        <testcase classname="src/pages/auth/PasswordPages.test.tsx" name="reset password &gt; checks the length and the confirmation before calling the API" time="0.5105669">
+        </testcase>
+        <testcase classname="src/pages/auth/PasswordPages.test.tsx" name="reset password &gt; explains an invalid or expired link" time="0.6661844">
+        </testcase>
+        <testcase classname="src/pages/auth/PasswordPages.test.tsx" name="reset password &gt; asks for a new link when the token is missing" time="0.0357989">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/admin/AdminPages.test.tsx" timestamp="2026-11-09T17:16:46.588Z" hostname="LAPTOP-OTI2" tests="18" failures="0" errors="0" skipped="0" time="7.12859">
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin dashboard &gt; shows the platform figures and the users by role" time="0.6728835">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin dashboard &gt; shows a dash for an unavailable average and an error with retry when the stats fail" time="0.1277506">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin users &gt; lists accounts with role and status" time="0.1821247">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin users &gt; filters by role and by status through the API" time="0.4590873">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin users &gt; disables an active account in one click and re-enables a disabled one" time="0.3723205">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin users &gt; does not let an admin disable themselves and offers nothing for a deleted account" time="0.1338529">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin users &gt; shows the API message when the change is refused" time="0.1767147">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin users &gt; pages through the accounts and says when a filter matches nobody" time="0.3337152">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin job moderation &gt; browses published offers by default, with status and keyword filters" time="0.4479295">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin job moderation &gt; shows the reason of a moderated offer and no withdraw button for it" time="0.0747017">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin job moderation &gt; requires a reason before withdrawing an offer" time="0.3214903">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin job moderation &gt; withdraws the offer with the reason and refreshes the list" time="0.8903385">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin job moderation &gt; shows a server field error on the reason and lets the admin cancel" time="0.5928985">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin audit log &gt; lists events with readable action labels and falls back to the raw action" time="0.076614">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin audit log &gt; filters by date range, user and event type" time="1.2469814">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin audit log &gt; filters on the author of a row with one click" time="0.2752919">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin audit log &gt; resets the filters and says when nothing matches" time="0.4284882">
+        </testcase>
+        <testcase classname="src/pages/admin/AdminPages.test.tsx" name="admin audit log &gt; pages through the log and reports errors" time="0.3070197">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/candidate/CandidateExtensions.test.tsx" timestamp="2026-11-09T17:16:46.600Z" hostname="LAPTOP-OTI2" tests="8" failures="0" errors="0" skipped="0" time="2.5791421">
+        <testcase classname="src/pages/candidate/CandidateExtensions.test.tsx" name="enriched offer (EXT-JOB-01, EXT-SAVED-01) &gt; shows work mode, salary, positions and deadline, links the company page and saves the offer" time="0.9758323">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateExtensions.test.tsx" name="enriched offer (EXT-JOB-01, EXT-SAVED-01) &gt; filters the search by work mode and minimum salary, kept in the URL" time="0.815316">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateExtensions.test.tsx" name="saved offers page (EXT-SAVED-01) &gt; lists favourites, keeps closed ones without a link and removes one" time="0.1802641">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateExtensions.test.tsx" name="saved offers page (EXT-SAVED-01) &gt; invites to browse offers when there is no favourite" time="0.0542472">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateExtensions.test.tsx" name="public company page &gt; presents the company and its published offers, paginated" time="0.1354369">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateExtensions.test.tsx" name="public company page &gt; says when the company does not exist" time="0.054423">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateExtensions.test.tsx" name="candidate follow-up (EXT-APP-01/02) &gt; shows the interview, the recruiter’s message and the cover letter of an application" time="0.1372004">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateExtensions.test.tsx" name="candidate follow-up (EXT-APP-01/02) &gt; lists upcoming interviews and counts favourites on the dashboard" time="0.2209365">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/candidate/CandidatePages.test.tsx" timestamp="2026-11-09T17:16:46.603Z" hostname="LAPTOP-OTI2" tests="26" failures="0" errors="0" skipped="0" time="3.5464852">
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="job detail page &gt; shows the description, skills, company presentation and the apply button" time="0.8498975">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="job detail page &gt; stays usable when the company presentation cannot be loaded" time="0.0937209">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="job detail page &gt; explains a 404 (closed or removed offer)" time="0.081333">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; shows the total, each criterion with its explanation and the skills to develop" time="0.1736186">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; says the profile covers everything when no skill is missing" time="0.1098183">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; does not ask for a score while the CV analysis is NONE" time="0.0456825">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; does not ask for a score while the CV analysis is PENDING" time="0.0415703">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; does not ask for a score while the CV analysis is FAILED" time="0.0418152">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; invites a candidate without a profile to create one" time="0.0414871">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; handles a 422 from match-preview with a message instead of a crash" time="0.0533742">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; offers a retry when the AI is unavailable" time="0.2158411">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="explained score page &gt; hides the apply button and warns when the offer is no longer open" time="0.0963539">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="my applications page &gt; lists each application with its status and score and a link to the detail" time="0.1661796">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="my applications page &gt; opens the explained detail of the selected application" time="0.2046235">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="my applications page &gt; withdraws after a confirmation, only while the application is early enough" time="0.2398879">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="my applications page &gt; offers no withdrawal once an interview is scheduled" time="0.1803692">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="my applications page &gt; shows the API message when the withdrawal is refused (409)" time="0.3228449">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="my applications page &gt; says the score is being computed when it has not arrived yet" time="0.0457201">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="my applications page &gt; shows an empty state with a link to the offers" time="0.0508772">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="my applications page &gt; labels an offer that can no longer be loaded instead of failing" time="0.054622">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="recommendations page &gt; lists the recommended offers with the estimated score" time="0.0857069">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="recommendations page &gt; points to the profile when there is nothing to recommend yet" time="0.0574213">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="recommendations page &gt; shows the unavailable service (503) with a retry" time="0.048092">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="candidate dashboard &gt; summarises active applications, the latest score and the recommendations" time="0.1439102">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="candidate dashboard &gt; shows dashes and invites the candidate to create a profile when there is nothing yet" time="0.0552976">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidatePages.test.tsx" name="candidate dashboard &gt; asks for a CV when the profile exists without one" time="0.0400858">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/candidate/CandidateProfilePage.test.tsx" timestamp="2026-11-09T17:16:46.606Z" hostname="LAPTOP-OTI2" tests="22" failures="0" errors="0" skipped="0" time="8.2707259">
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="profile creation and edition &gt; invites a new candidate to create the profile and keeps the CV upload disabled until then" time="0.7767403">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="profile creation and edition &gt; pre-fills the form with the saved profile and confirms a save with a toast" time="0.7702291">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="profile creation and edition &gt; shows the server field errors under the right field" time="0.2224045">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="multi-step form and local draft &gt; moves through the three steps and blocks Suivant on an invalid step" time="1.0584887">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="multi-step form and local draft &gt; keeps the draft across a reload and offers to discard it" time="1.0137281">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="multi-step form and local draft &gt; clears the draft once the profile is saved" time="0.3753848">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="multi-step form and local draft &gt; jumps to the faulty step when saving fails validation" time="0.4680239">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV analysis states &gt; says nothing about analysis when there is no CV" time="0.0853999">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV analysis states &gt; shows PENDING as &quot;Analyse en cours&quot; while polling" time="0.0603814">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV analysis states &gt; stops saying &quot;en cours&quot; and explains a FAILED analysis" time="0.0750759">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV analysis states &gt; confirms a DONE analysis even when cvParsedAt is the only trace" time="0.0569524">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV analysis states &gt; switches from PENDING to DONE when the polled profile settles" time="0.092684">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV analysis states &gt; stops polling after a while and offers a manual check" time="0.1958342">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV upload &gt; rejects a non-PDF and a file over 5 Mo without calling the API" time="0.2919316">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV upload &gt; shows a preview and a progress bar while the PDF is sent, then the analysis starts" time="0.3781442">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="CV upload &gt; shows the API error and drops the preview when the upload fails" time="0.2165599">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="validation of the data extracted from the CV &gt; proposes only what the profile does not contain yet" time="0.2245535">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="validation of the data extracted from the CV &gt; applies the ticked parts through the profile endpoint and ignores the unticked ones" time="0.6137648">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="validation of the data extracted from the CV &gt; lets the candidate ignore everything, and remembers it for this analysis" time="0.5626727">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="validation of the data extracted from the CV &gt; disables Appliquer when nothing is ticked" time="0.3070394">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="validation of the data extracted from the CV &gt; shows nothing when the profile already has everything" time="0.1027071">
+        </testcase>
+        <testcase classname="src/pages/candidate/CandidateProfilePage.test.tsx" name="validation of the data extracted from the CV &gt; offers a retry when the AI service is unavailable (503)" time="0.3158864">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/candidate/JobSearchPage.test.tsx" timestamp="2026-11-09T17:16:46.609Z" hostname="LAPTOP-OTI2" tests="8" failures="0" errors="0" skipped="0" time="3.1716566">
+        <testcase classname="src/pages/candidate/JobSearchPage.test.tsx" name="job search &gt; lists the published offers with a link to each detail page" time="0.9185802">
+        </testcase>
+        <testcase classname="src/pages/candidate/JobSearchPage.test.tsx" name="job search &gt; refreshes the list once, after the last keystroke, not on every key" time="0.4164763">
+        </testcase>
+        <testcase classname="src/pages/candidate/JobSearchPage.test.tsx" name="job search &gt; sends the comma-separated skills as a list and the selects as filters" time="0.5564828">
+        </testcase>
+        <testcase classname="src/pages/candidate/JobSearchPage.test.tsx" name="job search &gt; restores the filters from the URL" time="0.1151676">
+        </testcase>
+        <testcase classname="src/pages/candidate/JobSearchPage.test.tsx" name="job search &gt; pages through more than 20 results" time="0.2442295">
+        </testcase>
+        <testcase classname="src/pages/candidate/JobSearchPage.test.tsx" name="job search &gt; keeps showing the previous results while the next ones load" time="0.4265446">
+        </testcase>
+        <testcase classname="src/pages/candidate/JobSearchPage.test.tsx" name="job search &gt; offers to clear the filters when nothing matches" time="0.2663637">
+        </testcase>
+        <testcase classname="src/pages/candidate/JobSearchPage.test.tsx" name="job search &gt; shows an error with a retry" time="0.2226611">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/recruiter/CandidateRankingPage.test.tsx" timestamp="2026-11-09T17:16:46.610Z" hostname="LAPTOP-OTI2" tests="22" failures="0" errors="0" skipped="0" time="12.7325607">
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="received applications ranking &gt; ranks by score, highest first, with a band badge, unscored last" time="0.8235859">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="received applications ranking &gt; keeps withdrawn applications out of the list" time="0.2551844">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="received applications ranking &gt; filters by category and shows the counts" time="0.4651518">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="received applications ranking &gt; shows the breakdown, contact details and history of the selected candidate" time="0.186782">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="received applications ranking &gt; shows &quot;Compte supprimé&quot; for a candidate who exercised the right to be forgotten" time="0.1331204">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="status changes &gt; proposes only the next allowed step for a received application" time="0.1505875">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="status changes &gt; offers acceptance or rejection after an interview and nothing once decided" time="0.4858792">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="status changes &gt; asks for a confirmation, then updates the row without reloading" time="0.3956513">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="status changes &gt; does nothing when the confirmation is cancelled" time="0.4262583">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="status changes &gt; shows the API message when the transition is refused (400)" time="0.4122356">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="loading and errors &gt; shows an empty state when nobody applied yet" time="0.0607922">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="loading and errors &gt; says the offer is not found for a 403 or 404 on the offer" time="0.076898">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="loading and errors &gt; retries a failed applications load" time="0.2481438">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="interviews and explained decisions (EXT-APP-01/02) &gt; plans the interview with the status change and sends the message to the candidate" time="2.2880549">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="interviews and explained decisions (EXT-APP-01/02) &gt; refuses an interview in the past without calling the API, and can skip planning" time="0.7154313">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="interviews and explained decisions (EXT-APP-01/02) &gt; explains a rejection to the candidate" time="1.5054406">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="interviews and explained decisions (EXT-APP-01/02) &gt; shows and reschedules the planned interview" time="0.9999103">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="interviews and explained decisions (EXT-APP-01/02) &gt; shows the cover letter and the messages of the history" time="0.3902852">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="team notes (EXT-APP-03) &gt; lists the notes, adds one with a rating and updates the team column" time="1.3078242">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="team notes (EXT-APP-03) &gt; deletes one’s own note and refuses an empty one" time="0.3727955">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="pipeline view and CSV export (EXT-FE) &gt; exports the ranking as a CSV named after the offer" time="0.2735751">
+        </testcase>
+        <testcase classname="src/pages/recruiter/CandidateRankingPage.test.tsx" name="pipeline view and CSV export (EXT-FE) &gt; switches to the Kanban pipeline and confirms a move in the detail panel" time="0.7527885">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/recruiter/EditJobPage.mock.test.tsx" timestamp="2026-11-09T17:16:46.612Z" hostname="LAPTOP-OTI2" tests="4" failures="0" errors="0" skipped="0" time="5.3423809">
+        <testcase classname="src/pages/recruiter/EditJobPage.mock.test.tsx" name="edit page on the simulated gateway &gt; saves a change into the in-browser database" time="2.0633041">
+        </testcase>
+        <testcase classname="src/pages/recruiter/EditJobPage.mock.test.tsx" name="edit page on the simulated gateway &gt; shows the simulated 400 under the field" time="2.5868286">
+        </testcase>
+        <testcase classname="src/pages/recruiter/EditJobPage.mock.test.tsx" name="edit page on the simulated gateway &gt; refuses an offer closed meanwhile with the 409 message" time="0.6412641">
+        </testcase>
+        <testcase classname="src/pages/recruiter/EditJobPage.mock.test.tsx" name="edit page on the simulated gateway &gt; does not open a moderated offer for edition" time="0.0449392">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/recruiter/RecruiterExtensions.test.tsx" timestamp="2026-11-09T17:16:46.613Z" hostname="LAPTOP-OTI2" tests="7" failures="0" errors="0" skipped="0" time="6.8554429">
+        <testcase classname="src/pages/recruiter/RecruiterExtensions.test.tsx" name="job form extras (EXT-JOB-01) &gt; sends work mode, salary range, deadline and positions" time="4.47665">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterExtensions.test.tsx" name="job form extras (EXT-JOB-01) &gt; refuses an inverted salary range and a past deadline before calling the API" time="1.0561935">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterExtensions.test.tsx" name="duplicating an offer (EXT-JOB-01) &gt; adds the draft copy at the top of the list" time="0.3938513">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterExtensions.test.tsx" name="duplicating an offer (EXT-JOB-01) &gt; shows why a duplication is refused" time="0.265744">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterExtensions.test.tsx" name="recruiter dashboard pace (EXT-DASH-01) &gt; shows the funnel, the decision delay, the next interviews and the offers closing soon" time="0.3587632">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterExtensions.test.tsx" name="recruiter dashboard pace (EXT-DASH-01) &gt; shows dashes when the new figures are unavailable" time="0.1681877">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterExtensions.test.tsx" name="admin dashboard pace (EXT-DASH-01) &gt; shows the platform funnel, decision delay and offers closing soon" time="0.1294648">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/recruiter/RecruiterPages.test.tsx" timestamp="2026-11-09T17:16:46.614Z" hostname="LAPTOP-OTI2" tests="42" failures="0" errors="0" skipped="0" time="20.0067918">
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="&quot;Mes offres&quot; &gt; lists my offers (companyId=me) with status, publication date and application count" time="0.4238298">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="&quot;Mes offres&quot; &gt; links an offer to its received applications" time="0.6240118">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="&quot;Mes offres&quot; &gt; proposes the right status action for each status and none for a moderated offer" time="0.3602884">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="&quot;Mes offres&quot; &gt; offers &quot;Modifier&quot; on a draft or published offer only, linking to its edit page" time="0.2355228">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="&quot;Mes offres&quot; &gt; changes the status in place and confirms" time="0.2882805">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="&quot;Mes offres&quot; &gt; shows the API message when the change is refused" time="0.2434724">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="&quot;Mes offres&quot; &gt; asks a recruiter without a company to create it first" time="0.0301659">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="&quot;Mes offres&quot; &gt; shows an empty state and an error state" time="0.119994">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="publication form &gt; blocks the submission and names each empty required field" time="0.221718">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="publication form &gt; publishes without a companyId and lands on &quot;Mes offres&quot;" time="3.4141374">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="publication form &gt; shows the server field errors under the right field" time="3.0517544">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="publication form &gt; asks for the company first when the recruiter has none" time="0.0344608">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; pre-fills the form with the saved offer" time="0.129808">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; sends only the changed fields, then confirms with a link back to &quot;Mes offres&quot;" time="1.1846661">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; compares the next save with the last saved values" time="1.2025907">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; does not call the API when nothing changed" time="0.2320202">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; blocks an emptied required field before calling the API" time="0.2446167">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; shows the 400 field errors under the right field" time="0.8474545">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; explains a 403 as a closed or withdrawn offer" time="0.8607638">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; explains a 409 as a closed or withdrawn offer" time="0.7871732">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; shows no form for a CLOSED offer" time="0.0577327">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; shows no form for a MODERATED offer" time="0.0408498">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="edit form &gt; shows an error state when the offer cannot be loaded" time="0.0639551">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="company page &gt; creates the company then goes to the recruiter dashboard" time="1.0095449">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="company page &gt; requires a name and a sector" time="0.1558038">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="company page &gt; pre-fills the existing company and saves with PATCH" time="0.5815538">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="company page &gt; explains a 409 when the recruiter already has a company" time="0.5129877">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="team page &gt; lists the members, marking the current user, and the invitations with their status" time="0.1167332">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="team page &gt; sends an invitation and shows it as &quot;En attente&quot;" time="0.5240508">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="team page &gt; rejects a malformed email without calling the API" time="0.7325534">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="team page &gt; shows the 409 message for a duplicate pending invitation" time="0.5029559">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="team page &gt; shows an expired invitation as such" time="0.0904416">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="team page &gt; asks for the company first when there is none" time="0.0450445">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="accept-invitation page &gt; says the link is incomplete when the token is missing" time="0.0109475">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="accept-invitation page &gt; accepts the invitation from ?token= only after a click, then goes to the dashboard" time="0.0684721">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="accept-invitation page &gt; explains a 410 answer" time="0.1141128">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="accept-invitation page &gt; explains a 400 answer" time="0.1241414">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="accept-invitation page &gt; explains a 409 answer" time="0.0889935">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="recruiter dashboard &gt; shows the key figures of the company" time="0.2201887">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="recruiter dashboard &gt; shows a dash instead of a rate when nothing is decided yet" time="0.118717">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="recruiter dashboard &gt; links the best-scored applications, highest first, to their ranking page" time="0.1468545">
+        </testcase>
+        <testcase classname="src/pages/recruiter/RecruiterPages.test.tsx" name="recruiter dashboard &gt; shows an error when the stats are forbidden, and the company prompt without a company" time="0.1354541">
+        </testcase>
+    </testsuite>
+</testsuites>
