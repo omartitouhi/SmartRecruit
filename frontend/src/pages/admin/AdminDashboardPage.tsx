@@ -36,7 +36,7 @@ export function AdminDashboardPage() {
         </div>
       </header>
 
-      <div className="toolbar panel">
+      <div className="period-filter">
         <PeriodFilter value={days} onChange={setDays} />
       </div>
 

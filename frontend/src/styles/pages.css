@@ -1314,6 +1314,17 @@ aside .alert {
 
 .row-actions {
   text-align: right;
+  white-space: nowrap; /* actions stay on one line; .table-wrap scrolls on narrow screens */
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* Period filter: a compact control above the figures, not a full-width panel. */
+.period-filter {
+  margin-bottom: var(--space-4);
+  max-width: 280px;
 }
 
 .row-actions .btn {

@@ -36,11 +36,10 @@ describe('demo mode end to end', () => {
     ['Candidat·e', 'Candidatures actives'],
     ['Recruteur·se', 'Carthage Fret'],
     ['Admin', 'Utilisateurs par rôle'],
-  ])('logs in with the %s demo account and lands on its dashboard', async (button, expected) => {
+  ])('logs in with one click on the %s demo account and lands on its dashboard', async (button, expected) => {
     const user = userEvent.setup();
     renderApp('/login');
     await user.click(await screen.findByRole('button', { name: button }));
-    await user.click(screen.getByRole('button', { name: 'Se connecter' }));
     expect(await screen.findByText(expected, {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1, name: /Tableau de bord|Carthage Fret/ })).toBeInTheDocument();
   });

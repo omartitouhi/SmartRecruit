@@ -238,6 +238,10 @@
 .sticky {
   position: sticky;
   top: 84px;
+  /* A detail panel taller than the screen scrolls on its own instead of leaving the list column empty. */
+  max-height: calc(100dvh - 104px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .toolbar {
@@ -298,6 +302,37 @@
 
   .sticky {
     position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+/* The app bar carries up to six links: it collapses into the menu before they overflow the page (~950px). */
+@media (max-width: 1024px) {
+  .bar--app .menu-toggle {
+    display: inline-flex;
+  }
+
+  .bar--app .nav {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 60px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: var(--space-2) var(--gutter) var(--space-4);
+    background: var(--paper);
+    border-bottom: 1px solid var(--line); /* taste-skill-ignore: option D (minimalist-ui) separates with 1px #EAEAEA dividers */
+  }
+
+  .bar--app[data-open='true'] .nav {
+    display: flex;
+  }
+
+  .bar--app .nav__link {
+    height: 44px;
   }
 }
 

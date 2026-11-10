@@ -141,7 +141,7 @@ function Dashboard({ company }: { company: Company }) {
         </div>
       </header>
 
-      <div className="toolbar panel">
+      <div className="period-filter">
         <PeriodFilter value={days} onChange={setDays} />
       </div>
 
