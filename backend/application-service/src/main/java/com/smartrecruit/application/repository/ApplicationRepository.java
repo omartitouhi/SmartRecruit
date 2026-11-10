@@ -24,17 +24,22 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     @Query("select a.jobId, count(a) from Application a where a.jobId in :jobIds and a.status <> :excluded group by a.jobId")
     List<Object[]> countByJob(Collection<UUID> jobIds, ApplicationStatus excluded);
 
-    /** Rows of {@code [status, matchScore]} of every application other than {@code excluded}. */
-    @Query("select a.status, a.matchScore from Application a where a.status <> :excluded")
-    List<Object[]> statusAndScore(ApplicationStatus excluded);
+    /** Rows of {@code [status, matchScore]} of the applications other than {@code excluded} made in {@code [from, to)}. */
+    @Query("select a.status, a.matchScore from Application a where a.status <> :excluded "
+            + "and a.appliedAt >= :from and a.appliedAt < :to")
+    List<Object[]> statusAndScore(ApplicationStatus excluded, Instant from, Instant to);
 
-    @Query("select a.status, a.matchScore from Application a where a.companyId = :companyId and a.status <> :excluded")
-    List<Object[]> statusAndScoreOfCompany(UUID companyId, ApplicationStatus excluded);
+    @Query("select a.status, a.matchScore from Application a where a.companyId = :companyId and a.status <> :excluded "
+            + "and a.appliedAt >= :from and a.appliedAt < :to")
+    List<Object[]> statusAndScoreOfCompany(UUID companyId, ApplicationStatus excluded, Instant from, Instant to);
 
-    /** Applications in one of {@code statuses}, with their history (EXT-DASH-01 decision delay). */
-    List<Application> findByStatusIn(Collection<ApplicationStatus> statuses);
+    /** Applications in one of {@code statuses} made in {@code [from, to)}, with their history (EXT-DASH-01 decision delay). */
+    @Query("select a from Application a where a.status in :statuses and a.appliedAt >= :from and a.appliedAt < :to")
+    List<Application> decidedBetween(Collection<ApplicationStatus> statuses, Instant from, Instant to);
 
-    List<Application> findByCompanyIdAndStatusIn(UUID companyId, Collection<ApplicationStatus> statuses);
+    @Query("select a from Application a where a.companyId = :companyId and a.status in :statuses "
+            + "and a.appliedAt >= :from and a.appliedAt < :to")
+    List<Application> decidedOfCompanyBetween(UUID companyId, Collection<ApplicationStatus> statuses, Instant from, Instant to);
 
     /** Interviews of a company from {@code from} on, soonest first (EXT-APP-02). */
     @Query("select a from Application a where a.companyId = :companyId and a.status = :status "

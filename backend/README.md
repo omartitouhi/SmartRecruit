@@ -21,6 +21,8 @@ décisions motivées, entretiens planifiés, notes d'équipe), des offres favori
 une offre clôturée. Rejouable sans doublon. Comptes (mot de passe `Motdepasse123`) :
 `candidat@smartrecruit.test`, `recruteur@smartrecruit.test` (Acme Tech), `recruteur2` à `recruteur5@smartrecruit.test` ;
 administrateur : voir `.env.example` à la racine. Repartir d'une base vide : `docker compose down -v`.
+`python backend/seed/seed_volume.py` ajoute ensuite 3 000 offres publiées (`VOLUME=…` pour en changer le nombre), pour la
+recherche à fort volume et le test de charge.
 
 ## Tests
 

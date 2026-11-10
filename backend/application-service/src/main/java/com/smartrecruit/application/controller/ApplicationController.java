@@ -122,6 +122,13 @@ public class ApplicationController {
         return NoteResponse.from(noteService.add(user.id(), id, request));
     }
 
+    @PutMapping("/{id}/notes/{noteId}")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public NoteResponse updateNote(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
+                                   @PathVariable UUID noteId, @Valid @RequestBody NoteRequest request) {
+        return NoteResponse.from(noteService.update(user.id(), id, noteId, request));
+    }
+
     @DeleteMapping("/{id}/notes/{noteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('RECRUITER')")

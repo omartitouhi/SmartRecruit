@@ -60,6 +60,7 @@ Internes :
 | `GET /api/v1/jobs/{id}` | tout connecté | `JobSummary` ; un candidat ne voit que `PUBLISHED` (sinon 404) ; propriétaire/admin tout |
 | `PATCH /api/v1/jobs/{id}` | RECRUITER propriétaire | merge patch (title, description, requiredSkills, experienceLevel, contractType, location) → `JobResponse`, `updatedAt` mis à jour, nouvelle analyse IA si titre/description/compétences changent ; **403** autre entreprise ; **409** si `CLOSED`/`MODERATED` |
 | `PATCH /api/v1/jobs/{id}/status` | RECRUITER propriétaire | `{status}` transitions `DRAFT→PUBLISHED`, `PUBLISHED→CLOSED`, `CLOSED→PUBLISHED` ; autre transition → 400 ; offre `MODERATED` → 403 ; une offre clôturée disparaît de la recherche candidat |
+| `DELETE /api/v1/jobs/{id}` | RECRUITER propriétaire | 204 ; seulement une offre `DRAFT` (jamais publiée, donc sans candidature ni favori) ; autre statut → **409** (clôturer l'offre) ; **403** autre entreprise, 404 inconnue |
 | `GET /api/v1/jobs/recommendations` | CANDIDATE | existant (BE-REC-01) — le mapping doit rester prioritaire sur `/{id}` |
 
 Internes :
@@ -99,12 +100,14 @@ Appels sortants : job-service (`/internal/v1/jobs/{id}`), user-service (`/intern
 
 | Méthode et chemin | Rôle | Réponse |
 |---|---|---|
-| `GET /api/v1/dashboard/stats/global` | ADMIN | `{activeJobs, totalApplications, totalUsers, usersByRole{CANDIDATE,RECRUITER,ADMIN}, averageMatchScore|null}` (agrège auth/job/application) |
-| `GET /api/v1/dashboard/stats/company/{id}` | RECRUITER membre de `{id}` (vérifié via user-service `by-member`) / ADMIN | `{publishedJobs, applicationsReceived, acceptedApplications, acceptanceRate|null}` ; 403 sinon |
+| `GET /api/v1/dashboard/stats/global?from=&to=` | ADMIN | `{activeJobs, totalApplications, totalUsers, usersByRole{CANDIDATE,RECRUITER,ADMIN}, averageMatchScore|null}` (agrège auth/job/application) |
+| `GET /api/v1/dashboard/stats/company/{id}?from=&to=` | RECRUITER membre de `{id}` (vérifié via user-service `by-member`) / ADMIN | `{publishedJobs, applicationsReceived, acceptedApplications, acceptanceRate|null}` ; 403 sinon |
 | `GET /api/v1/dashboard/admin/users?role=&status=&page=&size=` | ADMIN | `Page<AccountResponse>` (via auth-service) |
 | `PATCH /api/v1/dashboard/admin/users/{id}/status` | ADMIN | `{status}` → `AccountResponse` ; audit `USER_STATUS_CHANGED` ; un admin ne peut pas se désactiver lui-même (400) |
 | `PATCH /api/v1/dashboard/admin/jobs/{id}/moderation` | ADMIN | `{reason(req ≤500)}` → `JobResponse` (via job-service) ; audit `JOB_MODERATED` |
 | `GET /api/v1/dashboard/admin/audit-log?from=&to=&actorId=&action=&page=&size=` | ADMIN | `Page<AuditLogEntryResponse>` (`id,actorId,action,resourceType,resourceId,timestamp`), plus récents d'abord ; `from`/`to` ISO 8601 |
+
+Filtre de période des deux statistiques : `from` / `to` facultatifs (dates ISO `AAAA-MM-JJ`, incluses, UTC) ; seuls les chiffres des candidatures (total, acceptées, taux, entonnoir, délai de décision, score moyen) sont limités aux candidatures déposées dans la période ; offres, utilisateurs et entretiens à venir restent des valeurs instantanées. `from` > `to` ou date invalide → 400. Transmis à `GET /internal/v1/applications/stats?companyId=&from=&to=`.
 
 Interne : `POST /internal/v1/audit-events` `{actorId, action, resourceType, resourceId}` → 201 (horodatage côté serveur).
 Actions : `CV_VIEWED`, `PROFILE_VIEWED`, `APPLICATION_STATUS_CHANGED`, `USER_STATUS_CHANGED`, `JOB_MODERATED`.
@@ -183,6 +186,7 @@ Réservé aux recruteurs de l'entreprise propriétaire (et à l'admin en lecture
 |---|---|---|
 | `GET /api/v1/applications/{id}/notes` | RECRUITER membre / ADMIN | `ApplicationNote[]` du plus ancien au plus récent |
 | `POST /api/v1/applications/{id}/notes` | RECRUITER membre | `{content (1..2000), rating? (1..5)}` → 201 `ApplicationNote` |
+| `PUT /api/v1/applications/{id}/notes/{noteId}` | RECRUITER auteur de la note | `{content (1..2000), rating? (1..5)}` → 200 `ApplicationNote` (contenu et évaluation remplacés) ; autre auteur → 403 ; inconnue → 404 ; 400 + `fieldErrors` |
 | `DELETE /api/v1/applications/{id}/notes/{noteId}` | RECRUITER auteur de la note | 204 ; autre auteur → 403 ; inconnue → 404 |
 
 `ApplicationNote` = `{id, applicationId, authorId, content, rating|null, createdAt}`.

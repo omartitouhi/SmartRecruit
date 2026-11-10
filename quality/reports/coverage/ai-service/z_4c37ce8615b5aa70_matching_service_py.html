@@ -5,7 +5,7 @@
     <title>Coverage for app\services\matching_service.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
     <link rel="stylesheet" href="style_cb_0853b3de.css" type="text/css">
-    <script src="coverage_html_cb_c74880ea.js" defer></script>
+    <script src="coverage_html_cb_c6c441fc.js" defer></script>
 </head>
 <body class="pyfile">
 <header>
@@ -66,8 +66,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_4c37ce8615b5aa70_recommendation_service_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.17.2">coverage.py v7.17.2</a>,
-            created at 2026-11-09 18:15 +0100
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
+            created at 2026-11-10 17:17 +0100
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -100,7 +100,7 @@
     <p class="run run2"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t">    <span class="str">&quot;education&quot;</span><span class="op">:</span> <span class="str">&quot;Formation&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t"><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="nam">INSUFFICIENT_DATA</span> <span class="op">=</span> <span class="str">&quot;Donn&#233;es insuffisantes&quot;</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t"><span class="nam">NO_EVALUABLE_CRITERION</span> <span class="op">=</span> <span class="fst">f&quot;</span><span class="op">{</span><span class="nam">INSUFFICIENT_DATA</span><span class="op">}</span><span class="fst"> : aucun crit&#232;re de compatibilit&#233; n&#x27;est &#233;valuable.</span><span class="fst">&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t"><span class="nam">NO_EVALUABLE_CRITERION</span> <span class="op">=</span> <span class="str">f&quot;{INSUFFICIENT_DATA} : aucun crit&#232;re de compatibilit&#233; n&#x27;est &#233;valuable.&quot;</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t"><span class="nam">MAX_JOB_DESCRIPTION_CHARS</span> <span class="op">=</span> <span class="num">3_000</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -149,9 +149,9 @@
     <p class="run run2"><span class="n"><a id="t65" href="#t65">65</a></span><span class="t">        <span class="str">&quot;description&quot;</span><span class="op">:</span> <span class="nam">job</span><span class="op">.</span><span class="nam">description</span><span class="op">[</span><span class="op">:</span><span class="nam">MAX_JOB_DESCRIPTION_CHARS</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t66" href="#t66">66</a></span><span class="t">    <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t67" href="#t67">67</a></span><span class="t">    <span class="key">return</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t">        <span class="fst">f&quot;</span><span class="fst">Date du jour : </span><span class="op">{</span><span class="nam">date</span><span class="op">.</span><span class="nam">today</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">isoformat</span><span class="op">(</span><span class="op">)</span><span class="op">}</span><span class="fst">\n\n</span><span class="fst">&quot;</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t69" href="#t69">69</a></span><span class="t">        <span class="fst">f&quot;</span><span class="fst">CV (JSON) :\n</span><span class="op">{</span><span class="nam">cv</span><span class="op">.</span><span class="nam">model_dump_json</span><span class="op">(</span><span class="nam">by_alias</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">}</span><span class="fst">\n\n</span><span class="fst">&quot;</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">        <span class="fst">f&quot;</span><span class="fst">Offre (JSON) :\n</span><span class="op">{</span><span class="nam">json</span><span class="op">.</span><span class="nam">dumps</span><span class="op">(</span><span class="nam">offer</span><span class="op">,</span> <span class="nam">ensure_ascii</span><span class="op">=</span><span class="key">False</span><span class="op">)</span><span class="op">}</span><span class="fst">&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t">        <span class="str">f&quot;Date du jour : {date.today().isoformat()}\n\n&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t69" href="#t69">69</a></span><span class="t">        <span class="str">f&quot;CV (JSON) :\n{cv.model_dump_json(by_alias=True)}\n\n&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">        <span class="str">f&quot;Offre (JSON) :\n{json.dumps(offer, ensure_ascii=False)}&quot;</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -216,7 +216,7 @@
     <p class="run run2"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">                <span class="nam">label</span><span class="op">=</span><span class="nam">CRITERIA_LABELS</span><span class="op">[</span><span class="nam">criterion</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">                <span class="nam">weight</span><span class="op">=</span><span class="num">0.0</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">                <span class="nam">contribution</span><span class="op">=</span><span class="num">0.0</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">                <span class="nam">explanation</span><span class="op">=</span><span class="fst">f&quot;</span><span class="op">{</span><span class="nam">INSUFFICIENT_DATA</span><span class="op">}</span><span class="fst"> : </span><span class="op">{</span><span class="nam">missing</span><span class="op">[</span><span class="nam">criterion</span><span class="op">]</span><span class="op">}</span><span class="fst">&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">                <span class="nam">explanation</span><span class="op">=</span><span class="str">f&quot;{INSUFFICIENT_DATA} : {missing[criterion]}&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t">            <span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t137" href="#t137">137</a></span><span class="t">            <span class="key">continue</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t138" href="#t138">138</a></span><span class="t">        <span class="nam">weight</span> <span class="op">=</span> <span class="nam">CRITERIA_WEIGHTS</span><span class="op">[</span><span class="nam">criterion</span><span class="op">]</span> <span class="op">/</span> <span class="nam">total_weight</span>&nbsp;</span><span class="r"></span></p>
@@ -246,8 +246,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_4c37ce8615b5aa70_recommendation_service_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.17.2">coverage.py v7.17.2</a>,
-            created at 2026-11-09 18:15 +0100
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
+            created at 2026-11-10 17:17 +0100
         </p>
     </div>
 </footer>

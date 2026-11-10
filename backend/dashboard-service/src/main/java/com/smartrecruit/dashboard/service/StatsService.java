@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +39,10 @@ public class StatsService {
     private final JobServiceClient jobClient;
     private final ApplicationServiceClient applicationClient;
 
-    public GlobalStatsResponse global() {
+    public GlobalStatsResponse global(LocalDate from, LocalDate to) {
         AccountStats accounts = Upstream.orNull(authClient::stats);
         JobStats jobs = Upstream.orNull(() -> jobClient.stats(null));
-        ApplicationStats applications = Upstream.orNull(() -> applicationClient.stats(null));
+        ApplicationStats applications = Upstream.orNull(() -> applicationClient.stats(null, from, to));
         return new GlobalStatsResponse(
                 from(jobs, JobStats::published),
                 from(applications, ApplicationStats::total),
@@ -54,7 +55,7 @@ public class StatsService {
     }
 
     /** A recruiter only sees their own company (membership checked in user-service); admins see any. */
-    public CompanyStatsResponse company(AuthenticatedUser caller, UUID companyId) {
+    public CompanyStatsResponse company(AuthenticatedUser caller, UUID companyId, LocalDate from, LocalDate to) {
         if (!"ADMIN".equals(caller.role())) {
             boolean member = Upstream.call(() -> userClient.companyOfMember(caller.id()))
                     .filter(company -> companyId.equals(company.id()))
@@ -64,7 +65,7 @@ public class StatsService {
             }
         }
         JobStats jobs = Upstream.orNull(() -> jobClient.stats(companyId));
-        ApplicationStats applications = Upstream.orNull(() -> applicationClient.stats(companyId));
+        ApplicationStats applications = Upstream.orNull(() -> applicationClient.stats(companyId, from, to));
         return new CompanyStatsResponse(
                 from(jobs, JobStats::published),
                 from(applications, ApplicationStats::total),

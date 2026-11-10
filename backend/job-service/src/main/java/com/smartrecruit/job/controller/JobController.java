@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,6 +95,14 @@ public class JobController {
     public JobResponse update(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
                               @RequestBody JsonNode body) {
         return jobService.update(user.id(), id, patchParser.parse(body));
+    }
+
+    /** Deletes a draft offer of the recruiter's company (other statuses: 409, close them instead). */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('RECRUITER')")
+    public void delete(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
+        jobService.delete(user.id(), id);
     }
 
     /** Copies an offer of the recruiter's company as a new draft — EXT-JOB-01. */

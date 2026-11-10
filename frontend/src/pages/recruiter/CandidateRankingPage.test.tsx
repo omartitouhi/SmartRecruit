@@ -27,6 +27,7 @@ vi.mock('../../api/applications', async (original) => ({
     notes: vi.fn(),
     addNote: vi.fn(),
     deleteNote: vi.fn(),
+    updateNote: vi.fn(),
   },
 }));
 vi.mock('../../api/candidates', async (original) => ({
@@ -359,6 +360,36 @@ describe('team notes (EXT-APP-03)', () => {
     expect(applications.deleteNote).toHaveBeenCalledWith('high', 'n1');
     await waitFor(() => expect(notes.queryByText('À revoir.')).not.toBeInTheDocument());
     expect(notes.getByText('Aucune note pour l’instant.')).toBeInTheDocument();
+  });
+});
+
+describe('editing one’s own note', () => {
+  it('prefills the form, saves the new content and rating, and can be cancelled', async () => {
+    const user = userEvent.setup();
+    applications.notes.mockResolvedValue([makeNote({ id: 'n1', applicationId: 'high', authorId: 'recruiter-id', content: 'À revoir.', rating: 2 })]);
+    applications.updateNote.mockResolvedValue(
+      makeNote({ id: 'n1', applicationId: 'high', authorId: 'recruiter-id', content: 'Très bon entretien.', rating: 5 }),
+    );
+    show();
+    const detail = await screen.findByRole('complementary', { name: 'Détail du candidat' });
+    const notes = within(await within(detail).findByRole('region', { name: /Notes de l’équipe/ }));
+
+    await user.click(await notes.findByRole('button', { name: 'Modifier ma note' }));
+    const field = notes.getByLabelText('Modifier ma note');
+    expect(field).toHaveValue('À revoir.');
+    await user.click(notes.getByRole('button', { name: 'Annuler' }));
+    expect(notes.getByLabelText('Ajouter une note')).toHaveValue('');
+
+    await user.click(notes.getByRole('button', { name: 'Modifier ma note' }));
+    await user.clear(notes.getByLabelText('Modifier ma note'));
+    await user.type(notes.getByLabelText('Modifier ma note'), 'Très bon entretien.');
+    await user.selectOptions(notes.getByLabelText('Évaluation'), '5');
+    await user.click(notes.getByRole('button', { name: 'Enregistrer la note' }));
+
+    expect(applications.updateNote).toHaveBeenCalledWith('high', 'n1', { content: 'Très bon entretien.', rating: 5 });
+    expect(await notes.findByText('Très bon entretien.')).toBeInTheDocument();
+    expect(notes.queryByText('À revoir.')).not.toBeInTheDocument();
+    expect(applications.addNote).not.toHaveBeenCalled();
   });
 });
 

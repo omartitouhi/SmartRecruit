@@ -27,8 +27,12 @@ class InternalStatsIntegrationTest extends ApiTestSupport {
     private final UUID globex = UUID.randomUUID();
 
     private void save(UUID company, ApplicationStatus status, Double score) {
+        save(company, status, score, Instant.now());
+    }
+
+    private void save(UUID company, ApplicationStatus status, Double score, Instant appliedAt) {
         applications.save(Application.builder().id(UUID.randomUUID()).jobId(UUID.randomUUID()).candidateId(UUID.randomUUID())
-                .companyId(company).status(status).appliedAt(Instant.now())
+                .companyId(company).status(status).appliedAt(appliedAt)
                 .matchScore(score == null ? null : new MatchScoreDto(score, List.of())).build());
     }
 
@@ -67,6 +71,26 @@ class InternalStatsIntegrationTest extends ApiTestSupport {
                 .andExpect(jsonPath("$.accepted").value(2))
                 .andExpect(jsonPath("$.decided").value(3))
                 .andExpect(jsonPath("$.acceptanceRate").value(2.0 / 3));
+    }
+
+    @Test
+    void periodKeepsOnlyTheApplicationsMadeInIt() throws Exception {
+        save(acme, ApplicationStatus.ACCEPTED, 80.0, Instant.parse("2026-09-30T23:59:59Z"));
+        save(acme, ApplicationStatus.RECEIVED, 40.0, Instant.parse("2026-10-01T00:00:00Z"));
+        save(acme, ApplicationStatus.REJECTED, 60.0, Instant.parse("2026-10-31T23:59:59Z"));
+        save(acme, ApplicationStatus.IN_REVIEW, null, Instant.parse("2026-11-01T00:00:00Z"));
+
+        mockMvc.perform(as(get("/internal/v1/applications/stats").param("companyId", acme.toString())
+                        .param("from", "2026-10-01").param("to", "2026-10-31"), service, "SERVICE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(2))
+                .andExpect(jsonPath("$.byStatus.RECEIVED").value(1))
+                .andExpect(jsonPath("$.byStatus.REJECTED").value(1))
+                .andExpect(jsonPath("$.byStatus.ACCEPTED").value(0))
+                .andExpect(jsonPath("$.averageMatchScore").value(50.0));
+        mockMvc.perform(as(get("/internal/v1/applications/stats").param("from", "2026-11-01"), service, "SERVICE"))
+                .andExpect(jsonPath("$.total").value(1));
+        stats("SERVICE", acme).andExpect(jsonPath("$.total").value(4));
     }
 
     @Test

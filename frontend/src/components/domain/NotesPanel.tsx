@@ -38,10 +38,25 @@ export function NotesPanel({ applicationId, readOnly, onStatsChange }: {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<string | undefined>();
+  const [editing, setEditing] = useState<ApplicationNote | null>(null);
 
   function replace(next: ApplicationNote[]) {
     notes.setData(next);
     onStatsChange?.(noteStats(next));
+  }
+
+  /** Le formulaire sert à ajouter une note ou, après « Modifier », à corriger l'une des siennes. */
+  function startEdit(note: ApplicationNote) {
+    setEditing(note);
+    setContent(note.content);
+    setRating(note.rating ? String(note.rating) : '');
+    setFieldError(undefined);
+  }
+
+  function resetForm() {
+    setEditing(null);
+    setContent('');
+    setRating('');
   }
 
   async function add(e: FormEvent) {
@@ -54,10 +69,15 @@ export function NotesPanel({ applicationId, readOnly, onStatsChange }: {
     setError(null);
     setFieldError(undefined);
     try {
-      const created = await applicationsApi.addNote(applicationId, { content: content.trim(), rating: rating ? Number(rating) : null });
-      replace([...(notes.data ?? []), created]);
-      setContent('');
-      setRating('');
+      const request = { content: content.trim(), rating: rating ? Number(rating) : null };
+      if (editing) {
+        const updated = await applicationsApi.updateNote(applicationId, editing.id, request);
+        replace((notes.data ?? []).map((n) => (n.id === updated.id ? updated : n)));
+      } else {
+        const created = await applicationsApi.addNote(applicationId, request);
+        replace([...(notes.data ?? []), created]);
+      }
+      resetForm();
     } catch (err) {
       const ui = toUiError(err);
       setFieldError(ui.fieldErrors.content);
@@ -73,6 +93,7 @@ export function NotesPanel({ applicationId, readOnly, onStatsChange }: {
     try {
       await applicationsApi.deleteNote(applicationId, note.id);
       replace((notes.data ?? []).filter((n) => n.id !== note.id));
+      if (editing?.id === note.id) resetForm();
     } catch (err) {
       setError(toUiError(err).message);
     } finally {
@@ -128,9 +149,14 @@ export function NotesPanel({ applicationId, readOnly, onStatsChange }: {
                 </p>
                 <p className="notes__content">{note.content}</p>
                 {mine && !readOnly && (
-                  <Button variant="quiet" loading={busy === note.id} disabled={busy !== null} onClick={() => remove(note)}>
-                    Supprimer ma note
-                  </Button>
+                  <>
+                    <Button variant="quiet" disabled={busy !== null} onClick={() => startEdit(note)}>
+                      Modifier ma note
+                    </Button>
+                    <Button variant="quiet" loading={busy === note.id} disabled={busy !== null} onClick={() => remove(note)}>
+                      Supprimer ma note
+                    </Button>
+                  </>
                 )}
               </li>
             );
@@ -141,7 +167,7 @@ export function NotesPanel({ applicationId, readOnly, onStatsChange }: {
       {!readOnly && (
         <form className="notes__form" onSubmit={add} noValidate>
           <TextAreaField
-            label="Ajouter une note"
+            label={editing ? 'Modifier ma note' : 'Ajouter une note'}
             rows={3}
             maxLength={NOTE_MAX}
             value={content}
@@ -162,8 +188,13 @@ export function NotesPanel({ applicationId, readOnly, onStatsChange }: {
               options={[5, 4, 3, 2, 1].map((n) => ({ value: String(n), label: `${'★'.repeat(n)} (${n}/5)` }))}
             />
             <Button type="submit" variant="ghost" loading={busy === 'add'} disabled={busy !== null && busy !== 'add'}>
-              Ajouter la note
+              {editing ? 'Enregistrer la note' : 'Ajouter la note'}
             </Button>
+            {editing && (
+              <Button variant="quiet" disabled={busy !== null} onClick={resetForm}>
+                Annuler
+              </Button>
+            )}
           </div>
         </form>
       )}

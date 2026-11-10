@@ -51,16 +51,28 @@ public class ApplicationNoteService {
                 .build());
     }
 
+    /** Only the author edits a note (403 otherwise); unknown application or note → 404. */
+    public ApplicationNote update(UUID recruiterId, UUID applicationId, UUID noteId, NoteRequest request) {
+        ApplicationNote note = authoredNote(recruiterId, applicationId, noteId);
+        note.setContent(request.content().strip());
+        note.setRating(request.rating());
+        return notes.save(note);
+    }
+
     /** Only the author removes a note (403 otherwise); unknown application or note → 404. */
     public void delete(UUID recruiterId, UUID applicationId, UUID noteId) {
+        notes.delete(authoredNote(recruiterId, applicationId, noteId));
+    }
+
+    private ApplicationNote authoredNote(UUID recruiterId, UUID applicationId, UUID noteId) {
         applications.findApplication(applicationId);
         ApplicationNote note = notes.findById(noteId)
                 .filter(found -> found.getApplicationId().equals(applicationId))
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Note introuvable"));
         if (!note.getAuthorId().equals(recruiterId)) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Seul l'auteur peut supprimer cette note");
+            throw new ApiException(HttpStatus.FORBIDDEN, "Seul l'auteur peut modifier ou supprimer cette note");
         }
-        notes.delete(note);
+        return note;
     }
 
     /** Count and average rating (1 decimal) per application, in one query; absent applications have no notes. */

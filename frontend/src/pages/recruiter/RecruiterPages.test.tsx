@@ -504,10 +504,19 @@ describe('recruiter dashboard', () => {
     show();
     const tile = async (label: string) => ((await screen.findByText(label)).closest('.tile') as HTMLElement);
     expect(within(await tile('Offres publiées')).getByText('2')).toBeInTheDocument();
-    expect(dashboard.companyStats).toHaveBeenCalledWith('company-1');
+    expect(dashboard.companyStats).toHaveBeenCalledWith('company-1', {});
     expect(within(await tile('Candidatures reçues')).getByText('8')).toBeInTheDocument();
     expect(within(await tile('Candidatures acceptées')).getByText('1')).toBeInTheDocument();
     expect(within(await tile('Taux d’acceptation')).getByText('50 %')).toBeInTheDocument();
+  });
+
+  it('filters the application figures on a period', async () => {
+    const user = userEvent.setup();
+    show();
+    await screen.findByText('Offres publiées');
+    await user.selectOptions(screen.getByLabelText('Période'), '30');
+    const from = new Date(Date.now() - 29 * 86_400_000).toISOString().slice(0, 10);
+    await waitFor(() => expect(dashboard.companyStats).toHaveBeenLastCalledWith('company-1', { from }));
   });
 
   it('shows a dash instead of a rate when nothing is decided yet', async () => {

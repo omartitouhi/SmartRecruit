@@ -6,6 +6,7 @@ import com.smartrecruit.application.model.ApplicationStatus;
 import com.smartrecruit.application.model.StatusHistoryEntry;
 import com.smartrecruit.application.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +38,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalApplicationController {
 
-<span class="fc" id="L38">    private static final Set&lt;ApplicationStatus&gt; DECIDED = Set.of(ApplicationStatus.ACCEPTED, ApplicationStatus.REJECTED);</span>
+<span class="fc" id="L41">    private static final Set&lt;ApplicationStatus&gt; DECIDED = Set.of(ApplicationStatus.ACCEPTED, ApplicationStatus.REJECTED);</span>
     private static final double SECONDS_PER_DAY = 86_400d;
 
     private final ApplicationRepository applications;
@@ -45,53 +48,62 @@ public class InternalApplicationController {
     @GetMapping(&quot;/counts&quot;)
     @Transactional(readOnly = true)
     public Map&lt;UUID, Long&gt; counts(@RequestParam List&lt;UUID&gt; jobIds) {
-<span class="fc" id="L48">        Map&lt;UUID, Long&gt; counts = new LinkedHashMap&lt;&gt;();</span>
-<span class="fc" id="L49">        jobIds.forEach(jobId -&gt; counts.put(jobId, 0L));</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (!jobIds.isEmpty()) {</span>
-<span class="fc" id="L51">            applications.countByJob(jobIds, ApplicationStatus.WITHDRAWN)</span>
-<span class="fc" id="L52">                    .forEach(row -&gt; counts.put((UUID) row[0], (Long) row[1]));</span>
+<span class="fc" id="L51">        Map&lt;UUID, Long&gt; counts = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L52">        jobIds.forEach(jobId -&gt; counts.put(jobId, 0L));</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (!jobIds.isEmpty()) {</span>
+<span class="fc" id="L54">            applications.countByJob(jobIds, ApplicationStatus.WITHDRAWN)</span>
+<span class="fc" id="L55">                    .forEach(row -&gt; counts.put((UUID) row[0], (Long) row[1]));</span>
         }
-<span class="fc" id="L54">        return counts;</span>
+<span class="fc" id="L57">        return counts;</span>
     }
+
+    /** Bounds used when the dashboard asks for no period. */
+<span class="fc" id="L61">    private static final Instant NO_START = Instant.EPOCH;</span>
+<span class="fc" id="L62">    private static final Instant NO_END = Instant.parse(&quot;9999-12-31T00:00:00Z&quot;);</span>
 
     /**
      * Statistics over every application, or only those of {@code companyId} when given; with the decision delay
-     * and the number of upcoming interviews (EXT-DASH-01).
+     * and the number of upcoming interviews (EXT-DASH-01). {@code from}/{@code to} (inclusive days, UTC) keep only
+     * the applications made in that period; upcoming interviews are always counted from now.
      */
     @GetMapping(&quot;/stats&quot;)
     @Transactional(readOnly = true)
-    public ApplicationStatsResponse stats(@RequestParam(required = false) UUID companyId) {
-<span class="fc" id="L64">        Instant now = clock.instant();</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (companyId == null) {</span>
-<span class="fc" id="L66">            return ApplicationStatsResponse.from(applications.statusAndScore(ApplicationStatus.WITHDRAWN),</span>
-<span class="fc" id="L67">                    averageDecisionDays(applications.findByStatusIn(DECIDED)),</span>
-<span class="fc" id="L68">                    applications.countUpcomingInterviews(ApplicationStatus.INTERVIEW, now));</span>
+    public ApplicationStatsResponse stats(@RequestParam(required = false) UUID companyId,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+<span class="fc" id="L74">        Instant now = clock.instant();</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        Instant start = from == null ? NO_START : from.atStartOfDay(ZoneOffset.UTC).toInstant();</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        Instant end = to == null ? NO_END : to.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (companyId == null) {</span>
+<span class="fc" id="L78">            return ApplicationStatsResponse.from(applications.statusAndScore(ApplicationStatus.WITHDRAWN, start, end),</span>
+<span class="fc" id="L79">                    averageDecisionDays(applications.decidedBetween(DECIDED, start, end)),</span>
+<span class="fc" id="L80">                    applications.countUpcomingInterviews(ApplicationStatus.INTERVIEW, now));</span>
         }
-<span class="fc" id="L70">        return ApplicationStatsResponse.from(applications.statusAndScoreOfCompany(companyId, ApplicationStatus.WITHDRAWN),</span>
-<span class="fc" id="L71">                averageDecisionDays(applications.findByCompanyIdAndStatusIn(companyId, DECIDED)),</span>
-<span class="fc" id="L72">                applications.countUpcomingInterviewsOfCompany(companyId, ApplicationStatus.INTERVIEW, now));</span>
+<span class="fc" id="L82">        return ApplicationStatsResponse.from(applications.statusAndScoreOfCompany(companyId, ApplicationStatus.WITHDRAWN, start, end),</span>
+<span class="fc" id="L83">                averageDecisionDays(applications.decidedOfCompanyBetween(companyId, DECIDED, start, end)),</span>
+<span class="fc" id="L84">                applications.countUpcomingInterviewsOfCompany(companyId, ApplicationStatus.INTERVIEW, now));</span>
     }
 
     /** Mean days from {@code appliedAt} to the first ACCEPTED/REJECTED history entry, 1 decimal; null when none. */
     static Double averageDecisionDays(List&lt;Application&gt; decided) {
-<span class="fc" id="L77">        OptionalDouble average = decided.stream()</span>
-<span class="fc" id="L78">                .map(InternalApplicationController::decisionDays)</span>
-<span class="fc" id="L79">                .flatMap(Optional::stream)</span>
-<span class="fc" id="L80">                .mapToDouble(Double::doubleValue)</span>
-<span class="fc" id="L81">                .average();</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">        return average.isPresent() ? Math.round(average.getAsDouble() * 10) / 10.0 : null;</span>
+<span class="fc" id="L89">        OptionalDouble average = decided.stream()</span>
+<span class="fc" id="L90">                .map(InternalApplicationController::decisionDays)</span>
+<span class="fc" id="L91">                .flatMap(Optional::stream)</span>
+<span class="fc" id="L92">                .mapToDouble(Double::doubleValue)</span>
+<span class="fc" id="L93">                .average();</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        return average.isPresent() ? Math.round(average.getAsDouble() * 10) / 10.0 : null;</span>
     }
 
     private static Optional&lt;Double&gt; decisionDays(Application application) {
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (application.getAppliedAt() == null) {</span>
-<span class="nc" id="L87">            return Optional.empty();</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (application.getAppliedAt() == null) {</span>
+<span class="nc" id="L99">            return Optional.empty();</span>
         }
-<span class="fc" id="L89">        return application.getStatusHistory().stream()</span>
-<span class="fc" id="L90">                .filter(entry -&gt; DECIDED.contains(entry.getStatus()))</span>
-<span class="fc" id="L91">                .map(StatusHistoryEntry::getChangedAt)</span>
-<span class="fc" id="L92">                .filter(Objects::nonNull)</span>
-<span class="fc" id="L93">                .findFirst()</span>
-<span class="fc" id="L94">                .map(decidedAt -&gt; Duration.between(application.getAppliedAt(), decidedAt).toSeconds() / SECONDS_PER_DAY);</span>
+<span class="fc" id="L101">        return application.getStatusHistory().stream()</span>
+<span class="fc" id="L102">                .filter(entry -&gt; DECIDED.contains(entry.getStatus()))</span>
+<span class="fc" id="L103">                .map(StatusHistoryEntry::getChangedAt)</span>
+<span class="fc" id="L104">                .filter(Objects::nonNull)</span>
+<span class="fc" id="L105">                .findFirst()</span>
+<span class="fc" id="L106">                .map(decidedAt -&gt; Duration.between(application.getAppliedAt(), decidedAt).toSeconds() / SECONDS_PER_DAY);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

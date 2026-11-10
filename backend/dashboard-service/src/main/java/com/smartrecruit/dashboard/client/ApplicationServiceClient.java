@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,13 +29,19 @@ public class ApplicationServiceClient {
         this.client = ServiceRestClients.create(endpoints.applicationServiceUri(), signer, clock);
     }
 
-    /** @param companyId restricts the statistics to one company; null means platform-wide */
-    public ApplicationStats stats(UUID companyId) {
+    /** @param companyId restricts the statistics to one company; null means platform-wide; from/to: application dates, inclusive */
+    public ApplicationStats stats(UUID companyId, LocalDate from, LocalDate to) {
         return client.get()
                 .uri(uri -> {
                     uri.path("/internal/v1/applications/stats");
                     if (companyId != null) {
                         uri.queryParam("companyId", companyId);
+                    }
+                    if (from != null) {
+                        uri.queryParam("from", from);
+                    }
+                    if (to != null) {
+                        uri.queryParam("to", to);
                     }
                     return uri.build();
                 })

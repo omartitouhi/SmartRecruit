@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,61 +32,61 @@ import java.util.function.Function;
 public class StatsService {
 
     /** Steps of the hiring funnel, in order; withdrawn applications are left out (EXT-DASH-01). */
-<span class="fc" id="L34">    static final List&lt;String&gt; FUNNEL = List.of(&quot;RECEIVED&quot;, &quot;IN_REVIEW&quot;, &quot;INTERVIEW&quot;, &quot;ACCEPTED&quot;, &quot;REJECTED&quot;);</span>
+<span class="fc" id="L35">    static final List&lt;String&gt; FUNNEL = List.of(&quot;RECEIVED&quot;, &quot;IN_REVIEW&quot;, &quot;INTERVIEW&quot;, &quot;ACCEPTED&quot;, &quot;REJECTED&quot;);</span>
 
     private final AuthServiceClient authClient;
     private final UserServiceClient userClient;
     private final JobServiceClient jobClient;
     private final ApplicationServiceClient applicationClient;
 
-    public GlobalStatsResponse global() {
-<span class="fc" id="L42">        AccountStats accounts = Upstream.orNull(authClient::stats);</span>
-<span class="fc" id="L43">        JobStats jobs = Upstream.orNull(() -&gt; jobClient.stats(null));</span>
-<span class="fc" id="L44">        ApplicationStats applications = Upstream.orNull(() -&gt; applicationClient.stats(null));</span>
-<span class="fc" id="L45">        return new GlobalStatsResponse(</span>
-<span class="fc" id="L46">                from(jobs, JobStats::published),</span>
-<span class="fc" id="L47">                from(applications, ApplicationStats::total),</span>
-<span class="fc" id="L48">                from(accounts, AccountStats::total),</span>
-<span class="fc" id="L49">                from(accounts, AccountStats::byRole),</span>
-<span class="fc" id="L50">                from(applications, ApplicationStats::averageMatchScore),</span>
-<span class="fc" id="L51">                from(applications, StatsService::funnel),</span>
-<span class="fc" id="L52">                from(applications, ApplicationStats::averageDecisionDays),</span>
-<span class="fc" id="L53">                from(jobs, JobStats::closingSoon));</span>
+    public GlobalStatsResponse global(LocalDate from, LocalDate to) {
+<span class="fc" id="L43">        AccountStats accounts = Upstream.orNull(authClient::stats);</span>
+<span class="fc" id="L44">        JobStats jobs = Upstream.orNull(() -&gt; jobClient.stats(null));</span>
+<span class="fc" id="L45">        ApplicationStats applications = Upstream.orNull(() -&gt; applicationClient.stats(null, from, to));</span>
+<span class="fc" id="L46">        return new GlobalStatsResponse(</span>
+<span class="fc" id="L47">                from(jobs, JobStats::published),</span>
+<span class="fc" id="L48">                from(applications, ApplicationStats::total),</span>
+<span class="fc" id="L49">                from(accounts, AccountStats::total),</span>
+<span class="fc" id="L50">                from(accounts, AccountStats::byRole),</span>
+<span class="fc" id="L51">                from(applications, ApplicationStats::averageMatchScore),</span>
+<span class="fc" id="L52">                from(applications, StatsService::funnel),</span>
+<span class="fc" id="L53">                from(applications, ApplicationStats::averageDecisionDays),</span>
+<span class="fc" id="L54">                from(jobs, JobStats::closingSoon));</span>
     }
 
     /** A recruiter only sees their own company (membership checked in user-service); admins see any. */
-    public CompanyStatsResponse company(AuthenticatedUser caller, UUID companyId) {
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (!&quot;ADMIN&quot;.equals(caller.role())) {</span>
-<span class="fc" id="L59">            boolean member = Upstream.call(() -&gt; userClient.companyOfMember(caller.id()))</span>
-<span class="fc" id="L60">                    .filter(company -&gt; companyId.equals(company.id()))</span>
-<span class="fc" id="L61">                    .isPresent();</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">            if (!member) {</span>
-<span class="fc" id="L63">                throw new ApiException(HttpStatus.FORBIDDEN, &quot;Accès refusé : vous n'appartenez pas à cette entreprise&quot;);</span>
+    public CompanyStatsResponse company(AuthenticatedUser caller, UUID companyId, LocalDate from, LocalDate to) {
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (!&quot;ADMIN&quot;.equals(caller.role())) {</span>
+<span class="fc" id="L60">            boolean member = Upstream.call(() -&gt; userClient.companyOfMember(caller.id()))</span>
+<span class="fc" id="L61">                    .filter(company -&gt; companyId.equals(company.id()))</span>
+<span class="fc" id="L62">                    .isPresent();</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (!member) {</span>
+<span class="fc" id="L64">                throw new ApiException(HttpStatus.FORBIDDEN, &quot;Accès refusé : vous n'appartenez pas à cette entreprise&quot;);</span>
             }
         }
-<span class="fc" id="L66">        JobStats jobs = Upstream.orNull(() -&gt; jobClient.stats(companyId));</span>
-<span class="fc" id="L67">        ApplicationStats applications = Upstream.orNull(() -&gt; applicationClient.stats(companyId));</span>
-<span class="fc" id="L68">        return new CompanyStatsResponse(</span>
-<span class="fc" id="L69">                from(jobs, JobStats::published),</span>
-<span class="fc" id="L70">                from(applications, ApplicationStats::total),</span>
-<span class="fc" id="L71">                from(applications, ApplicationStats::accepted),</span>
-<span class="fc" id="L72">                from(applications, ApplicationStats::acceptanceRate),</span>
-<span class="fc" id="L73">                from(applications, StatsService::funnel),</span>
-<span class="fc" id="L74">                from(applications, ApplicationStats::averageDecisionDays),</span>
-<span class="fc" id="L75">                from(applications, ApplicationStats::upcomingInterviews),</span>
-<span class="fc" id="L76">                from(jobs, JobStats::closingSoon));</span>
+<span class="fc" id="L67">        JobStats jobs = Upstream.orNull(() -&gt; jobClient.stats(companyId));</span>
+<span class="fc" id="L68">        ApplicationStats applications = Upstream.orNull(() -&gt; applicationClient.stats(companyId, from, to));</span>
+<span class="fc" id="L69">        return new CompanyStatsResponse(</span>
+<span class="fc" id="L70">                from(jobs, JobStats::published),</span>
+<span class="fc" id="L71">                from(applications, ApplicationStats::total),</span>
+<span class="fc" id="L72">                from(applications, ApplicationStats::accepted),</span>
+<span class="fc" id="L73">                from(applications, ApplicationStats::acceptanceRate),</span>
+<span class="fc" id="L74">                from(applications, StatsService::funnel),</span>
+<span class="fc" id="L75">                from(applications, ApplicationStats::averageDecisionDays),</span>
+<span class="fc" id="L76">                from(applications, ApplicationStats::upcomingInterviews),</span>
+<span class="fc" id="L77">                from(jobs, JobStats::closingSoon));</span>
     }
 
     /** The five funnel steps in order, 0 for a step the source did not report. */
     private static Map&lt;String, Long&gt; funnel(ApplicationStats stats) {
-<span class="fc" id="L81">        Map&lt;String, Long&gt; funnel = new LinkedHashMap&lt;&gt;();</span>
-<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        Map&lt;String, Long&gt; byStatus = stats.byStatus() == null ? Map.of() : stats.byStatus();</span>
-<span class="fc" id="L83">        FUNNEL.forEach(status -&gt; funnel.put(status, byStatus.getOrDefault(status, 0L)));</span>
-<span class="fc" id="L84">        return funnel;</span>
+<span class="fc" id="L82">        Map&lt;String, Long&gt; funnel = new LinkedHashMap&lt;&gt;();</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        Map&lt;String, Long&gt; byStatus = stats.byStatus() == null ? Map.of() : stats.byStatus();</span>
+<span class="fc" id="L84">        FUNNEL.forEach(status -&gt; funnel.put(status, byStatus.getOrDefault(status, 0L)));</span>
+<span class="fc" id="L85">        return funnel;</span>
     }
 
     private static &lt;S, T&gt; T from(S source, Function&lt;S, T&gt; field) {
-<span class="fc bfc" id="L88" title="All 2 branches covered.">        return source == null ? null : field.apply(source);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        return source == null ? null : field.apply(source);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

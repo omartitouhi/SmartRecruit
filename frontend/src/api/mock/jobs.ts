@@ -241,6 +241,17 @@ export const mockJobsApi: JobsApi = {
     return clone(copy);
   },
 
+  async remove(jobId) {
+    await delay();
+    const account = requireRole('RECRUITER');
+    assertOwnsJob(account.id, jobId);
+    if (findJob(jobId).status !== 'DRAFT') {
+      throw new HttpError(409, 'Seule une offre en brouillon peut être supprimée : clôturez plutôt une offre publiée.');
+    }
+    db.jobs = db.jobs.filter((j) => j.id !== jobId);
+    save();
+  },
+
   async save(jobId) {
     await delay(120);
     const account = requireRole('CANDIDATE');

@@ -1,6 +1,6 @@
 # Rapport de conformité ISO/IEC 25010 — SmartRecruit
 
-> Toutes les valeurs ci-dessous viennent d'**exécutions réelles** du 9 et 10 novembre 2026 sur la stack Docker Compose
+> Toutes les valeurs ci-dessous viennent d'**exécutions réelles** du 9 au 11 novembre 2026 (campagne finale complète du 11/11 : `bash quality/run-all.sh`, toutes étapes réussies) sur la stack Docker Compose
 > (Windows 11, Docker Desktop) et de la CI GitHub Actions (Ubuntu). Chaque ligne renvoie au fichier de preuve dans
 > `quality/reports/`. Reproduire : `bash quality/run-all.sh` ([guide](GUIDE_INSTALLATION.md)).
 
@@ -8,13 +8,13 @@
 
 | # | Caractéristique | Exigence mesurable | Outil(s) | Résultat | Verdict |
 |---|---|---|---|---|---|
-| 6.1 | Aptitude fonctionnelle | Fonctionnalités du §4 implémentées et exactes | JUnit/Spring Test, pytest, Vitest, httpx (API), Playwright | 1 221 tests unitaires/intégration, 146/146 vérifications API, 54/54 tests E2E | ✅ |
-| 6.2 | Efficacité de performance | p95 < 500 ms à 20 utilisateurs simultanés, < 1 % d'erreurs | k6 | p95 = **321 ms**, 0,00 % d'erreurs, 73 req/s | ✅ |
+| 6.1 | Aptitude fonctionnelle | Fonctionnalités du §4 implémentées et exactes | JUnit/Spring Test, pytest, Vitest, httpx (API), Playwright | 1 233 tests unitaires/intégration, 155/155 vérifications API, 62/62 tests E2E | ✅ |
+| 6.2 | Efficacité de performance | p95 < 500 ms à 20 utilisateurs simultanés, < 1 % d'erreurs | k6 | p95 = **350 ms** sur 3 068 offres, 0,00 % d'erreurs, 72 req/s | ✅ |
 | 6.3 | Compatibilité | ≥ 2 navigateurs ; coexistence avec un système tiers | Playwright | Chromium, Edge, WebKit (Safari), Chrome mobile ; API LLM externe OpenRouter interchangeable | ✅ (Firefox : non exécutable sur le poste, voir §6.3) |
 | 6.4 | Facilité d'utilisation | Parcours validés, accessibilité de base | Playwright + axe-core (WCAG 2.1 A/AA) | 3 parcours de rôle validés, **0 violation** WCAG sur 6 pages | ✅ |
 | 6.5 | Fiabilité | Pas de perte de données, reprise correcte après panne | pytest + arrêt réel de conteneurs | 8/8 après correction de **2 défauts trouvés par ces tests** | ✅ |
 | 6.6 | Sécurité | Authentification robuste, RBAC, pas de faille OWASP connue | Bandit, Semgrep, pip-audit, npm audit, Trivy, OWASP ZAP, tests RBAC | SAST 0 ; SCA **179 → 0** CVE ; DAST 0 échec | ✅ |
-| 6.7 | Maintenabilité | Couches, complexité maîtrisée, couverture mesurée | JaCoCo, pytest-cov, Vitest v8, lizard, ruff, oxlint | Couverture des lignes 95,6 % (Java), 97,2 % (IA), 92,8 % (front) ; CCN moyen 2,2 | ✅ |
+| 6.7 | Maintenabilité | Couches, complexité maîtrisée, couverture mesurée | JaCoCo, pytest-cov, Vitest v8, lizard, ruff, oxlint | Couverture des lignes 95,7 % (Java), 97,2 % (IA), 92,1 % (front) ; CCN moyen 2,2 | ✅ |
 | 6.8 | Portabilité | Installation reproductible sur une autre machine | Docker Compose, GitHub Actions, Kubernetes sur VM Azure | Windows (dev) → Ubuntu (CI) → VM Azure (Kubernetes) avec tests de fumée verts | ✅ |
 
 ## 6.1 Aptitude fonctionnelle
@@ -24,14 +24,21 @@ règles métier) sont implémentées et produisent le résultat attendu.
 
 | Couche | Outil | Volume | Résultat | Preuve |
 |---|---|---|---|---|
-| Unitaires + intégration backend (API → base H2) | JUnit 5, Spring MockMvc | 686 tests, 6 services | 686 réussis, 0 échec | `quality/reports/unit/<service>/TEST-*.xml` |
+| Unitaires + intégration backend (API → base H2) | JUnit 5, Spring MockMvc | 693 tests, 6 services | 693 réussis, 0 échec | `quality/reports/unit/<service>/TEST-*.xml` |
 | Unitaires service IA | pytest + TestClient | 137 tests | 137 réussis | `quality/reports/unit/ai-service-junit.xml` |
-| Unitaires frontend (composants, pages) | Vitest + Testing Library | 398 tests, 32 fichiers | 398 réussis | `quality/reports/unit/frontend-junit.xml` |
-| API de bout en bout (gateway + nginx, vraie base PostgreSQL) | script httpx `backend/e2e/e2e_full.py` | 146 vérifications | **146 OK, 0 échec** | `quality/reports/api/e2e-console.txt` |
-| E2E interface | Playwright | 18 scénarios × 4 navigateurs | **54 réussis, 0 échec** | `quality/reports/e2e-ui/html/index.html`, `junit.xml` |
+| Unitaires frontend (composants, pages) | Vitest + Testing Library | 403 tests, 32 fichiers | 403 réussis | `quality/reports/unit/frontend-junit.xml` |
+| API de bout en bout (gateway + nginx, vraie base PostgreSQL) | script httpx `backend/e2e/e2e_full.py` | 155 vérifications | **155 OK, 0 échec** | `quality/reports/api/e2e-console.txt` |
+| E2E interface | Playwright | 13 parcours × 4 navigateurs + 6 audits d'accessibilité | **62 réussis, 0 échec** | `quality/reports/e2e-ui/html/index.html`, `junit.xml` |
 
 Les 9 règles métier `RG-01` à `RG-09` ont chacune au moins un test automatisé
 ([matrice](MATRICE_TRACABILITE.md)).
+
+**Compléments du 11/11 après relecture du cahier des charges** (chacun avec ses tests unitaires, API et/ou E2E) :
+- CRUD complet sur 6 entités : suppression d'une offre en brouillon (`DELETE /jobs/{id}`) et modification d'une note
+  par son auteur (`PUT /applications/{id}/notes/{noteId}`) ;
+- filtre par période sur les tableaux de bord recruteur et administrateur (`?from=&to=`) ;
+- recherche sur un fort volume : 3 068 offres publiées (`backend/seed/seed_volume.py`), sur lesquelles portent les
+  tests de charge et d'interface.
 
 ## 6.2 Efficacité de performance
 
@@ -42,16 +49,16 @@ recherche filtrée d'offres, détail d'une offre, mes candidatures (candidat) ; 
 offres (recruteur) ; journal d'audit paginé (admin). Les seuils sont codés dans le script : k6 échoue s'ils ne sont
 pas tenus.
 
-| Mesure (campagne finale, 10/11/2026) | Valeur |
+| Mesure (campagne finale, 11/11/2026, 3 068 offres publiées) | Valeur |
 |---|---|
-| Requêtes | 4 529 (73,4 req/s) |
-| Durée moyenne / médiane | 100,0 ms / 59,8 ms |
-| p90 / **p95** / max | 215,5 ms / **321,4 ms** / 1 117,8 ms |
+| Requêtes | 4 463 (72,0 req/s) |
+| Durée moyenne / médiane | 104,2 ms / 55,2 ms |
+| p90 / **p95** / max | 237,5 ms / **349,6 ms** / 1 486,6 ms |
 | Taux d'erreur HTTP | **0,00 %** |
 | Contrôles fonctionnels réussis | 100 % |
 | Seuils `p(95)<500`, `rate<0.01`, `checks>0.99` | **OK** |
 
-Première mesure (09/11, avant corrections) : p95 = 184,1 ms, 0,02 % d'erreurs (1 délai réseau Docker sur 5 441
+Première mesure (09/11, 68 offres seulement, avant corrections) : p95 = 184,1 ms, 0,02 % d'erreurs (1 délai réseau Docker sur 5 441
 requêtes). Preuve : `quality/reports/perf/k6-console.txt`, `k6-summary.json`.
 
 ## 6.3 Compatibilité
@@ -59,7 +66,7 @@ requêtes). Preuve : `quality/reports/perf/k6-console.txt`, `k6-summary.json`.
 **Exigence** : fonctionnement sur au moins 2 navigateurs et coexistence avec un système tiers.
 
 - **Multi-navigateurs** : la même suite Playwright tourne sur **Chromium**, **Microsoft Edge 157** (installé),
-  **WebKit** (moteur de Safari) et **Chrome mobile** (émulation Pixel 7, écran tactile). Résultat : 54/54 (les 18 tests
+  **WebKit** (moteur de Safari) et **Chrome mobile** (émulation Pixel 7, écran tactile). Résultat : 62/62 (les 6 tests
   d'accessibilité ne tournent que sur Chromium). Preuve : `quality/reports/e2e-ui/html/index.html` (colonne projet).
 - **Firefox** : le binaire Firefox de Playwright ne démarre pas sur le poste Windows de l'équipe
   (`browserType.launch: spawn UNKNOWN`, exécutable bloqué par le système). Conformément à la règle d'or, il est
@@ -68,7 +75,7 @@ requêtes). Preuve : `quality/reports/perf/k6-console.txt`, `k6-summary.json`.
   `AI_ENGINE=llm`, et bascule sur un moteur à règles local sinon. `ai-service/tests/test_llm_client.py` vérifie le
   contrat avec l'API externe (réponse JSON validée par schéma, réponse non conforme, échec ou délai dépassé → erreur
   contrôlée) et `test_skill_gap.py` la traduction en 502/503 pour l'appelant. Le
-  contrat d'API REST est vérifié par les 146 vérifications API (codes HTTP et structure JSON).
+  contrat d'API REST est vérifié par les 155 vérifications API (codes HTTP et structure JSON).
 
 ## 6.4 Facilité d'utilisation
 
@@ -96,10 +103,10 @@ requêtes). Preuve : `quality/reports/perf/k6-console.txt`, `k6-summary.json`.
 | IA arrêtée : création d'offre | 201, l'offre reste valide | ✅ |
 | IA arrêtée : score de compatibilité | 502/503 propre, sans trace technique | ✅ |
 | IA arrêtée : candidature | 201 enregistrée, score `null` | ✅ |
-| IA redémarrée | le score de l'offre créée pendant la panne redevient disponible | ✅ reprise en 46 à 68 s |
+| IA redémarrée | le score de l'offre créée pendant la panne redevient disponible | ✅ reprise en 46 à 68 s (60 s lors de la campagne finale) |
 | Transition de statut interdite | 400, état inchangé en base | ✅ |
 | Double candidature | 409, aucun doublon | ✅ |
-| Service candidatures arrêté | erreur 5xx **en moins de 15 s**, puis reprise sans perte de l'état validé | ✅ reprise en 15 à 17 s |
+| Service candidatures arrêté | erreur 5xx **en moins de 15 s**, puis reprise sans perte de l'état validé | ✅ reprise en 9 à 17 s |
 | PostgreSQL redémarré | aucune perte (offre, candidature et son statut) | ✅ reprise immédiate |
 
 **Défauts trouvés par ces tests puis corrigés** (première exécution : 5 réussis, 3 échecs) :
@@ -121,7 +128,7 @@ Résultat final : **8/8**. Preuve : `quality/reports/reliability/junit.xml`, `py
 | Couche | Outil | Résultat | Preuve |
 |---|---|---|---|
 | SAST Python | Bandit 1.8.6 | **0 problème** (1 612 lignes) | `security/bandit.txt` |
-| SAST Java / TypeScript / Python / secrets | Semgrep 1.140 (`p/owasp-top-ten`, `p/java`, `p/typescript`, `p/python`, `p/secrets`) | **0 finding**, 355 règles, 495 fichiers | `security/semgrep.txt`, `semgrep.json` |
+| SAST Java / TypeScript / Python / secrets | Semgrep 1.140 (`p/owasp-top-ten`, `p/java`, `p/typescript`, `p/python`, `p/secrets`) | **0 finding**, 355 règles, 498 fichiers | `security/semgrep.txt`, `semgrep.json` |
 | SCA Python | pip-audit 2.9 | **82 → 0** vulnérabilités | `security/pip-audit-avant.txt`, `pip-audit.txt` |
 | SCA npm | npm audit | **1 haute → 0** (follow-redirects) | `security/npm-audit-avant.txt`, `npm-audit.txt` |
 | SCA images (dépendances réellement embarquées) | Trivy 0.58.1, 8 images | **179 → 0** (dont 24 critiques : Tomcat, Jackson, jsoup, starlette, pypdf…) | `security/trivy-resume.txt`, `trivy-avant/`, `trivy/` |
@@ -133,7 +140,7 @@ Résultat final : **8/8**. Preuve : `quality/reports/reliability/junit.xml`, `py
 Spring Cloud 2025.1.4, FastAPI 0.162 / starlette 1.7, pypdf 6.21.4, python-multipart 0.0.32, python-dotenv 1.2.4,
 prometheus-fastapi-instrumentator 8.1 ; pip retiré de l'image d'exécution IA ; en-têtes nginx ajoutés
 (`Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`,
-`Cross-Origin-*`, `server_tokens off`). Tous les tests ont été rejoués après ces mises à jour (1 221 + 146 + 54 + 8).
+`Cross-Origin-*`, `server_tokens off`). Tous les tests ont été rejoués après ces mises à jour (1 233 + 155 + 62 + 8).
 
 **Alertes ZAP acceptées (risque résiduel)** : `style-src 'unsafe-inline'` (styles en ligne de React), `img-src https:
 http:` (logos d'entreprise hébergés ailleurs), absence de SRI sur Google Fonts (feuille générée dynamiquement par
@@ -154,17 +161,17 @@ authentification (verrouillage, rate limiting) ; A09 journalisation (journal d'a
 | api-gateway | 91,4 % | 81,8 % | JaCoCo 0.8.14 |
 | auth-service | 97,2 % | 89,1 % | JaCoCo |
 | user-service | 93,5 % | 87,7 % | JaCoCo |
-| job-service | 96,6 % | 90,5 % | JaCoCo |
-| application-service | 97,7 % | 94,4 % | JaCoCo |
-| dashboard-service | 96,5 % | 86,0 % | JaCoCo |
-| **Backend Java (total)** | **95,6 %** | **88,9 %** | JaCoCo |
+| job-service | 96,7 % | 90,6 % | JaCoCo |
+| application-service | 97,7 % | 94,6 % | JaCoCo |
+| dashboard-service | 96,6 % | 86,5 % | JaCoCo |
+| **Backend Java (total)** | **95,7 %** | **89,0 %** | JaCoCo |
 | ai-service | 97,2 % (instructions) | 91,2 % | pytest-cov |
-| frontend | 92,8 % | 87,0 % | Vitest (v8) |
+| frontend | 92,1 % | 86,4 % | Vitest (v8) |
 
 Rapports HTML : `quality/reports/coverage/<composant>/index.html`.
 
-- **Complexité** (lizard 1.17, Java + Python + TypeScript, 13 590 lignes) : complexité cyclomatique moyenne **2,2** par
-  fonction ; 5 fonctions sur 862 (0,6 %) dépassent 15, dont 2 dans le code de maquette du frontend (`api/mock`).
+- **Complexité** (lizard 1.17, Java + Python + TypeScript, 13 709 lignes) : complexité cyclomatique moyenne **2,2** par
+  fonction ; 5 fonctions sur 875 (0,6 %) dépassent 15, dont 2 dans le code de maquette du frontend (`api/mock`).
   Preuve : `quality/reports/maintainability/lizard-complexite.txt`.
 - **Lint** : ruff (Python) « All checks passed », oxlint (TypeScript) 0 avertissement — bloquants en CI.
 - **Structure** : couches `controller/service/repository/model/dto` dans chaque service ; un service par domaine ; contrats
@@ -189,4 +196,4 @@ Rapports HTML : `quality/reports/coverage/<composant>/index.html`.
 - La CI a été vérifiée sur le commit `3b4cd95` ; les corrections de cette campagne (versions, nginx, fiabilité) ont été
   testées localement par toutes les couches ci-dessus et seront vérifiées en CI au prochain push.
 - Tests de charge sur un poste de développement (toute la stack sur une seule machine) : les valeurs absolues dépendent
-  du matériel ; le seuil est tenu avec une marge (321 ms contre 500 ms).
+  du matériel ; le seuil est tenu avec une marge (350 ms contre 500 ms, sur 3 068 offres).

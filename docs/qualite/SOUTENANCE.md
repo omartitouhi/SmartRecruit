@@ -12,6 +12,10 @@ docker compose up -d --build
 python backend/seed/seed_demo.py
 ```
 
+```bash
+python backend/seed/seed_volume.py
+```
+
 - Vérifier http://localhost:5173 (connexion `candidat@smartrecruit.test` / `Motdepasse123`).
 - Dans `quality/e2e-ui`, `npm ci` et `npx playwright install chromium webkit` déjà faits ; image `grafana/k6:1.0.0`
   déjà téléchargée (`docker pull grafana/k6:1.0.0`).
@@ -25,7 +29,7 @@ python backend/seed/seed_demo.py
 | Temps | Contenu | Qui |
 |---|---|---|
 | 0:00 – 1:00 | Domaine (recrutement), architecture (6 microservices + IA + React), stack et justification | membre 1 |
-| 1:00 – 4:00 | **Démo application** : candidat (recherche filtrée → offre → score expliqué → candidature) ; recruteur (tableau de bord, classement, changement de statut) ; admin (journal d'audit filtré, désactivation d'un compte) | membre 2 |
+| 1:00 – 4:00 | **Démo application** : candidat (recherche filtrée parmi 3 000+ offres → offre → score expliqué → candidature) ; recruteur (tableau de bord filtré par période, classement, changement de statut, modification d’une note, suppression d’un brouillon) ; admin (journal d'audit filtré, désactivation d'un compte) | membre 2 |
 | 4:00 – 5:30 | **Couche de test live n°1 — E2E Playwright** (commande ci-dessous, navigateur visible) | membre 3 |
 | 5:30 – 7:00 | **Couche de test live n°2 — charge k6** (20 utilisateurs, 1 min ; commenter p95 et seuils pendant l'exécution) | membre 1 |
 | 7:00 – 9:00 | Matrice de traçabilité et rapport ISO 25010 : une preuve par caractéristique ; les **défauts trouvés par nos tests et corrigés** (fiabilité, CVE) | membre 2 |
@@ -51,7 +55,7 @@ d'erreur, seuils `OK`.
 
 ### Plan B (si une démo live échoue)
 
-- Couche alternative rapide : `cd ai-service && pytest -q` (137 tests en 3 s) ou `cd frontend && npm test` (398 tests).
+- Couche alternative rapide : `cd ai-service && pytest -q` (137 tests en 3 s) ou `cd frontend && npm test` (403 tests).
 - Montrer les rapports déjà générés dans `quality/reports/` (ils viennent d'exécutions réelles, horodatées).
 
 ## Questions probables et réponses courtes

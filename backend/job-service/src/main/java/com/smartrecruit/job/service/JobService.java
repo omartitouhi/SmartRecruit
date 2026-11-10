@@ -135,6 +135,22 @@ public class JobService {
     }
 
     /**
+     * Deletes a draft offer of the recruiter's company. A draft was never published, so no application
+     * or bookmark refers to it; a published or closed offer is closed instead (409).
+     */
+    public void delete(UUID recruiterId, UUID jobId) {
+        UUID companyId = recruiterCompanies.requireCompanyId(recruiterId);
+        transaction.executeWithoutResult(status -> {
+            Job job = ownedJob(jobId, companyId);
+            if (job.getStatus() != JobStatus.DRAFT) {
+                throw new ApiException(HttpStatus.CONFLICT,
+                        "Seule une offre en brouillon peut être supprimée : clôturez plutôt une offre publiée");
+            }
+            jobRepository.delete(job);
+        });
+    }
+
+    /**
      * Copies an offer of the recruiter's company as a new draft (EXT-JOB-01): title suffixed with
      * "(copie)", no deadline, no publication date. A moderated offer cannot be copied (409).
      */

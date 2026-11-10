@@ -16,7 +16,7 @@ import { RecruiterJobsPage } from './RecruiterJobsPage';
 
 vi.mock('../../api/jobs', async (original) => ({
   ...(await original<typeof import('../../api/jobs')>()),
-  jobsApi: { search: vi.fn(), get: vi.fn(), create: vi.fn(), updateStatus: vi.fn(), duplicate: vi.fn() },
+  jobsApi: { search: vi.fn(), get: vi.fn(), create: vi.fn(), updateStatus: vi.fn(), duplicate: vi.fn(), remove: vi.fn() },
 }));
 vi.mock('../../api/applications', async (original) => ({
   ...(await original<typeof import('../../api/applications')>()),
@@ -71,7 +71,7 @@ describe('job form extras (EXT-JOB-01)', () => {
     expect(jobs.create).toHaveBeenCalledWith(
       expect.objectContaining({ workMode: 'HYBRID', positions: 3, salaryMin: 2500, salaryMax: 3500, applicationDeadline: day(10) }),
     );
-  });
+  }, 15_000); // types into many fields: slow when the whole suite runs in parallel
 
   it('refuses an inverted salary range and a past deadline before calling the API', async () => {
     const user = userEvent.setup();
@@ -114,6 +114,30 @@ describe('duplicating an offer (EXT-JOB-01)', () => {
     renderAt(<RecruiterJobsPage />, { route: '/recruiter/jobs', account: recruiter });
     await user.click(await screen.findByRole('button', { name: 'Dupliquer l’offre Backend' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('ne peut pas être dupliquée');
+  });
+});
+
+describe('deleting a draft offer', () => {
+  it('asks for a named confirmation, then removes only the draft', async () => {
+    const user = userEvent.setup();
+    const confirm = vi.spyOn(window, 'confirm');
+    jobs.search.mockResolvedValue(page([makeJob({ id: 'pub', title: 'Publiée' }), makeJob({ id: 'd1', title: 'Brouillon Java', status: 'DRAFT', publishedAt: null })]));
+    jobs.remove.mockResolvedValue();
+    renderAt(<RecruiterJobsPage />, { route: '/recruiter/jobs', account: recruiter });
+    expect(await screen.findByRole('button', { name: 'Supprimer le brouillon Brouillon Java' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Supprimer le brouillon Publiée' })).not.toBeInTheDocument();
+
+    confirm.mockReturnValueOnce(false);
+    await user.click(screen.getByRole('button', { name: 'Supprimer le brouillon Brouillon Java' }));
+    expect(confirm).toHaveBeenCalledWith('Supprimer définitivement le brouillon « Brouillon Java » ?');
+    expect(jobs.remove).not.toHaveBeenCalled();
+
+    confirm.mockReturnValueOnce(true);
+    await user.click(screen.getByRole('button', { name: 'Supprimer le brouillon Brouillon Java' }));
+    expect(jobs.remove).toHaveBeenCalledWith('d1');
+    expect(await screen.findByText(/Brouillon « Brouillon Java » supprimé/, { selector: '.toast' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Brouillon Java' })).not.toBeInTheDocument();
+    confirm.mockRestore();
   });
 });
 

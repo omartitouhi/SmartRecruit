@@ -6,13 +6,14 @@
 set -u
 cd "$(dirname "$0")/.."
 ROOT_HOST=$(pwd -W 2>/dev/null || pwd)   # chemin vu par Docker (Git Bash : C:/...)
-export MSYS_NO_PATHCONV=1
 R=quality/reports
 PY=${PYTHON:-python}
 STEPS=${*:-install unit api ui perf reliability sast sca dast maintainability}
 status=0
 step() { echo; echo "=================== $1 ==================="; }
 run() { "$@" || { echo "!! échec : $*"; status=1; }; }
+# Git Bash : chemins Docker non convertis (MSYS_NO_PATHCONV) — seulement pour Docker, sinon mvnw ne démarre plus.
+docker_run() { MSYS_NO_PATHCONV=1 docker run "$@"; }
 wait_http() { until [ "$(curl -s -o /dev/null -w '%{http_code}' "$1")" = "$2" ]; do sleep 3; done; }
 
 for s in $STEPS; do case $s in
@@ -51,7 +52,7 @@ ui)  # Aptitude fonctionnelle, facilité d'utilisation (axe), compatibilité (na
 perf)  # Efficacité de performance : 20 utilisateurs simultanés, p95 < 500 ms
   step "Test de charge (k6)"
   mkdir -p $R/perf
-  docker run --rm -v "$ROOT_HOST/quality/perf:/scripts:ro" -v "$ROOT_HOST/$R/perf:/reports" grafana/k6:1.0.0 run --quiet \
+  docker_run --rm -v "$ROOT_HOST/quality/perf:/scripts:ro" -v "$ROOT_HOST/$R/perf:/reports" grafana/k6:1.0.0 run --quiet \
     /scripts/load-test.js 2>&1 | tee $R/perf/k6-console.txt; [ "${PIPESTATUS[0]}" = 0 ] || status=1 ;;
 reliability)  # Fiabilité : pannes réelles de conteneurs
   step "Tests de fiabilité (pannes provoquées)"
@@ -64,7 +65,7 @@ sast)  # Sécurité : analyse statique
   mkdir -p $R/security
   $PY -m pip install -q bandit==1.8.6
   run $PY -m bandit -r ai-service/app -f txt -o $R/security/bandit.txt
-  run docker run --rm -v "$ROOT_HOST:/src" -w /src semgrep/semgrep:1.140.0 semgrep scan --metrics=off --error \
+  run docker_run --rm -v "$ROOT_HOST:/src" -w /src semgrep/semgrep:1.140.0 semgrep scan --metrics=off --error \
     --config p/owasp-top-ten --config p/java --config p/typescript --config p/python --config p/secrets \
     --exclude '**/test/**' --exclude '**/tests/**' --exclude '*.test.ts' --exclude '*.test.tsx' \
     --json-output $R/security/semgrep.json backend ai-service frontend/src ;;
@@ -75,14 +76,14 @@ sca)  # Sécurité : dépendances vulnérables (CVE)
   run $PY -m pip_audit -r ai-service/requirements.txt -f columns -o $R/security/pip-audit.txt
   (cd frontend && npm audit --omit=dev > ../$R/security/npm-audit.txt) || status=1
   for img in api-gateway auth-service user-service job-service application-service dashboard-service ai-service frontend; do
-    run docker run --rm -v //var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache -v "$ROOT_HOST/$R/security/trivy:/out" \
+    run docker_run --rm -v //var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache -v "$ROOT_HOST/$R/security/trivy:/out" \
       aquasec/trivy:0.58.1 image --quiet --scanners vuln --pkg-types library --exit-code 1 --severity HIGH,CRITICAL \
       --format table --output /out/$img.txt smartrecruit-$img:latest
   done ;;
 dast)  # Sécurité : scan dynamique de l'application en cours d'exécution
   step "DAST (OWASP ZAP baseline)"
   mkdir -p $R/security/zap
-  run docker run --rm -v "$ROOT_HOST/$R/security/zap:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:2.16.1 zap-baseline.py \
+  run docker_run --rm -v "$ROOT_HOST/$R/security/zap:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:2.16.1 zap-baseline.py \
     -t http://host.docker.internal:5173 -r zap-frontend.html -J zap-frontend.json -I ;;  # -I : échec sur FAIL seulement
 maintainability)  # Maintenabilité : complexité et lint
   step "Maintenabilité (lizard, ruff, oxlint)"

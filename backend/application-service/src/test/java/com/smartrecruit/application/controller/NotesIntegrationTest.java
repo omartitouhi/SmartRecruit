@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -130,6 +131,29 @@ class NotesIntegrationTest extends ApiTestSupport {
                 .andExpect(status().isNoContent());
         assertThat(notes.count()).isZero();
         mockMvc.perform(as(delete("/api/v1/applications/" + application.getId() + "/notes/" + mine.getId()), recruiterId, "RECRUITER"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void onlyTheAuthorEditsANote() throws Exception {
+        ApplicationNote mine = note(recruiterId, "Ma note", 2, Instant.now());
+        String url = "/api/v1/applications/" + application.getId() + "/notes/" + mine.getId();
+        String body = "{\"content\": \"  Entretien très positif \", \"rating\": 5}";
+
+        mockMvc.perform(as(put(url), colleagueId, "RECRUITER").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(as(put(url), recruiterId, "RECRUITER").contentType(MediaType.APPLICATION_JSON).content("{\"content\": \"\"}"))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(as(put(url), recruiterId, "RECRUITER").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").value("Entretien très positif"))
+                .andExpect(jsonPath("$.rating").value(5));
+        assertThat(notes.findById(mine.getId())).get().satisfies(saved -> {
+            assertThat(saved.getContent()).isEqualTo("Entretien très positif");
+            assertThat(saved.getRating()).isEqualTo(5);
+        });
+        mockMvc.perform(as(put("/api/v1/applications/" + application.getId() + "/notes/" + UUID.randomUUID()), recruiterId, "RECRUITER")
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isNotFound());
     }
 

@@ -16,8 +16,8 @@ Couverture des exigences fonctionnelles minimales du cahier des charges (§4) :
 | ≥ 3 profils, droits différenciés | `CANDIDATE`, `RECRUITER`, `ADMIN` ; JWT validé au gateway, RBAC par `@PreAuthorize` dans chaque service ; routes frontend protégées par rôle (`RequireRole`) |
 | ≥ 4 entités liées (1-N, N-N), CRUD | `Account`, `CandidateProfile`, `Company`, `Job`, `Application`, `ApplicationNote`, `SavedJob`, `CompanyInvitation`, `AuditLogEntry` (§3) |
 | ≥ 1 workflow à statuts | Candidature `RECEIVED → IN_REVIEW → INTERVIEW → {ACCEPTED, REJECTED}`, retrait `WITHDRAWN` ; offre `DRAFT → PUBLISHED ⇄ CLOSED`, `MODERATED` (§4) |
-| Tableau de bord (indicateurs agrégés, filtres) | Admin : offres actives, candidatures, utilisateurs par rôle, score moyen ; recruteur : offres publiées, candidatures reçues, taux d'acceptation, entonnoir par statut, délai moyen de décision, entretiens à venir |
-| Recherche / filtrage sur une entité à fort volume | Recherche d'offres paginée : mot-clé, ville, compétences, contrat, niveau, mode de travail, salaire minimum |
+| Tableau de bord (indicateurs agrégés, filtres) | Admin : offres actives, candidatures, utilisateurs par rôle, score moyen ; recruteur : offres publiées, candidatures reçues, taux d'acceptation, entonnoir par statut, délai moyen de décision, entretiens à venir ; **filtre par période** (7 / 30 / 90 jours, 12 mois) sur les deux tableaux de bord (`?from=&to=`) |
+| Recherche / filtrage sur une entité à fort volume | Recherche d'offres paginée : mot-clé, ville, compétences, contrat, niveau, mode de travail, salaire minimum ; **3 068 offres publiées** (`backend/seed/seed_volume.py`, paramétrable avec `VOLUME`) |
 | Journal d'audit | `dashboard-service` : `AuditLogEntry (actorId, action, resourceType, resourceId, timestamp)` ; consultation de CV, changement de statut, modération, (dés)activation de compte ; filtres date / auteur / action |
 | ≥ 5 règles métier testables | 9 règles `RG-01` à `RG-09` (§5) |
 
@@ -78,10 +78,18 @@ Application 1──N StatusHistory          AuditLogEntry N──1 Account (acto
 Entre microservices, les clés sont des **clés étrangères logiques** (chaque service possède sa base) ; la cohérence est
 garantie par les appels inter-services (ex. une candidature vérifie que l'offre existe et est `PUBLISHED`).
 
-CRUD : comptes (inscription, lecture, (dés)activation, suppression RGPD), profils candidat (création, lecture, mise à jour,
-suppression), entreprises (création, lecture, modification), offres (création, lecture/recherche, modification,
-duplication, clôture), candidatures (création, lecture, changement de statut, retrait), notes (création, lecture,
-suppression), favoris (ajout, liste, retrait).
+CRUD complet (les 4 opérations) sur 6 entités :
+
+| Entité | Créer | Lire | Modifier | Supprimer |
+|---|---|---|---|---|
+| Compte | `POST /auth/register` | `GET /auth/me`, liste admin | (dés)activation admin, réinitialisation du mot de passe | effacement RGPD avec le profil candidat |
+| Profil candidat | `PUT /users/candidates/me` (1re fois) | `GET /users/candidates/me` | `PUT` / `PATCH /users/candidates/me`, dépôt de CV | `DELETE /users/candidates/me?confirm=true` |
+| Offre | `POST /jobs`, duplication | `GET /jobs`, `GET /jobs/{id}` | `PATCH /jobs/{id}`, statut | `DELETE /jobs/{id}` (brouillon ; une offre publiée se clôture) |
+| Candidature | `POST /applications` | `GET /applications/me`, par offre | changement de statut, entretien | `DELETE /applications/{id}` (retrait logique `WITHDRAWN`) |
+| Note d'équipe | `POST /applications/{id}/notes` | `GET …/notes` | `PUT …/notes/{noteId}` (auteur) | `DELETE …/notes/{noteId}` (auteur) |
+| Favori | `PUT /jobs/{id}/saved` | `GET /jobs/saved` | — (aucun attribut modifiable) | `DELETE /jobs/{id}/saved` |
+
+Entreprises : création, lecture, modification, invitations (pas de suppression : les offres et candidatures en dépendent).
 
 ## 4. Workflows à statuts
 

@@ -34,6 +34,23 @@ class CompanyStatsIntegrationTest extends AbstractUpstreamIntegrationTest {
     }
 
     @Test
+    void periodIsForwardedForTheApplicationFiguresAndChecked() throws Exception {
+        membership(companyId);
+        sourcesUp();
+
+        perform(get(URL, companyId).param("from", "2026-10-01").param("to", "2026-10-31"), recruiterId, "RECRUITER")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.applicationsReceived").value(20));
+        assertThat(FAKE.callsTo("GET", "/internal/v1/applications/stats").getFirst().target())
+                .contains("companyId=" + companyId, "from=2026-10-01", "to=2026-10-31");
+
+        perform(get(URL, companyId).param("from", "2026-11-01").param("to", "2026-10-31"), recruiterId, "RECRUITER")
+                .andExpect(status().isBadRequest());
+        perform(get(URL, companyId).param("from", "pas-une-date"), recruiterId, "RECRUITER")
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void aRecruiterSeesTheirOwnCompanyFigures() throws Exception {
         membership(companyId);
         sourcesUp();

@@ -21,6 +21,16 @@ describe('mock stats', () => {
     expect(await statusOf(dashboard.globalStats())).toBe(403);
   });
 
+  it('keeps only the applications made in the period', async () => {
+    loginAs(EMAIL.admin);
+    const dates = db.applications.map((a) => a.appliedAt.slice(0, 10)).sort();
+    const day = dates[Math.floor(dates.length / 2)];
+    const stats = await dashboard.globalStats({ from: day, to: day });
+    expect(stats.totalApplications).toBe(dates.filter((d) => d === day).length);
+    expect((await dashboard.globalStats({ from: '2999-01-01' })).totalApplications).toBe(0);
+    expect((await dashboard.globalStats({})).totalApplications).toBe(db.applications.length);
+  });
+
   it('computes company figures for a member and an admin, 403 for anyone else', async () => {
     const fret = db.companies[0];
     loginAs(EMAIL.recruiter);
