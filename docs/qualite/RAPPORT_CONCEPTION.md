@@ -25,11 +25,11 @@ Couverture des exigences fonctionnelles minimales du cahier des charges (§4) :
 
 ```
                     ┌──────────────┐
-                    │   Frontend    │  React 19 + TypeScript (Vite), servi par nginx
+                    │   Frontend   │  React 19 + TypeScript (Vite), servi par nginx
                     └──────┬───────┘
                     ┌──────▼───────┐
-                    │ API Gateway   │  Spring Cloud Gateway : JWT, rate limiting, en-têtes d'identité signés (HMAC)
-                    └──────┬───────┘
+                    │ API Gateway  │  Spring Cloud Gateway : JWT, rate limiting,
+                    └──────┬───────┘  en-têtes d'identité signés (HMAC)
         ┌──────────┬───────┼───────┬───────────┬───────────┐
         ▼          ▼       ▼       ▼           ▼           ▼
    auth-service user-service job-service application- dashboard-  ai-service
