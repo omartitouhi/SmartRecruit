@@ -186,14 +186,18 @@ Rapports HTML : `quality/reports/coverage/<composant>/index.html`.
 - **Autre machine, autre OS** : la CI GitHub Actions (Ubuntu) rejoue tous les tests, valide les manifestes
   Kubernetes/Helm/Terraform/Ansible, construit les 8 images, **déploie sur une VM Azure** (Ubuntu, Kubernetes kind via
   Ansible) et lance des tests de fumée. Exécution
-  [42530810230](https://github.com/omartitouhi/SmartRecruit/actions/runs/42530810230) (commit `3b4cd95`) : 22 jobs sur
-  22 réussis, dont « 4 · Déploiement VM Azure » et « 5 · Tests de fumée ».
+  [42859400550](https://github.com/omartitouhi/SmartRecruit/actions/runs/42859400550) sur la version finale (commit
+  `ed0779b`, branche `feat/iso25010-quality`) : 20 jobs sur 20 réussis (tests des 8 composants avec couverture, Bandit,
+  pip-audit et npm audit ; validation de l'infrastructure ; construction des 8 images). Le déploiement et les tests de
+  fumée ne s'exécutent que depuis `main` : leur dernière exécution réussie est
+  [42530810230](https://github.com/omartitouhi/SmartRecruit/actions/runs/42530810230) (commit `3b4cd95`, 22 jobs sur
+  22, dont « 4 · Déploiement VM Azure » et « 5 · Tests de fumée »).
 - **Script d'installation documenté** : [GUIDE_INSTALLATION.md](GUIDE_INSTALLATION.md) et `quality/run-all.sh install`.
 
 ## Limites et éléments non vérifiés
 
 - Firefox non exécutable sur le poste de l'équipe (voir 6.3).
-- La CI a été vérifiée sur le commit `3b4cd95` ; les corrections de cette campagne (versions, nginx, fiabilité) ont été
-  testées localement par toutes les couches ci-dessus et seront vérifiées en CI au prochain push.
+- La version finale (`ed0779b`) passe toute la CI de la branche, mais n'est pas encore déployée sur la VM Azure : le
+  déploiement et les tests de fumée ne s'exécutent qu'après fusion dans `main` (dernier déploiement vérifié : `3b4cd95`).
 - Tests de charge sur un poste de développement (toute la stack sur une seule machine) : les valeurs absolues dépendent
   du matériel ; le seuil est tenu avec une marge (350 ms contre 500 ms, sur 3 068 offres).
