@@ -10,7 +10,7 @@ import httpx
 from reportlab.pdfgen import canvas
 
 GW = os.environ.get("E2E_GATEWAY", "http://localhost:8080") + "/api/v1"
-WEB = os.environ.get("E2E_WEB", "http://localhost:8090") + "/api/v1"
+WEB = os.environ.get("E2E_WEB", "http://localhost:5173") + "/api/v1"
 TARGET = os.environ.get("E2E_TARGET", "compose")
 # Racine du monorepo (docker-compose.yml) : backend/e2e/ -> ../..
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

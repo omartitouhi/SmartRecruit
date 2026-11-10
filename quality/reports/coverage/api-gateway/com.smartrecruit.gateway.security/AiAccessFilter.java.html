@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AiAccessFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api-gateway</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.gateway.security</a> &gt; <span class="el_source">AiAccessFilter.java</span></div><h1>AiAccessFilter.java</h1><pre class="source lang-java linenums">package com.smartrecruit.gateway.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import tools.jackson.databind.ObjectMapper;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Deny-by-default authorization for {@code /api/v1/ai/**}: the ai-service does no auth itself and
+ * backend services reach it directly on the internal network, so only a few read endpoints are exposed.
+ * RECRUITER and ADMIN may read any candidate's data; a CANDIDATE only their own.
+ */
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE + 20)
+<span class="fc" id="L35">public class AiAccessFilter extends OncePerRequestFilter {</span>
+
+    private static final String UUID_RE = &quot;([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})&quot;;
+    /** GET endpoints where group 1 is the candidate id. */
+<span class="fc" id="L39">    private static final Pattern[] CANDIDATE_READS = {</span>
+<span class="fc" id="L40">            Pattern.compile(&quot;/api/v1/ai/skill-gap/candidates/&quot; + UUID_RE + &quot;/jobs/&quot; + UUID_RE),</span>
+<span class="fc" id="L41">            Pattern.compile(&quot;/api/v1/ai/recommendation/candidates/&quot; + UUID_RE + &quot;/jobs&quot;),</span>
+<span class="fc" id="L42">            Pattern.compile(&quot;/api/v1/ai/cv-parsing/candidates/&quot; + UUID_RE)</span>
+    };
+    private static final String MATCHING_SCORE = &quot;/api/v1/ai/matching/score&quot;;
+    private static final int MAX_BODY_BYTES = 4096;
+
+<span class="fc" id="L47">    private final ObjectMapper mapper = new ObjectMapper();</span>
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        return !request.getRequestURI().startsWith(&quot;/api/v1/ai&quot;);</span>
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+<span class="fc" id="L57">        String uri = request.getRequestURI();</span>
+<span class="fc" id="L58">        String role = request.getHeader(InternalIdentityHeaders.USER_ROLE);</span>
+<span class="fc" id="L59">        String userId = request.getHeader(InternalIdentityHeaders.USER_ID);</span>
+<span class="fc bfc" id="L60" title="All 4 branches covered.">        boolean privileged = &quot;RECRUITER&quot;.equals(role) || &quot;ADMIN&quot;.equals(role);</span>
+<span class="pc bpc" id="L61" title="1 of 4 branches missed.">        if (!privileged &amp;&amp; !&quot;CANDIDATE&quot;.equals(role)) {</span>
+<span class="nc" id="L62">            deny(request, response, &quot;Accès refusé : endpoint réservé aux services internes&quot;);</span>
+<span class="nc" id="L63">            return;</span>
+        }
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (&quot;GET&quot;.equals(request.getMethod())) {</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            for (Pattern pattern : CANDIDATE_READS) {</span>
+<span class="fc" id="L68">                Matcher matcher = pattern.matcher(uri);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                if (matcher.matches()) {</span>
+<span class="fc bfc" id="L70" title="All 4 branches covered.">                    if (privileged || matcher.group(1).equalsIgnoreCase(userId)) {</span>
+<span class="fc" id="L71">                        chain.doFilter(request, response);</span>
+                    } else {
+<span class="fc" id="L73">                        deny(request, response, &quot;Accès refusé : ces données appartiennent à un autre candidat&quot;);</span>
+                    }
+<span class="fc" id="L75">                    return;</span>
+                }
+            }
+<span class="fc bfc" id="L78" title="All 4 branches covered.">        } else if (&quot;POST&quot;.equals(request.getMethod()) &amp;&amp; MATCHING_SCORE.equals(uri)) {</span>
+<span class="fc" id="L79">            byte[] body = request.getInputStream().readNBytes(MAX_BODY_BYTES + 1);</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            if (body.length &gt; MAX_BODY_BYTES) {</span>
+<span class="fc" id="L81">                GatewayErrorWriter.write(response, request, HttpStatus.BAD_REQUEST, &quot;Corps de requête trop volumineux&quot;);</span>
+<span class="fc" id="L82">                return;</span>
+            }
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if (!privileged) {</span>
+<span class="fc" id="L85">                String cvId = cvId(body);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                if (cvId == null) {</span>
+<span class="fc" id="L87">                    GatewayErrorWriter.write(response, request, HttpStatus.BAD_REQUEST,</span>
+                            &quot;Corps de requête invalide : cvId manquant&quot;);
+<span class="fc" id="L89">                    return;</span>
+                }
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                if (!cvId.equalsIgnoreCase(userId)) {</span>
+<span class="fc" id="L92">                    deny(request, response, &quot;Accès refusé : ces données appartiennent à un autre candidat&quot;);</span>
+<span class="fc" id="L93">                    return;</span>
+                }
+            }
+<span class="fc" id="L96">            chain.doFilter(new BufferedBodyRequest(request, body), response);</span>
+<span class="fc" id="L97">            return;</span>
+        }
+<span class="fc" id="L99">        deny(request, response, &quot;Accès refusé : endpoint réservé aux services internes&quot;);</span>
+<span class="fc" id="L100">    }</span>
+
+    /** Returns the cvId as a canonical UUID string, or null if the body has no valid one. */
+    private String cvId(byte[] body) {
+        try {
+<span class="fc" id="L105">            Object value = mapper.readValue(body, Map.class).get(&quot;cvId&quot;);</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            return value instanceof String s ? UUID.fromString(s).toString() : null;</span>
+<span class="fc" id="L107">        } catch (RuntimeException e) {</span>
+<span class="fc" id="L108">            return null;</span>
+        }
+    }
+
+    private static void deny(HttpServletRequest request, HttpServletResponse response, String message)
+            throws IOException {
+<span class="fc" id="L114">        GatewayErrorWriter.write(response, request, HttpStatus.FORBIDDEN, message);</span>
+<span class="fc" id="L115">    }</span>
+
+    /** Re-serves a body already consumed by the filter so the proxy forwards it unchanged. */
+    private static final class BufferedBodyRequest extends HttpServletRequestWrapper {
+
+        private final byte[] body;
+
+        BufferedBodyRequest(HttpServletRequest request, byte[] body) {
+<span class="fc" id="L123">            super(request);</span>
+<span class="fc" id="L124">            this.body = body;</span>
+<span class="fc" id="L125">        }</span>
+
+        @Override
+        public ServletInputStream getInputStream() {
+<span class="fc" id="L129">            ByteArrayInputStream in = new ByteArrayInputStream(body);</span>
+<span class="fc" id="L130">            return new ServletInputStream() {</span>
+                @Override
+                public int read() {
+<span class="nc" id="L133">                    return in.read();</span>
+                }
+
+                @Override
+                public int read(byte[] b, int off, int len) {
+<span class="fc" id="L138">                    return in.read(b, off, len);</span>
+                }
+
+                @Override
+                public boolean isFinished() {
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                    return in.available() == 0;</span>
+                }
+
+                @Override
+                public boolean isReady() {
+<span class="nc" id="L148">                    return true;</span>
+                }
+
+                @Override
+                public void setReadListener(ReadListener listener) {
+<span class="nc" id="L153">                    throw new UnsupportedOperationException();</span>
+                }
+            };
+        }
+
+        @Override
+        public BufferedReader getReader() {
+<span class="nc" id="L160">            String encoding = getCharacterEncoding();</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">            Charset charset = encoding == null ? StandardCharsets.UTF_8 : Charset.forName(encoding);</span>
+<span class="nc" id="L162">            return new BufferedReader(new InputStreamReader(getInputStream(), charset));</span>
+        }
+
+        @Override
+        public int getContentLength() {
+<span class="nc" id="L167">            return body.length;</span>
+        }
+
+        @Override
+        public long getContentLengthLong() {
+<span class="nc" id="L172">            return body.length;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

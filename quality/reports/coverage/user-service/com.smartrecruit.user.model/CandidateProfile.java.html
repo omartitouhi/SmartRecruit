@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CandidateProfile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.model</a> &gt; <span class="el_source">CandidateProfile.java</span></div><h1>CandidateProfile.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.model;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Field-for-field match of the {@code CandidateProfile} entity in
+ * {@code DATA_MODEL.md} (§3.2). {@code id} equals the {@code accountId} from
+ * auth-service (1:1 relationship) — never generate a separate id here.
+ */
+@Entity
+@Table(name = &quot;candidate_profiles&quot;)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CandidateProfile {
+
+    @Id
+    private UUID id;
+
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    /** Email de contact du candidat, visible par les recruteurs (BE-USER-01). */
+    @Column(nullable = false)
+    private String email;
+
+    private String phone;
+
+    /** Ville, utilisée pour le filtre de recherche d'offres (cf. DATA_MODEL.md §3.2). */
+    private String location;
+
+    @ElementCollection
+    @CollectionTable(name = &quot;candidate_skills&quot;, joinColumns = @JoinColumn(name = &quot;candidate_id&quot;))
+    @OrderColumn(name = &quot;position&quot;)
+    @Builder.Default
+    private List&lt;String&gt; skills = new ArrayList&lt;&gt;();
+
+    @ElementCollection
+    @CollectionTable(name = &quot;candidate_experiences&quot;, joinColumns = @JoinColumn(name = &quot;candidate_id&quot;))
+    @OrderColumn(name = &quot;position&quot;)
+    @Builder.Default
+    private List&lt;Experience&gt; experiences = new ArrayList&lt;&gt;();
+
+    @ElementCollection
+    @CollectionTable(name = &quot;candidate_education&quot;, joinColumns = @JoinColumn(name = &quot;candidate_id&quot;))
+    @OrderColumn(name = &quot;position&quot;)
+    @Builder.Default
+    private List&lt;Education&gt; education = new ArrayList&lt;&gt;();
+
+    @ElementCollection
+    @CollectionTable(name = &quot;candidate_languages&quot;, joinColumns = @JoinColumn(name = &quot;candidate_id&quot;))
+    @OrderColumn(name = &quot;position&quot;)
+    @Builder.Default
+    private List&lt;String&gt; languages = new ArrayList&lt;&gt;();
+
+    /** Référence au fichier stocké (chiffré, cf. BE-SEC-01) — jamais l'URL brute du stockage. */
+    private String cvUrl;
+
+    /** Clé interne du fichier dans {@code CvStorage} — jamais exposée dans l'API. */
+    private String cvStorageKey;
+
+    /** Horodatage de la dernière analyse IA réussie (AI-CV-02). */
+    private Instant cvParsedAt;
+
+    /** Null only on rows created before BE-CV-02: read it through {@link #analysisStatus()}. */
+    @Enumerated(EnumType.STRING)
+    private CvAnalysisStatus cvAnalysisStatus;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    @PrePersist
+    void onCreate() {
+<span class="fc" id="L101">        Instant now = Instant.now();</span>
+<span class="fc" id="L102">        createdAt = now;</span>
+<span class="fc" id="L103">        updatedAt = now;</span>
+<span class="fc" id="L104">    }</span>
+
+    @PreUpdate
+    void onUpdate() {
+<span class="fc" id="L108">        updatedAt = Instant.now();</span>
+<span class="fc" id="L109">    }</span>
+
+    /** Analysis state; profiles saved before BE-CV-02 have none stored and get it derived from the CV fields. */
+    public CvAnalysisStatus analysisStatus() {
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if (cvAnalysisStatus != null) {</span>
+<span class="fc" id="L114">            return cvAnalysisStatus;</span>
+        }
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (cvStorageKey == null) {</span>
+<span class="fc" id="L117">            return CvAnalysisStatus.NONE;</span>
+        }
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        return cvParsedAt != null ? CvAnalysisStatus.DONE : CvAnalysisStatus.FAILED;</span>
+    }
+
+    /** Replaces the content of a persistent collection in place (keeps Hibernate's collection wrapper). */
+    public static &lt;T&gt; void replace(List&lt;T&gt; target, List&lt;T&gt; values) {
+<span class="fc" id="L124">        target.clear();</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if (values != null) {</span>
+<span class="fc" id="L126">            target.addAll(values);</span>
+        }
+<span class="fc" id="L128">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

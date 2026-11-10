@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InternalAccountController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auth-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.auth.controller</a> &gt; <span class="el_source">InternalAccountController.java</span></div><h1>InternalAccountController.java</h1><pre class="source lang-java linenums">package com.smartrecruit.auth.controller;
+
+import com.smartrecruit.auth.dto.AccountResponse;
+import com.smartrecruit.auth.dto.AccountStatsResponse;
+import com.smartrecruit.auth.dto.AccountStatusRequest;
+import com.smartrecruit.auth.dto.PageResponse;
+import com.smartrecruit.auth.model.AccountStatus;
+import com.smartrecruit.auth.model.Role;
+import com.smartrecruit.auth.service.AccountAdminService;
+import com.smartrecruit.auth.service.AccountErasureService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
+
+/**
+ * Backend-to-backend endpoints. {@code /internal/**} is not routed by the api-gateway and requires
+ * a signed {@code SERVICE} identity.
+ */
+@RestController
+@RequestMapping(&quot;/internal/v1/accounts&quot;)
+@PreAuthorize(&quot;hasRole('SERVICE')&quot;)
+@RequiredArgsConstructor
+public class InternalAccountController {
+
+    private final AccountErasureService erasureService;
+    private final AccountAdminService adminService;
+
+    @GetMapping
+    public PageResponse&lt;AccountResponse&gt; list(@RequestParam(required = false) Role role,
+                                              @RequestParam(required = false) AccountStatus status,
+                                              @RequestParam(defaultValue = &quot;0&quot;) int page,
+                                              @RequestParam(defaultValue = &quot;20&quot;) int size) {
+<span class="fc" id="L45">        return adminService.list(role, status, page, size);</span>
+    }
+
+    @GetMapping(&quot;/stats&quot;)
+    public AccountStatsResponse stats() {
+<span class="fc" id="L50">        return adminService.stats();</span>
+    }
+
+    @PatchMapping(&quot;/{accountId}/status&quot;)
+    public AccountResponse updateStatus(@PathVariable UUID accountId, @Valid @RequestBody AccountStatusRequest request) {
+<span class="fc" id="L55">        return adminService.updateStatus(accountId, request.status());</span>
+    }
+
+    /** Erases the account's personal data (BE-SEC-02). Idempotent: always 204. */
+    @DeleteMapping(&quot;/{accountId}&quot;)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void erase(@PathVariable UUID accountId) {
+<span class="fc" id="L62">        erasureService.erase(accountId);</span>
+<span class="fc" id="L63">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

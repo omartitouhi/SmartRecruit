@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CvCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.storage</a> &gt; <span class="el_source">CvCipher.java</span></div><h1>CvCipher.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.storage;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+import java.util.Base64;
+
+/**
+ * AES-256-GCM encryption of CV files at rest (BE-SEC-01). GCM also authenticates the content,
+ * so any alteration of a stored file is detected on decryption.
+ * &lt;p&gt;
+ * Stored format: {@code [version:1][iv:12][ciphertext + tag:16]}. The version byte leaves room for
+ * a future algorithm or key rotation.
+ */
+public class CvCipher {
+
+    static final byte FORMAT_VERSION = 1;
+    private static final String TRANSFORMATION = &quot;AES/GCM/NoPadding&quot;;
+    private static final int KEY_BYTES = 32;
+    private static final int IV_BYTES = 12;
+    private static final int TAG_BITS = 128;
+
+    private final SecretKey key;
+<span class="fc" id="L28">    private final SecureRandom secureRandom = new SecureRandom();</span>
+
+    /**
+     * @param base64Key 32 random bytes encoded in base64 (e.g. {@code openssl rand -base64 32})
+     */
+<span class="fc" id="L33">    public CvCipher(String base64Key) {</span>
+        byte[] raw;
+        try {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            raw = Base64.getDecoder().decode(base64Key == null ? &quot;&quot; : base64Key.trim());</span>
+<span class="fc" id="L37">        } catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L38">            throw new IllegalStateException(&quot;CV_ENCRYPTION_KEY n'est pas du base64 valide&quot;, e);</span>
+<span class="fc" id="L39">        }</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (raw.length != KEY_BYTES) {</span>
+<span class="fc" id="L41">            throw new IllegalStateException(&quot;CV_ENCRYPTION_KEY doit contenir exactement 32 octets (AES-256), reçu &quot;</span>
+                    + raw.length);
+        }
+<span class="fc" id="L44">        this.key = new SecretKeySpec(raw, &quot;AES&quot;);</span>
+<span class="fc" id="L45">    }</span>
+
+    public byte[] encrypt(byte[] plaintext) {
+<span class="fc" id="L48">        byte[] iv = new byte[IV_BYTES];</span>
+<span class="fc" id="L49">        secureRandom.nextBytes(iv);</span>
+        try {
+<span class="fc" id="L51">            Cipher cipher = Cipher.getInstance(TRANSFORMATION);</span>
+<span class="fc" id="L52">            cipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(TAG_BITS, iv));</span>
+<span class="fc" id="L53">            byte[] ciphertext = cipher.doFinal(plaintext);</span>
+<span class="fc" id="L54">            return ByteBuffer.allocate(1 + IV_BYTES + ciphertext.length)</span>
+<span class="fc" id="L55">                    .put(FORMAT_VERSION).put(iv).put(ciphertext)</span>
+<span class="fc" id="L56">                    .array();</span>
+<span class="nc" id="L57">        } catch (GeneralSecurityException e) {</span>
+<span class="nc" id="L58">            throw new IllegalStateException(&quot;Chiffrement du CV impossible&quot;, e);</span>
+        }
+    }
+
+    /**
+     * @throws CorruptedCvException if the data was altered, encrypted with another key or has an
+     *                              unknown format
+     */
+    public byte[] decrypt(byte[] stored) {
+<span class="fc bfc" id="L67" title="All 4 branches covered.">        if (stored.length &lt; 1 + IV_BYTES + TAG_BITS / 8 || stored[0] != FORMAT_VERSION) {</span>
+<span class="fc" id="L68">            throw new CorruptedCvException();</span>
+        }
+        try {
+<span class="fc" id="L71">            Cipher cipher = Cipher.getInstance(TRANSFORMATION);</span>
+<span class="fc" id="L72">            cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(TAG_BITS, stored, 1, IV_BYTES));</span>
+<span class="fc" id="L73">            return cipher.doFinal(stored, 1 + IV_BYTES, stored.length - 1 - IV_BYTES);</span>
+<span class="fc" id="L74">        } catch (GeneralSecurityException e) {</span>
+<span class="fc" id="L75">            throw new CorruptedCvException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

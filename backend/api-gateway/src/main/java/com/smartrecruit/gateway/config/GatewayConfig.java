@@ -9,6 +9,7 @@ import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
 import java.net.http.HttpClient;
+import java.time.Duration;
 
 import static org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFunctions.uri;
 import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
@@ -43,11 +44,14 @@ public class GatewayConfig {
 
     /**
      * Proxy to the backends over plain HTTP/1.1. The JDK client's default cleartext h2c upgrade
-     * (Upgrade/HTTP2-Settings headers) breaks uvicorn on requests with a body.
+     * (Upgrade/HTTP2-Settings headers) breaks uvicorn on requests with a body. A stopped backend fails
+     * within the connect timeout instead of holding the client until the OS gives up (reliability test).
      */
     @Bean
-    public ClientHttpRequestFactoryBuilderCustomizer<JdkClientHttpRequestFactoryBuilder> http11ProxyClient() {
-        return builder -> builder.withHttpClientCustomizer(client -> client.version(HttpClient.Version.HTTP_1_1));
+    public ClientHttpRequestFactoryBuilderCustomizer<JdkClientHttpRequestFactoryBuilder> http11ProxyClient(
+            @Value("${gateway.connect-timeout:3s}") Duration connectTimeout) {
+        return builder -> builder.withHttpClientCustomizer(
+                client -> client.version(HttpClient.Version.HTTP_1_1).connectTimeout(connectTimeout));
     }
 
     @Bean

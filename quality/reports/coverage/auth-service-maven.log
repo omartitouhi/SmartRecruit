@@ -1,0 +1,389 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by lombok.permit.Permit
+WARNING: Please consider reporting this to the maintainers of class lombok.permit.Permit
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+10:31:41.266 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.auth.AuthServiceApplicationTests]: AuthServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:31:41.951 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.AuthServiceApplicationTests
+10:31:42.681 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.auth.AuthServiceApplicationTests]: AuthServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:31:42.689 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.AuthServiceApplicationTests
+10:31:43.118 [main] INFO org.springframework.boot.devtools.restart.RestartApplicationListener -- Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:31:44.986+01:00  INFO 15020 --- [           main] c.s.auth.AuthServiceApplicationTests     : Starting AuthServiceApplicationTests using Java 25.0.3 with PID 15020 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\auth-service)
+2026-11-10T10:31:44.992+01:00  INFO 15020 --- [           main] c.s.auth.AuthServiceApplicationTests     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:31:50.768+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:31:51.143+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 322 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:31:54.254+01:00  INFO 15020 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:31:54.655+01:00  INFO 15020 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-11-10T10:31:57.118+01:00  INFO 15020 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:31:57.301+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-10T10:31:58.703+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:auth_db user=SA
+2026-11-10T10:31:58.711+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-10T10:31:59.130+01:00  INFO 15020 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:auth_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: AUTH_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:32:04.809+01:00  INFO 15020 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:32:05.100+01:00  INFO 15020 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:32:05.561+01:00  INFO 15020 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-10T10:32:09.938+01:00  WARN 15020 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:32:10.643+01:00  WARN 15020 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 2630541f-bad2-4b5d-9232-3941baa33756
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:32:10.672+01:00  INFO 15020 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:32:14.152+01:00  INFO 15020 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:32:14.341+01:00  INFO 15020 --- [           main] c.s.auth.AuthServiceApplicationTests     : Started AuthServiceApplicationTests in 31.278 seconds (process running for 37.948)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (C:\Users\oti\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.15\byte-buddy-agent-1.18.15.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+2026-11-10T10:32:15.553+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.AccountErasureIntegrationTest]: AccountErasureIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:15.706+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.AccountErasureIntegrationTest
+2026-11-10T10:32:15.710+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.AccountErasureIntegrationTest]: AccountErasureIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:15.720+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.AccountErasureIntegrationTest
+2026-11-10T10:32:15.745+01:00  INFO 15020 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:32:15.857+01:00  INFO 15020 --- [           main] c.s.a.c.AccountErasureIntegrationTest    : Starting AccountErasureIntegrationTest using Java 25.0.3 with PID 15020 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\auth-service)
+2026-11-10T10:32:15.858+01:00  INFO 15020 --- [           main] c.s.a.c.AccountErasureIntegrationTest    : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:32:17.118+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:32:17.178+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 55 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:32:17.645+01:00  INFO 15020 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:32:17.715+01:00  INFO 15020 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:32:17.718+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-11-10T10:32:17.723+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:auth_db user=SA
+2026-11-10T10:32:17.723+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-11-10T10:32:17.725+01:00  INFO 15020 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:auth_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: AUTH_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:32:17.922+01:00  INFO 15020 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:32:17.956+01:00  INFO 15020 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:32:18.532+01:00  WARN 15020 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:32:18.637+01:00  WARN 15020 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 1d4fa0a7-d976-4568-9414-a6b3a06fb07b
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:32:18.640+01:00  INFO 15020 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:32:19.351+01:00  INFO 15020 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:32:19.352+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:32:19.378+01:00  INFO 15020 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:32:19.409+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 55 ms
+2026-11-10T10:32:19.591+01:00  INFO 15020 --- [           main] c.s.a.c.AccountErasureIntegrationTest    : Started AccountErasureIntegrationTest in 3.847 seconds (process running for 43.197)
+2026-11-10T10:32:22.496+01:00  INFO 15020 --- [           main] c.s.auth.service.AccountErasureService   : Compte f68f7d89-4088-4848-a25b-cdc2e01cddeb anonymisé (droit à l'oubli)
+2026-11-10T10:32:22.872+01:00  INFO 15020 --- [           main] c.s.auth.service.AccountErasureService   : Compte f68f7d89-4088-4848-a25b-cdc2e01cddeb anonymisé (droit à l'oubli)
+2026-11-10T10:32:24.045+01:00  INFO 15020 --- [           main] c.s.auth.service.AccountErasureService   : Compte 76bab539-496a-4564-8052-21faae43f2f0 anonymisé (droit à l'oubli)
+2026-11-10T10:32:25.596+01:00  INFO 15020 --- [           main] c.s.a.s.LoggingPasswordResetNotifier     : [DEV] Lien de réinitialisation du mot de passe pour alice@example.com : http://localhost:5173/reset-password?token=Kl8_7FS38PIJv1LatyLNs8c60SsoQU1-nqte17m2SRQ
+2026-11-10T10:32:25.785+01:00  INFO 15020 --- [           main] c.s.auth.service.AccountErasureService   : Compte bc7e5f48-6866-470b-bd2c-75bd14558055 anonymisé (droit à l'oubli)
+2026-11-10T10:32:26.138+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.InjectionProtectionIntegrationTest]: InjectionProtectionIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:26.154+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.InjectionProtectionIntegrationTest
+2026-11-10T10:32:26.161+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.InjectionProtectionIntegrationTest]: InjectionProtectionIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:26.169+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.InjectionProtectionIntegrationTest
+2026-11-10T10:32:30.002+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.InternalAccountAdminIntegrationTest]: InternalAccountAdminIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:30.010+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.InternalAccountAdminIntegrationTest
+2026-11-10T10:32:30.012+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.InternalAccountAdminIntegrationTest]: InternalAccountAdminIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:30.018+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.InternalAccountAdminIntegrationTest
+2026-11-10T10:32:33.832+01:00  WARN 15020 --- [           main] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.method.annotation.MethodArgumentTypeMismatchException: Method parameter 'role': Failed to convert value of type 'java.lang.String' to required type 'com.smartrecruit.auth.model.Role'; Failed to convert from type [java.lang.String] to type [@org.springframework.web.bind.annotation.RequestParam com.smartrecruit.auth.model.Role] for value [WIZARD]]
+2026-11-10T10:32:37.556+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.LoginIntegrationTest]: LoginIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:37.561+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.LoginIntegrationTest
+2026-11-10T10:32:37.563+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.LoginIntegrationTest]: LoginIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:37.568+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.LoginIntegrationTest
+2026-11-10T10:32:37.582+01:00  INFO 15020 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:32:37.639+01:00  INFO 15020 --- [           main] c.s.a.controller.LoginIntegrationTest    : Starting LoginIntegrationTest using Java 25.0.3 with PID 15020 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\auth-service)
+2026-11-10T10:32:37.639+01:00  INFO 15020 --- [           main] c.s.a.controller.LoginIntegrationTest    : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:32:38.368+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:32:38.417+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 43 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:32:38.749+01:00  INFO 15020 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:32:38.849+01:00  INFO 15020 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:32:38.852+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-11-10T10:32:38.857+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection conn20: url=jdbc:h2:mem:auth_db user=SA
+2026-11-10T10:32:38.857+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-11-10T10:32:38.860+01:00  INFO 15020 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:auth_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: AUTH_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:32:39.152+01:00  INFO 15020 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:32:39.180+01:00  INFO 15020 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:32:39.702+01:00  WARN 15020 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:32:39.817+01:00  WARN 15020 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: e184cb02-f203-4e31-854b-8ffa2c18ea5e
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:32:39.819+01:00  INFO 15020 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:32:40.125+01:00  INFO 15020 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:32:40.125+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:32:40.137+01:00  INFO 15020 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:32:40.158+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 33 ms
+2026-11-10T10:32:40.255+01:00  INFO 15020 --- [           main] c.s.a.controller.LoginIntegrationTest    : Started LoginIntegrationTest in 2.674 seconds (process running for 63.862)
+2026-11-10T10:32:45.174+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.LogoutIntegrationTest]: LogoutIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:45.178+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.LogoutIntegrationTest
+2026-11-10T10:32:45.181+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.LogoutIntegrationTest]: LogoutIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:45.185+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.LogoutIntegrationTest
+2026-11-10T10:32:46.313+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.PasswordResetIntegrationTest
+2026-11-10T10:32:46.319+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.PasswordResetIntegrationTest
+2026-11-10T10:32:46.330+01:00  INFO 15020 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:32:46.394+01:00  INFO 15020 --- [           main] c.s.a.c.PasswordResetIntegrationTest     : Starting PasswordResetIntegrationTest using Java 25.0.3 with PID 15020 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\auth-service)
+2026-11-10T10:32:46.394+01:00  INFO 15020 --- [           main] c.s.a.c.PasswordResetIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:32:47.236+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:32:47.288+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 47 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:32:47.544+01:00  INFO 15020 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:32:47.611+01:00  INFO 15020 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:32:47.614+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2026-11-10T10:32:47.618+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection conn30: url=jdbc:h2:mem:auth_db user=SA
+2026-11-10T10:32:47.619+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2026-11-10T10:32:47.620+01:00  INFO 15020 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:auth_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: AUTH_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:32:47.787+01:00  INFO 15020 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:32:47.807+01:00  INFO 15020 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:32:48.306+01:00  WARN 15020 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:32:48.440+01:00  WARN 15020 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: a1f3a42f-79eb-4bec-8934-0ff5d648e19f
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:32:48.444+01:00  INFO 15020 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:32:48.908+01:00  INFO 15020 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:32:48.908+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:32:48.926+01:00  INFO 15020 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:32:48.953+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 45 ms
+2026-11-10T10:32:49.131+01:00  INFO 15020 --- [           main] c.s.a.c.PasswordResetIntegrationTest     : Started PasswordResetIntegrationTest in 2.801 seconds (process running for 72.737)
+2026-11-10T10:32:52.532+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.RefreshIntegrationTest]: RefreshIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:52.539+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.RefreshIntegrationTest
+2026-11-10T10:32:52.542+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.RefreshIntegrationTest]: RefreshIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:52.547+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.RefreshIntegrationTest
+2026-11-10T10:32:54.332+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.RegisterIntegrationTest]: RegisterIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:54.336+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.RegisterIntegrationTest
+2026-11-10T10:32:54.338+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.controller.RegisterIntegrationTest]: RegisterIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:32:54.342+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.controller.RegisterIntegrationTest
+2026-11-10T10:32:55.143+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.security.InputSecurityIntegrationTest
+2026-11-10T10:32:55.151+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.security.InputSecurityIntegrationTest
+2026-11-10T10:32:55.157+01:00  INFO 15020 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:32:55.201+01:00  INFO 15020 --- [           main] c.s.a.s.InputSecurityIntegrationTest     : Starting InputSecurityIntegrationTest using Java 25.0.3 with PID 15020 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\auth-service)
+2026-11-10T10:32:55.202+01:00  INFO 15020 --- [           main] c.s.a.s.InputSecurityIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:32:55.907+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:32:55.956+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 45 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:32:56.254+01:00  INFO 15020 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:32:56.354+01:00  INFO 15020 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:32:56.358+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2026-11-10T10:32:56.360+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection conn40: url=jdbc:h2:mem:auth_db user=SA
+2026-11-10T10:32:56.361+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2026-11-10T10:32:56.362+01:00  INFO 15020 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:auth_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: AUTH_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:32:56.523+01:00  INFO 15020 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:32:56.538+01:00  INFO 15020 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:32:56.861+01:00  WARN 15020 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:32:56.949+01:00  WARN 15020 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 683c7bb5-f39c-4a70-8260-0ccba39ce038
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:32:56.951+01:00  INFO 15020 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:32:57.300+01:00  INFO 15020 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:32:57.301+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:32:57.314+01:00  INFO 15020 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:32:57.336+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 35 ms
+2026-11-10T10:32:57.448+01:00  INFO 15020 --- [           main] c.s.a.s.InputSecurityIntegrationTest     : Started InputSecurityIntegrationTest in 2.292 seconds (process running for 81.055)
+2026-11-10T10:32:57.542+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.security.RbacIntegrationTest
+2026-11-10T10:32:57.548+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.security.RbacIntegrationTest
+2026-11-10T10:32:57.556+01:00  INFO 15020 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:32:57.605+01:00  INFO 15020 --- [           main] c.s.auth.security.RbacIntegrationTest    : Starting RbacIntegrationTest using Java 25.0.3 with PID 15020 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\auth-service)
+2026-11-10T10:32:57.606+01:00  INFO 15020 --- [           main] c.s.auth.security.RbacIntegrationTest    : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:32:58.307+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:32:58.357+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 45 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:32:58.627+01:00  INFO 15020 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:32:58.709+01:00  INFO 15020 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:32:58.712+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Starting...
+2026-11-10T10:32:58.716+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-6 - Added connection conn50: url=jdbc:h2:mem:auth_db user=SA
+2026-11-10T10:32:58.716+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Start completed.
+2026-11-10T10:32:58.717+01:00  INFO 15020 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:auth_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: AUTH_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:32:58.925+01:00  INFO 15020 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:32:58.946+01:00  INFO 15020 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:32:59.492+01:00  WARN 15020 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:32:59.643+01:00  WARN 15020 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: f63dbc46-c0df-48c9-9ff3-42ff9d226fb5
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:32:59.647+01:00  INFO 15020 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:33:00.059+01:00  INFO 15020 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:33:00.060+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:33:00.099+01:00  INFO 15020 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:33:00.117+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 57 ms
+2026-11-10T10:33:00.237+01:00  INFO 15020 --- [           main] c.s.auth.security.RbacIntegrationTest    : Started RbacIntegrationTest in 2.682 seconds (process running for 83.844)
+2026-11-10T10:33:00.538+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.service.BootstrapAdminInitializerIntegrationTest]: BootstrapAdminInitializerIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:33:00.569+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.service.BootstrapAdminInitializerIntegrationTest
+2026-11-10T10:33:00.572+01:00  INFO 15020 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.auth.service.BootstrapAdminInitializerIntegrationTest]: BootstrapAdminInitializerIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:33:00.588+01:00  INFO 15020 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.auth.AuthServiceApplication for test class com.smartrecruit.auth.service.BootstrapAdminInitializerIntegrationTest
+2026-11-10T10:33:00.596+01:00  INFO 15020 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:33:00.657+01:00  INFO 15020 --- [           main] BootstrapAdminInitializerIntegrationTest : Starting BootstrapAdminInitializerIntegrationTest using Java 25.0.3 with PID 15020 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\auth-service)
+2026-11-10T10:33:00.658+01:00  INFO 15020 --- [           main] BootstrapAdminInitializerIntegrationTest : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:33:01.691+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:33:01.788+01:00  INFO 15020 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 88 ms. Found 3 JPA repository interfaces.
+2026-11-10T10:33:02.098+01:00  INFO 15020 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:33:02.200+01:00  INFO 15020 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:33:02.203+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Starting...
+2026-11-10T10:33:02.209+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-7 - Added connection conn60: url=jdbc:h2:mem:auth_db user=SA
+2026-11-10T10:33:02.210+01:00  INFO 15020 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Start completed.
+2026-11-10T10:33:02.212+01:00  INFO 15020 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:auth_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: AUTH_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:33:02.481+01:00  INFO 15020 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:33:02.510+01:00  INFO 15020 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:33:03.066+01:00  WARN 15020 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:33:03.211+01:00  WARN 15020 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: cc468f6d-1ba5-44bf-99c6-e3e85a1b854a
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:33:03.214+01:00  INFO 15020 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:33:03.745+01:00  INFO 15020 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:33:03.746+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:33:03.777+01:00  INFO 15020 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:33:03.808+01:00  INFO 15020 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 62 ms
+2026-11-10T10:33:03.956+01:00  INFO 15020 --- [           main] BootstrapAdminInitializerIntegrationTest : Started BootstrapAdminInitializerIntegrationTest in 3.36 seconds (process running for 87.562)
+2026-11-10T10:33:04.168+01:00  INFO 15020 --- [           main] c.s.a.service.BootstrapAdminInitializer  : Compte administrateur de démarrage créé
+2026-11-10T10:33:04.519+01:00  INFO 15020 --- [           main] c.s.a.service.BootstrapAdminInitializer  : Compte administrateur de démarrage créé
+2026-11-10T10:33:04.797+01:00  INFO 15020 --- [           main] c.s.a.service.BootstrapAdminInitializer  : Compte administrateur de démarrage créé

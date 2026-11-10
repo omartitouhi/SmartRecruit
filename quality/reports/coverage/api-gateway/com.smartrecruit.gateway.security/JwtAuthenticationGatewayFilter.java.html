@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtAuthenticationGatewayFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api-gateway</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.gateway.security</a> &gt; <span class="el_source">JwtAuthenticationGatewayFilter.java</span></div><h1>JwtAuthenticationGatewayFilter.java</h1><pre class="source lang-java linenums">package com.smartrecruit.gateway.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.crypto.SecretKey;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+/**
+ * Validates the access JWT once for the whole platform (BE-SEC-04):
+ * &lt;ul&gt;
+ *     &lt;li&gt;public paths and CORS preflights go through untouched;&lt;/li&gt;
+ *     &lt;li&gt;any other {@code /api/**} request without a valid token is answered 401 here and never
+ *     reaches a microservice;&lt;/li&gt;
+ *     &lt;li&gt;for a valid token, the identity (id, role) is forwarded in signed internal headers.&lt;/li&gt;
+ * &lt;/ul&gt;
+ */
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE + 10)
+public class JwtAuthenticationGatewayFilter extends OncePerRequestFilter {
+
+    private static final String BEARER_PREFIX = &quot;Bearer &quot;;
+<span class="fc" id="L42">    private static final Set&lt;String&gt; ROLES = Set.of(&quot;CANDIDATE&quot;, &quot;RECRUITER&quot;, &quot;ADMIN&quot;);</span>
+
+    private final SecretKey jwtKey;
+    private final String internalSecret;
+    private final Set&lt;String&gt; publicPaths;
+    private final Clock clock;
+
+<span class="fc" id="L49">    public JwtAuthenticationGatewayFilter(GatewaySecurityProperties properties, Clock clock) {</span>
+<span class="fc" id="L50">        this.jwtKey = Keys.hmacShaKeyFor(properties.jwt().secret().getBytes(StandardCharsets.UTF_8));</span>
+<span class="fc" id="L51">        this.internalSecret = properties.internalAuth().secret();</span>
+<span class="fc" id="L52">        this.publicPaths = Set.copyOf(properties.publicPaths());</span>
+<span class="fc" id="L53">        this.clock = clock;</span>
+<span class="fc" id="L54">    }</span>
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        return !request.getRequestURI().startsWith(&quot;/api/&quot;);</span>
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        boolean isPublic = publicPaths.contains(request.getRequestURI())</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">                || HttpMethod.OPTIONS.matches(request.getMethod());</span>
+<span class="fc" id="L66">        Optional&lt;Identity&gt; identity = authenticate(request);</span>
+
+<span class="fc bfc" id="L68" title="All 4 branches covered.">        if (identity.isEmpty() &amp;&amp; !isPublic) {</span>
+<span class="fc" id="L69">            GatewayErrorWriter.write(response, request, HttpStatus.UNAUTHORIZED,</span>
+                    &quot;Authentification requise : token absent, invalide ou expiré&quot;);
+<span class="fc" id="L71">            return;</span>
+        }
+<span class="fc" id="L73">        Map&lt;String, String&gt; headers = identity.map(this::signedHeaders).orElse(Map.of());</span>
+<span class="fc" id="L74">        chain.doFilter(new IdentityRequestWrapper(request, headers), response);</span>
+<span class="fc" id="L75">    }</span>
+
+    private Optional&lt;Identity&gt; authenticate(HttpServletRequest request) {
+<span class="fc" id="L78">        String header = request.getHeader(HttpHeaders.AUTHORIZATION);</span>
+<span class="pc bpc" id="L79" title="1 of 4 branches missed.">        if (header == null || !header.startsWith(BEARER_PREFIX)) {</span>
+<span class="fc" id="L80">            return Optional.empty();</span>
+        }
+        try {
+<span class="fc" id="L83">            Claims claims = Jwts.parser().verifyWith(jwtKey).build()</span>
+<span class="fc" id="L84">                    .parseSignedClaims(header.substring(BEARER_PREFIX.length()).trim())</span>
+<span class="fc" id="L85">                    .getPayload();</span>
+<span class="fc" id="L86">            String role = claims.get(&quot;role&quot;, String.class);</span>
+<span class="pc bpc" id="L87" title="1 of 4 branches missed.">            if (claims.getSubject() == null || !ROLES.contains(role)) {</span>
+<span class="fc" id="L88">                return Optional.empty();</span>
+            }
+<span class="fc" id="L90">            return Optional.of(new Identity(UUID.fromString(claims.getSubject()).toString(), role));</span>
+<span class="fc" id="L91">        } catch (JwtException | IllegalArgumentException e) {</span>
+<span class="fc" id="L92">            return Optional.empty();</span>
+        }
+    }
+
+    private Map&lt;String, String&gt; signedHeaders(Identity identity) {
+<span class="fc" id="L97">        long timestamp = clock.instant().getEpochSecond();</span>
+<span class="fc" id="L98">        return Map.of(</span>
+<span class="fc" id="L99">                InternalIdentityHeaders.USER_ID, identity.userId(),</span>
+<span class="fc" id="L100">                InternalIdentityHeaders.USER_ROLE, identity.role(),</span>
+<span class="fc" id="L101">                InternalIdentityHeaders.TIMESTAMP, Long.toString(timestamp),</span>
+                InternalIdentityHeaders.SIGNATURE,
+<span class="fc" id="L103">                InternalIdentityHeaders.sign(internalSecret, identity.userId(), identity.role(), timestamp));</span>
+    }
+
+<span class="fc" id="L106">    private record Identity(String userId, String role) {</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

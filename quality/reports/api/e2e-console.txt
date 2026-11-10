@@ -1,0 +1,169 @@
+
+== Comptes
+  OK   administrateur de demarrage peut se connecter
+  OK   CV du candidat analyse (cvAnalysisStatus=DONE)
+  OK   suggestions du CV (200, competences + dates YYYY-MM)
+  OK   dates des suggestions au format YYYY-MM
+
+== Entreprises (BE-COMP)
+  OK   recruteur cree son entreprise (201)
+  OK   le createur est premier membre
+  OK   seconde entreprise du meme recruteur refusee (409)
+  OK   un candidat ne peut pas creer d'entreprise (403)
+  OK   creation avec champs manquants (400)
+  OK   GET /companies/me (200)
+  OK   GET /companies/me sans entreprise (404)
+  OK   vue publique d'une entreprise (candidat, 200)
+  OK   modification par un membre (200)
+  OK   modification par un non-membre (403)
+  OK   invitation creee (201, PENDING)
+  OK   le jeton n'est pas expose par l'API
+  OK   invitation en doublon (409)
+  OK   invitation par un non-membre (403)
+  OK   liste des invitations (200)
+  OK   jeton d'invitation retrouve dans les logs (mode dev)
+  OK   acceptation avec un faux jeton (400/404/410)
+  OK   invitation acceptee, le recruteur est rattache (200)
+  OK   le membre invite voit l'entreprise (GET me)
+
+== Offres (BE-JOB)
+  OK   publication sans entreprise (403)
+  OK   publication par un candidat (403)
+  OK   publication invalide (400 + fieldErrors)
+  OK   publication (201, PUBLISHED)
+  OK   l'offre est liee a l'entreprise du recruteur
+  OK   un autre membre de l'entreprise peut publier (201)
+  OK   recherche candidat (200, paginee)
+  OK   filtre keyword
+  OK   filtre location
+  OK   filtre skills
+  OK   filtre contractType
+  OK   offres recentes d'abord
+  OK   nom de l'entreprise dans les resultats
+  OK   detail d'une offre (200)
+  OK   modification par le proprietaire (200)
+  OK   modification par une autre entreprise (403)
+  OK   mes offres (companyId=me) avec compteur de candidatures
+  OK   transition de statut interdite (400)
+
+== Candidatures et matching (BE-APP, BE-MATCH)
+  OK   apercu du score via le backend (200, score + criteres)
+  OK   apercu en cache (reponse rapide)
+  OK   candidature sans profil/CV (422)
+  OK   candidature par un recruteur (403)
+  OK   candidature sur une offre inconnue (404)
+  OK   candidature (201, RECEIVED)
+  OK   repostuler (409)
+  OK   score IA associe a la candidature en arriere-plan
+  OK   seconde candidature (201)
+  OK   candidatures recues triees par score decroissant
+  OK   candidatures recues par une autre entreprise (403)
+  OK   candidatures recues par un candidat (403)
+  OK   changement de statut IN_REVIEW (200 + historique)
+  OK   transition interdite RECEIVED->ACCEPTED (400)
+  OK   statut WITHDRAWN interdit au recruteur (400/403)
+  OK   changement de statut par une autre entreprise (403)
+  OK   INTERVIEW puis ACCEPTED
+  OK   retrait d'une candidature acceptee refuse (409/400)
+  OK   retrait par un autre candidat (403/404)
+  OK   retrait de sa candidature (204)
+  OK   candidature retiree absente de la liste du recruteur
+  OK   compteur de candidatures reel (1 active)
+  OK   recommandations du candidat (200)
+
+== Cloture d'une offre
+  OK   cloture (200)
+  OK   offre cloturee absente de la recherche candidat
+  OK   offre cloturee introuvable pour un candidat (404)
+  OK   offre cloturee visible cote recruteur
+  OK   candidature sur une offre cloturee (404/409)
+  OK   reouverture (200)
+
+== Tableau de bord et administration (BE-DASH, BE-ADMIN)
+  OK   stats globales refusees aux non-admins (403)
+  OK   stats globales (admin, candidatures retirees exclues)
+  OK   stats de mon entreprise
+  OK   taux d'acceptation calcule
+  OK   stats d'une autre entreprise refusees (403)
+  OK   stats entreprise par un admin (200)
+  OK   liste des utilisateurs filtree par role
+  OK   liste des utilisateurs refusee aux non-admins (403)
+  OK   desactivation d'un utilisateur (200)
+  OK   un utilisateur desactive ne peut plus se connecter
+  OK   reactivation puis connexion
+  OK   un admin ne peut pas se desactiver (400)
+  OK   moderation d'offre (200)
+  OK   moderation sans raison (400)
+  OK   moderation par un recruteur (403)
+  OK   offre moderee absente de la recherche candidat
+  OK   le proprietaire voit la raison de moderation
+  OK   offre moderee non modifiable par le recruteur (403/409)
+  OK   journal d'audit (admin)
+  OK   evenement d'audit CV_VIEWED journalise
+  OK   evenement d'audit APPLICATION_STATUS_CHANGED journalise
+  OK   evenement d'audit USER_STATUS_CHANGED journalise
+  OK   evenement d'audit JOB_MODERATED journalise
+  OK   filtre du journal par action
+  OK   filtre du journal par acteur
+  OK   journal d'audit refuse aux non-admins (403)
+
+== Offres enrichies et favoris (EXT-JOB-01, EXT-SAVED-01)
+  OK   publication avec mode, salaire, date limite et postes (201)
+  OK   offre sans nouveaux champs : valeurs par defaut (ON_SITE, 1 poste)
+  OK   salaire minimum superieur au maximum (400 salaryMax)
+  OK   date limite passee refusee (400 applicationDeadline)
+  OK   filtre workMode
+  OK   filtre minSalary (offres sans salaire exclues)
+  OK   suppression du salaire en PATCH (200)
+  OK   duplication d'une offre (201, DRAFT, titre (copie))
+  OK   duplication par une autre entreprise (403)
+  OK   duplication d'une offre moderee (409)
+  OK   mise en favori (204)
+  OK   mise en favori idempotente (204)
+  OK   favori sur un brouillon (404)
+  OK   favori par un recruteur (403)
+  OK   liste des favoris
+  OK   indicateur saved sur le detail (candidat)
+  OK   indicateur saved absent pour un recruteur
+  OK   retrait du favori (204)
+  OK   favoris vides apres retrait
+  OK   publication du brouillon duplique (200)
+
+== Candidature motivee, entretiens et notes (EXT-APP-01..03)
+  OK   candidature avec lettre de motivation (201)
+  OK   le candidat ne voit pas les notes (notesCount null)
+  OK   lettre trop longue (400)
+  OK   decision avec message au candidat (200)
+  OK   entretien avec un autre statut refuse (400)
+  OK   passage en entretien avec planification (200)
+  OK   entretien dans le passe refuse (400)
+  OK   replanification (200)
+  OK   replanification par une autre entreprise (403)
+  OK   entretiens a venir du recruteur
+  OK   entretiens a venir d'une autre entreprise (vide)
+  OK   le candidat voit son entretien et le message
+  OK   note d'equipe (201)
+  OK   notes partagees avec un autre membre de l'entreprise
+  OK   note hors bornes (400)
+  OK   notes refusees au candidat (403)
+  OK   notes refusees a une autre entreprise (403)
+  OK   compteur et moyenne des notes cote recruteur
+  OK   suppression d'une note par son auteur (204)
+  OK   refus motive (200)
+
+== Pilotage enrichi (EXT-DASH-01)
+  OK   entonnoir par statut (entreprise)
+  OK   delai moyen de decision (entreprise)
+  OK   offres bientot cloturees (entreprise)
+  OK   compteur d'entretiens a venir present
+  OK   entonnoir et delai de decision (global)
+  OK   evenement d'audit INTERVIEW_SCHEDULED journalise
+
+== Securite et acces
+  OK   endpoints internes non exposes par le gateway
+  OK   sans token (401)
+  OK   via nginx du frontend : recherche d'offres (200)
+  OK   IA : lecture du CV d'un autre candidat (403)
+
+============================================================
+RESULTAT : 146 OK, 0 echecs

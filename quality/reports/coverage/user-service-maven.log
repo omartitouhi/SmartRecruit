@@ -1,0 +1,693 @@
+10:34:03.420 [main] WARN com.smartrecruit.user.audit.AuditEmitter -- Événement d'audit CV_VIEWED non transmis à dashboard-service (InternalServerError)
+10:34:04.021 [main] WARN com.smartrecruit.user.audit.AuditEmitter -- Événement d'audit CV_VIEWED non transmis à dashboard-service (ResourceAccessException)
+10:34:05.121 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateAccountDeletionIntegrationTest]: CandidateAccountDeletionIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:34:07.545 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateAccountDeletionIntegrationTest
+10:34:08.944 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateAccountDeletionIntegrationTest]: CandidateAccountDeletionIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:34:09.031 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateAccountDeletionIntegrationTest
+10:34:10.856 [main] INFO org.springframework.boot.devtools.restart.RestartApplicationListener -- Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:34:15.020+01:00  INFO 17376 --- [           main] .CandidateAccountDeletionIntegrationTest : Starting CandidateAccountDeletionIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:34:15.033+01:00  INFO 17376 --- [           main] .CandidateAccountDeletionIntegrationTest : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:34:25.944+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:34:26.446+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 427 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:34:36.510+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:34:37.261+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-11-10T10:34:43.054+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:34:43.456+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-10T10:34:46.356+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:34:46.375+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-10T10:34:47.870+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:35:00.932+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:35:01.377+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:35:02.001+01:00  INFO 17376 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-10T10:35:09.845+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:35:10.153+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: ff1e6f10-5f1f-4dbf-971e-3b5090cc8b47
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:35:10.177+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:35:12.154+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:35:12.155+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:35:12.209+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:35:12.247+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 92 ms
+2026-11-10T10:35:12.988+01:00  INFO 17376 --- [           main] .CandidateAccountDeletionIntegrationTest : Started CandidateAccountDeletionIntegrationTest in 62.275 seconds (process running for 88.911)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (C:\Users\oti\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.15\byte-buddy-agent-1.18.15.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+2026-11-10T10:35:18.741+01:00  WARN 17376 --- [         task-3] c.smartrecruit.user.audit.AuditEmitter   : Événement d'audit PROFILE_VIEWED non transmis à dashboard-service (ResourceAccessException)
+2026-11-10T10:35:19.196+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat c40216c4-c508-4897-8b5e-209faa79e2ff supprimées de user-service (droit à l'oubli)
+2026-11-10T10:35:19.447+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat c1a00141-9116-4a4a-9f88-939173d03891 supprimées de user-service (droit à l'oubli)
+2026-11-10T10:35:19.513+01:00  WARN 17376 --- [         task-6] c.smartrecruit.user.audit.AuditEmitter   : Événement d'audit PROFILE_VIEWED non transmis à dashboard-service (ResourceAccessException)
+2026-11-10T10:35:19.738+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat f090842c-df03-40e5-b6f6-af57778edc17 supprimées de user-service (droit à l'oubli)
+2026-11-10T10:35:20.342+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat d11d233e-d425-4ebd-bb99-4ea6a0a74afd supprimées de user-service (droit à l'oubli)
+2026-11-10T10:35:20.395+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat 04d9e723-96b2-4a80-ad84-fb73d80df19c supprimées de user-service (droit à l'oubli)
+2026-11-10T10:35:20.486+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateAuditIntegrationTest]: CandidateAuditIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:20.505+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateAuditIntegrationTest
+2026-11-10T10:35:20.515+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateAuditIntegrationTest]: CandidateAuditIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:20.524+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateAuditIntegrationTest
+2026-11-10T10:35:20.568+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:35:20.742+01:00  INFO 17376 --- [           main] c.s.u.c.CandidateAuditIntegrationTest    : Starting CandidateAuditIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:35:20.743+01:00  INFO 17376 --- [           main] c.s.u.c.CandidateAuditIntegrationTest    : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:35:22.233+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:35:22.335+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 94 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:35:22.942+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:35:23.238+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:35:23.243+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-11-10T10:35:23.269+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:35:23.270+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-11-10T10:35:23.273+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:35:24.085+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:35:24.192+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:35:24.767+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:35:24.816+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 086b97a0-6bb4-4fdd-8b3f-41123b730be0
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:35:24.819+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:35:25.519+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:35:25.520+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:35:25.547+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:35:25.579+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 58 ms
+2026-11-10T10:35:25.778+01:00  INFO 17376 --- [           main] c.s.u.c.CandidateAuditIntegrationTest    : Started CandidateAuditIntegrationTest in 5.211 seconds (process running for 101.702)
+2026-11-10T10:35:26.186+01:00  WARN 17376 --- [         task-2] c.smartrecruit.user.audit.AuditEmitter   : Événement d'audit PROFILE_VIEWED non transmis à dashboard-service (InternalServerError)
+2026-11-10T10:35:26.206+01:00  WARN 17376 --- [         task-3] c.smartrecruit.user.audit.AuditEmitter   : Événement d'audit CV_VIEWED non transmis à dashboard-service (InternalServerError)
+2026-11-10T10:35:28.225+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateCvIntegrationTest]: CandidateCvIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:28.237+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateCvIntegrationTest
+2026-11-10T10:35:28.240+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateCvIntegrationTest]: CandidateCvIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:28.251+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateCvIntegrationTest
+2026-11-10T10:35:28.540+01:00 ERROR 17376 --- [           main] c.s.user.service.CandidateCvService      : CV du candidat 927193f5-a1ed-4124-b7f5-fd8f98b206a7 indéchiffrable (fichier altéré ou mauvaise clé)
+2026-11-10T10:35:28.878+01:00  WARN 17376 --- [         task-5] c.smartrecruit.user.audit.AuditEmitter   : Événement d'audit CV_VIEWED non transmis à dashboard-service (ResourceAccessException)
+2026-11-10T10:35:28.896+01:00  WARN 17376 --- [         task-6] c.smartrecruit.user.audit.AuditEmitter   : Événement d'audit CV_VIEWED non transmis à dashboard-service (ResourceAccessException)
+2026-11-10T10:35:30.124+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateProfileCreateIntegrationTest]: CandidateProfileCreateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:30.130+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateProfileCreateIntegrationTest
+2026-11-10T10:35:30.134+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateProfileCreateIntegrationTest]: CandidateProfileCreateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:30.140+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateProfileCreateIntegrationTest
+2026-11-10T10:35:31.093+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateProfileReadUpdateIntegrationTest]: CandidateProfileReadUpdateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:31.099+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateProfileReadUpdateIntegrationTest
+2026-11-10T10:35:31.100+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CandidateProfileReadUpdateIntegrationTest]: CandidateProfileReadUpdateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:31.106+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CandidateProfileReadUpdateIntegrationTest
+2026-11-10T10:35:31.973+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CompanyCreateIntegrationTest]: CompanyCreateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:31.979+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CompanyCreateIntegrationTest
+2026-11-10T10:35:31.982+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CompanyCreateIntegrationTest]: CompanyCreateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:31.987+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CompanyCreateIntegrationTest
+2026-11-10T10:35:32.654+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CompanyInvitationAcceptIntegrationTest]: CompanyInvitationAcceptIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:32.666+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CompanyInvitationAcceptIntegrationTest
+2026-11-10T10:35:32.669+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CompanyInvitationAcceptIntegrationTest]: CompanyInvitationAcceptIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:32.676+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CompanyInvitationAcceptIntegrationTest
+2026-11-10T10:35:32.693+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:35:32.790+01:00  INFO 17376 --- [           main] c.CompanyInvitationAcceptIntegrationTest : Starting CompanyInvitationAcceptIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:35:32.790+01:00  INFO 17376 --- [           main] c.CompanyInvitationAcceptIntegrationTest : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:35:33.824+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:35:33.921+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 91 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:35:34.369+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:35:34.477+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:35:34.482+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-11-10T10:35:34.486+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection conn20: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:35:34.487+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-11-10T10:35:34.489+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:35:34.905+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:35:34.978+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:35:35.560+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:35:35.602+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 610ec12e-efa8-488e-9eaa-37d1b6f51be9
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:35:35.604+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:35:36.142+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:35:36.143+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:35:36.174+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:35:36.206+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 63 ms
+2026-11-10T10:35:36.340+01:00  INFO 17376 --- [           main] c.CompanyInvitationAcceptIntegrationTest : Started CompanyInvitationAcceptIntegrationTest in 3.649 seconds (process running for 112.264)
+2026-11-10T10:35:37.309+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CompanyInvitationIntegrationTest]: CompanyInvitationIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:37.315+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CompanyInvitationIntegrationTest
+2026-11-10T10:35:37.317+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CompanyInvitationIntegrationTest]: CompanyInvitationIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:37.322+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CompanyInvitationIntegrationTest
+2026-11-10T10:35:37.829+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CompanyPatchIntegrationTest]: CompanyPatchIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:37.834+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CompanyPatchIntegrationTest
+2026-11-10T10:35:37.837+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CompanyPatchIntegrationTest]: CompanyPatchIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:37.843+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CompanyPatchIntegrationTest
+2026-11-10T10:35:38.160+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CvAnalysisIntegrationTest]: CvAnalysisIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:38.169+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CvAnalysisIntegrationTest
+2026-11-10T10:35:38.172+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CvAnalysisIntegrationTest]: CvAnalysisIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:35:38.180+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CvAnalysisIntegrationTest
+2026-11-10T10:35:38.207+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:35:38.293+01:00  INFO 17376 --- [           main] c.s.u.c.CvAnalysisIntegrationTest        : Starting CvAnalysisIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:35:38.293+01:00  INFO 17376 --- [           main] c.s.u.c.CvAnalysisIntegrationTest        : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:35:39.101+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:35:39.193+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 87 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:35:39.557+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:35:39.668+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:35:39.674+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2026-11-10T10:35:39.680+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection conn30: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:35:39.681+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2026-11-10T10:35:39.683+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:35:40.058+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:35:40.114+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:35:40.665+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:35:40.716+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 849b1165-04e5-40b6-a5d8-1968cf9547ec
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:35:40.719+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:35:41.251+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:35:41.251+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:35:41.278+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:35:41.309+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 56 ms
+2026-11-10T10:35:41.518+01:00  INFO 17376 --- [           main] c.s.u.c.CvAnalysisIntegrationTest        : Started CvAnalysisIntegrationTest in 3.311 seconds (process running for 117.442)
+2026-11-10T10:35:41.949+01:00  WARN 17376 --- [         task-2] com.smartrecruit.user.ai.CvAnalysisJob   : Analyse IA du CV du candidat e3bf168b-5e24-4c82-ab6c-c37f996a744d indisponible, mode dégradé (InternalServerError)
+2026-11-10T10:35:52.079+01:00  WARN 17376 --- [         task-4] com.smartrecruit.user.ai.CvAnalysisJob   : Analyse IA du CV du candidat 1a7f32e2-6783-4704-a9bd-3a1a7f1421d5 indisponible, mode dégradé (InternalServerError)
+2026-11-10T10:35:52.080+01:00  INFO 17376 --- [         task-3] com.smartrecruit.user.ai.CvAnalysisJob   : Résultat de l'analyse du CV du candidat 1a7f32e2-6783-4704-a9bd-3a1a7f1421d5 ignoré : CV remplacé ou compte supprimé
+2026-11-10T10:36:02.724+01:00  WARN 17376 --- [         task-5] com.smartrecruit.user.ai.CvAnalysisJob   : Analyse IA du CV du candidat cccdc173-e6cf-4a26-a4ce-39383620273e indisponible, mode dégradé (InternalServerError)
+2026-11-10T10:36:02.731+01:00  INFO 17376 --- [         task-5] com.smartrecruit.user.ai.CvAnalysisJob   : Résultat de l'analyse du CV du candidat cccdc173-e6cf-4a26-a4ce-39383620273e ignoré : CV remplacé ou compte supprimé
+2026-11-10T10:36:03.482+01:00  WARN 17376 --- [         task-8] com.smartrecruit.user.ai.CvAnalysisJob   : Analyse IA du CV du candidat 2fca35d3-8b57-4787-9860-fda61a98d2e7 indisponible, mode dégradé (ResourceAccessException)
+2026-11-10T10:36:04.489+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CvSuggestionsIntegrationTest]: CvSuggestionsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:04.495+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CvSuggestionsIntegrationTest
+2026-11-10T10:36:04.497+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.CvSuggestionsIntegrationTest]: CvSuggestionsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:04.502+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.CvSuggestionsIntegrationTest
+2026-11-10T10:36:04.523+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:36:04.594+01:00  INFO 17376 --- [           main] c.s.u.c.CvSuggestionsIntegrationTest     : Starting CvSuggestionsIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:36:04.594+01:00  INFO 17376 --- [           main] c.s.u.c.CvSuggestionsIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:36:05.504+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:36:05.606+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 96 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:36:05.877+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:36:05.965+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:36:05.969+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2026-11-10T10:36:05.973+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection conn40: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:36:05.973+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2026-11-10T10:36:05.975+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:36:06.294+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:36:06.345+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:36:06.905+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:36:06.948+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: f4bfcbc4-1b4d-4a1f-9f16-328c17bc2952
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:36:06.951+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:36:07.382+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:36:07.382+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:36:07.404+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:36:07.436+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 54 ms
+2026-11-10T10:36:07.596+01:00  INFO 17376 --- [           main] c.s.u.c.CvSuggestionsIntegrationTest     : Started CvSuggestionsIntegrationTest in 3.074 seconds (process running for 143.52)
+2026-11-10T10:36:07.707+01:00  WARN 17376 --- [           main] c.s.user.service.CvSuggestionsService    : Suggestions de CV du candidat f9616d48-45c2-4e86-bb05-bf772423a882 : ai-service indisponible (RestClientException)
+2026-11-10T10:36:07.735+01:00  WARN 17376 --- [           main] c.s.user.service.CvSuggestionsService    : Suggestions de CV du candidat 200e0cd6-155c-4767-a970-1be61feb6226 : ai-service indisponible (InternalServerError)
+2026-11-10T10:36:07.830+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.InternalCandidateIntegrationTest]: InternalCandidateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:07.840+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.InternalCandidateIntegrationTest
+2026-11-10T10:36:07.843+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.InternalCandidateIntegrationTest]: InternalCandidateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:07.848+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.InternalCandidateIntegrationTest
+2026-11-10T10:36:08.080+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.InternalCompanyIntegrationTest]: InternalCompanyIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:08.086+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.InternalCompanyIntegrationTest
+2026-11-10T10:36:08.088+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.InternalCompanyIntegrationTest]: InternalCompanyIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:08.092+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.InternalCompanyIntegrationTest
+2026-11-10T10:36:08.403+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.InternalStatsIntegrationTest]: InternalStatsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:08.410+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.InternalStatsIntegrationTest
+2026-11-10T10:36:08.413+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.controller.InternalStatsIntegrationTest]: InternalStatsIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:08.418+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.controller.InternalStatsIntegrationTest
+2026-11-10T10:36:08.594+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.gdpr.ImmediateErasureIntegrationTest]: ImmediateErasureIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:08.639+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.gdpr.ImmediateErasureIntegrationTest
+2026-11-10T10:36:08.641+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.gdpr.ImmediateErasureIntegrationTest]: ImmediateErasureIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:08.645+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.gdpr.ImmediateErasureIntegrationTest
+2026-11-10T10:36:08.662+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:36:08.736+01:00  INFO 17376 --- [           main] c.s.u.g.ImmediateErasureIntegrationTest  : Starting ImmediateErasureIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:36:08.736+01:00  INFO 17376 --- [           main] c.s.u.g.ImmediateErasureIntegrationTest  : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:36:09.600+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:36:09.711+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 104 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:36:09.977+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:36:10.045+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:36:10.048+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Starting...
+2026-11-10T10:36:10.051+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-6 - Added connection conn50: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:36:10.052+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Start completed.
+2026-11-10T10:36:10.054+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:36:10.366+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:36:10.412+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:36:10.855+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:36:10.897+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 23260e1c-07be-4ec9-87ea-423a00438c23
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:36:10.900+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:36:11.376+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:36:11.376+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:36:11.395+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:36:11.432+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 56 ms
+2026-11-10T10:36:11.571+01:00  INFO 17376 --- [           main] c.s.u.g.ImmediateErasureIntegrationTest  : Started ImmediateErasureIntegrationTest in 2.908 seconds (process running for 147.494)
+2026-11-10T10:36:11.613+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat f80ffaef-f067-4ae9-b6c6-fb6c3e13e05a supprimées de user-service (droit à l'oubli)
+2026-11-10T10:36:11.686+01:00  INFO 17376 --- [         task-1] c.s.u.gdpr.PersonalDataErasureProcessor  : Droit à l'oubli : données du candidat f80ffaef-f067-4ae9-b6c6-fb6c3e13e05a effacées dans tous les services
+2026-11-10T10:36:11.714+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.gdpr.PersonalDataErasureIntegrationTest]: PersonalDataErasureIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:11.722+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.gdpr.PersonalDataErasureIntegrationTest
+2026-11-10T10:36:11.724+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.gdpr.PersonalDataErasureIntegrationTest]: PersonalDataErasureIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:11.730+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.gdpr.PersonalDataErasureIntegrationTest
+2026-11-10T10:36:11.759+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:36:11.843+01:00  INFO 17376 --- [           main] s.u.g.PersonalDataErasureIntegrationTest : Starting PersonalDataErasureIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:36:11.844+01:00  INFO 17376 --- [           main] s.u.g.PersonalDataErasureIntegrationTest : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:36:12.527+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:36:12.590+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 58 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:36:12.867+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:36:12.941+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:36:12.943+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Starting...
+2026-11-10T10:36:12.946+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-7 - Added connection conn60: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:36:12.947+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Start completed.
+2026-11-10T10:36:12.948+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:36:13.270+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:36:13.314+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:36:13.767+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:36:13.811+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 5ba7ac84-2715-4010-859e-8c037551fde5
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:36:13.813+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:36:14.189+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:36:14.189+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:36:14.210+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:36:14.242+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 52 ms
+2026-11-10T10:36:14.368+01:00  INFO 17376 --- [           main] s.u.g.PersonalDataErasureIntegrationTest : Started PersonalDataErasureIntegrationTest in 2.61 seconds (process running for 150.292)
+2026-11-10T10:36:14.478+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat a7aaca69-b7a7-41db-9a30-44a214796ca6 supprimées de user-service (droit à l'oubli)
+2026-11-10T10:36:14.541+01:00  WARN 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : RGPD : effacement du candidat a7aaca69-b7a7-41db-9a30-44a214796ca6 incomplet, nouvel essai planifié : auth-service: 500 Internal Server Error: [no body]; ai-service: 500 Internal Server Error: [no body]; job-service: 500 Internal Server Error: [no body]; application-service: 500 Internal Server Error: [no body]; 
+2026-11-10T10:36:14.573+01:00  WARN 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : RGPD : effacement du candidat a7aaca69-b7a7-41db-9a30-44a214796ca6 incomplet, nouvel essai planifié : auth-service: 500 Internal Server Error: [no body]; ai-service: 500 Internal Server Error: [no body]; job-service: 500 Internal Server Error: [no body]; application-service: 500 Internal Server Error: [no body]; 
+2026-11-10T10:36:14.628+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat bba4713f-66de-4607-b42b-32a85dfadfa0 supprimées de user-service (droit à l'oubli)
+2026-11-10T10:36:14.664+01:00  WARN 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : RGPD : effacement du candidat bba4713f-66de-4607-b42b-32a85dfadfa0 incomplet, nouvel essai planifié : ai-service: 503 Service Unavailable: [no body]; 
+2026-11-10T10:36:14.680+01:00  INFO 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : Droit à l'oubli : données du candidat bba4713f-66de-4607-b42b-32a85dfadfa0 effacées dans tous les services
+2026-11-10T10:36:14.738+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat a9f75439-7b14-4d05-996c-99858ec76df3 supprimées de user-service (droit à l'oubli)
+2026-11-10T10:36:14.778+01:00 ERROR 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : RGPD : effacement du candidat a9f75439-7b14-4d05-996c-99858ec76df3 toujours incomplet après la date limite 2026-11-09T09:36:14.747936Z (1 tentatives) : ai-service: 500 Internal Server Error: [no body]; 
+2026-11-10T10:36:14.788+01:00  INFO 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : Droit à l'oubli : données du candidat a9f75439-7b14-4d05-996c-99858ec76df3 effacées dans tous les services
+2026-11-10T10:36:14.825+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat 0933fa9a-410a-49a1-a4e6-fa173952293e supprimées de user-service (droit à l'oubli)
+2026-11-10T10:36:14.874+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat f08cc56b-701b-4670-b861-f1de3b9662a3 supprimées de user-service (droit à l'oubli)
+2026-11-10T10:36:14.898+01:00  INFO 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : Droit à l'oubli : données du candidat f08cc56b-701b-4670-b861-f1de3b9662a3 effacées dans tous les services
+2026-11-10T10:36:14.941+01:00  INFO 17376 --- [           main] c.s.u.s.CandidateAccountDeletionService  : Données personnelles du candidat f5440e5c-90d1-4c19-956c-30d92f841159 supprimées de user-service (droit à l'oubli)
+2026-11-10T10:36:14.977+01:00  WARN 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : RGPD : effacement du candidat f5440e5c-90d1-4c19-956c-30d92f841159 incomplet, nouvel essai planifié : job-service: 503 Service Unavailable: [no body]; application-service: 500 Internal Server Error: [no body]; 
+2026-11-10T10:36:14.994+01:00  INFO 17376 --- [           main] c.s.u.gdpr.PersonalDataErasureProcessor  : Droit à l'oubli : données du candidat f5440e5c-90d1-4c19-956c-30d92f841159 effacées dans tous les services
+2026-11-10T10:36:15.028+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.repository.CompanyInvitationRepositoryTest]: CompanyInvitationRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:15.150+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.repository.CompanyInvitationRepositoryTest
+2026-11-10T10:36:15.153+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.repository.CompanyInvitationRepositoryTest]: CompanyInvitationRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:15.211+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.repository.CompanyInvitationRepositoryTest
+2026-11-10T10:36:15.225+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:36:15.297+01:00  INFO 17376 --- [           main] c.s.u.r.CompanyInvitationRepositoryTest  : Starting CompanyInvitationRepositoryTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:36:15.298+01:00  INFO 17376 --- [           main] c.s.u.r.CompanyInvitationRepositoryTest  : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:36:15.822+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:36:15.912+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 86 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:36:16.040+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:36:16.155+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:36:16.159+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Starting...
+2026-11-10T10:36:16.166+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-8 - Added connection conn70: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:36:16.167+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Start completed.
+2026-11-10T10:36:16.169+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:36:16.620+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: drop table if exists candidate_education cascade 
+Hibernate: drop table if exists candidate_experiences cascade 
+Hibernate: drop table if exists candidate_languages cascade 
+Hibernate: drop table if exists candidate_profiles cascade 
+Hibernate: drop table if exists candidate_skills cascade 
+Hibernate: drop table if exists companies cascade 
+Hibernate: drop table if exists company_invitations cascade 
+Hibernate: drop table if exists company_members cascade 
+Hibernate: drop table if exists deleted_candidates cascade 
+Hibernate: create table candidate_education (position integer not null check ((position>=0)), year integer, candidate_id uuid not null, degree varchar(255), institution varchar(255), primary key (position, candidate_id))
+Hibernate: create table candidate_experiences (position integer not null check ((position>=0)), candidate_id uuid not null, description varchar(2000), company varchar(255), end_date varbinary(255), start_date varbinary(255), title varchar(255), primary key (position, candidate_id))
+Hibernate: create table candidate_languages (position integer not null check ((position>=0)), candidate_id uuid not null, languages varchar(255), primary key (position, candidate_id))
+Hibernate: create table candidate_profiles (created_at timestamp(6) with time zone, cv_parsed_at timestamp(6) with time zone, updated_at timestamp(6) with time zone, id uuid not null, cv_storage_key varchar(255), cv_url varchar(255), email varchar(255) not null, first_name varchar(255) not null, last_name varchar(255) not null, location varchar(255), phone varchar(255), cv_analysis_status enum ('DONE','FAILED','NONE','PENDING'), primary key (id))
+Hibernate: create table candidate_skills (position integer not null check ((position>=0)), candidate_id uuid not null, skills varchar(255), primary key (position, candidate_id))
+Hibernate: create table companies (id uuid not null, sector varchar(100), name varchar(150), logo_url varchar(500), description varchar(5000), primary key (id))
+Hibernate: create table company_invitations (created_at timestamp(6) with time zone, expires_at timestamp(6) with time zone not null, company_id uuid not null, id uuid not null, token_hash varchar(64) not null unique, email varchar(255) not null, status enum ('ACCEPTED','EXPIRED','PENDING') not null, primary key (id))
+Hibernate: create table company_members (company_id uuid not null, members uuid unique)
+Hibernate: create table deleted_candidates (erasure_attempts integer not null, ai_erased_at timestamp(6) with time zone, applications_erased_at timestamp(6) with time zone, auth_erased_at timestamp(6) with time zone, deleted_at timestamp(6) with time zone, erase_deadline timestamp(6) with time zone, jobs_erased_at timestamp(6) with time zone, last_erasure_attempt_at timestamp(6) with time zone, version bigint not null, id uuid not null, last_erasure_error varchar(500), primary key (id))
+Hibernate: alter table if exists candidate_education add constraint FK1vbwts7ul164xuq38ik6l3eh4 foreign key (candidate_id) references candidate_profiles
+Hibernate: alter table if exists candidate_experiences add constraint FKjpevwfb6c4phklll16a8wu0dj foreign key (candidate_id) references candidate_profiles
+Hibernate: alter table if exists candidate_languages add constraint FKhfyo57rv2b2f0oobwte835fbd foreign key (candidate_id) references candidate_profiles
+Hibernate: alter table if exists candidate_skills add constraint FK13xo0mq175kdpsauy73xhhol2 foreign key (candidate_id) references candidate_profiles
+Hibernate: alter table if exists company_members add constraint FKmd021v867w24yg8567wsb6wyg foreign key (company_id) references companies
+2026-11-10T10:36:16.687+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:36:16.906+01:00  INFO 17376 --- [           main] c.s.u.r.CompanyInvitationRepositoryTest  : Started CompanyInvitationRepositoryTest in 1.682 seconds (process running for 152.83)
+Hibernate: insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?)
+Hibernate: update company_invitations set company_id=?,created_at=?,email=?,expires_at=?,status=?,token_hash=? where id=?
+Hibernate: insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?)
+Hibernate: select ci1_0.id from company_invitations ci1_0 where ci1_0.company_id=? and ci1_0.email=? and ci1_0.status=? and ci1_0.expires_at>? fetch first ? rows only
+Hibernate: select ci1_0.id from company_invitations ci1_0 where ci1_0.company_id=? and ci1_0.email=? and ci1_0.status=? and ci1_0.expires_at>? fetch first ? rows only
+Hibernate: select ci1_0.id from company_invitations ci1_0 where ci1_0.company_id=? and ci1_0.email=? and ci1_0.status=? and ci1_0.expires_at>? fetch first ? rows only
+Hibernate: select ci1_0.id from company_invitations ci1_0 where ci1_0.company_id=? and ci1_0.email=? and ci1_0.status=? and ci1_0.expires_at>? fetch first ? rows only
+Hibernate: insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?)
+Hibernate: update company_invitations ci1_0 set status='ACCEPTED' where ci1_0.id=? and ci1_0.status='PENDING'
+Hibernate: update company_invitations ci1_0 set status='ACCEPTED' where ci1_0.id=? and ci1_0.status='PENDING'
+Hibernate: insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?)
+Hibernate: select ci1_0.id,ci1_0.company_id,ci1_0.created_at,ci1_0.email,ci1_0.expires_at,ci1_0.status,ci1_0.token_hash from company_invitations ci1_0 where ci1_0.token_hash=?
+Hibernate: select ci1_0.id,ci1_0.company_id,ci1_0.created_at,ci1_0.email,ci1_0.expires_at,ci1_0.status,ci1_0.token_hash from company_invitations ci1_0 where ci1_0.token_hash=?
+Hibernate: insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?)
+2026-11-10T10:36:17.172+01:00  WARN 17376 --- [           main] org.hibernate.orm.jdbc.error             : HHH000247: ErrorCode: 23505, SQLState: 23505
+2026-11-10T10:36:17.173+01:00  WARN 17376 --- [           main] org.hibernate.orm.jdbc.error             : Violation d'index unique ou clé primaire: "PUBLIC.CONSTRAINT_C INDEX PUBLIC.CONSTRAINT_INDEX_C ON PUBLIC.COMPANY_INVITATIONS(TOKEN_HASH NULLS FIRST) VALUES ( /* 7 */ 'same' )"
+Unique index or primary key violation: "PUBLIC.CONSTRAINT_C INDEX PUBLIC.CONSTRAINT_INDEX_C ON PUBLIC.COMPANY_INVITATIONS(TOKEN_HASH NULLS FIRST) VALUES ( /* 7 */ 'same' )"; SQL statement:
+insert into company_invitations (company_id,created_at,email,expires_at,status,token_hash,id) values (?,?,?,?,?,?,?) [23505-240]
+2026-11-10T10:36:17.245+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.repository.CompanyRepositoryTest]: CompanyRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:17.308+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.repository.CompanyRepositoryTest
+2026-11-10T10:36:17.309+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.repository.CompanyRepositoryTest]: CompanyRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:17.360+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.repository.CompanyRepositoryTest
+Hibernate: select c1_0.id,c1_0.description,c1_0.logo_url,c1_0.name,c1_0.sector from companies c1_0 where c1_0.id=?
+Hibernate: insert into companies (description,logo_url,name,sector,id) values (?,?,?,?,?)
+Hibernate: insert into company_members (company_id,members) values (?,?)
+Hibernate: select c1_0.id,c1_0.description,c1_0.logo_url,c1_0.name,c1_0.sector from companies c1_0 where c1_0.id=?
+Hibernate: insert into companies (description,logo_url,name,sector,id) values (?,?,?,?,?)
+Hibernate: insert into company_members (company_id,members) values (?,?)
+2026-11-10T10:36:17.417+01:00  WARN 17376 --- [           main] org.hibernate.orm.jdbc.error             : HHH000247: ErrorCode: 23505, SQLState: 23505
+2026-11-10T10:36:17.418+01:00  WARN 17376 --- [           main] org.hibernate.orm.jdbc.error             : Violation d'index unique ou clé primaire: "PUBLIC.CONSTRAINT_1 INDEX PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.COMPANY_MEMBERS(MEMBERS NULLS FIRST) VALUES ( /* 1 */ UUID 'd2e48f8c-4634-4dec-9765-1bac248092a6' )"
+Unique index or primary key violation: "PUBLIC.CONSTRAINT_1 INDEX PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.COMPANY_MEMBERS(MEMBERS NULLS FIRST) VALUES ( /* 1 */ UUID 'd2e48f8c-4634-4dec-9765-1bac248092a6' )"; SQL statement:
+insert into company_members (company_id,members) values (?,?) [23505-240]
+Hibernate: select c1_0.id,c1_0.description,c1_0.logo_url,c1_0.name,c1_0.sector from companies c1_0 where c1_0.id=?
+Hibernate: insert into companies (description,logo_url,name,sector,id) values (?,?,?,?,?)
+Hibernate: insert into company_members (company_id,members) values (?,?)
+Hibernate: insert into company_members (company_id,members) values (?,?)
+Hibernate: select c1_0.id,c1_0.description,c1_0.logo_url,c1_0.name,c1_0.sector from companies c1_0 where c1_0.id=?
+Hibernate: insert into companies (description,logo_url,name,sector,id) values (?,?,?,?,?)
+Hibernate: insert into company_members (company_id,members) values (?,?)
+Hibernate: select c1_0.id,c1_0.description,c1_0.logo_url,c1_0.name,c1_0.sector from companies c1_0 join company_members m1_0 on c1_0.id=m1_0.company_id where m1_0.members=?
+Hibernate: select c1_0.id,c1_0.description,c1_0.logo_url,c1_0.name,c1_0.sector from companies c1_0 join company_members m1_0 on c1_0.id=m1_0.company_id where m1_0.members=?
+2026-11-10T10:36:17.932+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.security.InputSecurityIntegrationTest
+2026-11-10T10:36:17.937+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.security.InputSecurityIntegrationTest
+2026-11-10T10:36:17.947+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:36:18.003+01:00  INFO 17376 --- [           main] c.s.u.s.InputSecurityIntegrationTest     : Starting InputSecurityIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:36:18.003+01:00  INFO 17376 --- [           main] c.s.u.s.InputSecurityIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:36:18.907+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:36:19.002+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 91 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:36:19.265+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:36:19.345+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:36:19.348+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-9 - Starting...
+2026-11-10T10:36:19.353+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-9 - Added connection conn80: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:36:19.375+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-9 - Start completed.
+2026-11-10T10:36:19.377+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:36:19.722+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:36:19.775+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:36:20.203+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:36:20.241+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 627d4d5c-4af3-4a8f-a260-b1f967219f50
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:36:20.243+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:36:20.666+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:36:20.666+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:36:20.684+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:36:20.709+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 43 ms
+2026-11-10T10:36:20.824+01:00  INFO 17376 --- [           main] c.s.u.s.InputSecurityIntegrationTest     : Started InputSecurityIntegrationTest in 2.878 seconds (process running for 156.747)
+2026-11-10T10:36:20.946+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.security.RbacIntegrationTest
+2026-11-10T10:36:20.953+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.security.RbacIntegrationTest
+2026-11-10T10:36:20.967+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:36:21.039+01:00  INFO 17376 --- [           main] c.s.user.security.RbacIntegrationTest    : Starting RbacIntegrationTest using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:36:21.040+01:00  INFO 17376 --- [           main] c.s.user.security.RbacIntegrationTest    : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:36:21.875+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:36:21.949+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 69 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:36:22.199+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:36:22.261+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:36:22.264+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-10 - Starting...
+2026-11-10T10:36:22.268+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-10 - Added connection conn90: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:36:22.268+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-10 - Start completed.
+2026-11-10T10:36:22.270+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:36:22.547+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:36:22.594+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:36:23.117+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:36:23.207+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 0610f593-c759-4465-aecc-393ff7d913d6
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:36:23.210+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:36:23.693+01:00  INFO 17376 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:36:23.694+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:36:23.715+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:36:23.743+01:00  INFO 17376 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 49 ms
+2026-11-10T10:36:23.890+01:00  INFO 17376 --- [           main] c.s.user.security.RbacIntegrationTest    : Started RbacIntegrationTest in 2.924 seconds (process running for 159.814)
+2026-11-10T10:36:25.089+01:00  WARN 17376 --- [           main] c.s.user.service.CvSuggestionsService    : Suggestions de CV du candidat f6d217e9-bd09-483f-8597-31757bacbccd : ai-service indisponible (ResourceAccessException)
+2026-11-10T10:36:25.261+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.UserServiceApplicationTests]: UserServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:25.305+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.UserServiceApplicationTests
+2026-11-10T10:36:25.308+01:00  INFO 17376 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.user.UserServiceApplicationTests]: UserServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:36:25.310+01:00  INFO 17376 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.user.UserServiceApplication for test class com.smartrecruit.user.UserServiceApplicationTests
+2026-11-10T10:36:25.323+01:00  INFO 17376 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:36:25.381+01:00  INFO 17376 --- [           main] c.s.user.UserServiceApplicationTests     : Starting UserServiceApplicationTests using Java 25.0.3 with PID 17376 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\user-service)
+2026-11-10T10:36:25.381+01:00  INFO 17376 --- [           main] c.s.user.UserServiceApplicationTests     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:36:26.063+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:36:26.100+01:00  INFO 17376 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 34 ms. Found 4 JPA repository interfaces.
+2026-11-10T10:36:26.389+01:00  INFO 17376 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:36:26.457+01:00  INFO 17376 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:36:26.459+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-11 - Starting...
+2026-11-10T10:36:26.475+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-11 - Added connection conn100: url=jdbc:h2:mem:user_db user=SA
+2026-11-10T10:36:26.476+01:00  INFO 17376 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-11 - Start completed.
+2026-11-10T10:36:26.477+01:00  INFO 17376 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:user_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: USER_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:36:26.651+01:00  INFO 17376 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:36:26.675+01:00  INFO 17376 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:36:27.282+01:00  WARN 17376 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:36:27.318+01:00  WARN 17376 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 6b1f6c48-b9ce-457b-ba0b-352bb3c02ef6
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:36:27.321+01:00  INFO 17376 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:36:28.171+01:00  INFO 17376 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:36:28.217+01:00  INFO 17376 --- [           main] c.s.user.UserServiceApplicationTests     : Started UserServiceApplicationTests in 2.895 seconds (process running for 164.14)

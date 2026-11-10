@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CandidateProfileService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.service</a> &gt; <span class="el_source">CandidateProfileService.java</span></div><h1>CandidateProfileService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.service;
+
+import com.smartrecruit.user.dto.CandidateProfilePatchRequest;
+import com.smartrecruit.user.dto.CandidateProfileRequest;
+import com.smartrecruit.user.dto.CandidateProfileResponse;
+import com.smartrecruit.user.dto.EducationRequest;
+import com.smartrecruit.user.dto.ExperienceRequest;
+import com.smartrecruit.user.exception.ApiException;
+import com.smartrecruit.user.model.CandidateProfile;
+import com.smartrecruit.user.repository.CandidateProfileRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class CandidateProfileService {
+
+    private final CandidateProfileRepository profileRepository;
+    private final DeletedAccountGuard deletionGuard;
+
+    /** Result of a create-or-replace, so the controller can answer 201 or 200. */
+<span class="fc" id="L28">    public record SaveResult(CandidateProfileResponse profile, boolean created) {</span>
+    }
+
+    /**
+     * Creates the profile of the given account or fully replaces it (BE-USER-01).
+     * The profile id is always the account id carried by the access token.
+     */
+    @Transactional
+    public SaveResult createOrReplace(UUID accountId, CandidateProfileRequest request) {
+<span class="fc" id="L37">        deletionGuard.ensureNotDeleted(accountId);</span>
+<span class="fc" id="L38">        CandidateProfile existing = profileRepository.findById(accountId).orElse(null);</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        boolean created = existing == null;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        CandidateProfile profile = created ? CandidateProfile.builder().id(accountId).build() : existing;</span>
+
+<span class="fc" id="L42">        profile.setFirstName(request.firstName().trim());</span>
+<span class="fc" id="L43">        profile.setLastName(request.lastName().trim());</span>
+<span class="fc" id="L44">        profile.setEmail(request.email().trim().toLowerCase(Locale.ROOT));</span>
+<span class="fc" id="L45">        profile.setPhone(blankToNull(request.phone()));</span>
+<span class="fc" id="L46">        profile.setLocation(blankToNull(request.location()));</span>
+<span class="fc" id="L47">        CandidateProfile.replace(profile.getSkills(), trimDistinct(request.skills()));</span>
+<span class="fc" id="L48">        CandidateProfile.replace(profile.getLanguages(), trimDistinct(request.languages()));</span>
+<span class="fc" id="L49">        CandidateProfile.replace(profile.getExperiences(),</span>
+<span class="fc" id="L50">                nullToEmpty(request.experiences()).stream().map(ExperienceRequest::toEntity).toList());</span>
+<span class="fc" id="L51">        CandidateProfile.replace(profile.getEducation(),</span>
+<span class="fc" id="L52">                nullToEmpty(request.education()).stream().map(EducationRequest::toEntity).toList());</span>
+
+<span class="fc" id="L54">        CandidateProfile saved = profileRepository.saveAndFlush(profile);</span>
+<span class="fc" id="L55">        return new SaveResult(CandidateProfileResponse.from(saved), created);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public CandidateProfileResponse get(UUID accountId) {
+<span class="fc" id="L60">        return CandidateProfileResponse.from(findOrThrow(accountId));</span>
+    }
+
+    /**
+     * Partial update (BE-USER-03): only the fields present in the request body are modified.
+     * {@code updatedAt} is refreshed by the entity's {@code @PreUpdate} hook.
+     */
+    @Transactional
+    public CandidateProfileResponse patch(UUID accountId, CandidateProfilePatchRequest request) {
+<span class="fc" id="L69">        CandidateProfile profile = findOrThrow(accountId);</span>
+
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if (request.has(&quot;firstName&quot;)) {</span>
+<span class="nc" id="L72">            profile.setFirstName(request.firstName().trim());</span>
+        }
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (request.has(&quot;lastName&quot;)) {</span>
+<span class="nc" id="L75">            profile.setLastName(request.lastName().trim());</span>
+        }
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (request.has(&quot;email&quot;)) {</span>
+<span class="nc" id="L78">            profile.setEmail(request.email().trim().toLowerCase(Locale.ROOT));</span>
+        }
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (request.has(&quot;phone&quot;)) {</span>
+<span class="fc" id="L81">            profile.setPhone(blankToNull(request.phone()));</span>
+        }
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (request.has(&quot;location&quot;)) {</span>
+<span class="fc" id="L84">            profile.setLocation(blankToNull(request.location()));</span>
+        }
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (request.has(&quot;skills&quot;)) {</span>
+<span class="fc" id="L87">            CandidateProfile.replace(profile.getSkills(), trimDistinct(request.skills()));</span>
+        }
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (request.has(&quot;languages&quot;)) {</span>
+<span class="fc" id="L90">            CandidateProfile.replace(profile.getLanguages(), trimDistinct(request.languages()));</span>
+        }
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (request.has(&quot;experiences&quot;)) {</span>
+<span class="fc" id="L93">            CandidateProfile.replace(profile.getExperiences(),</span>
+<span class="fc" id="L94">                    nullToEmpty(request.experiences()).stream().map(ExperienceRequest::toEntity).toList());</span>
+        }
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        if (request.has(&quot;education&quot;)) {</span>
+<span class="nc" id="L97">            CandidateProfile.replace(profile.getEducation(),</span>
+<span class="nc" id="L98">                    nullToEmpty(request.education()).stream().map(EducationRequest::toEntity).toList());</span>
+        }
+<span class="fc" id="L100">        return CandidateProfileResponse.from(profileRepository.saveAndFlush(profile));</span>
+    }
+
+    private CandidateProfile findOrThrow(UUID accountId) {
+<span class="fc" id="L104">        return profileRepository.findById(accountId)</span>
+<span class="fc" id="L105">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND,</span>
+                        &quot;Profil candidat introuvable : créez-le d'abord avec PUT /api/v1/users/candidates/me&quot;));
+    }
+
+    static String blankToNull(String value) {
+<span class="pc bpc" id="L110" title="1 of 4 branches missed.">        return value == null || value.isBlank() ? null : value.trim();</span>
+    }
+
+    static List&lt;String&gt; trimDistinct(List&lt;String&gt; values) {
+<span class="fc" id="L114">        return nullToEmpty(values).stream().map(String::trim).distinct().toList();</span>
+    }
+
+    static &lt;T&gt; List&lt;T&gt; nullToEmpty(List&lt;T&gt; values) {
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        return values == null ? List.of() : values;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

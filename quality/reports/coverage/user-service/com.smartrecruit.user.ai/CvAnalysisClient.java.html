@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CvAnalysisClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.ai</a> &gt; <span class="el_source">CvAnalysisClient.java</span></div><h1>CvAnalysisClient.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.ai;
+
+import com.smartrecruit.user.gdpr.GdprErasureProperties;
+import com.smartrecruit.user.security.InternalIdentityVerifier;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+
+import java.net.http.HttpClient;
+import java.time.Duration;
+import java.util.Optional;
+import java.util.UUID;
+
+/**
+ * Sends an uploaded CV to ai-service for parsing (BE-CV-01). The AI stores the result itself, keyed by
+ * candidate. Requests carry the same signed {@code SERVICE} identity as the erasure calls.
+ */
+@Component
+public class CvAnalysisClient {
+
+    private final RestClient aiService;
+    private final InternalIdentityVerifier signer;
+
+<span class="fc" id="L31">    public CvAnalysisClient(GdprErasureProperties properties, InternalIdentityVerifier signer) {</span>
+<span class="fc" id="L32">        HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(Duration.ofSeconds(5)).build();</span>
+<span class="fc" id="L33">        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);</span>
+<span class="fc" id="L34">        requestFactory.setReadTimeout(Duration.ofSeconds(20)); // LLM call: typically 3-10 s</span>
+<span class="fc" id="L35">        this.aiService = RestClient.builder().baseUrl(properties.aiServiceUri()).requestFactory(requestFactory).build();</span>
+<span class="fc" id="L36">        this.signer = signer;</span>
+<span class="fc" id="L37">    }</span>
+
+    /** Any non-2xx answer or I/O failure throws. */
+    public void parse(UUID candidateId, byte[] pdf) {
+<span class="fc" id="L41">        HttpHeaders fileHeaders = new HttpHeaders();</span>
+<span class="fc" id="L42">        fileHeaders.setContentType(MediaType.APPLICATION_PDF);</span>
+<span class="fc" id="L43">        MultiValueMap&lt;String, Object&gt; body = new LinkedMultiValueMap&lt;&gt;();</span>
+<span class="fc" id="L44">        body.add(&quot;file&quot;, new HttpEntity&lt;&gt;(new ByteArrayResource(pdf) {</span>
+            @Override
+            public String getFilename() {
+<span class="fc" id="L47">                return &quot;cv.pdf&quot;;</span>
+            }
+        }, fileHeaders));
+<span class="fc" id="L50">        body.add(&quot;candidateId&quot;, candidateId.toString());</span>
+<span class="fc" id="L51">        aiService.post()</span>
+<span class="fc" id="L52">                .uri(&quot;/api/v1/ai/cv-parsing/parse&quot;)</span>
+<span class="fc" id="L53">                .headers(signer::addServiceIdentity)</span>
+<span class="fc" id="L54">                .contentType(MediaType.MULTIPART_FORM_DATA)</span>
+<span class="fc" id="L55">                .body(body)</span>
+<span class="fc" id="L56">                .retrieve()</span>
+<span class="fc" id="L57">                .toBodilessEntity();</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Last parsing result stored by the AI for this candidate, or empty if none (404). Any other
+     * failure (I/O, 5xx) throws a {@link org.springframework.web.client.RestClientException}.
+     */
+    public Optional&lt;ParsedCv&gt; findParsedCv(UUID candidateId) {
+        try {
+<span class="fc" id="L66">            return Optional.ofNullable(aiService.get()</span>
+<span class="fc" id="L67">                    .uri(&quot;/api/v1/ai/cv-parsing/candidates/{id}&quot;, candidateId)</span>
+<span class="fc" id="L68">                    .headers(signer::addServiceIdentity)</span>
+<span class="fc" id="L69">                    .retrieve()</span>
+<span class="fc" id="L70">                    .body(ParsedCv.class));</span>
+<span class="fc" id="L71">        } catch (HttpClientErrorException.NotFound e) {</span>
+<span class="fc" id="L72">            return Optional.empty();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

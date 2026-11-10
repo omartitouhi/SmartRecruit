@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CandidateProfilePatchParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.service</a> &gt; <span class="el_source">CandidateProfilePatchParser.java</span></div><h1>CandidateProfilePatchParser.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.service;
+
+import com.smartrecruit.user.dto.CandidateProfilePatchRequest;
+import com.smartrecruit.user.exception.ApiException;
+import com.smartrecruit.user.exception.RequestValidationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+/**
+ * Turns a raw PATCH body into a validated {@link CandidateProfilePatchRequest}. The raw JSON is
+ * needed to know which keys were sent, since Jackson maps &quot;absent&quot; and &quot;null&quot; to the same value.
+ */
+@Component
+@RequiredArgsConstructor
+public class CandidateProfilePatchParser {
+
+    private final ObjectMapper objectMapper;
+    private final Validator validator;
+
+    public CandidateProfilePatchRequest parse(JsonNode body) {
+<span class="pc bpc" id="L33" title="2 of 4 branches missed.">        if (body == null || !body.isObject()) {</span>
+<span class="nc" id="L34">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;Le corps de la requête doit être un objet JSON&quot;);</span>
+        }
+<span class="fc" id="L36">        Set&lt;String&gt; present = body.propertyNames().stream().collect(Collectors.toSet());</span>
+
+        CandidateProfilePatchRequest request;
+        try {
+<span class="fc" id="L40">            request = objectMapper.treeToValue(body, CandidateProfilePatchRequest.class).withPresentFields(present);</span>
+<span class="nc" id="L41">        } catch (JacksonException e) {</span>
+<span class="nc" id="L42">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;Corps de requête illisible ou mal formé&quot;);</span>
+<span class="fc" id="L43">        }</span>
+
+<span class="fc" id="L45">        Map&lt;String, String&gt; errors = new TreeMap&lt;&gt;();</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (String field : CandidateProfilePatchRequest.MANDATORY_FIELDS) {</span>
+<span class="fc bfc" id="L47" title="All 4 branches covered.">            if (present.contains(field) &amp;&amp; body.get(field).isNull()) {</span>
+<span class="fc" id="L48">                errors.put(field, &quot;Ce champ est obligatoire et ne peut pas être supprimé&quot;);</span>
+            }
+<span class="fc" id="L50">        }</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (ConstraintViolation&lt;CandidateProfilePatchRequest&gt; violation : validator.validate(request)) {</span>
+<span class="fc" id="L52">            errors.putIfAbsent(fieldPath(violation), violation.getMessage());</span>
+<span class="fc" id="L53">        }</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (!errors.isEmpty()) {</span>
+<span class="fc" id="L55">            throw new RequestValidationException(new LinkedHashMap&lt;&gt;(errors));</span>
+        }
+<span class="fc" id="L57">        return request;</span>
+    }
+
+    /** {@code skills[0].&lt;list element&gt;} → {@code skills[0]}, same names as {@code @Valid} binding errors. */
+    private static String fieldPath(ConstraintViolation&lt;?&gt; violation) {
+<span class="fc" id="L62">        return violation.getPropertyPath().toString().replace(&quot;.&lt;list element&gt;&quot;, &quot;&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

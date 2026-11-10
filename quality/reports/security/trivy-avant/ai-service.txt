@@ -1,0 +1,350 @@
+
+Python (python-pkg)
+===================
+Total: 89 (UNKNOWN: 0, LOW: 9, MEDIUM: 53, HIGH: 27, CRITICAL: 0)
+
+┌─────────────────────────────┬─────────────────────┬──────────┬────────┬───────────────────┬───────────────┬──────────────────────────────────────────────────────────────┐
+│           Library           │    Vulnerability    │ Severity │ Status │ Installed Version │ Fixed Version │                            Title                             │
+├─────────────────────────────┼─────────────────────┼──────────┼────────┼───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
+│ pip (METADATA)              │ CVE-2025-8869       │ MEDIUM   │ fixed  │ 25.0.1            │ 25.3          │ pip: pip missing checks on symbolic link extraction          │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-8869                    │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-13346      │          │        │                   │ 26.2.0        │ pip: pip: Arbitrary file installation via malicious package  │
+│                             │                     │          │        │                   │               │ indexes                                                      │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-13346                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-3219       │          │        │                   │ 26.1          │ pip: pip: Incorrect file installation due to improper        │
+│                             │                     │          │        │                   │               │ archive handling                                             │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-3219                    │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-6357       │          │        │                   │               │ pip: pip: Arbitrary code execution or information disclosure │
+│                             │                     │          │        │                   │               │ via malicious wheel package...                               │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-6357                    │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-8643       │          │        │                   │ 26.1.2        │ python-pip: Path traversal via malicious entry point name in │
+│                             │                     │          │        │                   │               │ pip wheel installation...                                    │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-8643                    │
+│                             ├─────────────────────┼──────────┤        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-1703       │ LOW      │        │                   │ 26.0          │ pip: pip: Information disclosure via path traversal when     │
+│                             │                     │          │        │                   │               │ installing crafted wheel archives...                         │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-1703                    │
+├─────────────────────────────┼─────────────────────┼──────────┤        ├───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
+│ pypdf (METADATA)            │ CVE-2026-102993     │ HIGH     │        │ 4.3.1             │ 6.17.0        │ pypdf: pypdf: Denial of Service via crafted Roman page       │
+│                             │                     │          │        │                   │               │ labels                                                       │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-102993                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-102994     │          │        │                   │ 6.18.0        │ pypdf: pypdf: Denial of Service via crafted indirect object  │
+│                             │                     │          │        │                   │               │ tokens in PDF...                                             │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-102994                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-102995     │          │        │                   │ 6.18.1        │ pypdf: pypdf: Denial of Service via excessive memory         │
+│                             │                     │          │        │                   │               │ consumption in font mapping...                               │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-102995                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-102996     │          │        │                   │               │ pypdf: pypdf: Denial of Service via excessive memory         │
+│                             │                     │          │        │                   │               │ consumption during font parsing...                           │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-102996                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-102997     │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted FlateDecode      │
+│                             │                     │          │        │                   │               │ stream                                                       │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-102997                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-102998     │          │        │                   │ 6.19.0        │ pypdf: pypdf: Denial of Service via crafted PDF form fields  │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-102998                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-102999     │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ numerous embedded files...                                   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-102999                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-103000     │          │        │                   │               │ pypdf: pypdf: Denial of Service via large alphabetical page  │
+│                             │                     │          │        │                   │               │ labels                                                       │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-103000                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-115572     │          │        │                   │ 6.21.2        │ pypdf: pypdf: Denial of Service via repeated nonexistent     │
+│                             │                     │          │        │                   │               │ object references                                            │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-115572                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-115580     │          │        │                   │               │ pypdf: pypdf: Denial of Service via excessive                │
+│                             │                     │          │        │                   │               │ cross-reference table entries                                │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-115580                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-115585     │          │        │                   │               │ pypdf: pypdf: Denial of Service via malformed                │
+│                             │                     │          │        │                   │               │ cross-reference streams                                      │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-115585                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-119203     │          │        │                   │ 6.21.4        │ pypdf: pypdf: Denial of Service via infinite loop on crafted │
+│                             │                     │          │        │                   │               │ incomplete PDF...                                            │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-119203                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-119204     │          │        │                   │               │ pypdf: pypdf: Denial of Service via excessive memory         │
+│                             │                     │          │        │                   │               │ consumption during PDF parsing...                            │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-119204                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-119205     │          │        │                   │               │ pypdf: pypdf: Denial of Service via infinite loop during     │
+│                             │                     │          │        │                   │               │ dictionary cloning                                           │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-119205                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-119206     │          │        │                   │ 6.21.3        │ pypdf: pypdf: Denial of Service via crafted PDF page labels  │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-119206                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-119207     │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted invalid PDF      │
+│                             │                     │          │        │                   │               │ dictionary                                                   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-119207                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-119208     │          │        │                   │               │ pypdf: pypdf: Denial of Service via forged page count in     │
+│                             │                     │          │        │                   │               │ encrypted PDFs...                                            │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-119208                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-119209     │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted cross-reference  │
+│                             │                     │          │        │                   │               │ streams                                                      │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-119209                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-59935      │          │        │                   │ 6.14.2        │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ unterminated inline image...                                 │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-59935                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-59936      │          │        │                   │ 6.14.1        │ pypdf: pypdf: Denial of Service via crafted PDF inline image │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-59936                   │
+│                             ├─────────────────────┼──────────┤        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2025-55197      │ MEDIUM   │        │                   │ 6.0.0         │ pypdf: PyPDF RAM Exhaustion Vulnerability                    │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-55197                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2025-62707      │          │        │                   │ 6.1.3         │ pypdf: pypdf affected by possible infinite loop when reading │
+│                             │                     │          │        │                   │               │ DCT inline images...                                         │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-62707                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2025-62708      │          │        │                   │               │ pypdf: pypdf manipulated LZWDecode streams can exhaust RAM   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-62708                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2025-66019      │          │        │                   │ 6.4.0         │ pypdf: pypdf manipulated LZWDecode streams can exhaust RAM   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-66019                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-113789     │          │        │                   │ 6.21.0        │ pypdf: pypdf: Denial of Service via crafted PDF form fields  │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-113789                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-113790     │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF arrays and   │
+│                             │                     │          │        │                   │               │ dictionaries                                                 │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-113790                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-113791     │          │        │                   │               │ pypdf: pypdf: Denial of Service via excessive memory         │
+│                             │                     │          │        │                   │               │ consumption during content stream...                         │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-113791                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-113792     │          │        │                   │ 6.20.1        │ pypdf: pypdf: Denial of Service via infinite loop in         │
+│                             │                     │          │        │                   │               │ PdfWriter.find_outline_item                                  │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-113792                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-113793     │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted cyclic PDF tree  │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-113793                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-113794     │          │        │                   │ 6.20.0        │ pypdf: pypdf: Denial of Service via incomplete               │
+│                             │                     │          │        │                   │               │ cross-reference table                                        │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-113794                  │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-113795     │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF streams with │
+│                             │                     │          │        │                   │               │ multiple filters...                                          │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-113795                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-24688      │          │        │                   │ 6.6.2         │ pypdf: pypdf Infinite Loop when processing                   │
+│                             │                     │          │        │                   │               │ outlines/bookmarks                                           │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-24688                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-27024      │          │        │                   │ 6.7.1         │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ TreeObject outlines                                          │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-27024                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-27025      │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF with large   │
+│                             │                     │          │        │                   │               │ font values...                                               │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-27025                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-27026      │          │        │                   │               │ pypdf: pypdf: Denial of Service via malformed PDF            │
+│                             │                     │          │        │                   │               │ /FlateDecode stream                                          │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-27026                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-27888      │          │        │                   │ 6.7.3         │ pypdf: pypdf: Denial of Service via crafted PDF              │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-27888                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-28351      │          │        │                   │ 6.7.4         │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ RunLengthDecode filter                                       │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-28351                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-28804      │          │        │                   │ 6.7.5         │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ ASCIIHexDecode filter                                        │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-28804                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-31826      │          │        │                   │ 6.8.0         │ pypdf: pypdf: Denial of Service due to excessive memory      │
+│                             │                     │          │        │                   │               │ consumption via crafted...                                   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-31826                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-33123      │          │        │                   │ 6.9.1         │ pypdf: pypdf: Denial of Service due to excessive resource    │
+│                             │                     │          │        │                   │               │ consumption from crafted...                                  │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-33123                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-33699      │          │        │                   │ 6.9.2         │ pypdf: pypdf: Denial of Service via crafted PDF in           │
+│                             │                     │          │        │                   │               │ non-strict mode                                              │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-33699                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-40260      │          │        │                   │ 6.10.0        │ pypdf: pypdf: Denial of Service due to memory exhaustion via │
+│                             │                     │          │        │                   │               │ manipulated XMP...                                           │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-40260                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-41168      │          │        │                   │ 6.10.1        │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ oversized streams                                            │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-41168                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-41312      │          │        │                   │ 6.10.2        │ pypdf: pypdf: Denial of Service due to excessive memory      │
+│                             │                     │          │        │                   │               │ consumption via specially...                                 │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-41312                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-41313      │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF with large   │
+│                             │                     │          │        │                   │               │ trailer /Size...                                             │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-41313                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-41314      │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF with large   │
+│                             │                     │          │        │                   │               │ image sizes...                                               │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-41314                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-48155      │          │        │                   │ 6.12.0        │ pypdf: pypdf: Denial of Service via crafted PDF with large   │
+│                             │                     │          │        │                   │               │ character offsets...                                         │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-48155                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-48156      │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF              │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-48156                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-48735      │          │        │                   │ 6.12.1        │ pypdf: pypdf: Denial of Service via crafted PDF with large   │
+│                             │                     │          │        │                   │               │ XMP metadata...                                              │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-48735                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-49460      │          │        │                   │ 6.12.2        │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ FlateDecode filter                                           │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-49460                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-49461      │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ self-referencing form XObject...                             │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-49461                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-54530      │          │        │                   │ 6.13.0        │ pypdf: python-pypdf: pypdf: Denial of Service via crafted    │
+│                             │                     │          │        │                   │               │ PDF processing                                               │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-54530                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-54531      │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ outlines                                                     │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-54531                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-54651      │          │        │                   │ 6.13.1        │ pypdf: python-pypdf: pypdf: Denial of Service via crafted    │
+│                             │                     │          │        │                   │               │ PDF                                                          │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-54651                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-59937      │          │        │                   │ 6.14.0        │ pypdf: pypdf: Denial of Service via crafted PDF with         │
+│                             │                     │          │        │                   │               │ malformed cross-reference streams...                         │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-59937                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-59938      │          │        │                   │               │ pypdf: pypdf: Possible large memory usage for wrong image    │
+│                             │                     │          │        │                   │               │ dimensions                                                   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-59938                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-71852      │          │        │                   │ 6.15.0        │ pypdf: pypdf: Denial of Service via crafted PDF with large   │
+│                             │                     │          │        │                   │               │ CID font...                                                  │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-71852                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-71870      │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF with large   │
+│                             │                     │          │        │                   │               │ /ToUnicode streams...                                        │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-71870                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-82398      │          │        │                   │               │ pypdf: pypdf: Denial of Service via inefficient handling of  │
+│                             │                     │          │        │                   │               │ non-whitespace inputs                                        │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-82398                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-84309      │          │        │                   │ 6.16.0        │ pypdf: pypdf: Denial of Service via crafted PDF with cyclic  │
+│                             │                     │          │        │                   │               │ tree structure...                                            │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-84309                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-84310      │          │        │                   │ 6.16.1        │ pypdf: pypdf: Denial of Service via crafted PDF outlines     │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-84310                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-84311      │          │        │                   │               │ pypdf: pypdf: Denial of Service via crafted PDF XForm        │
+│                             │                     │          │        │                   │               │ objects                                                      │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-84311                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ GHSA-jm82-fx9c-mx94 │          │        │                   │ 6.13.3        │ pypdf: Missing stream length values ignore defined limits    │
+│                             │                     │          │        │                   │               │ https://github.com/advisories/GHSA-jm82-fx9c-mx94            │
+│                             ├─────────────────────┼──────────┤        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-113786     │ LOW      │        │                   │ 6.21.1        │ pypdf: pypdf: Denial of Service via unintended image parser  │
+│                             │                     │          │        │                   │               │ invocation                                                   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-113786                  │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-22690      │          │        │                   │ 6.6.0         │ pypdf: pypdf: Denial of Service via crafted PDF with missing │
+│                             │                     │          │        │                   │               │ /Root object...                                              │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-22690                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-22691      │          │        │                   │               │ pypdf: pypdf: Denial of Service via malformed PDF startxref  │
+│                             │                     │          │        │                   │               │ entries                                                      │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-22691                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-27628      │          │        │                   │ 6.7.2         │ pypdf: possible infinite loop when loading circular /Prev    │
+│                             │                     │          │        │                   │               │ entries in cross-reference streams...                        │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-27628                   │
+├─────────────────────────────┼─────────────────────┼──────────┤        ├───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
+│ python-dotenv (METADATA)    │ CVE-2026-28684      │ MEDIUM   │        │ 1.0.1             │ 1.2.2         │ python-dotenv: python-dotenv: Arbitrary file overwrite via   │
+│                             │                     │          │        │                   │               │ symbolic link following                                      │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-28684                   │
+├─────────────────────────────┼─────────────────────┼──────────┤        ├───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
+│ python-multipart (METADATA) │ CVE-2024-53981      │ HIGH     │        │ 0.0.9             │ 0.0.18        │ python-multipart: python-multipart has a DoS via deformation │
+│                             │                     │          │        │                   │               │ `multipart/form-data` boundary                               │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-53981                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-24486      │          │        │                   │ 0.0.22        │ python-multipart: Python-Multipart: Arbitrary file write via │
+│                             │                     │          │        │                   │               │ path traversal vulnerability                                 │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-24486                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-42561      │          │        │                   │ 0.0.27        │ python-multipart: python-multipart: Denial of Service via    │
+│                             │                     │          │        │                   │               │ excessive multipart part headers                             │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-42561                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-53539      │          │        │                   │ 0.0.30        │ python-multipart: Python-Multipart: Denial of Service via    │
+│                             │                     │          │        │                   │               │ crafted form-urlencoded bodies                               │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-53539                   │
+│                             ├─────────────────────┼──────────┤        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-40347      │ MEDIUM   │        │                   │ 0.0.26        │ python-multipart: Python-Multipart: Denial of Service via    │
+│                             │                     │          │        │                   │               │ crafted multipart/form-data requests                         │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-40347                   │
+│                             ├─────────────────────┼──────────┤        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-53537      │ LOW      │        │                   │ 0.0.30        │ multipart: Python-Multipart: Information disclosure via      │
+│                             │                     │          │        │                   │               │ header parsing discrepancy                                   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-53537                   │
+│                             ├─────────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-53538      │          │        │                   │               │ python-multipart: Python-Multipart: Information disclosure   │
+│                             │                     │          │        │                   │               │ due to parser differential in form data handling...          │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-53538                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-53540      │          │        │                   │ 0.0.31        │ python-multipart: Python-Multipart: Negative Content-Length  │
+│                             │                     │          │        │                   │               │ in parse_form buffers the entire body in memory...           │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-53540                   │
+├─────────────────────────────┼─────────────────────┼──────────┤        ├───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
+│ starlette (METADATA)        │ CVE-2024-47874      │ HIGH     │        │ 0.38.6            │ 0.40.0        │ starlette: Starlette Denial of service (DoS) via             │
+│                             │                     │          │        │                   │               │ multipart/form-data                                          │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-47874                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-48818      │          │        │                   │ 1.1.0         │ starlette: Starlette: SSRF and NTLM credential theft via UNC │
+│                             │                     │          │        │                   │               │ paths in StaticFiles...                                      │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-48818                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-54283      │          │        │                   │ 1.3.1         │ starlette: Starlette: request.form() limits silently ignored │
+│                             │                     │          │        │                   │               │ for application/x-www-form-urlencoded enable DoS             │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-54283                   │
+│                             ├─────────────────────┼──────────┤        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2025-54121      │ MEDIUM   │        │                   │ 0.47.2        │ starlette: Starlette denial-of-service                       │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-54121                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-48710      │          │        │                   │ 1.0.1         │ starlette: Starlette: Security restriction bypass via        │
+│                             │                     │          │        │                   │               │ malformed HTTP Host header                                   │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-48710                   │
+│                             ├─────────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-48817      │          │        │                   │ 1.1.0         │ starlette: Starlette: Information disclosure and unintended  │
+│                             │                     │          │        │                   │               │ method execution via non-standard HTTP methods...            │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-48817                   │
+│                             ├─────────────────────┼──────────┤        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-54282      │ LOW      │        │                   │ 1.3.0         │ starlette: Starlette: Information disclosure due to improper │
+│                             │                     │          │        │                   │               │ HTTP request path validation                                 │
+│                             │                     │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-54282                   │
+└─────────────────────────────┴─────────────────────┴──────────┴────────┴───────────────────┴───────────────┴──────────────────────────────────────────────────────────────┘

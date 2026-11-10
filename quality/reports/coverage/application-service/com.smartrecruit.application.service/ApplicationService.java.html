@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">application-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.application.service</a> &gt; <span class="el_source">ApplicationService.java</span></div><h1>ApplicationService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.application.service;
+
+import com.smartrecruit.application.client.AuditClient;
+import com.smartrecruit.application.client.CandidateReadinessClient;
+import com.smartrecruit.application.client.CandidateReadinessClient.Readiness;
+import com.smartrecruit.application.client.CompanyDirectoryClient;
+import com.smartrecruit.application.client.CompanyDirectoryClient.CompanySummary;
+import com.smartrecruit.application.client.JobDirectoryClient;
+import com.smartrecruit.application.client.JobDirectoryClient.JobSummary;
+import com.smartrecruit.application.dto.InterviewRequest;
+import com.smartrecruit.application.dto.MatchScoreDto;
+import com.smartrecruit.application.exception.ApiException;
+import com.smartrecruit.application.model.Application;
+import com.smartrecruit.application.model.ApplicationStatus;
+import com.smartrecruit.application.model.Interview;
+import com.smartrecruit.application.model.StatusHistoryEntry;
+import com.smartrecruit.application.repository.ApplicationRepository;
+import com.smartrecruit.application.security.AuthenticatedUser;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Limit;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class ApplicationService {
+
+    /** At most this many upcoming interviews are listed (EXT-APP-02). */
+    static final int UPCOMING_INTERVIEWS_LIMIT = 50;
+
+    private static final int DEFAULT_INTERVIEW_MINUTES = 60;
+
+    private final ApplicationRepository applications;
+    private final JobDirectoryClient jobs;
+    private final CandidateReadinessClient readiness;
+    private final CompanyDirectoryClient companies;
+    private final AuditClient audit;
+    private final ApplicationScoring scoring;
+    private final MatchScoreService matchScores;
+    private final Clock clock;
+
+    /**
+     * BE-APP-01: checks, in the contract order: job exists (404), is published (409), deadline not passed (409,
+     * EXT-JOB-01), candidate ready (422), no duplicate (409). The optional cover letter is kept (EXT-APP-01). The
+     * score is computed afterwards in the background (BE-MATCH-01).
+     */
+    public Application apply(UUID candidateId, UUID jobId, String coverLetter) {
+<span class="fc" id="L57">        JobSummary job = jobs.find(jobId).orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Offre introuvable&quot;));</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (!&quot;PUBLISHED&quot;.equals(job.status())) {</span>
+<span class="fc" id="L59">            throw new ApiException(HttpStatus.CONFLICT, &quot;L'offre n'accepte pas de candidatures&quot;);</span>
+        }
+<span class="fc bfc" id="L61" title="All 4 branches covered.">        if (job.applicationDeadline() != null &amp;&amp; LocalDate.ofInstant(clock.instant(), ZoneOffset.UTC).isAfter(job.applicationDeadline())) {</span>
+<span class="fc" id="L62">            throw new ApiException(HttpStatus.CONFLICT, &quot;La date limite de candidature est dépassée&quot;);</span>
+        }
+<span class="fc" id="L64">        Readiness candidate = readiness.find(candidateId).orElse(null);</span>
+<span class="fc bfc" id="L65" title="All 6 branches covered.">        if (candidate == null || !candidate.profileComplete() || !candidate.hasCv()) {</span>
+<span class="fc" id="L66">            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,</span>
+                    &quot;Profil complet et CV requis pour postuler&quot;);
+        }
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (applications.existsByJobIdAndCandidateIdAndStatusNot(jobId, candidateId, ApplicationStatus.WITHDRAWN)) {</span>
+<span class="fc" id="L70">            throw new ApiException(HttpStatus.CONFLICT, &quot;Vous avez déjà postulé à cette offre&quot;);</span>
+        }
+<span class="fc" id="L72">        Instant now = clock.instant();</span>
+<span class="fc" id="L73">        Application application = Application.builder()</span>
+<span class="fc" id="L74">                .id(UUID.randomUUID()).jobId(jobId).candidateId(candidateId).companyId(job.companyId())</span>
+<span class="fc" id="L75">                .status(ApplicationStatus.RECEIVED).appliedAt(now).coverLetter(blankToNull(coverLetter)).build();</span>
+<span class="fc" id="L76">        application.getStatusHistory().add(new StatusHistoryEntry(ApplicationStatus.RECEIVED, now, candidateId));</span>
+<span class="fc" id="L77">        Application saved = applications.save(application);</span>
+        // Without an analysed CV there is nothing to score; the application stays valid without a score.
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (candidate.cvParsedAt() != null) {</span>
+<span class="fc" id="L80">            scoring.scoreInBackground(saved.getId(), candidateId, jobId, candidate.cvParsedAt(), job.updatedAt());</span>
+        }
+<span class="fc" id="L82">        return saved;</span>
+    }
+
+    /** BE-MATCH-02: score of the candidate for a job, cached; 404 unknown job, 422 no analysed CV, 503 if the AI fails. */
+    public MatchScoreDto matchPreview(UUID candidateId, UUID jobId) {
+<span class="fc" id="L87">        JobSummary job = jobs.find(jobId).orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Offre introuvable&quot;));</span>
+<span class="fc" id="L88">        Readiness candidate = readiness.find(candidateId).orElse(null);</span>
+<span class="fc bfc" id="L89" title="All 4 branches covered.">        if (candidate == null || candidate.cvParsedAt() == null) {</span>
+<span class="fc" id="L90">            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, &quot;Un CV analysé est requis pour calculer la compatibilité&quot;);</span>
+        }
+<span class="fc" id="L92">        return matchScores.scoreFor(candidateId, jobId, candidate.cvParsedAt(), job.updatedAt());</span>
+    }
+
+    /** BE-APP-02: newest first, withdrawn ones included. */
+    public List&lt;Application&gt; mine(UUID candidateId) {
+<span class="fc" id="L97">        return applications.findByCandidateIdOrderByAppliedAtDesc(candidateId);</span>
+    }
+
+    /**
+     * BE-APP-03: active applications of a job, best score first (unscored last). A recruiter must belong
+     * to the company owning the job (403), an admin sees every job.
+     */
+    public List&lt;Application&gt; receivedFor(AuthenticatedUser user, UUID jobId) {
+<span class="fc" id="L105">        JobSummary job = jobs.find(jobId).orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Offre introuvable&quot;));</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if (!&quot;ADMIN&quot;.equals(user.role())) {</span>
+<span class="fc" id="L107">            requireMemberOf(user.id(), job.companyId());</span>
+        }
+<span class="fc" id="L109">        return applications.findByJobIdAndStatusNot(jobId, ApplicationStatus.WITHDRAWN).stream()</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">                .sorted(Comparator.comparing((Application a) -&gt; a.getMatchScore() == null ? null : a.getMatchScore().getScore(),</span>
+<span class="fc" id="L111">                        Comparator.nullsLast(Comparator.reverseOrder())).thenComparing(Application::getAppliedAt))</span>
+<span class="fc" id="L112">                .toList();</span>
+    }
+
+    /**
+     * BE-APP-04: a recruiter of the owning company moves the application along
+     * {@link ApplicationStatus#ALLOWED_TRANSITIONS}; WITHDRAWN is reserved for the candidate. The optional
+     * {@code message} is recorded in the new history entry for the candidate (EXT-APP-01); an {@code interview}
+     * may be planned in the same call, only when moving to INTERVIEW (EXT-APP-02).
+     */
+    public Application changeStatus(UUID recruiterId, UUID applicationId, ApplicationStatus target, String message,
+                                     InterviewRequest interview) {
+<span class="fc" id="L123">        Application application = findApplication(applicationId);</span>
+<span class="fc" id="L124">        requireMemberOf(recruiterId, application.getCompanyId());</span>
+<span class="fc" id="L125">        ApplicationStatus current = application.getStatus();</span>
+<span class="fc bfc" id="L126" title="All 4 branches covered.">        if (target == ApplicationStatus.WITHDRAWN || !current.canTransitionTo(target)) {</span>
+<span class="fc" id="L127">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;Transition interdite : &quot; + current + &quot; -&gt; &quot; + target);</span>
+        }
+<span class="fc bfc" id="L129" title="All 4 branches covered.">        if (interview != null &amp;&amp; target != ApplicationStatus.INTERVIEW) {</span>
+<span class="fc" id="L130">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;Un entretien ne peut être planifié qu'avec le statut INTERVIEW&quot;);</span>
+        }
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        Interview planned = interview == null ? null : toInterview(interview);</span>
+<span class="fc" id="L133">        application.setStatus(target);</span>
+<span class="fc" id="L134">        application.getStatusHistory().add(new StatusHistoryEntry(target, clock.instant(), recruiterId, blankToNull(message)));</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (planned != null) {</span>
+<span class="fc" id="L136">            application.setInterview(planned);</span>
+        }
+<span class="fc" id="L138">        Application saved = applications.save(application);</span>
+<span class="fc" id="L139">        audit.record(recruiterId, &quot;APPLICATION_STATUS_CHANGED&quot;, &quot;APPLICATION&quot;, saved.getId());</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if (planned != null) {</span>
+<span class="fc" id="L141">            audit.record(recruiterId, &quot;INTERVIEW_SCHEDULED&quot;, &quot;APPLICATION&quot;, saved.getId());</span>
+        }
+<span class="fc" id="L143">        return saved;</span>
+    }
+
+    /** EXT-APP-02: plans or reschedules the interview of an application in INTERVIEW (else 409). */
+    public Application scheduleInterview(UUID recruiterId, UUID applicationId, InterviewRequest request) {
+<span class="fc" id="L148">        Application application = findApplication(applicationId);</span>
+<span class="fc" id="L149">        requireMemberOf(recruiterId, application.getCompanyId());</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (application.getStatus() != ApplicationStatus.INTERVIEW) {</span>
+<span class="fc" id="L151">            throw new ApiException(HttpStatus.CONFLICT, &quot;La candidature doit être au statut INTERVIEW pour planifier un entretien&quot;);</span>
+        }
+<span class="fc" id="L153">        application.setInterview(toInterview(request));</span>
+<span class="fc" id="L154">        Application saved = applications.save(application);</span>
+<span class="fc" id="L155">        audit.record(recruiterId, &quot;INTERVIEW_SCHEDULED&quot;, &quot;APPLICATION&quot;, saved.getId());</span>
+<span class="fc" id="L156">        return saved;</span>
+    }
+
+    /** EXT-APP-02: upcoming interviews of the recruiter's company, soonest first; none without a company. */
+    public List&lt;Application&gt; upcomingInterviews(UUID recruiterId) {
+<span class="fc" id="L161">        Optional&lt;CompanySummary&gt; company = companies.findByMember(recruiterId);</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if (company.isEmpty()) {</span>
+<span class="fc" id="L163">            return List.of();</span>
+        }
+<span class="fc" id="L165">        return applications.upcomingInterviews(company.get().id(), ApplicationStatus.INTERVIEW, clock.instant(),</span>
+<span class="fc" id="L166">                Limit.of(UPCOMING_INTERVIEWS_LIMIT));</span>
+    }
+
+    /** BE-APP-05: the candidate withdraws their own application, only while RECEIVED or IN_REVIEW (else 409). */
+    public void withdraw(UUID candidateId, UUID applicationId) {
+<span class="fc" id="L171">        Application application = findApplication(applicationId);</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (!application.getCandidateId().equals(candidateId)) {</span>
+<span class="fc" id="L173">            throw new ApiException(HttpStatus.FORBIDDEN, &quot;Cette candidature ne vous appartient pas&quot;);</span>
+        }
+<span class="fc bfc" id="L175" title="All 4 branches covered.">        if (application.getStatus() != ApplicationStatus.RECEIVED &amp;&amp; application.getStatus() != ApplicationStatus.IN_REVIEW) {</span>
+<span class="fc" id="L176">            throw new ApiException(HttpStatus.CONFLICT, &quot;Une candidature &quot; + application.getStatus() + &quot; ne peut plus être retirée&quot;);</span>
+        }
+<span class="fc" id="L178">        application.setStatus(ApplicationStatus.WITHDRAWN);</span>
+<span class="fc" id="L179">        application.getStatusHistory().add(new StatusHistoryEntry(ApplicationStatus.WITHDRAWN, clock.instant(), candidateId));</span>
+<span class="fc" id="L180">        applications.save(application);</span>
+<span class="fc" id="L181">    }</span>
+
+    Application findApplication(UUID applicationId) {
+<span class="fc" id="L184">        return applications.findById(applicationId)</span>
+<span class="fc" id="L185">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Candidature introuvable&quot;));</span>
+    }
+
+    void requireMemberOf(UUID recruiterId, UUID companyId) {
+<span class="fc" id="L189">        boolean member = companies.findByMember(recruiterId)</span>
+<span class="fc" id="L190">                .map(company -&gt; company.id().equals(companyId)).orElse(false);</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (!member) {</span>
+<span class="fc" id="L192">            throw new ApiException(HttpStatus.FORBIDDEN, &quot;Cette offre n'appartient pas à votre entreprise&quot;);</span>
+        }
+<span class="fc" id="L194">    }</span>
+
+    private Interview toInterview(InterviewRequest request) {
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        if (!request.scheduledAt().isAfter(clock.instant())) {</span>
+<span class="fc" id="L198">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;L'entretien doit être planifié dans le futur&quot;);</span>
+        }
+<span class="fc" id="L200">        return Interview.builder()</span>
+<span class="fc" id="L201">                .scheduledAt(request.scheduledAt())</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">                .durationMinutes(request.durationMinutes() == null ? DEFAULT_INTERVIEW_MINUTES : request.durationMinutes())</span>
+<span class="fc" id="L203">                .mode(request.mode())</span>
+<span class="fc" id="L204">                .location(blankToNull(request.location()))</span>
+<span class="fc" id="L205">                .build();</span>
+    }
+
+    static String blankToNull(String value) {
+<span class="fc bfc" id="L209" title="All 4 branches covered.">        return value == null || value.isBlank() ? null : value.strip();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

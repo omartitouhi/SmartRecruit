@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecommendedJobResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.dto</a> &gt; <span class="el_source">RecommendedJobResponse.java</span></div><h1>RecommendedJobResponse.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.dto;
+
+import com.smartrecruit.job.model.ContractType;
+import com.smartrecruit.job.model.ExperienceLevel;
+import com.smartrecruit.job.model.Job;
+
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * One recommended offer, ready to display (BE-REC-01): offer details joined with the AI score.
+ * Shape documented in {@code DATA_MODEL.md} §4.7. {@code companyName} is null when user-service
+ * could not be reached.
+ */
+<span class="fc" id="L15">public record RecommendedJobResponse(</span>
+        UUID jobId,
+        String title,
+        UUID companyId,
+        String companyName,
+        String location,
+        ContractType contractType,
+        ExperienceLevel experienceLevel,
+        Instant publishedAt,
+        double score
+) {
+
+    public static RecommendedJobResponse of(Job job, String companyName, double score) {
+<span class="fc" id="L28">        return new RecommendedJobResponse(job.getId(), job.getTitle(), job.getCompanyId(), companyName,</span>
+<span class="fc" id="L29">                job.getLocation(), job.getContractType(), job.getExperienceLevel(), job.getPublishedAt(), score);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuditLogService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">dashboard-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.dashboard.service</a> &gt; <span class="el_source">AuditLogService.java</span></div><h1>AuditLogService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.dashboard.service;
+
+import com.smartrecruit.dashboard.dto.AuditEventRequest;
+import com.smartrecruit.dashboard.dto.AuditLogEntryResponse;
+import com.smartrecruit.dashboard.dto.PageResponse;
+import com.smartrecruit.dashboard.model.AuditLogEntry;
+import com.smartrecruit.dashboard.repository.AuditLogRepository;
+import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.UUID;
+
+/** Who did what and when on sensitive data (BE-ADMIN-03). */
+@Service
+@RequiredArgsConstructor
+public class AuditLogService {
+
+    private static final int MAX_PAGE_SIZE = 100;
+
+    private final AuditLogRepository repository;
+    private final Clock clock;
+
+    public AuditLogEntry record(AuditEventRequest event) {
+<span class="fc" id="L32">        return repository.save(AuditLogEntry.builder()</span>
+<span class="fc" id="L33">                .actorId(event.actorId())</span>
+<span class="fc" id="L34">                .action(event.action())</span>
+<span class="fc" id="L35">                .resourceType(event.resourceType())</span>
+<span class="fc" id="L36">                .resourceId(event.resourceId())</span>
+<span class="fc" id="L37">                .timestamp(clock.instant())</span>
+<span class="fc" id="L38">                .build());</span>
+    }
+
+    /** Newest first; every filter is optional and {@code from}/{@code to} are inclusive. */
+    @Transactional(readOnly = true)
+    public PageResponse&lt;AuditLogEntryResponse&gt; search(Instant from, Instant to, UUID actorId, String action,
+                                                      int page, int size) {
+<span class="fc" id="L45">        Specification&lt;AuditLogEntry&gt; filters = (root, query, cb) -&gt; {</span>
+<span class="fc" id="L46">            var predicates = new ArrayList&lt;Predicate&gt;();</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            if (from != null) {</span>
+<span class="fc" id="L48">                predicates.add(cb.greaterThanOrEqualTo(root.get(&quot;timestamp&quot;), from));</span>
+            }
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            if (to != null) {</span>
+<span class="fc" id="L51">                predicates.add(cb.lessThanOrEqualTo(root.get(&quot;timestamp&quot;), to));</span>
+            }
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            if (actorId != null) {</span>
+<span class="fc" id="L54">                predicates.add(cb.equal(root.get(&quot;actorId&quot;), actorId));</span>
+            }
+<span class="pc bpc" id="L56" title="1 of 4 branches missed.">            if (action != null &amp;&amp; !action.isBlank()) {</span>
+<span class="fc" id="L57">                predicates.add(cb.equal(root.get(&quot;action&quot;), action.trim()));</span>
+            }
+<span class="fc" id="L59">            return cb.and(predicates.toArray(Predicate[]::new));</span>
+        };
+<span class="fc" id="L61">        PageRequest pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), MAX_PAGE_SIZE),</span>
+<span class="fc" id="L62">                Sort.by(&quot;timestamp&quot;).descending().and(Sort.by(&quot;id&quot;)));</span>
+<span class="fc" id="L63">        return PageResponse.of(repository.findAll(filters, pageable).map(AuditLogEntryResponse::from));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

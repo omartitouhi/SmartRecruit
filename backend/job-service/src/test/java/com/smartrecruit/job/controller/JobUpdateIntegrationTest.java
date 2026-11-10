@@ -9,11 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -102,10 +104,11 @@ class JobUpdateIntegrationTest extends JobApiTest {
         patchJob("{\"title\": \"Lead Java\"}").andExpect(status().isOk());
         patchJob("{\"requiredSkills\": [\"Kafka\"]}").andExpect(status().isOk());
 
-        assertThat(BACKENDS.awaitCallsTo(ANALYZE, 2)).hasSize(2).allSatisfy(call -> {
-            assertThat(call.role()).isEqualTo("SERVICE");
-            assertThat(call.body()).contains("\"jobId\":\"" + job.getId() + "\"");
-        });
+        String thisJob = "\"jobId\":\"" + job.getId() + "\"";
+        // A late async analysis from a previous test may also arrive: only this offer's calls are counted.
+        await().atMost(Duration.ofSeconds(5)).until(() -> BACKENDS.callsTo(ANALYZE).stream().filter(c -> c.body().contains(thisJob)).count() >= 2);
+        assertThat(BACKENDS.callsTo(ANALYZE).stream().filter(c -> c.body().contains(thisJob)).toList())
+                .hasSize(2).allSatisfy(call -> assertThat(call.role()).isEqualTo("SERVICE"));
         // The two analyses run asynchronously: their arrival order is not guaranteed.
         assertThat(BACKENDS.callsTo(ANALYZE)).anySatisfy(call -> assertThat(call.body()).contains("\"title\":\"Lead Java\""));
     }

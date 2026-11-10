@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CandidateProfileResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.dto</a> &gt; <span class="el_source">CandidateProfileResponse.java</span></div><h1>CandidateProfileResponse.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.dto;
+
+import com.smartrecruit.user.model.CandidateProfile;
+import com.smartrecruit.user.model.CvAnalysisStatus;
+import com.smartrecruit.user.model.Education;
+import com.smartrecruit.user.model.Experience;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Public shape of {@link CandidateProfile}, as consumed by the frontend
+ * (see {@code src/types/entities.ts} in {@code frontend/}).
+ * Never exposes the internal {@code cvStorageKey}.
+ */
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CandidateProfileResponse {
+
+    private UUID id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private String location;
+    private List&lt;String&gt; skills;
+    private List&lt;Experience&gt; experiences;
+    private List&lt;Education&gt; education;
+    private List&lt;String&gt; languages;
+    private String cvUrl;
+    private Instant cvParsedAt;
+    private CvAnalysisStatus cvAnalysisStatus;
+    private Instant createdAt;
+    private Instant updatedAt;
+
+    /** true when the candidate exercised the right to be forgotten: every personal field is then null. */
+    private boolean deleted;
+
+    /** Placeholder shown instead of a deleted profile (BE-USER-04): no personal data at all. */
+    public static CandidateProfileResponse deletedAccount(UUID id) {
+<span class="fc" id="L48">        return CandidateProfileResponse.builder().id(id).deleted(true).build();</span>
+    }
+
+    public static CandidateProfileResponse from(CandidateProfile profile) {
+<span class="fc" id="L52">        return CandidateProfileResponse.builder()</span>
+<span class="fc" id="L53">                .id(profile.getId())</span>
+<span class="fc" id="L54">                .firstName(profile.getFirstName())</span>
+<span class="fc" id="L55">                .lastName(profile.getLastName())</span>
+<span class="fc" id="L56">                .email(profile.getEmail())</span>
+<span class="fc" id="L57">                .phone(profile.getPhone())</span>
+<span class="fc" id="L58">                .location(profile.getLocation())</span>
+<span class="fc" id="L59">                .skills(List.copyOf(profile.getSkills()))</span>
+<span class="fc" id="L60">                .experiences(List.copyOf(profile.getExperiences()))</span>
+<span class="fc" id="L61">                .education(List.copyOf(profile.getEducation()))</span>
+<span class="fc" id="L62">                .languages(List.copyOf(profile.getLanguages()))</span>
+<span class="fc" id="L63">                .cvUrl(profile.getCvUrl())</span>
+<span class="fc" id="L64">                .cvParsedAt(profile.getCvParsedAt())</span>
+<span class="fc" id="L65">                .cvAnalysisStatus(profile.analysisStatus())</span>
+<span class="fc" id="L66">                .createdAt(profile.getCreatedAt())</span>
+<span class="fc" id="L67">                .updatedAt(profile.getUpdatedAt())</span>
+<span class="fc" id="L68">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

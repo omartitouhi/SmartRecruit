@@ -1,0 +1,387 @@
+10:36:45.548 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.job.controller.InternalJobIntegrationTest]: InternalJobIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:36:45.963 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.InternalJobIntegrationTest
+10:36:46.212 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.job.controller.InternalJobIntegrationTest]: InternalJobIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:36:46.213 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.smartrecruit.job.support.JobApiTest]: JobApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:36:46.216 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.InternalJobIntegrationTest
+10:36:46.493 [main] INFO org.springframework.boot.devtools.restart.RestartApplicationListener -- Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:36:47.585+01:00  INFO 9008 --- [           main] c.s.j.c.InternalJobIntegrationTest       : Starting InternalJobIntegrationTest using Java 25.0.3 with PID 9008 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\job-service)
+2026-11-10T10:36:47.591+01:00  INFO 9008 --- [           main] c.s.j.c.InternalJobIntegrationTest       : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:36:50.822+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:36:50.926+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 90 ms. Found 2 JPA repository interfaces.
+2026-11-10T10:36:52.637+01:00  INFO 9008 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:36:52.787+01:00  INFO 9008 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-11-10T10:36:53.967+01:00  INFO 9008 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:36:54.093+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-10T10:36:55.054+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:job_db user=SA
+2026-11-10T10:36:55.058+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-10T10:36:55.334+01:00  INFO 9008 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:job_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: JOB_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:36:58.540+01:00  INFO 9008 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:36:58.698+01:00  INFO 9008 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:36:59.385+01:00  INFO 9008 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-10T10:37:01.680+01:00  WARN 9008 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:37:01.779+01:00  WARN 9008 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 35a3a0ae-3572-4f93-9ddb-f680d6416833
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:37:01.795+01:00  INFO 9008 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:37:02.596+01:00  INFO 9008 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:37:02.596+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:37:02.641+01:00  INFO 9008 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:37:02.673+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 76 ms
+2026-11-10T10:37:03.037+01:00  INFO 9008 --- [           main] c.s.j.c.InternalJobIntegrationTest       : Started InternalJobIntegrationTest in 16.566 seconds (process running for 19.994)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\oti\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.15\byte-buddy-agent-1.18.15.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+2026-11-10T10:37:05.170+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:05.280+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:05.418+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:05.428+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : application-service indisponible, nombre de candidatures mis à 0 : 404 Not Found: [no body]
+2026-11-10T10:37:05.456+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:05.600+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:05.774+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:05.792+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:06.521+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobEnrichmentIntegrationTest]: JobEnrichmentIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:06.525+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobEnrichmentIntegrationTest
+2026-11-10T10:37:06.527+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobEnrichmentIntegrationTest]: JobEnrichmentIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:06.528+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.support.JobApiTest]: JobApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:06.533+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobEnrichmentIntegrationTest
+2026-11-10T10:37:06.658+01:00  WARN 9008 --- [         task-1] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 6c4c42cc-48da-410e-a087-d926a86b8320 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:06.708+01:00  WARN 9008 --- [         task-2] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 52c1a369-de86-48fb-9bff-66be8902e607 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:06.940+01:00  INFO 9008 --- [           main] c.s.job.service.JobExpiryService         : 1 offre(s) clôturée(s) automatiquement : date limite de candidature dépassée
+2026-11-10T10:37:07.052+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:07.077+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:07.091+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:07.108+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:07.311+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 404 Not Found: [no body]
+2026-11-10T10:37:07.340+01:00  WARN 9008 --- [         task-3] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 52046490-3a78-47fc-aff7-259be81919d6 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:07.447+01:00  WARN 9008 --- [         task-4] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 24b4c430-b83b-49e8-a3b5-75603bd8076a indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:07.466+01:00  WARN 9008 --- [         task-5] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre f857d8dc-63c7-403b-92bc-075c5106f702 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:07.470+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobListingIntegrationTest]: JobListingIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:07.472+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobListingIntegrationTest
+2026-11-10T10:37:07.473+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobListingIntegrationTest]: JobListingIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:07.473+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.support.JobApiTest]: JobApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:07.476+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobListingIntegrationTest
+2026-11-10T10:37:07.905+01:00  WARN 9008 --- [           main] c.s.job.service.RecommendationService    : ai-service indisponible pour les recommandations du candidat 0b96aa52-85c1-4523-b7ee-671a5d6f79cc : 404 Not Found: [no body]
+2026-11-10T10:37:08.002+01:00  WARN 9008 --- [           main] c.s.job.service.RecruiterCompanies       : user-service indisponible pour retrouver l'entreprise d'un recruteur : 500 Internal Server Error: [no body]
+2026-11-10T10:37:08.078+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 500 Internal Server Error: [no body]
+2026-11-10T10:37:08.086+01:00  WARN 9008 --- [           main] c.s.job.service.RecruiterCompanies       : user-service indisponible pour retrouver l'entreprise d'un recruteur : 500 Internal Server Error: [no body]
+2026-11-10T10:37:08.094+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 500 Internal Server Error: [no body]
+2026-11-10T10:37:08.128+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : application-service indisponible, nombre de candidatures mis à 0 : 500 Internal Server Error: [no body]
+2026-11-10T10:37:08.160+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 500 Internal Server Error: [no body]
+2026-11-10T10:37:08.179+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobPublishIntegrationTest]: JobPublishIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:08.183+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobPublishIntegrationTest
+2026-11-10T10:37:08.184+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobPublishIntegrationTest]: JobPublishIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:08.185+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.support.JobApiTest]: JobApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:08.188+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobPublishIntegrationTest
+2026-11-10T10:37:08.245+01:00  WARN 9008 --- [         task-6] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre dd9e3283-739a-41fc-a565-f13f326da39a indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:08.462+01:00  WARN 9008 --- [         task-7] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 302537d3-5d46-4a77-8424-cae46e0ed295 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:08.472+01:00  WARN 9008 --- [           main] c.s.job.service.RecruiterCompanies       : user-service indisponible pour retrouver l'entreprise d'un recruteur : 500 Internal Server Error: [no body]
+2026-11-10T10:37:08.649+01:00  WARN 9008 --- [         task-1] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 29115c40-3da9-45fb-95b8-bac1aa2a20e7 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:08.678+01:00  WARN 9008 --- [         task-2] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre e8b1da42-1e5c-4b8f-9a51-52cac8973c14 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:08.706+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobSearchIntegrationTest]: JobSearchIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:08.708+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobSearchIntegrationTest
+2026-11-10T10:37:08.709+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobSearchIntegrationTest]: JobSearchIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:08.710+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.support.JobApiTest]: JobApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:08.711+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobSearchIntegrationTest
+2026-11-10T10:37:09.126+01:00  WARN 9008 --- [           main] c.s.job.service.JobQueryService          : user-service indisponible, offres renvoyées sans nom d'entreprise : 500 Internal Server Error: [no body]
+2026-11-10T10:37:09.504+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobStatusIntegrationTest]: JobStatusIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:09.507+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobStatusIntegrationTest
+2026-11-10T10:37:09.508+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobStatusIntegrationTest]: JobStatusIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:09.509+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.support.JobApiTest]: JobApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:09.511+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobStatusIntegrationTest
+2026-11-10T10:37:09.528+01:00  WARN 9008 --- [           main] c.s.job.service.RecruiterCompanies       : user-service indisponible pour retrouver l'entreprise d'un recruteur : 500 Internal Server Error: [no body]
+2026-11-10T10:37:09.786+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobUpdateIntegrationTest]: JobUpdateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:09.788+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobUpdateIntegrationTest
+2026-11-10T10:37:09.789+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.JobUpdateIntegrationTest]: JobUpdateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:09.790+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.support.JobApiTest]: JobApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:09.791+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.JobUpdateIntegrationTest
+2026-11-10T10:37:09.816+01:00  WARN 9008 --- [         task-3] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 137303c5-3090-4c3c-8b33-33351620730c indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:09.907+01:00  WARN 9008 --- [         task-4] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 4481ff32-97b5-441a-9a00-5b7f67135219 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:09.918+01:00  WARN 9008 --- [           main] c.s.job.service.RecruiterCompanies       : user-service indisponible pour retrouver l'entreprise d'un recruteur : 500 Internal Server Error: [no body]
+2026-11-10T10:37:09.977+01:00  WARN 9008 --- [         task-5] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 8b37d495-1c84-46d4-aca2-2b406a23912b indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:10.209+01:00  WARN 9008 --- [         task-6] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre e267c96d-cd78-4f81-8fb1-b14e75f09b9d indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:10.232+01:00  WARN 9008 --- [         task-7] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 232ccc20-944e-4e54-bb8b-2445ee0bb0c8 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:10.258+01:00  WARN 9008 --- [         task-8] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 577b4d4d-e91e-429e-988f-8822ec06b4ee indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:10.272+01:00  WARN 9008 --- [         task-1] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 577b4d4d-e91e-429e-988f-8822ec06b4ee indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:10.406+01:00  WARN 9008 --- [         task-2] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre 1168e95d-1600-4713-9ae2-ae1d9bd79e3f indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:10.539+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.RecommendationIntegrationTest]: RecommendationIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:10.541+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.RecommendationIntegrationTest
+2026-11-10T10:37:10.541+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.RecommendationIntegrationTest]: RecommendationIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:10.544+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.RecommendationIntegrationTest
+2026-11-10T10:37:10.561+01:00  INFO 9008 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:37:10.589+01:00  INFO 9008 --- [           main] c.s.j.c.RecommendationIntegrationTest    : Starting RecommendationIntegrationTest using Java 25.0.3 with PID 9008 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\job-service)
+2026-11-10T10:37:10.589+01:00  INFO 9008 --- [           main] c.s.j.c.RecommendationIntegrationTest    : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:37:11.204+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:37:11.243+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 35 ms. Found 2 JPA repository interfaces.
+2026-11-10T10:37:11.596+01:00  INFO 9008 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:37:11.696+01:00  INFO 9008 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:37:11.699+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-11-10T10:37:11.701+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:job_db user=SA
+2026-11-10T10:37:11.702+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-11-10T10:37:11.704+01:00  INFO 9008 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:job_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: JOB_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:37:11.816+01:00  INFO 9008 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:37:11.827+01:00  INFO 9008 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:37:12.143+01:00  WARN 9008 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:37:12.177+01:00  WARN 9008 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 0ac24a4d-4cad-4602-aa00-4a9fd79099a3
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:37:12.178+01:00  INFO 9008 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:37:12.399+01:00  INFO 9008 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:37:12.399+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:37:12.412+01:00  INFO 9008 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:37:12.425+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 26 ms
+2026-11-10T10:37:12.511+01:00  INFO 9008 --- [           main] c.s.j.c.RecommendationIntegrationTest    : Started RecommendationIntegrationTest in 1.95 seconds (process running for 29.468)
+2026-11-10T10:37:12.715+01:00  WARN 9008 --- [           main] c.s.job.service.RecommendationService    : user-service indisponible, recommandations renvoyées sans nom d'entreprise : 500 Internal Server Error: [no body]
+2026-11-10T10:37:12.811+01:00  WARN 9008 --- [           main] c.s.job.service.RecommendationService    : ai-service indisponible pour les recommandations du candidat 99169e21-7c72-443f-93d8-2ff26a77d38a : 501 Not Implemented: "{"detail": "Recommendation not implemented yet"}"
+2026-11-10T10:37:12.854+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.SavedJobIntegrationTest]: SavedJobIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:12.857+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.SavedJobIntegrationTest
+2026-11-10T10:37:12.858+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.controller.SavedJobIntegrationTest]: SavedJobIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:12.858+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.support.JobApiTest]: JobApiTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:12.861+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.controller.SavedJobIntegrationTest
+2026-11-10T10:37:13.639+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.JobServiceApplicationTests]: JobServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:13.662+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.JobServiceApplicationTests
+2026-11-10T10:37:13.666+01:00  INFO 9008 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.smartrecruit.job.JobServiceApplicationTests]: JobServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-11-10T10:37:13.668+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.JobServiceApplicationTests
+2026-11-10T10:37:13.677+01:00  INFO 9008 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:37:13.718+01:00  INFO 9008 --- [           main] c.s.job.JobServiceApplicationTests       : Starting JobServiceApplicationTests using Java 25.0.3 with PID 9008 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\job-service)
+2026-11-10T10:37:13.718+01:00  INFO 9008 --- [           main] c.s.job.JobServiceApplicationTests       : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:37:14.179+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:37:14.208+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 24 ms. Found 2 JPA repository interfaces.
+2026-11-10T10:37:14.339+01:00  INFO 9008 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:37:14.370+01:00  INFO 9008 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:37:14.371+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-11-10T10:37:14.373+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection conn20: url=jdbc:h2:mem:job_db user=SA
+2026-11-10T10:37:14.375+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-11-10T10:37:14.375+01:00  INFO 9008 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:job_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: JOB_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:37:14.454+01:00  INFO 9008 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:37:14.464+01:00  INFO 9008 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:37:14.652+01:00  WARN 9008 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:37:14.669+01:00  WARN 9008 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 73af9ad3-82e1-4e98-b042-ecd9880ba8ae
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:37:14.669+01:00  INFO 9008 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:37:14.844+01:00  INFO 9008 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:37:14.871+01:00  INFO 9008 --- [           main] c.s.job.JobServiceApplicationTests       : Started JobServiceApplicationTests in 1.194 seconds (process running for 31.827)
+2026-11-10T10:37:15.028+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.security.InputSecurityIntegrationTest
+2026-11-10T10:37:15.031+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.security.InputSecurityIntegrationTest
+2026-11-10T10:37:15.036+01:00  INFO 9008 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:37:15.071+01:00  INFO 9008 --- [           main] c.s.j.s.InputSecurityIntegrationTest     : Starting InputSecurityIntegrationTest using Java 25.0.3 with PID 9008 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\job-service)
+2026-11-10T10:37:15.072+01:00  INFO 9008 --- [           main] c.s.j.s.InputSecurityIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:37:15.427+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:37:15.443+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 13 ms. Found 2 JPA repository interfaces.
+2026-11-10T10:37:15.539+01:00  INFO 9008 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:37:15.563+01:00  INFO 9008 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:37:15.564+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2026-11-10T10:37:15.566+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection conn30: url=jdbc:h2:mem:job_db user=SA
+2026-11-10T10:37:15.566+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2026-11-10T10:37:15.566+01:00  INFO 9008 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:job_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: JOB_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:37:15.655+01:00  INFO 9008 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:37:15.662+01:00  INFO 9008 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:37:15.804+01:00  WARN 9008 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:37:15.816+01:00  WARN 9008 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 9a3c72cb-7863-4ae2-9f45-4f68797cab5c
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:37:15.816+01:00  INFO 9008 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:37:15.920+01:00  INFO 9008 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:37:15.921+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:37:15.925+01:00  INFO 9008 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:37:15.938+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 17 ms
+2026-11-10T10:37:15.994+01:00  INFO 9008 --- [           main] c.s.j.s.InputSecurityIntegrationTest     : Started InputSecurityIntegrationTest in 0.959 seconds (process running for 32.952)
+2026-11-10T10:37:16.037+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.security.RbacIntegrationTest
+2026-11-10T10:37:16.039+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.security.RbacIntegrationTest
+2026-11-10T10:37:16.043+01:00  INFO 9008 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:37:16.067+01:00  INFO 9008 --- [           main] c.s.job.security.RbacIntegrationTest     : Starting RbacIntegrationTest using Java 25.0.3 with PID 9008 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\job-service)
+2026-11-10T10:37:16.067+01:00  INFO 9008 --- [           main] c.s.job.security.RbacIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:37:16.316+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:37:16.343+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 26 ms. Found 2 JPA repository interfaces.
+2026-11-10T10:37:16.468+01:00  INFO 9008 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:37:16.493+01:00  INFO 9008 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:37:16.495+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2026-11-10T10:37:16.498+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection conn40: url=jdbc:h2:mem:job_db user=SA
+2026-11-10T10:37:16.498+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2026-11-10T10:37:16.498+01:00  INFO 9008 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:job_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: JOB_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:37:16.561+01:00  INFO 9008 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:37:16.569+01:00  INFO 9008 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:37:16.731+01:00  WARN 9008 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:37:16.741+01:00  WARN 9008 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: cd76db48-3756-4f92-8154-d3ec44a0f539
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:37:16.743+01:00  INFO 9008 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:37:16.853+01:00  INFO 9008 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:37:16.853+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:37:16.858+01:00  INFO 9008 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:37:16.865+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 12 ms
+2026-11-10T10:37:16.896+01:00  INFO 9008 --- [           main] c.s.job.security.RbacIntegrationTest     : Started RbacIntegrationTest in 0.854 seconds (process running for 33.853)
+2026-11-10T10:37:17.001+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.security.ServiceIdentityIntegrationTest
+2026-11-10T10:37:17.005+01:00  INFO 9008 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.smartrecruit.job.JobServiceApplication for test class com.smartrecruit.job.security.ServiceIdentityIntegrationTest
+2026-11-10T10:37:17.014+01:00  INFO 9008 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-11-10T10:37:17.041+01:00  INFO 9008 --- [           main] c.s.j.s.ServiceIdentityIntegrationTest   : Starting ServiceIdentityIntegrationTest using Java 25.0.3 with PID 9008 (started by oti in C:\Users\oti\Desktop\Projects\SmartRecruit\backend\job-service)
+2026-11-10T10:37:17.041+01:00  INFO 9008 --- [           main] c.s.j.s.ServiceIdentityIntegrationTest   : No active profile set, falling back to 1 default profile: "default"
+2026-11-10T10:37:17.321+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-10T10:37:17.334+01:00  INFO 9008 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 2 JPA repository interfaces.
+2026-11-10T10:37:17.408+01:00  INFO 9008 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-10T10:37:17.425+01:00  INFO 9008 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-10T10:37:17.426+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Starting...
+2026-11-10T10:37:17.429+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-6 - Added connection conn50: url=jdbc:h2:mem:job_db user=SA
+2026-11-10T10:37:17.429+01:00  INFO 9008 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Start completed.
+2026-11-10T10:37:17.430+01:00  INFO 9008 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:job_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: JOB_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-10T10:37:17.483+01:00  INFO 9008 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-10T10:37:17.493+01:00  INFO 9008 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-10T10:37:17.629+01:00  WARN 9008 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-10T10:37:17.643+01:00  WARN 9008 --- [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: ff131008-0138-4347-b55a-1795fd85477a
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-10T10:37:17.644+01:00  INFO 9008 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-10T10:37:17.798+01:00  INFO 9008 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-11-10T10:37:17.798+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-11-10T10:37:17.803+01:00  INFO 9008 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-11-10T10:37:17.813+01:00  INFO 9008 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 15 ms
+2026-11-10T10:37:17.879+01:00  INFO 9008 --- [           main] c.s.j.s.ServiceIdentityIntegrationTest   : Started ServiceIdentityIntegrationTest in 0.865 seconds (process running for 34.836)
+2026-11-10T10:37:18.297+01:00  WARN 9008 --- [           main] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre c6f26531-c2ab-4e7b-a38c-e4d0a74aa260 indisponible, l'offre reste valide ; nouvel essai planifié
+2026-11-10T10:37:18.323+01:00  INFO 9008 --- [           main] c.s.job.service.JobAnalysisListener      : Analyse IA de l'offre c6f26531-c2ab-4e7b-a38c-e4d0a74aa260 effectuée après reprise du service IA

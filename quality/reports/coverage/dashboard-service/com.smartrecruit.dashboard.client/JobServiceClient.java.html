@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JobServiceClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">dashboard-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.dashboard.client</a> &gt; <span class="el_source">JobServiceClient.java</span></div><h1>JobServiceClient.java</h1><pre class="source lang-java linenums">package com.smartrecruit.dashboard.client;
+
+import com.smartrecruit.dashboard.security.InternalIdentityVerifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+import java.time.Clock;
+import java.util.Map;
+import java.util.UUID;
+
+/** job-service internals ({@code /internal/v1/jobs}). Calls throw RestClientException on failure. */
+@Component
+public class JobServiceClient {
+
+    /** {@code closingSoon}: published offers whose deadline falls within 7 days (EXT-DASH-01), null from an older job-service. */
+<span class="fc" id="L18">    public record JobStats(long total, long draft, long published, long closed, long moderated, Long closingSoon) {</span>
+    }
+
+    private final RestClient client;
+
+<span class="fc" id="L23">    public JobServiceClient(ServiceEndpointsProperties endpoints, InternalIdentityVerifier signer, Clock clock) {</span>
+<span class="fc" id="L24">        this.client = ServiceRestClients.create(endpoints.jobServiceUri(), signer, clock);</span>
+<span class="fc" id="L25">    }</span>
+
+    /** @param companyId restricts the counts to one company; null means platform-wide */
+    public JobStats stats(UUID companyId) {
+<span class="fc" id="L29">        return client.get()</span>
+<span class="fc" id="L30">                .uri(uri -&gt; {</span>
+<span class="fc" id="L31">                    uri.path(&quot;/internal/v1/jobs/stats&quot;);</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">                    if (companyId != null) {</span>
+<span class="fc" id="L33">                        uri.queryParam(&quot;companyId&quot;, companyId);</span>
+                    }
+<span class="fc" id="L35">                    return uri.build();</span>
+                })
+<span class="fc" id="L37">                .retrieve()</span>
+<span class="fc" id="L38">                .body(JobStats.class);</span>
+    }
+
+    /** @return the moderated job exactly as job-service describes it */
+    public Map&lt;String, Object&gt; moderate(UUID jobId, String reason) {
+<span class="fc" id="L43">        return client.patch()</span>
+<span class="fc" id="L44">                .uri(&quot;/internal/v1/jobs/{id}/moderation&quot;, jobId)</span>
+<span class="fc" id="L45">                .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L46">                .body(Map.of(&quot;reason&quot;, reason))</span>
+<span class="fc" id="L47">                .retrieve()</span>
+<span class="fc" id="L48">                .body(new ParameterizedTypeReference&lt;&gt;() {</span>
+                });
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

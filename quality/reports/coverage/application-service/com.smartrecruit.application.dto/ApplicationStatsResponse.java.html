@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationStatsResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">application-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.application.dto</a> &gt; <span class="el_source">ApplicationStatsResponse.java</span></div><h1>ApplicationStatsResponse.java</h1><pre class="source lang-java linenums">package com.smartrecruit.application.dto;
+
+import com.smartrecruit.application.model.ApplicationStatus;
+
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Counters over the non-withdrawn applications. {@code decided} = ACCEPTED + REJECTED and
+ * {@code acceptanceRate} = accepted / decided as a 0..1 ratio, null while nothing is decided.
+ * {@code averageDecisionDays} (null while nothing is decided) and {@code upcomingInterviews} come from EXT-DASH-01.
+ */
+<span class="fc" id="L15">public record ApplicationStatsResponse(long total, Map&lt;ApplicationStatus, Long&gt; byStatus, Double averageMatchScore,</span>
+                                       long accepted, long decided, Double acceptanceRate,
+                                       Double averageDecisionDays, long upcomingInterviews) {
+
+    /** @param rows {@code [ApplicationStatus, MatchScoreDto|null]} rows of non-withdrawn applications */
+    public static ApplicationStatsResponse from(List&lt;Object[]&gt; rows, Double averageDecisionDays, long upcomingInterviews) {
+<span class="fc" id="L21">        Map&lt;ApplicationStatus, Long&gt; byStatus = new EnumMap&lt;&gt;(ApplicationStatus.class);</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">        for (ApplicationStatus status : ApplicationStatus.values()) {</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">            if (status != ApplicationStatus.WITHDRAWN) {</span>
+<span class="fc" id="L24">                byStatus.put(status, 0L);</span>
+            }
+        }
+<span class="fc" id="L27">        rows.forEach(row -&gt; byStatus.merge((ApplicationStatus) row[0], 1L, Long::sum));</span>
+<span class="fc" id="L28">        Double average = rows.stream().map(row -&gt; (MatchScoreDto) row[1]).filter(Objects::nonNull)</span>
+<span class="fc" id="L29">                .mapToDouble(MatchScoreDto::getScore).average().stream().boxed().findFirst().orElse(null);</span>
+<span class="fc" id="L30">        long accepted = byStatus.get(ApplicationStatus.ACCEPTED);</span>
+<span class="fc" id="L31">        long decided = accepted + byStatus.get(ApplicationStatus.REJECTED);</span>
+<span class="fc" id="L32">        return new ApplicationStatsResponse(rows.size(), byStatus, average, accepted, decided,</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">                decided == 0 ? null : (double) accepted / decided, averageDecisionDays, upcomingInterviews);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

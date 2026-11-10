@@ -1,0 +1,20 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.11, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\oti\AppData\Local\Programs\Python\Python310\python.exe
+rootdir: C:\Users\oti\Desktop\Projects\SmartRecruit
+plugins: anyio-4.16.0, platformdirs-4.12.4
+collecting ... collected 8 items
+
+quality/reliability/test_reliability.py::test_service_ia_en_panne_creation_offre_toujours_possible PASSED
+quality/reliability/test_reliability.py::test_service_ia_en_panne_score_repond_503_propre PASSED
+quality/reliability/test_reliability.py::test_service_ia_en_panne_candidature_enregistree_sans_score PASSED
+quality/reliability/test_reliability.py::test_reprise_apres_redemarrage_du_service_ia reprise du score IA en 68 s
+PASSED
+quality/reliability/test_reliability.py::test_transition_interdite_rejetee_sans_modifier_l_etat PASSED
+quality/reliability/test_reliability.py::test_double_candidature_rejetee_pas_de_doublon PASSED
+quality/reliability/test_reliability.py::test_panne_du_service_candidatures_erreur_rapide_puis_reprise_sans_perte reprise du service candidatures en 17 s
+PASSED
+quality/reliability/test_reliability.py::test_redemarrage_base_de_donnees_aucune_perte reprise après redémarrage de PostgreSQL en 0 s
+PASSED
+
+- generated xml file: C:\Users\oti\Desktop\Projects\SmartRecruit\quality\reports\reliability\junit.xml -
+======================== 8 passed in 106.12s (0:01:46) ========================

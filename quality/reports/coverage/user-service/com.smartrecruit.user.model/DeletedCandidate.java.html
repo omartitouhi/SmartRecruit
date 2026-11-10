@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DeletedCandidate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.model</a> &gt; <span class="el_source">DeletedCandidate.java</span></div><h1>DeletedCandidate.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * Tombstone of a candidate who exercised the right to be forgotten (BE-USER-04). It holds no
+ * personal data: only the account id, so references from other services (applications) can be
+ * displayed as &quot;compte supprimé&quot; and the profile cannot be silently recreated.
+ * &lt;p&gt;
+ * It also tracks the propagation of the erasure to the other services holding the candidate's
+ * data (BE-SEC-02), which must be done before {@link #eraseDeadline}.
+ */
+@Entity
+@Table(name = &quot;deleted_candidates&quot;)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class DeletedCandidate {
+
+    @Id
+    private UUID id;
+
+    private Instant deletedAt;
+
+    /** Legal limit to erase the data everywhere: deletion date + 30 days. */
+    private Instant eraseDeadline;
+
+    /** Account anonymized in auth-service. */
+    private Instant authErasedAt;
+
+    /** CV analysis / matching data removed from ai-service. */
+    private Instant aiErasedAt;
+
+    /** Saved offers removed from job-service (EXT-SAVED-01). */
+    private Instant jobsErasedAt;
+
+    /** Cover letters and recruiter notes removed from application-service (EXT-APP-01, EXT-APP-03). */
+    private Instant applicationsErasedAt;
+
+    private int erasureAttempts;
+
+    private Instant lastErasureAttemptAt;
+
+    @Column(length = 500)
+    private String lastErasureError;
+
+    @Version
+    private Long version;
+
+    public boolean isFullyErased() {
+<span class="pc bpc" id="L65" title="1 of 8 branches missed.">        return authErasedAt != null &amp;&amp; aiErasedAt != null &amp;&amp; jobsErasedAt != null &amp;&amp; applicationsErasedAt != null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

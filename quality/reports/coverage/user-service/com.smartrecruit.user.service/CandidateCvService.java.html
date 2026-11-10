@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CandidateCvService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.service</a> &gt; <span class="el_source">CandidateCvService.java</span></div><h1>CandidateCvService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.service;
+
+import com.smartrecruit.user.ai.CvAnalysisJob;
+import com.smartrecruit.user.dto.CandidateProfileResponse;
+import com.smartrecruit.user.exception.ApiException;
+import com.smartrecruit.user.model.CandidateProfile;
+import com.smartrecruit.user.model.CvAnalysisStatus;
+import com.smartrecruit.user.repository.CandidateProfileRepository;
+import com.smartrecruit.user.storage.CorruptedCvException;
+import com.smartrecruit.user.storage.CvNotFoundException;
+import com.smartrecruit.user.storage.CvStorage;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.UUID;
+
+/**
+ * CV upload and download (BE-USER-02). Files are encrypted at rest by the {@link CvStorage}
+ * bean (BE-SEC-01) and only decrypted here, for an authorized download.
+ */
+<span class="fc" id="L31">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class CandidateCvService {
+
+    public static final long MAX_CV_SIZE = 5L * 1024 * 1024;
+<span class="fc" id="L37">    private static final byte[] PDF_SIGNATURE = &quot;%PDF-&quot;.getBytes(StandardCharsets.US_ASCII);</span>
+
+    private final CandidateProfileRepository profileRepository;
+    private final CvStorage cvStorage;
+    private final DeletedAccountGuard deletionGuard;
+    private final CvAnalysisJob analysisJob;
+
+    /** Public reference stored in {@code cvUrl}: the download endpoint, never the storage location. */
+    public static String cvUrlOf(UUID candidateId) {
+<span class="fc" id="L46">        return &quot;/api/v1/users/candidates/&quot; + candidateId + &quot;/cv&quot;;</span>
+    }
+
+    /**
+     * Stores the PDF and links it to the profile. A previous CV is deleted once the new one is
+     * committed, and {@code cvParsedAt} is reset with the analysis status back to PENDING, since the new
+     * file has not been analysed yet. Once committed, the AI analysis starts asynchronously (BE-CV-01).
+     */
+    @Transactional
+    public CandidateProfileResponse upload(UUID candidateId, MultipartFile file) {
+<span class="fc" id="L56">        byte[] content = validatePdf(file);</span>
+<span class="fc" id="L57">        deletionGuard.ensureNotDeleted(candidateId);</span>
+<span class="fc" id="L58">        CandidateProfile profile = profileRepository.findById(candidateId)</span>
+<span class="fc" id="L59">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND,</span>
+                        &quot;Profil candidat introuvable : créez-le avant d'envoyer un CV&quot;));
+
+<span class="fc" id="L62">        String previousKey = profile.getCvStorageKey();</span>
+<span class="fc" id="L63">        String newKey = cvStorage.store(content);</span>
+<span class="fc" id="L64">        afterTransaction(previousKey, newKey, candidateId, content);</span>
+
+<span class="fc" id="L66">        profile.setCvStorageKey(newKey);</span>
+<span class="fc" id="L67">        profile.setCvUrl(cvUrlOf(candidateId));</span>
+<span class="fc" id="L68">        profile.setCvParsedAt(null);</span>
+<span class="fc" id="L69">        profile.setCvAnalysisStatus(CvAnalysisStatus.PENDING);</span>
+<span class="fc" id="L70">        return CandidateProfileResponse.from(profileRepository.saveAndFlush(profile));</span>
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] download(UUID candidateId) {
+<span class="fc" id="L75">        CandidateProfile profile = profileRepository.findById(candidateId)</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">                .filter(found -&gt; found.getCvStorageKey() != null)</span>
+<span class="fc" id="L77">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Aucun CV pour ce candidat&quot;));</span>
+        try {
+<span class="fc" id="L79">            return cvStorage.load(profile.getCvStorageKey());</span>
+<span class="nc" id="L80">        } catch (CvNotFoundException e) {</span>
+<span class="nc" id="L81">            throw new ApiException(HttpStatus.NOT_FOUND, &quot;Aucun CV pour ce candidat&quot;);</span>
+<span class="fc" id="L82">        } catch (CorruptedCvException e) {</span>
+<span class="fc" id="L83">            log.error(&quot;CV du candidat {} indéchiffrable (fichier altéré ou mauvaise clé)&quot;, candidateId);</span>
+<span class="fc" id="L84">            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, &quot;Le CV stocké est illisible&quot;);</span>
+        }
+    }
+
+    /** Removes a CV file once the surrounding transaction has committed (account deletion). */
+    public void deleteFileAfterCommit(String key) {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (key == null) {</span>
+<span class="fc" id="L91">            return;</span>
+        }
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (!TransactionSynchronizationManager.isSynchronizationActive()) {</span>
+<span class="nc" id="L94">            cvStorage.delete(key);</span>
+<span class="nc" id="L95">            return;</span>
+        }
+<span class="fc" id="L97">        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {</span>
+            @Override
+            public void afterCommit() {
+<span class="fc" id="L100">                cvStorage.delete(key);</span>
+<span class="fc" id="L101">            }</span>
+        });
+<span class="fc" id="L103">    }</span>
+
+    private static byte[] validatePdf(MultipartFile file) {
+<span class="fc bfc" id="L106" title="All 4 branches covered.">        if (file == null || file.isEmpty()) {</span>
+<span class="fc" id="L107">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;Aucun fichier reçu : envoyez le CV dans le champ 'file'&quot;);</span>
+        }
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (file.getSize() &gt; MAX_CV_SIZE) {</span>
+<span class="fc" id="L110">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;Le CV dépasse la taille maximale de 5 Mo&quot;);</span>
+        }
+        byte[] content;
+        try {
+<span class="fc" id="L114">            content = file.getBytes();</span>
+<span class="nc" id="L115">        } catch (IOException e) {</span>
+<span class="nc" id="L116">            throw new UncheckedIOException(&quot;Lecture du fichier impossible&quot;, e);</span>
+<span class="fc" id="L117">        }</span>
+<span class="fc" id="L118">        boolean declaredPdf = &quot;application/pdf&quot;.equalsIgnoreCase(file.getContentType());</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        boolean looksLikePdf = content.length &gt;= PDF_SIGNATURE.length</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                &amp;&amp; Arrays.equals(content, 0, PDF_SIGNATURE.length, PDF_SIGNATURE, 0, PDF_SIGNATURE.length);</span>
+<span class="fc bfc" id="L121" title="All 4 branches covered.">        if (!declaredPdf || !looksLikePdf) {</span>
+<span class="fc" id="L122">            throw new ApiException(HttpStatus.BAD_REQUEST, &quot;Format non supporté : le CV doit être un fichier PDF&quot;);</span>
+        }
+<span class="fc" id="L124">        return content;</span>
+    }
+
+    /** Keeps storage consistent with the database whatever the transaction outcome. */
+    private void afterTransaction(String previousKey, String newKey, UUID candidateId, byte[] content) {
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (!TransactionSynchronizationManager.isSynchronizationActive()) {</span>
+<span class="nc" id="L130">            return;</span>
+        }
+<span class="fc" id="L132">        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {</span>
+            @Override
+            public void afterCommit() {
+<span class="fc" id="L135">                analysisJob.analyse(candidateId, newKey, content);</span>
+<span class="fc" id="L136">            }</span>
+
+            @Override
+            public void afterCompletion(int status) {
+<span class="pc bpc" id="L140" title="1 of 4 branches missed.">                if (status == STATUS_COMMITTED &amp;&amp; previousKey != null) {</span>
+<span class="fc" id="L141">                    cvStorage.delete(previousKey);</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">                } else if (status != STATUS_COMMITTED) {</span>
+<span class="nc" id="L143">                    cvStorage.delete(newKey);</span>
+                }
+<span class="fc" id="L145">            }</span>
+        });
+<span class="fc" id="L147">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

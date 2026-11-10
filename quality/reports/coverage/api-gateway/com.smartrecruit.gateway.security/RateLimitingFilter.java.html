@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RateLimitingFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api-gateway</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.gateway.security</a> &gt; <span class="el_source">RateLimitingFilter.java</span></div><h1>RateLimitingFilter.java</h1><pre class="source lang-java linenums">package com.smartrecruit.gateway.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.time.Clock;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Brute-force / credential-stuffing protection (BE-SEC-05): at most {@code maxRequests} calls per
+ * client IP and per sensitive path in a sliding window, otherwise 429 with {@code Retry-After}.
+ * Runs before JWT validation so rejected calls cost nothing downstream.
+ * &lt;p&gt;
+ * State is in memory, which is enough for the single gateway instance of this project; several
+ * instances would need a shared store (e.g. Redis).
+ */
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class RateLimitingFilter extends OncePerRequestFilter {
+
+    private static final int CLEANUP_THRESHOLD = 10_000;
+
+    private final int maxRequests;
+    private final long windowMillis;
+    private final Set&lt;String&gt; paths;
+    private final boolean trustForwardedFor;
+    private final Clock clock;
+<span class="fc" id="L42">    private final Map&lt;String, Deque&lt;Long&gt;&gt; requestLog = new ConcurrentHashMap&lt;&gt;();</span>
+
+<span class="fc" id="L44">    public RateLimitingFilter(RateLimitProperties properties, Clock clock) {</span>
+<span class="fc" id="L45">        this.maxRequests = properties.maxRequests();</span>
+<span class="fc" id="L46">        this.windowMillis = properties.window().toMillis();</span>
+<span class="fc" id="L47">        this.paths = Set.copyOf(properties.paths());</span>
+<span class="fc" id="L48">        this.trustForwardedFor = properties.trustForwardedFor();</span>
+<span class="fc" id="L49">        this.clock = clock;</span>
+<span class="fc" id="L50">    }</span>
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+<span class="pc bpc" id="L54" title="1 of 4 branches missed.">        return HttpMethod.OPTIONS.matches(request.getMethod()) || !paths.contains(request.getRequestURI());</span>
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+<span class="fc" id="L60">        long now = clock.millis();</span>
+<span class="fc" id="L61">        long retryAfterMillis = tryAcquire(clientIp(request) + &quot;|&quot; + request.getRequestURI(), now);</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (retryAfterMillis &gt; 0) {</span>
+<span class="fc" id="L63">            response.setHeader(HttpHeaders.RETRY_AFTER, Long.toString(Math.max(1, (retryAfterMillis + 999) / 1000)));</span>
+<span class="fc" id="L64">            GatewayErrorWriter.write(response, request, HttpStatus.TOO_MANY_REQUESTS,</span>
+                    &quot;Trop de tentatives depuis cette adresse, réessayez plus tard&quot;);
+<span class="fc" id="L66">            return;</span>
+        }
+<span class="fc" id="L68">        chain.doFilter(request, response);</span>
+<span class="fc" id="L69">    }</span>
+
+    /** @return 0 if the request is allowed, otherwise the milliseconds until a slot frees up */
+    private long tryAcquire(String key, long now) {
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (requestLog.size() &gt; CLEANUP_THRESHOLD) {</span>
+<span class="nc" id="L74">            requestLog.entrySet().removeIf(entry -&gt; isExpired(entry.getValue(), now));</span>
+        }
+<span class="fc" id="L76">        Deque&lt;Long&gt; timestamps = requestLog.computeIfAbsent(key, k -&gt; new ArrayDeque&lt;&gt;());</span>
+<span class="fc" id="L77">        synchronized (timestamps) {</span>
+<span class="fc bfc" id="L78" title="All 4 branches covered.">            while (!timestamps.isEmpty() &amp;&amp; timestamps.peekFirst() &lt;= now - windowMillis) {</span>
+<span class="fc" id="L79">                timestamps.pollFirst();</span>
+            }
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            if (timestamps.size() &gt;= maxRequests) {</span>
+<span class="fc" id="L82">                return timestamps.peekFirst() + windowMillis - now;</span>
+            }
+<span class="fc" id="L84">            timestamps.addLast(now);</span>
+<span class="fc" id="L85">            return 0;</span>
+        }
+    }
+
+    private boolean isExpired(Deque&lt;Long&gt; timestamps, long now) {
+<span class="nc" id="L90">        synchronized (timestamps) {</span>
+<span class="nc bnc" id="L91" title="All 4 branches missed.">            return timestamps.isEmpty() || timestamps.peekLast() &lt;= now - windowMillis;</span>
+        }
+    }
+
+    private String clientIp(HttpServletRequest request) {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (trustForwardedFor) {</span>
+<span class="fc" id="L97">            String forwarded = request.getHeader(&quot;X-Forwarded-For&quot;);</span>
+<span class="pc bpc" id="L98" title="2 of 4 branches missed.">            if (forwarded != null &amp;&amp; !forwarded.isBlank()) {</span>
+<span class="fc" id="L99">                return forwarded.split(&quot;,&quot;)[0].trim();</span>
+            }
+        }
+<span class="fc" id="L102">        return request.getRemoteAddr();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

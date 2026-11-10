@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServiceRestClients.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">application-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.application.client</a> &gt; <span class="el_source">ServiceRestClients.java</span></div><h1>ServiceRestClients.java</h1><pre class="source lang-java linenums">package com.smartrecruit.application.client;
+
+import com.smartrecruit.application.security.InternalIdentityVerifier;
+import com.smartrecruit.application.exception.ApiException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+
+import java.net.http.HttpClient;
+import java.time.Clock;
+import java.time.Duration;
+import java.util.Optional;
+import java.util.UUID;
+
+/**
+ * Builds clients for backend-to-backend calls: HTTP/1.1 only (uvicorn does not speak h2c), short
+ * timeouts and a signed {@code SERVICE} identity, the same mechanism the api-gateway uses (BE-SEC-04).
+ */
+final class ServiceRestClients {
+
+<span class="fc" id="L23">    static final UUID SERVICE_ID = new UUID(0, 0);</span>
+    static final String SERVICE_ROLE = &quot;SERVICE&quot;;
+
+    private ServiceRestClients() {
+    }
+
+    static RestClient create(String baseUri, InternalIdentityVerifier signer, Clock clock, Duration readTimeout) {
+<span class="fc" id="L30">        HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1)</span>
+<span class="fc" id="L31">                .connectTimeout(Duration.ofSeconds(3)).build();</span>
+<span class="fc" id="L32">        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);</span>
+<span class="fc" id="L33">        requestFactory.setReadTimeout(readTimeout);</span>
+<span class="fc" id="L34">        return RestClient.builder()</span>
+<span class="fc" id="L35">                .baseUrl(baseUri)</span>
+<span class="fc" id="L36">                .requestFactory(requestFactory)</span>
+<span class="fc" id="L37">                .requestInterceptor((request, body, execution) -&gt; {</span>
+<span class="fc" id="L38">                    long now = clock.instant().getEpochSecond();</span>
+<span class="fc" id="L39">                    var headers = request.getHeaders();</span>
+<span class="fc" id="L40">                    headers.set(InternalIdentityVerifier.USER_ID, SERVICE_ID.toString());</span>
+<span class="fc" id="L41">                    headers.set(InternalIdentityVerifier.USER_ROLE, SERVICE_ROLE);</span>
+<span class="fc" id="L42">                    headers.set(InternalIdentityVerifier.TIMESTAMP, Long.toString(now));</span>
+<span class="fc" id="L43">                    headers.set(InternalIdentityVerifier.SIGNATURE, signer.sign(SERVICE_ID.toString(), SERVICE_ROLE, now));</span>
+<span class="fc" id="L44">                    return execution.execute(request, body);</span>
+                })
+<span class="fc" id="L46">                .build();</span>
+    }
+
+    /** GET returning empty on 404; any other failure becomes a 503 naming the unavailable service. */
+    static &lt;T&gt; Optional&lt;T&gt; find(RestClient client, Class&lt;T&gt; type, String service, String uri, Object... variables) {
+        try {
+<span class="fc" id="L52">            return Optional.ofNullable(client.get().uri(uri, variables).retrieve().body(type));</span>
+<span class="fc" id="L53">        } catch (HttpClientErrorException.NotFound e) {</span>
+<span class="fc" id="L54">            return Optional.empty();</span>
+<span class="fc" id="L55">        } catch (RestClientException e) {</span>
+<span class="fc" id="L56">            throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, service + &quot; indisponible&quot;);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,326 @@
+
+=================== Tests API de bout en bout (gateway + nginx) ===================
+ Container smartrecruit-job-service-1 Running 
+ Container smartrecruit-ai-service-1 Running 
+ Container smartrecruit-dashboard-service-1 Running 
+ Container smartrecruit-user-service-1 Running 
+ Container smartrecruit-postgres-1 Running 
+ Container smartrecruit-application-service-1 Running 
+ Container smartrecruit-auth-service-1 Running 
+ Container smartrecruit-api-gateway-1 Recreate 
+ Container smartrecruit-api-gateway-1 Recreated 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-api-gateway-1 Starting 
+ Container smartrecruit-api-gateway-1 Started 
+============================================================
+RESULTAT : 146 OK, 0 echecs
+ Container smartrecruit-user-service-1 Running 
+ Container smartrecruit-ai-service-1 Running 
+ Container smartrecruit-postgres-1 Running 
+ Container smartrecruit-dashboard-service-1 Running 
+ Container smartrecruit-application-service-1 Running 
+ Container smartrecruit-job-service-1 Running 
+ Container smartrecruit-auth-service-1 Running 
+ Container smartrecruit-api-gateway-1 Recreate 
+ Container smartrecruit-api-gateway-1 Recreated 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Waiting 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-postgres-1 Healthy 
+ Container smartrecruit-api-gateway-1 Starting 
+ Container smartrecruit-api-gateway-1 Started 
+
+=================== Tests E2E de l'interface (Playwright) ===================
+
+added 6 packages in 4s
+
+Running 72 tests using 2 workers
+
+  ok  1 [setup] › tests\auth.setup.ts:6:8 › connexion candidate par le formulaire (8.4s)
+  ok  2 [setup] › tests\auth.setup.ts:6:8 › connexion recruiter par le formulaire (2.9s)
+  ok  3 [setup] › tests\auth.setup.ts:6:8 › connexion admin par le formulaire (2.4s)
+  ok  4 [setup] › tests\auth.setup.ts:16:6 › mot de passe incorrect : message clair, pas de connexion (2.4s)
+  ok  5 [chromium] › tests\journeys.spec.ts:7:7 › Visiteur non connecté › une page protégée renvoie vers la connexion (1.2s)
+  ok  6 [chromium] › tests\a11y.spec.ts:22:9 › connexion › accessibilité WCAG A/AA : connexion (2.3s)
+  ok  7 [chromium] › tests\journeys.spec.ts:12:7 › Visiteur non connecté › page inconnue : 404 lisible (1.2s)
+  ok  9 [chromium] › tests\journeys.spec.ts:21:7 › Candidat › recherche d’offres filtrée par ville (2.0s)
+  ok  8 [chromium] › tests\a11y.spec.ts:22:9 › inscription › accessibilité WCAG A/AA : inscription (2.4s)
+  ok 10 [chromium] › tests\journeys.spec.ts:30:7 › Candidat › détail d’une offre et score de compatibilité (2.0s)
+  ok 12 [chromium] › tests\journeys.spec.ts:38:7 › Candidat › suivi de ses candidatures (workflow à statuts) (1.4s)
+  ok 11 [chromium] › tests\a11y.spec.ts:22:9 › recherche-offres › accessibilité WCAG A/AA : recherche-offres (3.6s)
+  ok 13 [chromium] › tests\journeys.spec.ts:43:7 › Candidat › accès refusé à l’espace administrateur (1.7s)
+  ok 14 [chromium] › tests\a11y.spec.ts:22:9 › candidatures › accessibilité WCAG A/AA : candidatures (2.8s)
+  ok 15 [chromium] › tests\journeys.spec.ts:52:7 › Recruteur › tableau de bord avec indicateurs (1.7s)
+  ok 17 [chromium] › tests\journeys.spec.ts:57:7 › Recruteur › liste de ses offres (2.1s)
+  ok 16 [chromium] › tests\a11y.spec.ts:22:9 › tableau-de-bord-recruteur › accessibilité WCAG A/AA : tableau-de-bord-recruteur (3.1s)
+  ok 18 [chromium] › tests\journeys.spec.ts:63:7 › Recruteur › classement des candidats d’une offre (3.4s)
+  ok 19 [chromium] › tests\a11y.spec.ts:22:9 › journal-audit › accessibilité WCAG A/AA : journal-audit (4.5s)
+  ok 20 [chromium] › tests\journeys.spec.ts:74:7 › Administrateur › journal d’audit : qui a fait quoi, quand (2.1s)
+  ok 21 [chromium] › tests\journeys.spec.ts:80:7 › Administrateur › gestion des utilisateurs (1.8s)
+  -  22 [edge] › tests\a11y.spec.ts:22:9 › connexion › accessibilité WCAG A/AA : connexion
+  -  24 [edge] › tests\a11y.spec.ts:22:9 › inscription › accessibilité WCAG A/AA : inscription
+  ok 23 [edge] › tests\journeys.spec.ts:7:7 › Visiteur non connecté › une page protégée renvoie vers la connexion (5.3s)
+  -  25 [edge] › tests\a11y.spec.ts:22:9 › recherche-offres › accessibilité WCAG A/AA : recherche-offres
+  -  27 [edge] › tests\a11y.spec.ts:22:9 › candidatures › accessibilité WCAG A/AA : candidatures
+  ok 26 [edge] › tests\journeys.spec.ts:12:7 › Visiteur non connecté › page inconnue : 404 lisible (3.0s)
+  -  28 [edge] › tests\a11y.spec.ts:22:9 › tableau-de-bord-recruteur › accessibilité WCAG A/AA : tableau-de-bord-recruteur
+  -  30 [edge] › tests\a11y.spec.ts:22:9 › journal-audit › accessibilité WCAG A/AA : journal-audit
+  ok 29 [edge] › tests\journeys.spec.ts:21:7 › Candidat › recherche d’offres filtrée par ville (3.1s)
+  ok 31 [edge] › tests\journeys.spec.ts:30:7 › Candidat › détail d’une offre et score de compatibilité (3.5s)
+  ok 32 [edge] › tests\journeys.spec.ts:38:7 › Candidat › suivi de ses candidatures (workflow à statuts) (2.0s)
+  ok 33 [edge] › tests\journeys.spec.ts:43:7 › Candidat › accès refusé à l’espace administrateur (2.3s)
+  ok 34 [edge] › tests\journeys.spec.ts:52:7 › Recruteur › tableau de bord avec indicateurs (2.8s)
+  ok 36 [edge] › tests\journeys.spec.ts:57:7 › Recruteur › liste de ses offres (3.5s)
+  -  35 [webkit] › tests\a11y.spec.ts:22:9 › connexion › accessibilité WCAG A/AA : connexion
+  ok 37 [edge] › tests\journeys.spec.ts:63:7 › Recruteur › classement des candidats d’une offre (2.4s)
+  -  38 [webkit] › tests\a11y.spec.ts:22:9 › inscription › accessibilité WCAG A/AA : inscription
+  ok 39 [edge] › tests\journeys.spec.ts:74:7 › Administrateur › journal d’audit : qui a fait quoi, quand (2.9s)
+  -  40 [webkit] › tests\a11y.spec.ts:22:9 › recherche-offres › accessibilité WCAG A/AA : recherche-offres
+  ok 41 [edge] › tests\journeys.spec.ts:80:7 › Administrateur › gestion des utilisateurs (2.3s)
+  -  42 [webkit] › tests\a11y.spec.ts:22:9 › candidatures › accessibilité WCAG A/AA : candidatures
+  -  43 [webkit] › tests\a11y.spec.ts:22:9 › tableau-de-bord-recruteur › accessibilité WCAG A/AA : tableau-de-bord-recruteur
+  -  44 [webkit] › tests\a11y.spec.ts:22:9 › journal-audit › accessibilité WCAG A/AA : journal-audit
+  ok 45 [webkit] › tests\journeys.spec.ts:7:7 › Visiteur non connecté › une page protégée renvoie vers la connexion (3.3s)
+  -  47 [mobile-chrome] › tests\a11y.spec.ts:22:9 › connexion › accessibilité WCAG A/AA : connexion
+  ok 46 [webkit] › tests\journeys.spec.ts:12:7 › Visiteur non connecté › page inconnue : 404 lisible (3.0s)
+  -  48 [mobile-chrome] › tests\a11y.spec.ts:22:9 › inscription › accessibilité WCAG A/AA : inscription
+  -  50 [mobile-chrome] › tests\a11y.spec.ts:22:9 › recherche-offres › accessibilité WCAG A/AA : recherche-offres
+  -  51 [mobile-chrome] › tests\a11y.spec.ts:22:9 › candidatures › accessibilité WCAG A/AA : candidatures
+  -  52 [mobile-chrome] › tests\a11y.spec.ts:22:9 › tableau-de-bord-recruteur › accessibilité WCAG A/AA : tableau-de-bord-recruteur
+  -  53 [mobile-chrome] › tests\a11y.spec.ts:22:9 › journal-audit › accessibilité WCAG A/AA : journal-audit
+  ok 49 [webkit] › tests\journeys.spec.ts:21:7 › Candidat › recherche d’offres filtrée par ville (5.6s)
+  ok 54 [mobile-chrome] › tests\journeys.spec.ts:7:7 › Visiteur non connecté › une page protégée renvoie vers la connexion (1.8s)
+  ok 56 [mobile-chrome] › tests\journeys.spec.ts:12:7 › Visiteur non connecté › page inconnue : 404 lisible (1.9s)
+  ok 57 [mobile-chrome] › tests\journeys.spec.ts:21:7 › Candidat › recherche d’offres filtrée par ville (3.1s)
+  ok 58 [mobile-chrome] › tests\journeys.spec.ts:30:7 › Candidat › détail d’une offre et score de compatibilité (3.1s)
+  ok 55 [webkit] › tests\journeys.spec.ts:30:7 › Candidat › détail d’une offre et score de compatibilité (8.9s)
+  ok 59 [mobile-chrome] › tests\journeys.spec.ts:38:7 › Candidat › suivi de ses candidatures (workflow à statuts) (2.2s)
+  ok 61 [mobile-chrome] › tests\journeys.spec.ts:43:7 › Candidat › accès refusé à l’espace administrateur (2.3s)
+  ok 60 [webkit] › tests\journeys.spec.ts:38:7 › Candidat › suivi de ses candidatures (workflow à statuts) (5.7s)
+  ok 62 [mobile-chrome] › tests\journeys.spec.ts:52:7 › Recruteur › tableau de bord avec indicateurs (2.3s)
+  ok 64 [mobile-chrome] › tests\journeys.spec.ts:57:7 › Recruteur › liste de ses offres (2.4s)
+  ok 63 [webkit] › tests\journeys.spec.ts:43:7 › Candidat › accès refusé à l’espace administrateur (4.4s)
+  ok 65 [mobile-chrome] › tests\journeys.spec.ts:63:7 › Recruteur › classement des candidats d’une offre (2.3s)
+  ok 67 [mobile-chrome] › tests\journeys.spec.ts:74:7 › Administrateur › journal d’audit : qui a fait quoi, quand (2.0s)
+  ok 66 [webkit] › tests\journeys.spec.ts:52:7 › Recruteur › tableau de bord avec indicateurs (4.1s)
+  ok 68 [mobile-chrome] › tests\journeys.spec.ts:80:7 › Administrateur › gestion des utilisateurs (2.4s)
+  ok 69 [webkit] › tests\journeys.spec.ts:57:7 › Recruteur › liste de ses offres (3.7s)
+  ok 70 [webkit] › tests\journeys.spec.ts:63:7 › Recruteur › classement des candidats d’une offre (4.6s)
+  ok 71 [webkit] › tests\journeys.spec.ts:74:7 › Administrateur › journal d’audit : qui a fait quoi, quand (3.3s)
+  ok 72 [webkit] › tests\journeys.spec.ts:80:7 › Administrateur › gestion des utilisateurs (4.0s)
+
+  18 skipped
+  54 passed (2.3m)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report ..\reports\e2e-ui\html[39m
+[36m[39m
+
+=================== Test de charge (k6) ===================
+requêtes : 4529 (73.4/s)
+durée (ms) : moy 100.0 | médiane 59.8 | p90 215.5 | p95 321.4 | max 1117.8
+taux d'erreur HTTP : 0.00 %
+checks réussis : 100.00 %
+seuil http_req_duration p(95)<500 : OK
+seuil checks rate>0.99 : OK
+seuil http_req_failed rate<0.01 : OK
+
+=================== Tests de fiabilité (pannes provoquées) ===================
+
+[notice] A new release of pip is available: 23.0.1 -> 26.3
+[notice] To update, run: python.exe -m pip install --upgrade pip
+============================= test session starts =============================
+platform win32 -- Python 3.10.11, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\oti\AppData\Local\Programs\Python\Python310\python.exe
+rootdir: C:\Users\oti\Desktop\Projects\SmartRecruit
+plugins: anyio-4.16.0, platformdirs-4.12.4
+collecting ... collected 8 items
+
+quality/reliability/test_reliability.py::test_service_ia_en_panne_creation_offre_toujours_possible PASSED
+quality/reliability/test_reliability.py::test_service_ia_en_panne_score_repond_503_propre PASSED
+quality/reliability/test_reliability.py::test_service_ia_en_panne_candidature_enregistree_sans_score PASSED
+quality/reliability/test_reliability.py::test_reprise_apres_redemarrage_du_service_ia reprise du score IA en 68 s
+PASSED
+quality/reliability/test_reliability.py::test_transition_interdite_rejetee_sans_modifier_l_etat PASSED
+quality/reliability/test_reliability.py::test_double_candidature_rejetee_pas_de_doublon PASSED
+quality/reliability/test_reliability.py::test_panne_du_service_candidatures_erreur_rapide_puis_reprise_sans_perte reprise du service candidatures en 17 s
+PASSED
+quality/reliability/test_reliability.py::test_redemarrage_base_de_donnees_aucune_perte reprise apr�s red�marrage de PostgreSQL en 0 s
+PASSED
+
+- generated xml file: C:\Users\oti\Desktop\Projects\SmartRecruit\quality\reports\reliability\junit.xml -
+======================== 8 passed in 106.12s (0:01:46) ========================
+
+=================== SAST (Bandit, Semgrep) ===================
+
+[notice] A new release of pip is available: 23.0.1 -> 26.3
+[notice] To update, run: python.exe -m pip install --upgrade pip
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.10.11
+[text]	INFO	Text output written to file: quality/reports/security/bandit.txt
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 495 files tracked by git with 602 Code rules:
+                                                                                                                        
+  Language      Rules   Files          Origin      Rules                                                                
+ ─────────────────────────────        ───────────────────                                                               
+  <multilang>      41     495          Community     602                                                                
+  java             60     288                                                                                           
+  ts               74      94                                                                                           
+  python          151      35                                                                                           
+  dockerfile        4       7                                                                                           
+  bash              1       7                                                                                           
+  yaml             24       6                                                                                           
+                                                                                                                        
+Warning: 1 timeout error(s) in backend/e2e/e2e_full.py when running the following rules:
+[python.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args]
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 0 (0 blocking)
+ • Rules run: 355
+ • Targets scanned: 495
+ • Parsed lines: ~99.9%
+ • Scan skipped: 
+   ◦ Matching --exclude patterns: 32
+   ◦ Files matching .semgrepignore patterns: 136
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 355 rules on 495 files: 0 findings.
+(need more rules? `semgrep login` for additional free Semgrep Registry rules)
+
+
+A new version of Semgrep is available. See https://semgrep.dev/docs/upgrading
+If Semgrep missed a finding, please send us feedback to let us know!
+See https://semgrep.dev/docs/reporting-false-negatives/
+
+=================== SCA (pip-audit, npm audit, Trivy sur les images) ===================
+
+[notice] A new release of pip is available: 23.0.1 -> 26.3
+[notice] To update, run: python.exe -m pip install --upgrade pip
+No known vulnerabilities found
+!! échec : docker run --rm -v //var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache -v C:/Users/oti/Desktop/Projects/SmartRecruit/quality/reports/security/trivy:/out aquasec/trivy:0.58.1 image --quiet --scanners vuln --pkg-types library --exit-code 1 --severity HIGH,CRITICAL --format table --output /out/ai-service.txt smartrecruit-ai-service:latest
+
+=================== DAST (OWASP ZAP baseline) ===================
+Using the Automation Framework
+Total of 7 URLs
+PASS: Vulnerable JS Library (Powered by Retire.js) [10003]
+PASS: In Page Banner Information Leak [10009]
+PASS: Cookie No HttpOnly Flag [10010]
+PASS: Cookie Without Secure Flag [10011]
+PASS: Re-examine Cache-control Directives [10015]
+PASS: Cross-Domain JavaScript Source File Inclusion [10017]
+PASS: Content-Type Header Missing [10019]
+PASS: Anti-clickjacking Header [10020]
+PASS: X-Content-Type-Options Header Missing [10021]
+PASS: Information Disclosure - Debug Error Messages [10023]
+PASS: Information Disclosure - Sensitive Information in URL [10024]
+PASS: Information Disclosure - Sensitive Information in HTTP Referrer Header [10025]
+PASS: HTTP Parameter Override [10026]
+PASS: Off-site Redirect [10028]
+PASS: Cookie Poisoning [10029]
+PASS: User Controllable Charset [10030]
+PASS: User Controllable HTML Element Attribute (Potential XSS) [10031]
+PASS: Viewstate [10032]
+PASS: Directory Browsing [10033]
+PASS: Heartbleed OpenSSL Vulnerability (Indicative) [10034]
+PASS: Strict-Transport-Security Header [10035]
+PASS: HTTP Server Response Header [10036]
+PASS: Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s) [10037]
+PASS: Content Security Policy (CSP) Header Not Set [10038]
+PASS: X-Backend-Server Header Information Leak [10039]
+PASS: Secure Pages Include Mixed Content [10040]
+PASS: HTTP to HTTPS Insecure Transition in Form Post [10041]
+PASS: HTTPS to HTTP Insecure Transition in Form Post [10042]
+PASS: User Controllable JavaScript Event (XSS) [10043]
+PASS: Big Redirect Detected (Potential Sensitive Information Leak) [10044]
+PASS: Retrieved from Cache [10050]
+PASS: X-ChromeLogger-Data (XCOLD) Header Information Leak [10052]
+PASS: Cookie without SameSite Attribute [10054]
+PASS: X-Debug-Token Information Leak [10056]
+PASS: Username Hash Found [10057]
+PASS: X-AspNet-Version Response Header [10061]
+PASS: PII Disclosure [10062]
+PASS: Timestamp Disclosure [10096]
+PASS: Hash Disclosure [10097]
+PASS: Cross-Domain Misconfiguration [10098]
+PASS: Source Code Disclosure [10099]
+PASS: Weak Authentication Method [10105]
+PASS: Reverse Tabnabbing [10108]
+PASS: Dangerous JS Functions [10110]
+PASS: Authentication Request Identified [10111]
+PASS: Session Management Response Identified [10112]
+PASS: Verification Request Identified [10113]
+PASS: Script Served From Malicious Domain (polyfill) [10115]
+PASS: Absence of Anti-CSRF Tokens [10202]
+PASS: Private IP Disclosure [2]
+PASS: Session ID in URL Rewrite [3]
+PASS: Script Passive Scan Rules [50001]
+PASS: Stats Passive Scan Rule [50003]
+PASS: Insecure JSF ViewState [90001]
+PASS: Java Serialization Object [90002]
+PASS: Charset Mismatch [90011]
+PASS: Application Error Disclosure [90022]
+PASS: WSDL File Detection [90030]
+PASS: Loosely Scoped Cookie [90033]
+WARN-NEW: Information Disclosure - Suspicious Comments [10027] x 1 
+	http://host.docker.internal:5173/assets/index-DuHKPTiU.js (200 OK)
+WARN-NEW: Storable and Cacheable Content [10049] x 6 
+	http://host.docker.internal:5173 (200 OK)
+	http://host.docker.internal:5173/assets/index-D4BRleZP.css (200 OK)
+	http://host.docker.internal:5173/assets/index-DuHKPTiU.js (200 OK)
+	http://host.docker.internal:5173/favicon.svg (200 OK)
+	http://host.docker.internal:5173/robots.txt (200 OK)
+WARN-NEW: CSP: Wildcard Directive [10055] x 5 
+	http://host.docker.internal:5173 (200 OK)
+	http://host.docker.internal:5173/sitemap.xml (200 OK)
+	http://host.docker.internal:5173 (200 OK)
+	http://host.docker.internal:5173/robots.txt (200 OK)
+	http://host.docker.internal:5173/sitemap.xml (200 OK)
+WARN-NEW: Permissions Policy Header Not Set [10063] x 1 
+	http://host.docker.internal:5173/assets/index-DuHKPTiU.js (200 OK)
+WARN-NEW: Modern Web Application [10109] x 3 
+	http://host.docker.internal:5173 (200 OK)
+	http://host.docker.internal:5173/robots.txt (200 OK)
+	http://host.docker.internal:5173/sitemap.xml (200 OK)
+WARN-NEW: ZAP is Out of Date [10116] x 1 
+	http://host.docker.internal:5173/favicon.svg (200 OK)
+WARN-NEW: Sub Resource Integrity Attribute Missing [90003] x 3 
+	http://host.docker.internal:5173 (200 OK)
+	http://host.docker.internal:5173/robots.txt (200 OK)
+	http://host.docker.internal:5173/sitemap.xml (200 OK)
+WARN-NEW: Insufficient Site Isolation Against Spectre Vulnerability [90004] x 3 
+	http://host.docker.internal:5173 (200 OK)
+	http://host.docker.internal:5173/robots.txt (200 OK)
+	http://host.docker.internal:5173/sitemap.xml (200 OK)
+FAIL-NEW: 0	FAIL-INPROG: 0	WARN-NEW: 8	WARN-INPROG: 0	INFO: 0	IGNORE: 0	PASS: 59
+
+AU MOINS UNE ÉTAPE A ÉCHOUÉ (voir ci-dessus)

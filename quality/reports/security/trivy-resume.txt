@@ -1,0 +1,21 @@
+Trivy 0.58.1 - dépendances applicatives embarquées dans les images (--pkg-types library)
+
+AVANT corrections : total 179 {'HIGH': 72, 'MEDIUM': 74, 'CRITICAL': 24, 'LOW': 9}
+  api-gateway          {'HIGH': 10, 'MEDIUM': 4, 'CRITICAL': 4}
+  auth-service         {'HIGH': 11, 'MEDIUM': 5, 'CRITICAL': 4}
+  user-service         {'CRITICAL': 4, 'HIGH': 6, 'MEDIUM': 3}
+  job-service          {'CRITICAL': 4, 'HIGH': 6, 'MEDIUM': 3}
+  application-service  {'CRITICAL': 4, 'HIGH': 6, 'MEDIUM': 3}
+  dashboard-service    {'CRITICAL': 4, 'HIGH': 6, 'MEDIUM': 3}
+  ai-service           {'MEDIUM': 53, 'LOW': 9, 'HIGH': 27}
+  frontend             aucune
+
+APRÈS corrections : total 0 {}
+  api-gateway          aucune
+  auth-service         aucune
+  user-service         aucune
+  job-service          aucune
+  application-service  aucune
+  dashboard-service    aucune
+  ai-service           aucune
+  frontend             aucune

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GatewayConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api-gateway</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.gateway.config</a> &gt; <span class="el_source">GatewayConfig.java</span></div><h1>GatewayConfig.java</h1><pre class="source lang-java linenums">package com.smartrecruit.gateway.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.http.client.JdkClientHttpRequestFactoryBuilder;
+import org.springframework.boot.http.client.autoconfigure.ClientHttpRequestFactoryBuilderCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.ServerResponse;
+
+import java.net.http.HttpClient;
+import java.time.Duration;
+
+import static org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFunctions.uri;
+import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
+import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions.http;
+import static org.springframework.web.servlet.function.RequestPredicates.path;
+
+/**
+ * Static routing table: one route per backend microservice.
+ * No service discovery (Eureka) at this project scale — hostnames are
+ * resolved via Docker Compose service names / env vars.
+ */
+@Configuration
+<span class="fc" id="L25">public class GatewayConfig {</span>
+
+    @Value(&quot;${services.auth-service.uri}&quot;)
+    private String authServiceUri;
+
+    @Value(&quot;${services.user-service.uri}&quot;)
+    private String userServiceUri;
+
+    @Value(&quot;${services.job-service.uri}&quot;)
+    private String jobServiceUri;
+
+    @Value(&quot;${services.application-service.uri}&quot;)
+    private String applicationServiceUri;
+
+    @Value(&quot;${services.dashboard-service.uri}&quot;)
+    private String dashboardServiceUri;
+
+    @Value(&quot;${services.ai-service.uri}&quot;)
+    private String aiServiceUri;
+
+    /**
+     * Proxy to the backends over plain HTTP/1.1. The JDK client's default cleartext h2c upgrade
+     * (Upgrade/HTTP2-Settings headers) breaks uvicorn on requests with a body. A stopped backend fails
+     * within the connect timeout instead of holding the client until the OS gives up (reliability test).
+     */
+    @Bean
+    public ClientHttpRequestFactoryBuilderCustomizer&lt;JdkClientHttpRequestFactoryBuilder&gt; http11ProxyClient(
+            @Value(&quot;${gateway.connect-timeout:3s}&quot;) Duration connectTimeout) {
+<span class="fc" id="L53">        return builder -&gt; builder.withHttpClientCustomizer(</span>
+<span class="fc" id="L54">                client -&gt; client.version(HttpClient.Version.HTTP_1_1).connectTimeout(connectTimeout));</span>
+    }
+
+    @Bean
+    public RouterFunction&lt;ServerResponse&gt; authRoute() {
+<span class="fc" id="L59">        return route(&quot;auth_service&quot;)</span>
+<span class="fc" id="L60">                .route(path(&quot;/api/v1/auth/**&quot;), http())</span>
+<span class="fc" id="L61">                .before(uri(authServiceUri))</span>
+<span class="fc" id="L62">                .build();</span>
+    }
+
+    @Bean
+    public RouterFunction&lt;ServerResponse&gt; userRoute() {
+<span class="fc" id="L67">        return route(&quot;user_service&quot;)</span>
+<span class="fc" id="L68">                .route(path(&quot;/api/v1/users/**&quot;), http())</span>
+<span class="fc" id="L69">                .before(uri(userServiceUri))</span>
+<span class="fc" id="L70">                .build();</span>
+    }
+
+    @Bean
+    public RouterFunction&lt;ServerResponse&gt; jobRoute() {
+<span class="fc" id="L75">        return route(&quot;job_service&quot;)</span>
+<span class="fc" id="L76">                .route(path(&quot;/api/v1/jobs/**&quot;), http())</span>
+<span class="fc" id="L77">                .before(uri(jobServiceUri))</span>
+<span class="fc" id="L78">                .build();</span>
+    }
+
+    @Bean
+    public RouterFunction&lt;ServerResponse&gt; applicationRoute() {
+<span class="fc" id="L83">        return route(&quot;application_service&quot;)</span>
+<span class="fc" id="L84">                .route(path(&quot;/api/v1/applications/**&quot;), http())</span>
+<span class="fc" id="L85">                .before(uri(applicationServiceUri))</span>
+<span class="fc" id="L86">                .build();</span>
+    }
+
+    @Bean
+    public RouterFunction&lt;ServerResponse&gt; dashboardRoute() {
+<span class="fc" id="L91">        return route(&quot;dashboard_service&quot;)</span>
+<span class="fc" id="L92">                .route(path(&quot;/api/v1/dashboard/**&quot;), http())</span>
+<span class="fc" id="L93">                .before(uri(dashboardServiceUri))</span>
+<span class="fc" id="L94">                .build();</span>
+    }
+
+    @Bean
+    public RouterFunction&lt;ServerResponse&gt; aiRoute() {
+<span class="fc" id="L99">        return route(&quot;ai_service&quot;)</span>
+<span class="fc" id="L100">                .route(path(&quot;/api/v1/ai/**&quot;), http())</span>
+<span class="fc" id="L101">                .before(uri(aiServiceUri))</span>
+<span class="fc" id="L102">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

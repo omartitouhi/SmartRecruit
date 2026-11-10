@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JobService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">job-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.job.service</a> &gt; <span class="el_source">JobService.java</span></div><h1>JobService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.job.service;
+
+import com.smartrecruit.job.dto.JobCreateRequest;
+import com.smartrecruit.job.dto.JobPatchRequest;
+import com.smartrecruit.job.dto.JobResponse;
+import com.smartrecruit.job.exception.ApiException;
+import com.smartrecruit.job.exception.RequestValidationException;
+import com.smartrecruit.job.model.Job;
+import com.smartrecruit.job.model.JobStatus;
+import com.smartrecruit.job.model.WorkMode;
+import com.smartrecruit.job.repository.JobRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+
+/**
+ * Recruiter write operations on offers: publish (BE-JOB-01), edit (BE-JOB-02), status (BE-JOB-03),
+ * duplicate (EXT-JOB-01). Salary range, deadline, work mode and positions follow EXT-JOB-01.
+ */
+@Service
+@RequiredArgsConstructor
+public class JobService {
+
+    private final JobRepository jobRepository;
+    private final RecruiterCompanies recruiterCompanies;
+    private final Clock clock;
+    private final TransactionTemplate transaction;
+    private final ApplicationEventPublisher events;
+
+    private static final String COPY_SUFFIX = &quot; (copie)&quot;;
+    private static final int TITLE_MAX = 255;
+
+    /** Publishes an offer for the recruiter's company straight away. */
+    public JobResponse publish(UUID recruiterId, JobCreateRequest request) {
+<span class="fc" id="L47">        Map&lt;String, String&gt; errors = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L48">        checkDeadline(request.getApplicationDeadline(), errors);</span>
+<span class="fc" id="L49">        checkSalaryRange(request.getSalaryMin(), request.getSalaryMax(), errors);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (!errors.isEmpty()) {</span>
+<span class="fc" id="L51">            throw new RequestValidationException(errors);</span>
+        }
+<span class="fc" id="L53">        UUID companyId = recruiterCompanies.requireCompanyId(recruiterId);</span>
+<span class="fc" id="L54">        Instant now = clock.instant();</span>
+<span class="fc" id="L55">        Job job = Job.builder()</span>
+<span class="fc" id="L56">                .id(UUID.randomUUID())</span>
+<span class="fc" id="L57">                .companyId(companyId)</span>
+<span class="fc" id="L58">                .title(request.getTitle())</span>
+<span class="fc" id="L59">                .description(request.getDescription())</span>
+<span class="fc" id="L60">                .requiredSkills(new ArrayList&lt;&gt;(request.getRequiredSkills()))</span>
+<span class="fc" id="L61">                .experienceLevel(request.getExperienceLevel())</span>
+<span class="fc" id="L62">                .contractType(request.getContractType())</span>
+<span class="fc" id="L63">                .location(request.getLocation())</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                .workMode(request.getWorkMode() == null ? WorkMode.ON_SITE : request.getWorkMode())</span>
+<span class="fc" id="L65">                .salaryMin(request.getSalaryMin())</span>
+<span class="fc" id="L66">                .salaryMax(request.getSalaryMax())</span>
+<span class="fc" id="L67">                .applicationDeadline(request.getApplicationDeadline())</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                .positions(request.getPositions() == null ? 1 : request.getPositions())</span>
+<span class="fc" id="L69">                .status(JobStatus.PUBLISHED)</span>
+<span class="fc" id="L70">                .publishedAt(now)</span>
+<span class="fc" id="L71">                .updatedAt(now)</span>
+<span class="fc" id="L72">                .build();</span>
+        // The company lookup above is a remote call: keep it outside the transaction.
+<span class="fc" id="L74">        return transaction.execute(status -&gt; {</span>
+<span class="fc" id="L75">            jobRepository.save(job);</span>
+<span class="fc" id="L76">            events.publishEvent(new JobAnalysisRequested(job.getId(), job.getTitle(), job.getDescription()));</span>
+<span class="fc" id="L77">            return JobResponse.from(job);</span>
+        });
+    }
+
+    /**
+     * Merge patch of an offer of the recruiter's company. Closed and moderated offers are frozen;
+     * a change of title, description or skills asks for a new AI analysis.
+     */
+    public JobResponse update(UUID recruiterId, UUID jobId, JobPatchRequest patch) {
+<span class="fc" id="L86">        UUID companyId = recruiterCompanies.requireCompanyId(recruiterId);</span>
+<span class="fc" id="L87">        return transaction.execute(status -&gt; {</span>
+<span class="fc" id="L88">            Job job = ownedJob(jobId, companyId);</span>
+<span class="fc bfc" id="L89" title="All 4 branches covered.">            if (job.getStatus() == JobStatus.CLOSED || job.getStatus() == JobStatus.MODERATED) {</span>
+<span class="fc" id="L90">                throw new ApiException(HttpStatus.CONFLICT,</span>
+                        &quot;Une offre clôturée ou retirée par modération ne peut plus être modifiée&quot;);
+            }
+<span class="fc" id="L93">            checkPatchedRules(job, patch);</span>
+<span class="fc" id="L94">            boolean analysedContentChanged = applyAnalysedContent(job, patch);</span>
+<span class="fc" id="L95">            boolean detailsChanged = applyDetails(job, patch);</span>
+<span class="fc bfc" id="L96" title="All 4 branches covered.">            if (analysedContentChanged || detailsChanged) {</span>
+<span class="fc" id="L97">                job.setUpdatedAt(clock.instant());</span>
+<span class="fc" id="L98">                jobRepository.save(job);</span>
+            }
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (analysedContentChanged) {</span>
+<span class="fc" id="L101">                events.publishEvent(new JobAnalysisRequested(job.getId(), job.getTitle(), job.getDescription()));</span>
+            }
+<span class="fc" id="L103">            return JobResponse.from(job);</span>
+        });
+    }
+
+    /**
+     * Publishes, closes or reopens an offer of the recruiter's company. A moderated offer is out of
+     * the recruiter's hands (403); other transitions are limited by {@link JobStatus#canBecome}.
+     */
+    public JobResponse changeStatus(UUID recruiterId, UUID jobId, JobStatus next) {
+<span class="fc" id="L112">        UUID companyId = recruiterCompanies.requireCompanyId(recruiterId);</span>
+<span class="fc" id="L113">        return transaction.execute(status -&gt; {</span>
+<span class="fc" id="L114">            Job job = ownedJob(jobId, companyId);</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            if (job.getStatus() == JobStatus.MODERATED) {</span>
+<span class="fc" id="L116">                throw new ApiException(HttpStatus.FORBIDDEN, &quot;Cette offre a été retirée par modération&quot;);</span>
+            }
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            if (!job.getStatus().canBecome(next)) {</span>
+<span class="fc" id="L119">                throw new ApiException(HttpStatus.BAD_REQUEST,</span>
+<span class="fc" id="L120">                        &quot;Transition de statut interdite : %s vers %s&quot;.formatted(job.getStatus(), next));</span>
+            }
+<span class="fc bfc" id="L122" title="All 4 branches covered.">            if (next == JobStatus.PUBLISHED &amp;&amp; job.isPastDeadline(today())) {</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                throw new ApiException(HttpStatus.CONFLICT, job.getStatus() == JobStatus.CLOSED</span>
+<span class="fc" id="L124">                        ? &quot;La date limite de candidature est dépassée : dupliquez l'offre pour la republier&quot;</span>
+<span class="fc" id="L125">                        : &quot;La date limite de candidature est dépassée : modifiez-la ou supprimez-la avant de publier&quot;);</span>
+            }
+<span class="fc" id="L127">            Instant now = clock.instant();</span>
+<span class="fc" id="L128">            job.setStatus(next);</span>
+<span class="fc bfc" id="L129" title="All 4 branches covered.">            if (next == JobStatus.PUBLISHED &amp;&amp; job.getPublishedAt() == null) {</span>
+<span class="fc" id="L130">                job.setPublishedAt(now);</span>
+            }
+<span class="fc" id="L132">            job.setUpdatedAt(now);</span>
+<span class="fc" id="L133">            return JobResponse.from(jobRepository.save(job));</span>
+        });
+    }
+
+    /**
+     * Copies an offer of the recruiter's company as a new draft (EXT-JOB-01): title suffixed with
+     * &quot;(copie)&quot;, no deadline, no publication date. A moderated offer cannot be copied (409).
+     */
+    public JobResponse duplicate(UUID recruiterId, UUID jobId) {
+<span class="fc" id="L142">        UUID companyId = recruiterCompanies.requireCompanyId(recruiterId);</span>
+<span class="fc" id="L143">        return transaction.execute(status -&gt; {</span>
+<span class="fc" id="L144">            Job source = ownedJob(jobId, companyId);</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">            if (source.getStatus() == JobStatus.MODERATED) {</span>
+<span class="fc" id="L146">                throw new ApiException(HttpStatus.CONFLICT, &quot;Une offre retirée par modération ne peut pas être dupliquée&quot;);</span>
+            }
+<span class="fc" id="L148">            Instant now = clock.instant();</span>
+<span class="fc" id="L149">            Job copy = Job.builder()</span>
+<span class="fc" id="L150">                    .id(UUID.randomUUID())</span>
+<span class="fc" id="L151">                    .companyId(companyId)</span>
+<span class="fc" id="L152">                    .title(copyTitle(source.getTitle()))</span>
+<span class="fc" id="L153">                    .description(source.getDescription())</span>
+<span class="fc" id="L154">                    .requiredSkills(new ArrayList&lt;&gt;(source.getRequiredSkills()))</span>
+<span class="fc" id="L155">                    .experienceLevel(source.getExperienceLevel())</span>
+<span class="fc" id="L156">                    .contractType(source.getContractType())</span>
+<span class="fc" id="L157">                    .location(source.getLocation())</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">                    .workMode(source.getWorkMode() == null ? WorkMode.ON_SITE : source.getWorkMode())</span>
+<span class="fc" id="L159">                    .salaryMin(source.getSalaryMin())</span>
+<span class="fc" id="L160">                    .salaryMax(source.getSalaryMax())</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">                    .positions(source.getPositions() == null ? 1 : source.getPositions())</span>
+<span class="fc" id="L162">                    .status(JobStatus.DRAFT)</span>
+<span class="fc" id="L163">                    .updatedAt(now)</span>
+<span class="fc" id="L164">                    .build();</span>
+<span class="fc" id="L165">            jobRepository.save(copy);</span>
+<span class="fc" id="L166">            events.publishEvent(new JobAnalysisRequested(copy.getId(), copy.getTitle(), copy.getDescription()));</span>
+<span class="fc" id="L167">            return JobResponse.from(copy, true);</span>
+        });
+    }
+
+    private static String copyTitle(String title) {
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        String base = title.length() + COPY_SUFFIX.length() &gt; TITLE_MAX</span>
+<span class="fc" id="L173">                ? title.substring(0, TITLE_MAX - COPY_SUFFIX.length()).stripTrailing()</span>
+<span class="fc" id="L174">                : title;</span>
+<span class="fc" id="L175">        return base + COPY_SUFFIX;</span>
+    }
+
+    private LocalDate today() {
+<span class="fc" id="L179">        return LocalDate.ofInstant(clock.instant(), ZoneOffset.UTC);</span>
+    }
+
+    private void checkDeadline(LocalDate deadline, Map&lt;String, String&gt; errors) {
+<span class="fc bfc" id="L183" title="All 4 branches covered.">        if (deadline != null &amp;&amp; deadline.isBefore(today())) {</span>
+<span class="fc" id="L184">            errors.put(&quot;applicationDeadline&quot;, &quot;La date limite doit être aujourd'hui ou plus tard&quot;);</span>
+        }
+<span class="fc" id="L186">    }</span>
+
+    private static void checkSalaryRange(Integer salaryMin, Integer salaryMax, Map&lt;String, String&gt; errors) {
+<span class="fc bfc" id="L189" title="All 6 branches covered.">        if (salaryMin != null &amp;&amp; salaryMax != null &amp;&amp; salaryMin &gt; salaryMax) {</span>
+<span class="fc" id="L190">            errors.put(&quot;salaryMax&quot;, &quot;Le salaire maximum doit être supérieur ou égal au salaire minimum&quot;);</span>
+        }
+<span class="fc" id="L192">    }</span>
+
+    /** The deadline sent must not be past; the salary range is checked on the values after the patch. */
+    private void checkPatchedRules(Job job, JobPatchRequest patch) {
+<span class="fc" id="L196">        Map&lt;String, String&gt; errors = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        if (patch.has(&quot;applicationDeadline&quot;)) {</span>
+<span class="fc" id="L198">            checkDeadline(patch.applicationDeadline(), errors);</span>
+        }
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        Integer salaryMin = patch.has(&quot;salaryMin&quot;) ? patch.salaryMin() : job.getSalaryMin();</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        Integer salaryMax = patch.has(&quot;salaryMax&quot;) ? patch.salaryMax() : job.getSalaryMax();</span>
+<span class="fc" id="L202">        checkSalaryRange(salaryMin, salaryMax, errors);</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        if (!errors.isEmpty()) {</span>
+<span class="fc" id="L204">            throw new RequestValidationException(errors);</span>
+        }
+<span class="fc" id="L206">    }</span>
+
+    private Job ownedJob(UUID jobId, UUID companyId) {
+<span class="fc" id="L209">        Job job = jobRepository.findById(jobId)</span>
+<span class="fc" id="L210">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Offre introuvable&quot;));</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        if (!companyId.equals(job.getCompanyId())) {</span>
+<span class="fc" id="L212">            throw new ApiException(HttpStatus.FORBIDDEN, &quot;Cette offre appartient à une autre entreprise&quot;);</span>
+        }
+<span class="fc" id="L214">        return job;</span>
+    }
+
+    /** @return true if title, description or skills changed, i.e. what the AI analyzes */
+    private boolean applyAnalysedContent(Job job, JobPatchRequest patch) {
+<span class="fc" id="L219">        boolean changed = false;</span>
+<span class="fc bfc" id="L220" title="All 4 branches covered.">        if (patch.has(&quot;title&quot;) &amp;&amp; !patch.title().equals(job.getTitle())) {</span>
+<span class="fc" id="L221">            job.setTitle(patch.title());</span>
+<span class="fc" id="L222">            changed = true;</span>
+        }
+<span class="pc bpc" id="L224" title="1 of 4 branches missed.">        if (patch.has(&quot;description&quot;) &amp;&amp; !patch.description().equals(job.getDescription())) {</span>
+<span class="fc" id="L225">            job.setDescription(patch.description());</span>
+<span class="fc" id="L226">            changed = true;</span>
+        }
+        // Compared as plain lists: Hibernate's collection wrapper has identity equality.
+<span class="fc bfc" id="L229" title="All 4 branches covered.">        if (patch.has(&quot;requiredSkills&quot;) &amp;&amp; !patch.requiredSkills().equals(new ArrayList&lt;&gt;(job.getRequiredSkills()))) {</span>
+<span class="fc" id="L230">            job.setRequiredSkills(new ArrayList&lt;&gt;(patch.requiredSkills()));</span>
+<span class="fc" id="L231">            changed = true;</span>
+        }
+<span class="fc" id="L233">        return changed;</span>
+    }
+
+    private boolean applyDetails(Job job, JobPatchRequest patch) {
+<span class="fc" id="L237">        boolean changed = false;</span>
+<span class="pc bpc" id="L238" title="1 of 4 branches missed.">        if (patch.has(&quot;experienceLevel&quot;) &amp;&amp; !Objects.equals(patch.experienceLevel(), job.getExperienceLevel())) {</span>
+<span class="fc" id="L239">            job.setExperienceLevel(patch.experienceLevel());</span>
+<span class="fc" id="L240">            changed = true;</span>
+        }
+<span class="pc bpc" id="L242" title="1 of 4 branches missed.">        if (patch.has(&quot;contractType&quot;) &amp;&amp; !Objects.equals(patch.contractType(), job.getContractType())) {</span>
+<span class="fc" id="L243">            job.setContractType(patch.contractType());</span>
+<span class="fc" id="L244">            changed = true;</span>
+        }
+<span class="fc bfc" id="L246" title="All 4 branches covered.">        if (patch.has(&quot;location&quot;) &amp;&amp; !patch.location().equals(job.getLocation())) {</span>
+<span class="fc" id="L247">            job.setLocation(patch.location());</span>
+<span class="fc" id="L248">            changed = true;</span>
+        }
+<span class="pc bpc" id="L250" title="1 of 4 branches missed.">        if (patch.has(&quot;workMode&quot;) &amp;&amp; !Objects.equals(patch.workMode(), job.getWorkMode())) {</span>
+<span class="fc" id="L251">            job.setWorkMode(patch.workMode());</span>
+<span class="fc" id="L252">            changed = true;</span>
+        }
+<span class="pc bpc" id="L254" title="1 of 4 branches missed.">        if (patch.has(&quot;salaryMin&quot;) &amp;&amp; !Objects.equals(patch.salaryMin(), job.getSalaryMin())) {</span>
+<span class="fc" id="L255">            job.setSalaryMin(patch.salaryMin());</span>
+<span class="fc" id="L256">            changed = true;</span>
+        }
+<span class="pc bpc" id="L258" title="1 of 4 branches missed.">        if (patch.has(&quot;salaryMax&quot;) &amp;&amp; !Objects.equals(patch.salaryMax(), job.getSalaryMax())) {</span>
+<span class="fc" id="L259">            job.setSalaryMax(patch.salaryMax());</span>
+<span class="fc" id="L260">            changed = true;</span>
+        }
+<span class="pc bpc" id="L262" title="1 of 4 branches missed.">        if (patch.has(&quot;applicationDeadline&quot;) &amp;&amp; !Objects.equals(patch.applicationDeadline(), job.getApplicationDeadline())) {</span>
+<span class="fc" id="L263">            job.setApplicationDeadline(patch.applicationDeadline());</span>
+<span class="fc" id="L264">            changed = true;</span>
+        }
+<span class="pc bpc" id="L266" title="1 of 4 branches missed.">        if (patch.has(&quot;positions&quot;) &amp;&amp; !Objects.equals(patch.positions(), job.getPositions())) {</span>
+<span class="fc" id="L267">            job.setPositions(patch.positions());</span>
+<span class="fc" id="L268">            changed = true;</span>
+        }
+<span class="fc" id="L270">        return changed;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

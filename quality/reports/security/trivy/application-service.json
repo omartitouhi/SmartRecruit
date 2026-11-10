@@ -1,0 +1,170 @@
+{
+  "SchemaVersion": 2,
+  "CreatedAt": "2026-11-10T10:43:52.751151808Z",
+  "ArtifactName": "smartrecruit-application-service:latest",
+  "ArtifactType": "container_image",
+  "Metadata": {
+    "OS": {
+      "Family": "alpine",
+      "Name": "3.24.4"
+    },
+    "ImageID": "sha256:b2a11e57c9c2a34c33e91b53e6e7f6c7cc852c7d62c4c589b4ce3ff59fc621c7",
+    "DiffIDs": [
+      "sha256:75f1d9657d880da5f75298e8f40e9928bb6e260c50d26f97af196845307e3064",
+      "sha256:84acb449159b20ac628a10d0ad6dea5a5b4d640ad6a692ab7c8f78f86a0d5046",
+      "sha256:4ef03777e368e6a66e2a59c99a455b1a0b51edd957531cddd32d5edf04cd9e44",
+      "sha256:f5e61faefc0df1544e4e1a1532c670293d25a9a4b4a92c7f4f814c2c307eadd7",
+      "sha256:219987be08917e94711722bcd85ffebf2d6f506eb147e45f8b24865a4414a9e2",
+      "sha256:5851955a7f776b7ba37fc4f881de272bfc87e92ae449fdb76a79fda31a8bd76c",
+      "sha256:3525111e397ca6ee033392f872565d7bd382035eefece428bdcbf69e5e9ebd82",
+      "sha256:7a051782004f8bbfa3a853d229f3ebfe9e5171b48fb42a540ed02ccb8403d7f9"
+    ],
+    "RepoTags": [
+      "smartrecruit-application-service:latest"
+    ],
+    "ImageConfig": {
+      "architecture": "amd64",
+      "created": "2026-11-10T09:32:01.623601353Z",
+      "history": [
+        {
+          "created": "2026-11-05T18:00:28Z",
+          "created_by": "ADD alpine-minirootfs-3.24.4-x86_64.tar.gz / # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-11-05T18:00:28Z",
+          "created_by": "CMD [\"/bin/sh\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-11-05T19:17:30Z",
+          "created_by": "ENV JAVA_HOME=/opt/java/openjdk",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-11-05T19:17:30Z",
+          "created_by": "ENV PATH=/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-11-05T19:17:30Z",
+          "created_by": "ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-11-05T19:17:30Z",
+          "created_by": "RUN /bin/sh -c set -eux;     apk add --no-cache         fontconfig ttf-dejavu         gnupg         ca-certificates p11-kit-trust         musl-locales musl-locales-lang         tzdata         coreutils         openssl     ;     rm -rf /var/cache/apk/* # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-11-05T19:17:30Z",
+          "created_by": "ENV JAVA_VERSION=jdk-21.0.13+9",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-11-05T19:18:47Z",
+          "created_by": "RUN /bin/sh -c set -eux;     ARCH=\"$(apk --print-arch)\";     case \"${ARCH}\" in        aarch64)          ESUM='382633eb2ba28cc5b97be1446eb1dd8d2a60a3795be0166a030e4cda338c490e';          BINARY_URL='https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jre_aarch64_alpine-linux_hotspot_21.0.13_9.tar.gz';          ;;        x86_64)          ESUM='9138eab0f7d230e17163953f015ec9ae2431dbc49069c658b7f991e45b54fb9b';          BINARY_URL='https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jre_x64_alpine-linux_hotspot_21.0.13_9.tar.gz';          ;;        *)          echo \"Unsupported arch: ${ARCH}\";          exit 1;          ;;     esac;     wget -O /tmp/openjdk.tar.gz ${BINARY_URL};     wget -O /tmp/openjdk.tar.gz.sig ${BINARY_URL}.sig;     export GNUPGHOME=\"$(mktemp -d)\";     gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 3B04D753C9050D9A5D343F39843C48A565F8F04B;     gpg --batch --verify /tmp/openjdk.tar.gz.sig /tmp/openjdk.tar.gz;     rm -rf \"${GNUPGHOME}\" /tmp/openjdk.tar.gz.sig;     echo \"${ESUM} */tmp/openjdk.tar.gz\" | sha256sum -c -;     mkdir -p \"$JAVA_HOME\";     tar --extract         --file /tmp/openjdk.tar.gz         --directory \"$JAVA_HOME\"         --strip-components 1         --no-same-owner     ;     rm -f /tmp/openjdk.tar.gz; # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-11-05T19:18:47Z",
+          "created_by": "RUN /bin/sh -c set -eux;     echo \"Verifying install ...\";     echo \"java --version\"; java --version;     echo \"Complete.\" # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-11-05T19:18:47Z",
+          "created_by": "COPY --chmod=755 entrypoint.sh /__cacert_entrypoint.sh # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-11-05T19:18:47Z",
+          "created_by": "ENTRYPOINT [\"/__cacert_entrypoint.sh\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-11-09T12:12:59Z",
+          "created_by": "WORKDIR /app",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-11-09T12:13:00Z",
+          "created_by": "RUN /bin/sh -c addgroup -S -g 10001 app \u0026\u0026 adduser -S -u 10001 -G app app # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-11-10T09:32:01Z",
+          "created_by": "COPY --chown=app:app /app/target/*.jar app.jar # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-11-10T09:32:01Z",
+          "created_by": "USER 10001:10001",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-11-10T09:32:01Z",
+          "created_by": "EXPOSE [8084/tcp]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-11-10T09:32:01Z",
+          "created_by": "ENTRYPOINT [\"java\" \"-XX:MaxRAMPercentage=75\" \"-jar\" \"app.jar\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        }
+      ],
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:75f1d9657d880da5f75298e8f40e9928bb6e260c50d26f97af196845307e3064",
+          "sha256:84acb449159b20ac628a10d0ad6dea5a5b4d640ad6a692ab7c8f78f86a0d5046",
+          "sha256:4ef03777e368e6a66e2a59c99a455b1a0b51edd957531cddd32d5edf04cd9e44",
+          "sha256:f5e61faefc0df1544e4e1a1532c670293d25a9a4b4a92c7f4f814c2c307eadd7",
+          "sha256:219987be08917e94711722bcd85ffebf2d6f506eb147e45f8b24865a4414a9e2",
+          "sha256:5851955a7f776b7ba37fc4f881de272bfc87e92ae449fdb76a79fda31a8bd76c",
+          "sha256:3525111e397ca6ee033392f872565d7bd382035eefece428bdcbf69e5e9ebd82",
+          "sha256:7a051782004f8bbfa3a853d229f3ebfe9e5171b48fb42a540ed02ccb8403d7f9"
+        ]
+      },
+      "config": {
+        "Entrypoint": [
+          "java",
+          "-XX:MaxRAMPercentage=75",
+          "-jar",
+          "app.jar"
+        ],
+        "Env": [
+          "PATH=/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "JAVA_HOME=/opt/java/openjdk",
+          "LANG=en_US.UTF-8",
+          "LANGUAGE=en_US:en",
+          "LC_ALL=en_US.UTF-8",
+          "JAVA_VERSION=jdk-21.0.13+9"
+        ],
+        "Labels": {
+          "com.docker.compose.project": "smartrecruit",
+          "com.docker.compose.service": "application-service",
+          "com.docker.compose.version": "5.6.1"
+        },
+        "User": "10001:10001",
+        "WorkingDir": "/app"
+      }
+    }
+  },
+  "Results": [
+    {
+      "Target": "Java",
+      "Class": "lang-pkgs",
+      "Type": "jar"
+    }
+  ]
+}

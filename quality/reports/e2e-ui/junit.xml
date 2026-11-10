@@ -1,0 +1,542 @@
+<testsuites id="" name="" tests="72" failures="0" skipped="18" errors="0" time="138.132396">
+<testsuite name="auth.setup.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="setup" tests="4" failures="0" skipped="0" time="16.053" errors="0">
+<testcase name="connexion candidate par le formulaire" classname="auth.setup.ts" time="8.408">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\auth.setup.ts-connexion-candidate-par-le-formulaire-setup\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="connexion recruiter par le formulaire" classname="auth.setup.ts" time="2.931">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\auth.setup.ts-connexion-recruiter-par-le-formulaire-setup\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="connexion admin par le formulaire" classname="auth.setup.ts" time="2.358">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\auth.setup.ts-connexion-admin-par-le-formulaire-setup\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="mot de passe incorrect : message clair, pas de connexion" classname="auth.setup.ts" time="2.356">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\auth.setup.ts-mot-de-passe-b06e2-sage-clair-pas-de-connexion-setup\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="a11y.spec.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="chromium" tests="6" failures="0" skipped="0" time="18.587" errors="0">
+<testcase name="connexion › accessibilité WCAG A/AA : connexion" classname="a11y.spec.ts" time="2.272">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\a11y-connexion-accessibilité-WCAG-A-AA-connexion-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="inscription › accessibilité WCAG A/AA : inscription" classname="a11y.spec.ts" time="2.397">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\a11y-inscription-accessibilité-WCAG-A-AA-inscription-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="recherche-offres › accessibilité WCAG A/AA : recherche-offres" classname="a11y.spec.ts" time="3.592">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\a11y-recherche-offres-acce-af219--WCAG-A-AA-recherche-offres-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="candidatures › accessibilité WCAG A/AA : candidatures" classname="a11y.spec.ts" time="2.765">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\a11y-candidatures-accessibilité-WCAG-A-AA-candidatures-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="tableau-de-bord-recruteur › accessibilité WCAG A/AA : tableau-de-bord-recruteur" classname="a11y.spec.ts" time="3.079">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\a11y-tableau-de-bord-recru-53929-A-tableau-de-bord-recruteur-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="journal-audit › accessibilité WCAG A/AA : journal-audit" classname="a11y.spec.ts" time="4.482">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\a11y-journal-audit-accessibilité-WCAG-A-AA-journal-audit-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="journeys.spec.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="chromium" tests="11" failures="0" skipped="0" time="20.608" errors="0">
+<testcase name="Visiteur non connecté › une page protégée renvoie vers la connexion" classname="journeys.spec.ts" time="1.242">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Visiteur-non-conn-3188e-e-renvoie-vers-la-connexion-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Visiteur non connecté › page inconnue : 404 lisible" classname="journeys.spec.ts" time="1.211">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Visiteur-non-connecté-page-inconnue-404-lisible-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › recherche d’offres filtrée par ville" classname="journeys.spec.ts" time="1.962">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-recherche-d’offres-filtrée-par-ville-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › détail d’une offre et score de compatibilité" classname="journeys.spec.ts" time="2.001">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-détail-d-9e862-e-et-score-de-compatibilité-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › suivi de ses candidatures (workflow à statuts)" classname="journeys.spec.ts" time="1.359">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-suivi-de-0a831-datures-workflow-à-statuts--chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › accès refusé à l’espace administrateur" classname="journeys.spec.ts" time="1.663">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-accès-refusé-à-l’espace-administrateur-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › tableau de bord avec indicateurs" classname="journeys.spec.ts" time="1.683">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-tableau-de-bord-avec-indicateurs-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › liste de ses offres" classname="journeys.spec.ts" time="2.149">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-liste-de-ses-offres-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › classement des candidats d’une offre" classname="journeys.spec.ts" time="3.386">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-classement-des-candidats-d’une-offre-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrateur › journal d’audit : qui a fait quoi, quand" classname="journeys.spec.ts" time="2.113">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Administrateur-jo-f2143-audit-qui-a-fait-quoi-quand-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrateur › gestion des utilisateurs" classname="journeys.spec.ts" time="1.839">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Administrateur-gestion-des-utilisateurs-chromium\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="a11y.spec.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="edge" tests="6" failures="0" skipped="6" time="13.853" errors="0">
+<testcase name="connexion › accessibilité WCAG A/AA : connexion" classname="a11y.spec.ts" time="3.68">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="inscription › accessibilité WCAG A/AA : inscription" classname="a11y.spec.ts" time="2.08">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="recherche-offres › accessibilité WCAG A/AA : recherche-offres" classname="a11y.spec.ts" time="2.848">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="candidatures › accessibilité WCAG A/AA : candidatures" classname="a11y.spec.ts" time="2.439">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="tableau-de-bord-recruteur › accessibilité WCAG A/AA : tableau-de-bord-recruteur" classname="a11y.spec.ts" time="1.413">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="journal-audit › accessibilité WCAG A/AA : journal-audit" classname="a11y.spec.ts" time="1.393">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="journeys.spec.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="edge" tests="11" failures="0" skipped="0" time="33.127" errors="0">
+<testcase name="Visiteur non connecté › une page protégée renvoie vers la connexion" classname="journeys.spec.ts" time="5.31">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Visiteur-non-conn-3188e-e-renvoie-vers-la-connexion-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Visiteur non connecté › page inconnue : 404 lisible" classname="journeys.spec.ts" time="2.961">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Visiteur-non-connecté-page-inconnue-404-lisible-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › recherche d’offres filtrée par ville" classname="journeys.spec.ts" time="3.128">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-recherche-d’offres-filtrée-par-ville-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › détail d’une offre et score de compatibilité" classname="journeys.spec.ts" time="3.543">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-détail-d-9e862-e-et-score-de-compatibilité-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › suivi de ses candidatures (workflow à statuts)" classname="journeys.spec.ts" time="2.049">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-suivi-de-0a831-datures-workflow-à-statuts--edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › accès refusé à l’espace administrateur" classname="journeys.spec.ts" time="2.276">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-accès-refusé-à-l’espace-administrateur-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › tableau de bord avec indicateurs" classname="journeys.spec.ts" time="2.836">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-tableau-de-bord-avec-indicateurs-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › liste de ses offres" classname="journeys.spec.ts" time="3.476">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-liste-de-ses-offres-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › classement des candidats d’une offre" classname="journeys.spec.ts" time="2.356">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-classement-des-candidats-d’une-offre-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrateur › journal d’audit : qui a fait quoi, quand" classname="journeys.spec.ts" time="2.892">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Administrateur-jo-f2143-audit-qui-a-fait-quoi-quand-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrateur › gestion des utilisateurs" classname="journeys.spec.ts" time="2.3">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Administrateur-gestion-des-utilisateurs-edge\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="a11y.spec.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="webkit" tests="6" failures="0" skipped="6" time="14.548" errors="0">
+<testcase name="connexion › accessibilité WCAG A/AA : connexion" classname="a11y.spec.ts" time="2.866">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="inscription › accessibilité WCAG A/AA : inscription" classname="a11y.spec.ts" time="1.76">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="recherche-offres › accessibilité WCAG A/AA : recherche-offres" classname="a11y.spec.ts" time="2.862">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="candidatures › accessibilité WCAG A/AA : candidatures" classname="a11y.spec.ts" time="2.699">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="tableau-de-bord-recruteur › accessibilité WCAG A/AA : tableau-de-bord-recruteur" classname="a11y.spec.ts" time="2.18">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="journal-audit › accessibilité WCAG A/AA : journal-audit" classname="a11y.spec.ts" time="2.181">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="journeys.spec.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="webkit" tests="11" failures="0" skipped="0" time="50.646" errors="0">
+<testcase name="Visiteur non connecté › une page protégée renvoie vers la connexion" classname="journeys.spec.ts" time="3.266">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Visiteur-non-conn-3188e-e-renvoie-vers-la-connexion-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Visiteur non connecté › page inconnue : 404 lisible" classname="journeys.spec.ts" time="3.013">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Visiteur-non-connecté-page-inconnue-404-lisible-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › recherche d’offres filtrée par ville" classname="journeys.spec.ts" time="5.634">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-recherche-d’offres-filtrée-par-ville-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › détail d’une offre et score de compatibilité" classname="journeys.spec.ts" time="8.896">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-détail-d-9e862-e-et-score-de-compatibilité-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › suivi de ses candidatures (workflow à statuts)" classname="journeys.spec.ts" time="5.668">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-suivi-de-0a831-datures-workflow-à-statuts--webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › accès refusé à l’espace administrateur" classname="journeys.spec.ts" time="4.387">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-accès-refusé-à-l’espace-administrateur-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › tableau de bord avec indicateurs" classname="journeys.spec.ts" time="4.106">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-tableau-de-bord-avec-indicateurs-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › liste de ses offres" classname="journeys.spec.ts" time="3.737">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-liste-de-ses-offres-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › classement des candidats d’une offre" classname="journeys.spec.ts" time="4.592">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-classement-des-candidats-d’une-offre-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrateur › journal d’audit : qui a fait quoi, quand" classname="journeys.spec.ts" time="3.31">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Administrateur-jo-f2143-audit-qui-a-fait-quoi-quand-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrateur › gestion des utilisateurs" classname="journeys.spec.ts" time="4.037">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Administrateur-gestion-des-utilisateurs-webkit\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="a11y.spec.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="mobile-chrome" tests="6" failures="0" skipped="6" time="5.579" errors="0">
+<testcase name="connexion › accessibilité WCAG A/AA : connexion" classname="a11y.spec.ts" time="1.16">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="inscription › accessibilité WCAG A/AA : inscription" classname="a11y.spec.ts" time="0.729">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="recherche-offres › accessibilité WCAG A/AA : recherche-offres" classname="a11y.spec.ts" time="1.041">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="candidatures › accessibilité WCAG A/AA : candidatures" classname="a11y.spec.ts" time="0.861">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="tableau-de-bord-recruteur › accessibilité WCAG A/AA : tableau-de-bord-recruteur" classname="a11y.spec.ts" time="0.866">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="journal-audit › accessibilité WCAG A/AA : journal-audit" classname="a11y.spec.ts" time="0.922">
+<properties>
+<property name="skip" value="audit axe exécuté une fois (chromium)">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="journeys.spec.ts" timestamp="2026-11-10T09:42:14.864Z" hostname="mobile-chrome" tests="11" failures="0" skipped="0" time="25.834" errors="0">
+<testcase name="Visiteur non connecté › une page protégée renvoie vers la connexion" classname="journeys.spec.ts" time="1.83">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Visiteur-non-conn-3188e-e-renvoie-vers-la-connexion-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Visiteur non connecté › page inconnue : 404 lisible" classname="journeys.spec.ts" time="1.874">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Visiteur-non-connecté-page-inconnue-404-lisible-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › recherche d’offres filtrée par ville" classname="journeys.spec.ts" time="3.053">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-recherche-d’offres-filtrée-par-ville-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › détail d’une offre et score de compatibilité" classname="journeys.spec.ts" time="3.092">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-détail-d-9e862-e-et-score-de-compatibilité-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › suivi de ses candidatures (workflow à statuts)" classname="journeys.spec.ts" time="2.164">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-suivi-de-0a831-datures-workflow-à-statuts--mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Candidat › accès refusé à l’espace administrateur" classname="journeys.spec.ts" time="2.334">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Candidat-accès-refusé-à-l’espace-administrateur-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › tableau de bord avec indicateurs" classname="journeys.spec.ts" time="2.328">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-tableau-de-bord-avec-indicateurs-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › liste de ses offres" classname="journeys.spec.ts" time="2.435">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-liste-de-ses-offres-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Recruteur › classement des candidats d’une offre" classname="journeys.spec.ts" time="2.348">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Recruteur-classement-des-candidats-d’une-offre-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrateur › journal d’audit : qui a fait quoi, quand" classname="journeys.spec.ts" time="2.019">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Administrateur-jo-f2143-audit-qui-a-fait-quoi-quand-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrateur › gestion des utilisateurs" classname="journeys.spec.ts" time="2.357">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts\journeys-Administrateur-gestion-des-utilisateurs-mobile-chrome\test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

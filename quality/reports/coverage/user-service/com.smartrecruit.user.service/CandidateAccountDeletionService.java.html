@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CandidateAccountDeletionService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-service</a> &gt; <a href="index.source.html" class="el_package">com.smartrecruit.user.service</a> &gt; <span class="el_source">CandidateAccountDeletionService.java</span></div><h1>CandidateAccountDeletionService.java</h1><pre class="source lang-java linenums">package com.smartrecruit.user.service;
+
+import com.smartrecruit.user.dto.CandidateProfileResponse;
+import com.smartrecruit.user.exception.ApiException;
+import com.smartrecruit.user.gdpr.ErasureTriggers;
+import com.smartrecruit.user.gdpr.GdprErasureProperties;
+import com.smartrecruit.user.model.DeletedCandidate;
+import com.smartrecruit.user.repository.CandidateProfileRepository;
+import com.smartrecruit.user.repository.DeletedCandidateRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * Right to be forgotten (BE-USER-04): the candidate's personal data held by user-service — profile
+ * and CV file — is removed immediately; only a tombstone without personal data is kept. The
+ * erasure is then propagated to the other services (BE-SEC-02, {@code PersonalDataErasureProcessor}).
+ */
+<span class="fc" id="L26">@Slf4j</span>
+@Service
+@RequiredArgsConstructor
+public class CandidateAccountDeletionService {
+
+    private final CandidateProfileRepository profileRepository;
+    private final DeletedCandidateRepository deletedCandidateRepository;
+    private final CandidateCvService cvService;
+    private final Clock clock;
+    private final GdprErasureProperties erasureProperties;
+    private final ApplicationEventPublisher eventPublisher;
+
+    /** Idempotent: deleting an already deleted account does nothing more. */
+    @Transactional
+    public void deleteAccount(UUID accountId) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (deletedCandidateRepository.existsById(accountId)) {</span>
+<span class="fc" id="L42">            return;</span>
+        }
+<span class="fc" id="L44">        profileRepository.findById(accountId).ifPresent(profile -&gt; {</span>
+<span class="fc" id="L45">            cvService.deleteFileAfterCommit(profile.getCvStorageKey());</span>
+<span class="fc" id="L46">            profileRepository.delete(profile);</span>
+<span class="fc" id="L47">        });</span>
+<span class="fc" id="L48">        Instant now = clock.instant();</span>
+<span class="fc" id="L49">        deletedCandidateRepository.save(DeletedCandidate.builder()</span>
+<span class="fc" id="L50">                .id(accountId)</span>
+<span class="fc" id="L51">                .deletedAt(now)</span>
+<span class="fc" id="L52">                .eraseDeadline(now.plus(erasureProperties.deadline()))</span>
+<span class="fc" id="L53">                .build());</span>
+        // Propagation to auth-service and ai-service (BE-SEC-02), once this transaction is committed.
+<span class="fc" id="L55">        eventPublisher.publishEvent(new ErasureTriggers.AccountDeletedEvent(accountId));</span>
+<span class="fc" id="L56">        log.info(&quot;Données personnelles du candidat {} supprimées de user-service (droit à l'oubli)&quot;, accountId);</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     * Candidate profile as seen by a recruiter or an admin, e.g. from an application.
+     * A deleted account is shown as &quot;compte supprimé&quot; without any personal data.
+     */
+    @Transactional(readOnly = true)
+    public CandidateProfileResponse viewCandidate(UUID candidateId) {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (deletedCandidateRepository.existsById(candidateId)) {</span>
+<span class="fc" id="L66">            return CandidateProfileResponse.deletedAccount(candidateId);</span>
+        }
+<span class="fc" id="L68">        return profileRepository.findById(candidateId)</span>
+<span class="fc" id="L69">                .map(CandidateProfileResponse::from)</span>
+<span class="fc" id="L70">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Candidat introuvable&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
