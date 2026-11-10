@@ -3,7 +3,7 @@
 | Livrable (cahier des charges §8) | Document |
 |---|---|
 | Code source versionné | ce dépôt Git (historique complet) |
-| Rapport de conception | [RAPPORT_CONCEPTION.md](RAPPORT_CONCEPTION.md) |
+| Rapport de conception | [RAPPORT_CONCEPTION.md](RAPPORT_CONCEPTION.md), diagrammes Mermaid : [DIAGRAMMES.md](DIAGRAMMES.md) |
 | Matrice de traçabilité | [MATRICE_TRACABILITE.md](MATRICE_TRACABILITE.md) |
 | Jeux de tests exécutables + rapports générés | [`quality/`](../../quality/) et `quality/reports/` |
 | Rapport de conformité ISO 25010 | [RAPPORT_CONFORMITE_ISO25010.md](RAPPORT_CONFORMITE_ISO25010.md) |
