@@ -67,6 +67,25 @@ function Jobs({ companyName }: { companyName: string }) {
     }
   }
 
+  async function remove(jobId: string, title: string) {
+    if (!window.confirm(`Supprimer définitivement le brouillon « ${title} » ?`)) return;
+    setBusy(`delete:${jobId}`);
+    setError(null);
+    try {
+      await jobsApi.remove(jobId);
+      jobs.setData((page) => ({
+        ...(page as NonNullable<typeof page>),
+        totalElements: (page?.totalElements ?? 1) - 1,
+        content: (page?.content ?? []).filter((j) => j.id !== jobId),
+      }));
+      notify(`Brouillon « ${title} » supprimé.`);
+    } catch (err) {
+      setError(toUiError(err).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function changeStatus(jobId: string, status: JobStatus, done: string) {
     setBusy(jobId);
     setError(null);
@@ -199,6 +218,17 @@ function Jobs({ companyName }: { companyName: string }) {
                             onClick={() => duplicate(job.id)}
                           >
                             Dupliquer
+                          </Button>
+                        )}
+                        {job.status === 'DRAFT' && (
+                          <Button
+                            variant="ghost"
+                            loading={busy === `delete:${job.id}`}
+                            disabled={busy !== null && busy !== `delete:${job.id}`}
+                            aria-label={`Supprimer le brouillon ${job.title}`}
+                            onClick={() => remove(job.id, job.title)}
+                          >
+                            Supprimer
                           </Button>
                         )}
                       </td>

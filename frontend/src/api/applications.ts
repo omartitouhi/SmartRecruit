@@ -38,6 +38,8 @@ export interface ApplicationsApi {
   /** Notes d'équipe, de la plus ancienne à la plus récente (recruteur membre ou admin). */
   notes(applicationId: string): Promise<ApplicationNote[]>;
   addNote(applicationId: string, note: NoteRequest): Promise<ApplicationNote>;
+  /** Remplace le contenu et l'évaluation ; seulement par l'auteur de la note (403 sinon). */
+  updateNote(applicationId: string, noteId: string, note: NoteRequest): Promise<ApplicationNote>;
   /** Seulement par l'auteur de la note (403 sinon). */
   deleteNote(applicationId: string, noteId: string): Promise<void>;
   /** Le candidat retire sa candidature (204) ; seulement depuis RECEIVED ou IN_REVIEW, sinon 409. */
@@ -80,6 +82,9 @@ export const httpApplicationsApi: ApplicationsApi = {
   },
   async addNote(applicationId, note) {
     return (await apiClient.post<ApplicationNote>(`/applications/${applicationId}/notes`, note)).data;
+  },
+  async updateNote(applicationId, noteId, note) {
+    return (await apiClient.put<ApplicationNote>(`/applications/${applicationId}/notes/${noteId}`, note)).data;
   },
   async deleteNote(applicationId, noteId) {
     await apiClient.delete(`/applications/${applicationId}/notes/${noteId}`);

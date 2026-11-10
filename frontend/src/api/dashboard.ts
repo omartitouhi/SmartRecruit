@@ -1,3 +1,4 @@
+import type { StatsPeriod } from '../lib/period';
 import type {
   Account,
   AccountStatus,
@@ -29,10 +30,10 @@ export interface AuditFilters {
 }
 
 export interface DashboardApi {
-  /** ADMIN. */
-  globalStats(): Promise<GlobalStats>;
-  /** Recruteur membre de l'entreprise, ou ADMIN ; 403 sinon. */
-  companyStats(companyId: string): Promise<CompanyStats>;
+  /** ADMIN. `period` filtre les chiffres des candidatures sur leur date de dépôt. */
+  globalStats(period?: StatsPeriod): Promise<GlobalStats>;
+  /** Recruteur membre de l'entreprise, ou ADMIN ; 403 sinon ; 400 si `from` > `to`. */
+  companyStats(companyId: string, period?: StatsPeriod): Promise<CompanyStats>;
   users(filters?: UserFilters): Promise<PaginatedResponse<Account>>;
   /** Un admin ne peut pas se désactiver lui-même (400). */
   setUserStatus(accountId: string, status: Extract<AccountStatus, 'ACTIVE' | 'DISABLED'>): Promise<Account>;
@@ -47,11 +48,11 @@ const clean = (params: object) =>
 
 // dashboard-service — API_CONTRACTS.md §5.
 export const httpDashboardApi: DashboardApi = {
-  async globalStats() {
-    return (await apiClient.get<GlobalStats>('/dashboard/stats/global')).data;
+  async globalStats(period = {}) {
+    return (await apiClient.get<GlobalStats>('/dashboard/stats/global', { params: clean(period) })).data;
   },
-  async companyStats(companyId) {
-    return (await apiClient.get<CompanyStats>(`/dashboard/stats/company/${companyId}`)).data;
+  async companyStats(companyId, period = {}) {
+    return (await apiClient.get<CompanyStats>(`/dashboard/stats/company/${companyId}`, { params: clean(period) })).data;
   },
   async users(filters = {}) {
     return (await apiClient.get<PaginatedResponse<Account>>('/dashboard/admin/users', { params: clean(filters) })).data;

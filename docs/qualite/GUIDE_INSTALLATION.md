@@ -24,12 +24,15 @@ cd SmartRecruit
 cp .env.example .env
 docker compose up -d --build
 python backend/seed/seed_demo.py
+python backend/seed/seed_volume.py
 ```
 
 - Interface : http://localhost:5173 — API : http://localhost:8080 — IA (Swagger) : http://localhost:8000/docs
 - Comptes de démonstration (mot de passe `Motdepasse123`) : `candidat@smartrecruit.test`,
   `recruteur@smartrecruit.test` ; administrateur : `ADMIN_EMAIL` / `ADMIN_PASSWORD` du fichier `.env`.
 - Le script de données de démo prend environ 10 minutes (analyse de 19 CV) et peut être relancé sans doublon.
+- `seed_volume.py` ajoute 3 000 offres publiées (environ 2 minutes ; `VOLUME=10000` pour plus) : c'est le volume sur
+  lequel portent la recherche et le test de charge. Lui aussi peut être relancé sans doublon.
 - Repartir de zéro : `docker compose down -v`.
 
 ## 3. Exécuter les tests

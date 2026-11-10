@@ -27,6 +27,14 @@ test.describe('Candidat', () => {
     await expect(page.locator('main a[href^="/candidate/jobs/"]').first()).toBeVisible();
   });
 
+  test('recherche dans un fort volume d’offres (pagination)', async ({ page }) => {
+    const search = page.waitForResponse((r) => r.url().includes('/api/v1/jobs?') && r.request().method() === 'GET');
+    await page.goto('/candidate/jobs');
+    const body = await (await search).json();
+    expect(body.totalElements).toBeGreaterThan(1000);
+    await expect(page.locator('main a[href^="/candidate/jobs/"]').first()).toBeVisible();
+  });
+
   test('détail d’une offre et score de compatibilité', async ({ page }) => {
     await page.goto('/candidate/jobs');
     const firstJob = page.locator('main a[href^="/candidate/jobs/"]').first();
@@ -52,6 +60,15 @@ test.describe('Recruteur', () => {
   test('tableau de bord avec indicateurs', async ({ page }) => {
     await page.goto('/recruiter');
     await expect(page.getByRole('heading', { name: 'Acme Tech', level: 1 })).toBeVisible();
+  });
+
+  test('tableau de bord filtré par période', async ({ page }) => {
+    await page.goto('/recruiter');
+    await expect(page.getByText('Candidatures reçues')).toBeVisible();
+    const statsCall = page.waitForResponse((r) => r.url().includes('/dashboard/stats/company/') && r.url().includes('from='));
+    await page.getByLabel('Période').selectOption('30');
+    expect((await statsCall).status()).toBe(200);
+    await expect(page.getByText('Candidatures reçues')).toBeVisible();
   });
 
   test('liste de ses offres', async ({ page }) => {

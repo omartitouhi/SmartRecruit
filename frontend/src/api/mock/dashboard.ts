@@ -1,5 +1,6 @@
 import { HttpError } from '../../lib/errors';
 import { FUNNEL_STATUSES, type Account, type Application, type ApplicationsByStatus, type Job, type PaginatedResponse, type Role } from '../../types';
+import type { StatsPeriod } from '../../lib/period';
 import type { DashboardApi } from '../dashboard';
 import { audit, clone, closeExpiredJobs, db, delay, findJob, now, recruiterCompany, requireRole, save, today } from './store';
 
@@ -49,32 +50,38 @@ function closingSoon(jobs: Job[]) {
   return jobs.filter((j) => j.status === 'PUBLISHED' && j.applicationDeadline && j.applicationDeadline >= from && j.applicationDeadline <= to).length;
 }
 
+/** Candidatures déposées dans la période (dates incluses). */
+function inPeriod(applications: Application[], { from, to }: StatsPeriod = {}) {
+  return applications.filter((a) => (!from || a.appliedAt.slice(0, 10) >= from) && (!to || a.appliedAt.slice(0, 10) <= to));
+}
+
 export const mockDashboardApi: DashboardApi = {
-  async globalStats() {
+  async globalStats(period) {
     await delay();
     requireRole('ADMIN');
     closeExpiredJobs();
     const users = db.accounts.filter((a) => a.status !== 'DELETED');
     const count = (role: Role) => users.filter((a) => a.role === role).length;
+    const applications = inPeriod(db.applications, period);
     return {
       activeJobs: db.jobs.filter((j) => j.status === 'PUBLISHED').length,
-      totalApplications: db.applications.length,
+      totalApplications: applications.length,
       totalUsers: users.length,
       usersByRole: { CANDIDATE: count('CANDIDATE'), RECRUITER: count('RECRUITER'), ADMIN: count('ADMIN') },
-      averageMatchScore: average(db.applications.flatMap((a) => (a.matchScore ? [a.matchScore.score] : []))),
-      applicationsByStatus: byStatus(db.applications),
-      averageDecisionDays: averageDecisionDays(db.applications),
+      averageMatchScore: average(applications.flatMap((a) => (a.matchScore ? [a.matchScore.score] : []))),
+      applicationsByStatus: byStatus(applications),
+      averageDecisionDays: averageDecisionDays(applications),
       jobsClosingSoon: closingSoon(db.jobs),
     };
   },
 
-  async companyStats(companyId) {
+  async companyStats(companyId, period) {
     await delay();
     const account = requireRole('RECRUITER', 'ADMIN');
     if (account.role === 'RECRUITER' && recruiterCompany(account.id)?.id !== companyId) throw new HttpError(403);
     closeExpiredJobs();
     const jobIds = new Set(db.jobs.filter((j) => j.companyId === companyId).map((j) => j.id));
-    const received = db.applications.filter((a) => jobIds.has(a.jobId) && a.status !== 'WITHDRAWN');
+    const received = inPeriod(db.applications, period).filter((a) => jobIds.has(a.jobId) && a.status !== 'WITHDRAWN');
     const accepted = received.filter((a) => a.status === 'ACCEPTED').length;
     const decided = accepted + received.filter((a) => a.status === 'REJECTED').length;
     return {

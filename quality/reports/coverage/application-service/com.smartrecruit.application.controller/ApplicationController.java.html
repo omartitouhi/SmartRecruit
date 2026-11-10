@@ -122,12 +122,19 @@ public class ApplicationController {
 <span class="fc" id="L122">        return NoteResponse.from(noteService.add(user.id(), id, request));</span>
     }
 
+    @PutMapping(&quot;/{id}/notes/{noteId}&quot;)
+    @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
+    public NoteResponse updateNote(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
+                                   @PathVariable UUID noteId, @Valid @RequestBody NoteRequest request) {
+<span class="fc" id="L129">        return NoteResponse.from(noteService.update(user.id(), id, noteId, request));</span>
+    }
+
     @DeleteMapping(&quot;/{id}/notes/{noteId}&quot;)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
     public void deleteNote(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
                            @PathVariable UUID noteId) {
-<span class="fc" id="L130">        noteService.delete(user.id(), id, noteId);</span>
-<span class="fc" id="L131">    }</span>
+<span class="fc" id="L137">        noteService.delete(user.id(), id, noteId);</span>
+<span class="fc" id="L138">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

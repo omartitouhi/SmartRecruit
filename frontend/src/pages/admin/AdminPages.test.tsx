@@ -57,6 +57,20 @@ describe('admin dashboard', () => {
     expect(screen.getByRole('link', { name: 'Utilisateurs' })).toHaveAttribute('href', '/admin/users');
   });
 
+  it('reloads the figures for the chosen period', async () => {
+    const user = userEvent.setup();
+    dashboard.globalStats.mockResolvedValue({
+      activeJobs: 1, totalApplications: 3, totalUsers: 2, usersByRole: { CANDIDATE: 1, RECRUITER: 0, ADMIN: 1 },
+      averageMatchScore: null, applicationsByStatus: null, averageDecisionDays: null, jobsClosingSoon: null,
+    });
+    renderAt(<AdminDashboardPage />, { route: '/admin', account: admin });
+    await screen.findByText('Offres publiées', { selector: '.tile__label' });
+    expect(dashboard.globalStats).toHaveBeenCalledWith({});
+    await user.selectOptions(screen.getByLabelText('Période'), '7');
+    const from = new Date(Date.now() - 6 * 86_400_000).toISOString().slice(0, 10);
+    await waitFor(() => expect(dashboard.globalStats).toHaveBeenLastCalledWith({ from }));
+  });
+
   it('shows a dash for an unavailable average and an error with retry when the stats fail', async () => {
     dashboard.globalStats.mockResolvedValueOnce({
       activeJobs: 0,

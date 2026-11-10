@@ -67,6 +67,8 @@ export interface JobsApi {
   updateStatus(jobId: string, status: JobStatus): Promise<Job>;
   /** Copie en brouillon (« (copie) »), sans date limite ; 409 si l'offre est MODERATED. */
   duplicate(jobId: string): Promise<Job>;
+  /** Supprime un brouillon de son entreprise ; 409 pour une offre déjà publiée (la clôturer). */
+  remove(jobId: string): Promise<void>;
   /** Candidat : ajoute l'offre (PUBLISHED) à ses favoris, idempotent ; 404 sinon, 409 au-delà de 200. */
   save(jobId: string): Promise<void>;
   /** Candidat : retire l'offre de ses favoris, idempotent. */
@@ -105,6 +107,9 @@ export const httpJobsApi: JobsApi = {
   // EXT-JOB-01 / EXT-SAVED-01 — API_CONTRACTS.md §7.1, §7.2.
   async duplicate(jobId) {
     return (await apiClient.post<Job>(`/jobs/${jobId}/duplicate`)).data;
+  },
+  async remove(jobId) {
+    await apiClient.delete(`/jobs/${jobId}`);
   },
   async save(jobId) {
     await apiClient.put(`/jobs/${jobId}/saved`);

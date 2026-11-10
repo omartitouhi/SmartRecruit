@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,7 +68,7 @@ public class JobController {
             @RequestParam(required = false) @Min(0) Integer minSalary,
             @RequestParam(defaultValue = &quot;0&quot;) @Min(0) int page,
             @RequestParam(defaultValue = &quot;20&quot;) @Min(1) @Max(50) int size) {
-<span class="fc" id="L70">        return queryService.search(user,</span>
+<span class="fc" id="L71">        return queryService.search(user,</span>
                 new JobSearchCriteria(keyword, location, skills, contractType, experienceLevel, companyId, status,
                         workMode, minSalary),
                 page, size);
@@ -76,7 +77,7 @@ public class JobController {
     /** One offer; unpublished ones only for their company and admins — BE-JOB-05. */
     @GetMapping(&quot;/{id}&quot;)
     public JobSummaryResponse get(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
-<span class="fc" id="L79">        return queryService.get(user, id);</span>
+<span class="fc" id="L80">        return queryService.get(user, id);</span>
     }
 
     /** Publishes an offer for the recruiter's company — BE-JOB-01. */
@@ -85,7 +86,7 @@ public class JobController {
     @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
     public JobResponse publish(@AuthenticationPrincipal AuthenticatedUser user,
                                @Valid @RequestBody JobCreateRequest request) {
-<span class="fc" id="L88">        return jobService.publish(user.id(), request);</span>
+<span class="fc" id="L89">        return jobService.publish(user.id(), request);</span>
     }
 
     /** Partial update (JSON Merge Patch) of an offer of the recruiter's company — BE-JOB-02. */
@@ -93,15 +94,23 @@ public class JobController {
     @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
     public JobResponse update(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
                               @RequestBody JsonNode body) {
-<span class="fc" id="L96">        return jobService.update(user.id(), id, patchParser.parse(body));</span>
+<span class="fc" id="L97">        return jobService.update(user.id(), id, patchParser.parse(body));</span>
     }
+
+    /** Deletes a draft offer of the recruiter's company (other statuses: 409, close them instead). */
+    @DeleteMapping(&quot;/{id}&quot;)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
+    public void delete(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
+<span class="fc" id="L105">        jobService.delete(user.id(), id);</span>
+<span class="fc" id="L106">    }</span>
 
     /** Copies an offer of the recruiter's company as a new draft — EXT-JOB-01. */
     @PostMapping(&quot;/{id}/duplicate&quot;)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
     public JobResponse duplicate(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
-<span class="fc" id="L104">        return jobService.duplicate(user.id(), id);</span>
+<span class="fc" id="L113">        return jobService.duplicate(user.id(), id);</span>
     }
 
     /** Publishes, closes or reopens an offer — BE-JOB-03. */
@@ -109,7 +118,7 @@ public class JobController {
     @PreAuthorize(&quot;hasRole('RECRUITER')&quot;)
     public JobResponse changeStatus(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id,
                                     @Valid @RequestBody JobStatusRequest request) {
-<span class="fc" id="L112">        return jobService.changeStatus(user.id(), id, request.status());</span>
+<span class="fc" id="L121">        return jobService.changeStatus(user.id(), id, request.status());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

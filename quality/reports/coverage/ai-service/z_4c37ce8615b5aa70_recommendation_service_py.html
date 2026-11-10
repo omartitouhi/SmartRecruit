@@ -5,7 +5,7 @@
     <title>Coverage for app\services\recommendation_service.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
     <link rel="stylesheet" href="style_cb_0853b3de.css" type="text/css">
-    <script src="coverage_html_cb_c74880ea.js" defer></script>
+    <script src="coverage_html_cb_c6c441fc.js" defer></script>
 </head>
 <body class="pyfile">
 <header>
@@ -66,8 +66,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_4c37ce8615b5aa70_rules_cv_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.17.2">coverage.py v7.17.2</a>,
-            created at 2026-11-09 18:15 +0100
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
+            created at 2026-11-10 17:17 +0100
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -101,12 +101,12 @@
     <p class="pln"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t"><span class="com"># pour borner la taille du prompt (et donc la latence et le co&#251;t).</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="nam">MAX_CANDIDATE_JOBS</span> <span class="op">=</span> <span class="num">40</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t"><span class="nam">SYSTEM_PROMPT</span> <span class="op">=</span> <span class="fst">f&quot;&quot;&quot;</span><span class="fst">Tu recommandes des offres d&#x27;emploi &#224; un candidat. Tu r&#233;ponds UNIQUEMENT par un objet JSON :</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t"><span class="fst">{{</span><span class="fst">&quot;recommendations&quot;: [{{</span><span class="fst">&quot;jobId&quot;: string, &quot;score&quot;: number}}</span><span class="fst">]}}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t"><span class="fst">- Classe les offres de la plus &#224; la moins pertinente pour le profil (comp&#233;tences, en tenant compte</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t"><span class="fst">  des &#233;quivalences et technologies proches, exp&#233;rience, formation). Au plus </span><span class="op">{</span><span class="nam">MAX_RECOMMENDATIONS</span><span class="op">}</span><span class="fst"> offres.</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t24" href="#t24">24</a></span><span class="t"><span class="fst">- jobId : recopie exactement un identifiant de la liste fournie ; n&#x27;en invente aucun.</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t25" href="#t25">25</a></span><span class="t"><span class="fst">- score : pertinence entre 0 et 100. N&#x27;inclus pas les offres sans rapport avec le profil.</span><span class="fst">&quot;&quot;&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t"><span class="nam">SYSTEM_PROMPT</span> <span class="op">=</span> <span class="str">f&quot;&quot;&quot;Tu recommandes des offres d&#x27;emploi &#224; un candidat. Tu r&#233;ponds UNIQUEMENT par un objet JSON :</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t"><span class="str">{{&quot;recommendations&quot;: [{{&quot;jobId&quot;: string, &quot;score&quot;: number}}]}}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t"><span class="str">- Classe les offres de la plus &#224; la moins pertinente pour le profil (comp&#233;tences, en tenant compte</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t"><span class="str">  des &#233;quivalences et technologies proches, exp&#233;rience, formation). Au plus {MAX_RECOMMENDATIONS} offres.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t24" href="#t24">24</a></span><span class="t"><span class="str">- jobId : recopie exactement un identifiant de la liste fournie ; n&#x27;en invente aucun.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t25" href="#t25">25</a></span><span class="t"><span class="str">- score : pertinence entre 0 et 100. N&#x27;inclus pas les offres sans rapport avec le profil.&quot;&quot;&quot;</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t26" href="#t26">26</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t27" href="#t27">27</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t28" href="#t28">28</a></span><span class="t"><span class="key">class</span> <span class="nam">_LLMRecommendation</span><span class="op">(</span><span class="nam">BaseModel</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -148,8 +148,8 @@
     <p class="run run2"><span class="n"><a id="t64" href="#t64">64</a></span><span class="t">        <span class="key">for</span> <span class="nam">job</span> <span class="key">in</span> <span class="nam">jobs</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t65" href="#t65">65</a></span><span class="t">    <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t66" href="#t66">66</a></span><span class="t">    <span class="key">return</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t67" href="#t67">67</a></span><span class="t">        <span class="fst">f&quot;</span><span class="fst">Profil du candidat (JSON) :\n</span><span class="op">{</span><span class="nam">json</span><span class="op">.</span><span class="nam">dumps</span><span class="op">(</span><span class="nam">profile</span><span class="op">,</span> <span class="nam">ensure_ascii</span><span class="op">=</span><span class="key">False</span><span class="op">)</span><span class="op">}</span><span class="fst">\n\n</span><span class="fst">&quot;</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t">        <span class="fst">f&quot;</span><span class="fst">Offres publi&#233;es (JSON) :\n</span><span class="op">{</span><span class="nam">json</span><span class="op">.</span><span class="nam">dumps</span><span class="op">(</span><span class="nam">offers</span><span class="op">,</span> <span class="nam">ensure_ascii</span><span class="op">=</span><span class="key">False</span><span class="op">)</span><span class="op">}</span><span class="fst">&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t67" href="#t67">67</a></span><span class="t">        <span class="str">f&quot;Profil du candidat (JSON) :\n{json.dumps(profile, ensure_ascii=False)}\n\n&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t">        <span class="str">f&quot;Offres publi&#233;es (JSON) :\n{json.dumps(offers, ensure_ascii=False)}&quot;</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t69" href="#t69">69</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -188,8 +188,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_4c37ce8615b5aa70_rules_cv_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.17.2">coverage.py v7.17.2</a>,
-            created at 2026-11-09 18:15 +0100
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
+            created at 2026-11-10 17:17 +0100
         </p>
     </div>
 </footer>

@@ -86,6 +86,9 @@
   OK   taux d'acceptation calcule
   OK   stats d'une autre entreprise refusees (403)
   OK   stats entreprise par un admin (200)
+  OK   filtre par periode : aucune candidature en 2000
+  OK   filtre par periode incoherent (400)
+  OK   stats globales filtrees par periode
   OK   liste des utilisateurs filtree par role
   OK   liste des utilisateurs refusee aux non-admins (403)
   OK   desactivation d'un utilisateur (200)
@@ -121,6 +124,10 @@
   OK   mise en favori (204)
   OK   mise en favori idempotente (204)
   OK   favori sur un brouillon (404)
+  OK   suppression d'une offre publiee refusee (409)
+  OK   suppression du brouillon par une autre entreprise (403)
+  OK   suppression d'un brouillon (204)
+  OK   brouillon supprime introuvable (404)
   OK   favori par un recruteur (403)
   OK   liste des favoris
   OK   indicateur saved sur le detail (candidat)
@@ -148,6 +155,8 @@
   OK   notes refusees au candidat (403)
   OK   notes refusees a une autre entreprise (403)
   OK   compteur et moyenne des notes cote recruteur
+  OK   modification d'une note par son auteur (200)
+  OK   modification de la note d'un collegue refusee (403)
   OK   suppression d'une note par son auteur (204)
   OK   refus motive (200)
 
@@ -166,4 +175,4 @@
   OK   IA : lecture du CV d'un autre candidat (403)
 
 ============================================================
-RESULTAT : 146 OK, 0 echecs
+RESULTAT : 155 OK, 0 echecs

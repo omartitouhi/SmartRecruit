@@ -72,11 +72,12 @@
        3      1     27      2       3 ApplicationController::withdraw@106-108@backend/application-service/src/main\java\com\smartrecruit\application\controller\ApplicationController.java
        3      1     39      2       3 ApplicationController::notes@113-115@backend/application-service/src/main\java\com\smartrecruit\application\controller\ApplicationController.java
        4      1     42      3       4 ApplicationController::addNote@120-123@backend/application-service/src/main\java\com\smartrecruit\application\controller\ApplicationController.java
-       4      1     34      3       4 ApplicationController::deleteNote@128-131@backend/application-service/src/main\java\com\smartrecruit\application\controller\ApplicationController.java
-       9      2     94      1       9 InternalApplicationController::counts@47-55@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
-      11      2    109      1      11 InternalApplicationController::stats@63-73@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
-       8      2     68      1       8 InternalApplicationController::averageDecisionDays@76-83@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
-      11      2     95      1      11 InternalApplicationController::decisionDays@85-95@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
+       4      1     49      4       4 ApplicationController::updateNote@127-130@backend/application-service/src/main\java\com\smartrecruit\application\controller\ApplicationController.java
+       4      1     34      3       4 ApplicationController::deleteNote@135-138@backend/application-service/src/main\java\com\smartrecruit\application\controller\ApplicationController.java
+       9      2     94      1       9 InternalApplicationController::counts@50-58@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
+      15      4    216      3      15 InternalApplicationController::stats@71-85@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
+       8      2     68      1       8 InternalApplicationController::averageDecisionDays@88-95@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
+      11      2     95      1      11 InternalApplicationController::decisionDays@97-107@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
        7      2     62      1       7 InternalCandidateDataController::erase@35-41@backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalCandidateDataController.java
        7      1     31      0       7 PingController::ping@15-21@backend/application-service/src/main\java\com\smartrecruit\application\controller\PingController.java
        3      1     17      1       3 ApplicationResponse::from@40-42@backend/application-service/src/main\java\com\smartrecruit\application\dto\ApplicationResponse.java
@@ -103,9 +104,11 @@
        3      1     24      1       3 SecurityErrorHandler::escape@45-47@backend/application-service/src/main\java\com\smartrecruit\application\security\SecurityErrorHandler.java
        7      2     61      2       7 ApplicationNoteService::list@33-39@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
       12      1    102      3      12 ApplicationNoteService::add@41-52@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
-      10      2     96      3      10 ApplicationNoteService::delete@55-64@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
-      11      4    125      1      11 ApplicationNoteService::summaries@67-77@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
-       3      1     27      1       3 ApplicationNoteService::summaryOf@79-81@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
+       6      1     62      4       6 ApplicationNoteService::update@55-60@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
+       3      1     27      3       3 ApplicationNoteService::delete@63-65@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
+      10      2     92      3      10 ApplicationNoteService::authoredNote@67-76@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
+      11      4    125      1      11 ApplicationNoteService::summaries@79-89@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
+       3      1     27      1       3 ApplicationNoteService::summaryOf@91-93@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
        9      2     86      5       9 ApplicationScoring::scoreInBackground@28-36@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationScoring.java
       27      9    332      3      28 ApplicationService::apply@56-83@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationService.java
        8      3    100      2       8 ApplicationService::matchPreview@86-93@backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationService.java
@@ -203,7 +206,9 @@
        5      1     39      0       5 SecureTokens::generate@21-25@backend/auth-service/src/main\java\com\smartrecruit\auth\service\SecureTokens.java
        8      2     62      1       8 SecureTokens::hash@27-34@backend/auth-service/src/main\java\com\smartrecruit\auth\service\SecureTokens.java
        3      1     20      1       3 AuthServiceApplication::main@11-13@backend/auth-service/src/main\java\com\smartrecruit\auth\AuthServiceApplication.java
-       4      1     32      3       4 ApplicationStats::ApplicationServiceClient@26-29@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\ApplicationServiceClient.java
+       4      1     32      3       4 ApplicationStats::ApplicationServiceClient@27-30@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\ApplicationServiceClient.java
+       3      1     17      1       3 ApplicationServiceClient::if@40-42@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\ApplicationServiceClient.java
+       3      1     17      1       3 ApplicationServiceClient::if@43-45@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\ApplicationServiceClient.java
        3      1     32      3       3 AccountStats::AuthServiceClient@24-26@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\AuthServiceClient.java
       16      5    123      4      16 AccountStats::list@28-43@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\AuthServiceClient.java
        8      1     54      2       8 AccountStats::updateStatus@45-52@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\AuthServiceClient.java
@@ -227,8 +232,9 @@
        6      1     58      4       6 AdminUserController::list@32-37@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\AdminUserController.java
        4      1     41      3       4 AdminUserController::updateStatus@40-43@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\AdminUserController.java
        7      1     31      0       7 PingController::ping@15-21@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\PingController.java
-       3      1     12      0       3 StatsController::global@27-29@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\StatsController.java
-       3      1     24      2       3 StatsController::company@33-35@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\StatsController.java
+       6      1     63      2       6 StatsController::global@35-40@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\StatsController.java
+       7      1     77      4       7 StatsController::company@44-50@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\StatsController.java
+       5      4     40      2       5 StatsController::checkPeriod@52-56@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\StatsController.java
       10      1     72      1      10 AuditLogEntryResponse::from@25-34@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\dto\AuditLogEntryResponse.java
        4      1     21      2       4 ApiException::ApiException@14-17@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\exception\ApiException.java
        6      1     69      4       6 public::build@45-50@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\exception\GlobalExceptionHandler.java
@@ -251,10 +257,10 @@
        3      1     38      4       3 AdminUserService::list@23-25@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\AdminUserService.java
        8      3     82      3       8 AdminUserService::updateStatus@27-34@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\AdminUserService.java
       22      6    262      6      22 AuditLogService::search@43-64@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\AuditLogService.java
-      14      1    130      0      14 StatsService::global@41-54@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
-      21      3    199      2      21 StatsService::company@57-77@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
-       6      2     76      1       6 StatsService::funnel@80-85@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
-       3      2     29      2       3 StatsService::from@87-89@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
+      14      1    139      2      14 StatsService::global@42-55@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
+      21      3    209      4      21 StatsService::company@58-78@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
+       6      2     76      1       6 StatsService::funnel@81-86@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
+       3      2     29      2       3 StatsService::from@88-90@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
        3      1     20      1       3 DashboardServiceApplication::main@11-13@backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\DashboardServiceApplication.java
        3      1     32      3       3 AnalyzeRequest::AiJobAnalysisClient@22-24@backend/job-service/src/main\java\com\smartrecruit\job\client\AiJobAnalysisClient.java
        7      1     45      3       7 AnalyzeRequest::analyze@27-33@backend/job-service/src/main\java\com\smartrecruit\job\client\AiJobAnalysisClient.java
@@ -276,12 +282,13 @@
        4      1     40      1       4 InternalJobController::get@47-50@backend/job-service/src/main\java\com\smartrecruit\job\controller\InternalJobController.java
       11      3    130      1      11 InternalJobController::stats@54-64@backend/job-service/src/main\java\com\smartrecruit\job\controller\InternalJobController.java
        3      1     30      2       3 InternalJobController::moderate@68-70@backend/job-service/src/main\java\com\smartrecruit\job\controller\InternalJobController.java
-      18      1    190     12      18 JobController::search@57-74@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
-       3      1     24      2       3 JobController::get@78-80@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
-       4      1     30      2       4 JobController::publish@86-89@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
-       4      1     40      3       4 JobController::update@94-97@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
-       3      1     28      2       3 JobController::duplicate@103-105@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
-       4      1     41      3       4 JobController::changeStatus@110-113@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
+      18      1    190     12      18 JobController::search@58-75@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
+       3      1     24      2       3 JobController::get@79-81@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
+       4      1     30      2       4 JobController::publish@87-90@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
+       4      1     40      3       4 JobController::update@95-98@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
+       3      1     27      2       3 JobController::delete@104-106@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
+       3      1     28      2       3 JobController::duplicate@112-114@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
+       4      1     41      3       4 JobController::changeStatus@119-122@backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
        7      1     31      0       7 PingController::ping@15-21@backend/job-service/src/main\java\com\smartrecruit\job\controller\PingController.java
        5      1     43      2       5 RecommendationController::myRecommendations@28-32@backend/job-service/src/main\java\com\smartrecruit\job\controller\RecommendationController.java
        3      1     21      1       3 SavedJobController::mySavedJobs@32-34@backend/job-service/src/main\java\com\smartrecruit\job\controller\SavedJobController.java
@@ -342,15 +349,16 @@
       33      4    314      2      34 JobService::publish@46-79@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
       21      6    173      3      21 JobService::update@85-105@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
       25      8    210      3      25 JobService::changeStatus@111-135@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-      29      4    279      2      29 JobService::duplicate@141-169@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-       6      2     50      1       6 JobService::copyTitle@171-176@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-       3      1     21      0       3 JobService::today@178-180@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-       5      3     41      2       5 JobService::checkDeadline@182-186@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-       5      4     43      3       5 JobService::checkSalaryRange@188-192@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-      12      5    118      2      12 JobService::checkPatchedRules@195-206@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-       8      2     66      2       8 JobService::ownedJob@208-215@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-      16      7    156      2      17 JobService::applyAnalysedContent@218-234@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
-      36     17    368      2      36 JobService::applyDetails@236-271@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+      11      2     72      2      11 JobService::delete@141-151@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+      29      4    279      2      29 JobService::duplicate@157-185@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+       6      2     50      1       6 JobService::copyTitle@187-192@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+       3      1     21      0       3 JobService::today@194-196@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+       5      3     41      2       5 JobService::checkDeadline@198-202@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+       5      4     43      3       5 JobService::checkSalaryRange@204-208@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+      12      5    118      2      12 JobService::checkPatchedRules@211-222@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+       8      2     66      2       8 JobService::ownedJob@224-231@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+      16      7    156      2      17 JobService::applyAnalysedContent@234-250@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+      36     17    368      2      36 JobService::applyDetails@252-287@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
       26      2    304      2      30 RecommendationService::recommendFor@45-74@backend/job-service/src/main\java\com\smartrecruit\job\service\RecommendationService.java
        9      2     83      1       9 RecommendationService::companyNames@77-85@backend/job-service/src/main\java\com\smartrecruit\job\service\RecommendationService.java
        9      2     56      1       9 RecruiterCompanies::companyIdOf@26-34@backend/job-service/src/main\java\com\smartrecruit\job\service\RecruiterCompanies.java
@@ -607,8 +615,9 @@
        1      1      9      0       1 clone@196-196@frontend/src\api\mock\applications.ts
        1      1      6      0       1 clone@202-202@frontend/src\api\mock\applications.ts
        1      1     11      0       1 (anonymous)@202-202@frontend/src\api\mock\applications.ts
-       1      2     12      0       1 db.notes.find@231-231@frontend/src\api\mock\applications.ts
-       1      1      6      0       1 (anonymous)@234-234@frontend/src\api\mock\applications.ts
+       1      2     12      0       1 db.notes.find@229-229@frontend/src\api\mock\applications.ts
+       1      2     12      0       1 db.notes.find@246-246@frontend/src\api\mock\applications.ts
+       1      1      6      0       1 (anonymous)@249-249@frontend/src\api\mock\applications.ts
        1      1     14      0       1 (anonymous)@14-14@frontend/src\api\mock\auth.ts
        7      1     56      0       7 uuid@18-24@frontend/src\api\mock\auth.ts
        1      1     18      0       1 (anonymous)@28-28@frontend/src\api\mock\auth.ts
@@ -641,32 +650,34 @@
        1      5     19      0       1 (anonymous)@116-116@frontend/src\api\mock\companies.ts
        1      1      6      0       1 db.invitations.find@122-122@frontend/src\api\mock\companies.ts
        1      1      8      0       1 (anonymous)@126-126@frontend/src\api\mock\companies.ts
-       1      1     18      2       1 clone@9-9@frontend/src\api\mock\dashboard.ts
-       4      1      8      0       4 publicAccount@17-20@frontend/src\api\mock\dashboard.ts
-       1      1      1      0       1 average@23-23@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 (anonymous)@23-23@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 (anonymous)@29-29@frontend/src\api\mock\dashboard.ts
-       3      2     19      0       3 (anonymous)@30-32@frontend/src\api\mock\dashboard.ts
-       1      2     12      0       1 (anonymous)@39-39@frontend/src\api\mock\dashboard.ts
-       4      2     53      0       4 (anonymous)@38-41@frontend/src\api\mock\dashboard.ts
-       9      1     76      1      16 byStatus@28-43@frontend/src\api\mock\dashboard.ts
-       1      4     22      0       1 (anonymous)@49-49@frontend/src\api\mock\dashboard.ts
-       5      1     57      1       5 closingSoon@46-50@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 (anonymous)@57-57@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 (anonymous)@58-58@frontend/src\api\mock\dashboard.ts
-       1      1     12      0       1 count@58-58@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 db.jobs.filter@60-60@frontend/src\api\mock\dashboard.ts
-       6      2     66      0       6 count@63-68@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 Set@76-76@frontend/src\api\mock\dashboard.ts
-       1      1      4      0       1 (anonymous)@76-76@frontend/src\api\mock\dashboard.ts
-       1      2     15      0       1 (anonymous)@77-77@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 (anonymous)@78-78@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 (anonymous)@79-79@frontend/src\api\mock\dashboard.ts
-       1      2     12      0       1 db.jobs.filter@81-81@frontend/src\api\mock\dashboard.ts
-       1      1     11      0       1 (anonymous)@99-99@frontend/src\api\mock\dashboard.ts
-       1      1      6      0       1 db.accounts.find@108-108@frontend/src\api\mock\dashboard.ts
-       6      8     78      0       6 db.audit.filter@138-143@frontend/src\api\mock\dashboard.ts
-       1      1     11      0       1 (anonymous)@144-144@frontend/src\api\mock\dashboard.ts
+       1      1     18      2       1 clone@10-10@frontend/src\api\mock\dashboard.ts
+       4      1      8      0       4 publicAccount@18-21@frontend/src\api\mock\dashboard.ts
+       1      1      1      0       1 average@24-24@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 (anonymous)@24-24@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 (anonymous)@30-30@frontend/src\api\mock\dashboard.ts
+       3      2     19      0       3 (anonymous)@31-33@frontend/src\api\mock\dashboard.ts
+       1      2     12      0       1 (anonymous)@40-40@frontend/src\api\mock\dashboard.ts
+       4      2     53      0       4 (anonymous)@39-42@frontend/src\api\mock\dashboard.ts
+       9      1     76      1      16 byStatus@29-44@frontend/src\api\mock\dashboard.ts
+       1      4     22      0       1 (anonymous)@50-50@frontend/src\api\mock\dashboard.ts
+       5      1     57      1       5 closingSoon@47-51@frontend/src\api\mock\dashboard.ts
+       1      4     36      0       1 (anonymous)@55-55@frontend/src\api\mock\dashboard.ts
+       3      1     31      3       3 inPeriod@54-56@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 (anonymous)@63-63@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 (anonymous)@64-64@frontend/src\api\mock\dashboard.ts
+       1      1     12      0       1 count@64-64@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 db.jobs.filter@67-67@frontend/src\api\mock\dashboard.ts
+       6      2     60      0       6 count@70-75@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 Set@83-83@frontend/src\api\mock\dashboard.ts
+       1      1      4      0       1 (anonymous)@83-83@frontend/src\api\mock\dashboard.ts
+       1      2     15      0       1 (anonymous)@84-84@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 (anonymous)@85-85@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 (anonymous)@86-86@frontend/src\api\mock\dashboard.ts
+       1      2     12      0       1 db.jobs.filter@88-88@frontend/src\api\mock\dashboard.ts
+       1      1     11      0       1 (anonymous)@106-106@frontend/src\api\mock\dashboard.ts
+       1      1      6      0       1 db.accounts.find@115-115@frontend/src\api\mock\dashboard.ts
+       6      8     78      0       6 db.audit.filter@145-150@frontend/src\api\mock\dashboard.ts
+       1      1     11      0       1 (anonymous)@151-151@frontend/src\api\mock\dashboard.ts
        1      4     20      0       1 isSalary@28-28@frontend/src\api\mock\jobs.ts
        1      2      7      0       1 has@37-37@frontend/src\api\mock\jobs.ts
        1      1      6      0       1 (anonymous)@49-49@frontend/src\api\mock\jobs.ts
@@ -682,13 +693,14 @@
       17     11    223     11      27 search@107-133@frontend/src\api\mock\jobs.ts
        1      5     19      0       1 (anonymous)@134-134@frontend/src\api\mock\jobs.ts
        1      1      9      0       1 (anonymous)@136-136@frontend/src\api\mock\jobs.ts
-       1      1      6      0       1 db.jobs.find@248-248@frontend/src\api\mock\jobs.ts
-       1      1      8      0       1 (anonymous)@250-250@frontend/src\api\mock\jobs.ts
-       1      1      6      0       1 (anonymous)@251-251@frontend/src\api\mock\jobs.ts
-       1      1      8      0       1 db.savedJobs.filter@271-271@frontend/src\api\mock\jobs.ts
-       1      1     11      0       1 (anonymous)@272-272@frontend/src\api\mock\jobs.ts
-       1      1      8      0       1 (anonymous)@274-274@frontend/src\api\mock\jobs.ts
-       4      4     46      0       4 (anonymous)@273-276@frontend/src\api\mock\jobs.ts
+       1      1      6      0       1 db.jobs.filter@251-251@frontend/src\api\mock\jobs.ts
+       1      1      6      0       1 db.jobs.find@259-259@frontend/src\api\mock\jobs.ts
+       1      1      8      0       1 (anonymous)@261-261@frontend/src\api\mock\jobs.ts
+       1      1      6      0       1 (anonymous)@262-262@frontend/src\api\mock\jobs.ts
+       1      1      8      0       1 db.savedJobs.filter@282-282@frontend/src\api\mock\jobs.ts
+       1      1     11      0       1 (anonymous)@283-283@frontend/src\api\mock\jobs.ts
+       1      1      8      0       1 (anonymous)@285-285@frontend/src\api\mock\jobs.ts
+       4      4     46      0       4 (anonymous)@284-287@frontend/src\api\mock\jobs.ts
        1      1      1      0       1 norm@14-14@frontend/src\api\mock\scoring.ts
        1      1     11      0       1 round1@20-20@frontend/src\api\mock\scoring.ts
        3      2     28      1       3 list@32-34@frontend/src\api\mock\scoring.ts
@@ -737,10 +749,10 @@
        1      1      9      0       1 (anonymous)@138-138@frontend/src\api\mock\store.ts
        3      1     20      1       3 recruiterCompany@137-139@frontend/src\api\mock\store.ts
        4      3     42      2       4 assertOwnsJob@142-145@frontend/src\api\mock\store.ts
-       3      1     27      0       3 coverLetter.trim@54-56@frontend/src\api\applications.ts
-       3      1     22      0       3 mine@57-59@frontend/src\api\applications.ts
-       3      1     31      1       3 forJob@60-62@frontend/src\api\applications.ts
-       3      2     27      0       3 options.message.trim@66-68@frontend/src\api\applications.ts
+       3      1     27      0       3 coverLetter.trim@56-58@frontend/src\api\applications.ts
+       3      1     22      0       3 mine@59-61@frontend/src\api\applications.ts
+       3      1     31      1       3 forJob@62-64@frontend/src\api\applications.ts
+       3      2     27      0       3 options.message.trim@68-70@frontend/src\api\applications.ts
        3      1     23      1       3 register@23-25@frontend/src\api\auth.ts
        3      1     29      2       3 login@26-28@frontend/src\api\auth.ts
        3      1     20      0       3 me@29-31@frontend/src\api\auth.ts
@@ -767,15 +779,15 @@
       15      8    122      0      20 (anonymous)@102-121@frontend/src\api\client.ts
        3      1     23      1       3 create@30-32@frontend/src\api\companies.ts
        3      1     20      0       3 getMine@33-35@frontend/src\api\companies.ts
-       1      1      1      0       1 clean@46-46@frontend/src\api\dashboard.ts
-       1      3     12      0       1 (anonymous)@46-46@frontend/src\api\dashboard.ts
-       3      1     20      0       3 globalStats@50-52@frontend/src\api\dashboard.ts
-       2      1     20      1       2 companyStats@53-54@frontend/src\api\dashboard.ts
-       1      1      1      0       1 clean@79-79@frontend/src\api\jobs.ts
-       1      2     20      0       1 (anonymous)@81-81@frontend/src\api\jobs.ts
-       1      3     12      0       1 (anonymous)@82-82@frontend/src\api\jobs.ts
-       3      1     33      1       3 recommendations@87-89@frontend/src\api\jobs.ts
-       2      1     10      1       2 clean@91-92@frontend/src\api\jobs.ts
+       1      1      1      0       1 clean@47-47@frontend/src\api\dashboard.ts
+       1      3     12      0       1 (anonymous)@47-47@frontend/src\api\dashboard.ts
+       2      1     10      1       2 clean@52-53@frontend/src\api\dashboard.ts
+       1      1      6      1       1 clean@55-55@frontend/src\api\dashboard.ts
+       1      1      1      0       1 clean@81-81@frontend/src\api\jobs.ts
+       1      2     20      0       1 (anonymous)@83-83@frontend/src\api\jobs.ts
+       1      3     12      0       1 (anonymous)@84-84@frontend/src\api\jobs.ts
+       3      1     33      1       3 recommendations@89-91@frontend/src\api\jobs.ts
+       2      1     10      1       2 clean@93-94@frontend/src\api\jobs.ts
        5      2     27      0       5 useAuth@18-22@frontend/src\auth\context.ts
        1      1      2      0       1 (anonymous)@3-3@frontend/src\components\ui\toast.ts
        1      1      8      0       1 ToastContext@3-3@frontend/src\components\ui\toast.ts
@@ -825,6 +837,7 @@
        1      2     15      0       1 (anonymous)@7-7@frontend/src\lib\notes.ts
        1      1      6      0       1 Math.round@10-10@frontend/src\lib\notes.ts
        1      1     18      2       1 Math.round@10-10@frontend/src\lib\notes.ts
+       2      1      8      2       2 from.toISOString.slice@11-12@frontend/src\lib\period.ts
        1      1      2      0       1 setData@10-10@frontend/src\lib\useAsync.ts
        1      1      9      0       1 >@14-14@frontend/src\lib\useAsync.ts
        3      2     11      0       3 (anonymous)@28-30@frontend/src\lib\useAsync.ts
@@ -863,7 +876,7 @@
        1      1      8      0       1 (anonymous)@20-20@frontend/src\pages\recruiter\rankingCsv.ts
       12      8     86      0      12 (anonymous)@21-32@frontend/src\pages\recruiter\rankingCsv.ts
        5      1     53      1      16 buildRankingCsv@19-34@frontend/src\pages\recruiter\rankingCsv.ts
-353 file analyzed.
+354 file analyzed.
 ==============================================================
 NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
 --------------------------------------------------------------
@@ -888,8 +901,8 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      11       3.0     1.0       12.0         1     backend/application-service/src/main\java\com\smartrecruit\application\config\ClockConfig.java
      14       4.0     1.0       23.0         1     backend/application-service/src/main\java\com\smartrecruit\application\config\JacksonSanitizationConfig.java
      41      12.0     1.0       76.5         2     backend/application-service/src/main\java\com\smartrecruit\application\config\SecurityConfig.java
-    111       4.1     1.0       46.9        11     backend/application-service/src/main\java\com\smartrecruit\application\controller\ApplicationController.java
-     77       9.8     2.0       91.5         4     backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
+    117       4.1     1.0       47.1        12     backend/application-service/src/main\java\com\smartrecruit\application\controller\ApplicationController.java
+     86      10.8     2.5      118.2         4     backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalApplicationController.java
      33       7.0     2.0       62.0         1     backend/application-service/src/main\java\com\smartrecruit\application\controller\InternalCandidateDataController.java
      18       7.0     1.0       31.0         1     backend/application-service/src/main\java\com\smartrecruit\application\controller\PingController.java
      14       0.0     0.0        0.0         0     backend/application-service/src/main\java\com\smartrecruit\application\dto\ApiError.java
@@ -914,7 +927,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      29       0.0     0.0        0.0         0     backend/application-service/src/main\java\com\smartrecruit\application\model\MatchScoreCacheEntry.java
      29       3.0     1.0       24.0         1     backend/application-service/src/main\java\com\smartrecruit\application\model\StatusHistoryEntry.java
      16       0.0     0.0        0.0         0     backend/application-service/src/main\java\com\smartrecruit\application\repository\ApplicationNoteRepository.java
-     36       0.0     0.0        0.0         0     backend/application-service/src/main\java\com\smartrecruit\application\repository\ApplicationRepository.java
+     41       0.0     0.0        0.0         0     backend/application-service/src/main\java\com\smartrecruit\application\repository\ApplicationRepository.java
       8       0.0     0.0        0.0         0     backend/application-service/src/main\java\com\smartrecruit\application\repository\MatchScoreCacheRepository.java
       4       0.0     0.0        0.0         0     backend/application-service/src/main\java\com\smartrecruit\application\security\AuthenticatedUser.java
      28       9.0     1.0       80.0         1     backend/application-service/src/main\java\com\smartrecruit\application\security\GatewayIdentityFilter.java
@@ -923,7 +936,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
       9       0.0     0.0        0.0         0     backend/application-service/src/main\java\com\smartrecruit\application\security\RawText.java
      29       3.5     1.8       24.0         4     backend/application-service/src/main\java\com\smartrecruit\application\security\SanitizingStringDeserializer.java
      38       5.0     1.0       44.2         4     backend/application-service/src/main\java\com\smartrecruit\application\security\SecurityErrorHandler.java
-     67       8.6     2.0       82.2         5     backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
+     76       7.4     1.7       70.9         7     backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationNoteService.java
      28       9.0     2.0       86.0         1     backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationScoring.java
     171       7.9     2.7       82.7        12     backend/application-service/src/main\java\com\smartrecruit\application\service\ApplicationService.java
      49       9.0     2.7       77.0         3     backend/application-service/src/main\java\com\smartrecruit\application\service\MatchScoreService.java
@@ -975,7 +988,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      48       6.4     1.0       47.6         5     backend/auth-service/src/main\java\com\smartrecruit\auth\service\RefreshTokenService.java
      26       5.0     1.3       35.3         3     backend/auth-service/src/main\java\com\smartrecruit\auth\service\SecureTokens.java
      11       3.0     1.0       20.0         1     backend/auth-service/src/main\java\com\smartrecruit\auth\AuthServiceApplication.java
-     31       4.0     1.0       32.0         1     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\ApplicationServiceClient.java
+     38       3.3     1.0       22.0         3     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\ApplicationServiceClient.java
      47       9.0     2.3       69.7         3     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\AuthServiceClient.java
      39       6.0     1.0       45.5         2     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\JobServiceClient.java
       6       0.0     0.0        0.0         0     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\client\ServiceEndpointsProperties.java
@@ -990,7 +1003,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      37       5.0     1.0       49.5         2     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\AdminUserController.java
      24       0.0     0.0        0.0         0     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\InternalAuditController.java
      18       7.0     1.0       31.0         1     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\PingController.java
-     29       3.0     1.0       18.0         2     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\StatsController.java
+     46       6.0     2.0       60.0         3     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\controller\StatsController.java
       6       0.0     0.0        0.0         0     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\dto\AccountResponse.java
       9       0.0     0.0        0.0         0     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\dto\AccountStatusRequest.java
      14       0.0     0.0        0.0         0     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\dto\ApiError.java
@@ -1014,7 +1027,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      19       5.0     1.0       58.0         1     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\AdminJobService.java
      28       5.5     2.0       60.0         2     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\AdminUserService.java
      56      22.0     6.0      262.0         1     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\AuditLogService.java
-     74      11.0     2.0      108.5         4     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
+     75      11.0     2.0      113.2         4     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\service\StatsService.java
      11       3.0     1.0       20.0         1     backend/dashboard-service/src/main\java\com\smartrecruit\dashboard\DashboardServiceApplication.java
      22       5.0     1.0       38.5         2     backend/job-service/src/main\java\com\smartrecruit\job\client\AiJobAnalysisClient.java
      25       5.0     2.0       45.5         2     backend/job-service/src/main\java\com\smartrecruit\job\client\AiRecommendationClient.java
@@ -1029,7 +1042,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      41      12.0     1.0       76.5         2     backend/job-service/src/main\java\com\smartrecruit\job\config\SecurityConfig.java
      23       3.0     1.0       16.0         1     backend/job-service/src/main\java\com\smartrecruit\job\controller\InternalCandidateController.java
      57       6.0     1.7       66.7         3     backend/job-service/src/main\java\com\smartrecruit\job\controller\InternalJobController.java
-     91       6.0     1.0       58.8         6     backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
+     98       5.6     1.0       54.3         7     backend/job-service/src/main\java\com\smartrecruit\job\controller\JobController.java
      18       7.0     1.0       31.0         1     backend/job-service/src/main\java\com\smartrecruit\job\controller\PingController.java
      27       5.0     1.0       43.0         1     backend/job-service/src/main\java\com\smartrecruit\job\controller\RecommendationController.java
      36       3.0     1.0       25.0         3     backend/job-service/src/main\java\com\smartrecruit\job\controller\SavedJobController.java
@@ -1070,7 +1083,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      53      15.0     5.0      126.5         2     backend/job-service/src/main\java\com\smartrecruit\job\service\JobPatchParser.java
     167      11.3     4.0      120.2        11     backend/job-service/src/main\java\com\smartrecruit\job\service\JobQueryService.java
      18       0.0     0.0        0.0         0     backend/job-service/src/main\java\com\smartrecruit\job\service\JobSearchCriteria.java
-    234      16.6     5.2      153.2        12     backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+    245      16.2     5.0      147.0        13     backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
      68      17.5     2.0      193.5         2     backend/job-service/src/main\java\com\smartrecruit\job\service\RecommendationService.java
      30       6.5     1.5       42.5         2     backend/job-service/src/main\java\com\smartrecruit\job\service\RecruiterCompanies.java
      97       9.7     2.2       91.3         6     backend/job-service/src/main\java\com\smartrecruit\job\service\SavedJobService.java
@@ -1184,22 +1197,22 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      50      15.0     5.0      104.5         2     ai-service/app\services\skill_gap_service.py
      47       5.3     1.3       31.7         3     ai-service/app\main.py
      26       0.0     0.0        0.0         0     ai-service/app\models.py
-    245       2.4     1.9       23.3        27     frontend/src\api\mock\applications.ts
+    259       2.3     1.9       22.9        28     frontend/src\api\mock\applications.ts
      49       4.2     1.6       31.6         8     frontend/src\api\mock\auth.ts
     153       3.5     2.2       30.7        13     frontend/src\api\mock\candidates.ts
     122       3.5     2.1       26.2        11     frontend/src\api\mock\companies.ts
-    131       2.2     1.6       20.3        26     frontend/src\api\mock\dashboard.ts
-    256       4.5     4.5       49.3        22     frontend/src\api\mock\jobs.ts
+    136       2.1     1.7       21.1        28     frontend/src\api\mock\dashboard.ts
+    266       4.3     4.3       47.4        23     frontend/src\api\mock\jobs.ts
      74       2.6     1.4       22.6         7     frontend/src\api\mock\scoring.ts
     431       4.1     1.5       25.4        15     frontend/src\api\mock\seed.ts
     113       4.2     2.2       29.7        26     frontend/src\api\mock\store.ts
-     78       3.0     1.2       26.8         4     frontend/src\api\applications.ts
+     82       3.0     1.2       26.8         4     frontend/src\api\applications.ts
      37       3.0     1.0       21.2         6     frontend/src\api\auth.ts
      57       2.4     1.4       18.8         5     frontend/src\api\candidates.ts
      95       4.6     2.2       30.9        13     frontend/src\api\client.ts
      42       3.0     1.0       21.5         2     frontend/src\api\companies.ts
-     59       1.8     1.5       13.2         4     frontend/src\api\dashboard.ts
-     93       1.6     1.6       15.2         5     frontend/src\api\jobs.ts
+     60       1.2     1.5        7.2         4     frontend/src\api\dashboard.ts
+     97       1.6     1.6       15.2         5     frontend/src\api\jobs.ts
      22       5.0     2.0       27.0         1     frontend/src\auth\context.ts
       3       1.0     1.0        5.0         3     frontend/src\components\ui\toast.ts
      33       5.3     1.7       39.2         6     frontend/src\lib\csv.ts
@@ -1209,6 +1222,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      59       2.3     2.3       18.7         3     frontend/src\lib\jobForm.ts
      13       2.5     1.3       23.8         6     frontend/src\lib\kanban.ts
       9       1.0     1.3       13.0         3     frontend/src\lib\notes.ts
+      9       2.0     1.0        8.0         1     frontend/src\lib\period.ts
      21       0.0     0.0        0.0         0     frontend/src\lib\storage.ts
      43       2.9     1.5       14.3        11     frontend/src\lib\useAsync.ts
       9       2.7     1.7       16.7         3     frontend/src\lib\useCompany.ts
@@ -1226,7 +1240,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
 ================================================
   NLOC    CCN   token  PARAM  length  location  
 ------------------------------------------------
-      36     17    368      2      36 JobService::applyDetails@236-271@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
+      36     17    368      2      36 JobService::applyDetails@252-287@backend/job-service/src/main\java\com\smartrecruit\job\service\JobService.java
       21     22    290      1      22 _education@162-183@ai-service/app\services\rules_cv.py
       38     21    342      2      40 match_criteria_rules@90-129@ai-service/app\services\rules_match.py
       41     37    461      3      42 validateJob@34-75@frontend/src\api\mock\jobs.ts
@@ -1234,4 +1248,4 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
 ==========================================================================================
 Total nloc   Avg.NLOC  AvgCCN  Avg.token   Fun Cnt  Warning cnt   Fun Rt   nloc Rt
 ------------------------------------------------------------------------------------------
-     13590       6.4     2.2       52.2      862            5      0.01    0.03
+     13709       6.3     2.2       52.1      875            5      0.01    0.03

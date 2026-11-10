@@ -3,7 +3,7 @@ job-service,com.smartrecruit.job.controller,SavedJobController,0,20,0,0,0,5,0,3,
 job-service,com.smartrecruit.job.controller,PingController,0,12,0,0,0,3,0,2,0,2
 job-service,com.smartrecruit.job.controller,InternalJobController,0,71,0,4,0,11,0,6,0,4
 job-service,com.smartrecruit.job.controller,RecommendationController,0,7,0,0,0,1,0,1,0,1
-job-service,com.smartrecruit.job.controller,JobController,0,59,0,0,0,6,0,6,0,6
+job-service,com.smartrecruit.job.controller,JobController,0,66,0,0,0,8,0,7,0,7
 job-service,com.smartrecruit.job.controller,InternalCandidateController,0,5,0,0,0,2,0,1,0,1
 job-service,com.smartrecruit.job.security,InternalIdentityVerifier,10,118,3,11,4,24,3,8,0,4
 job-service,com.smartrecruit.job.security,GatewayIdentityFilter,0,28,0,0,0,7,0,2,0,2
@@ -56,6 +56,6 @@ job-service,com.smartrecruit.job.service,JobQueryService,0,507,3,62,0,82,3,49,0,
 job-service,com.smartrecruit.job.service,JobSearchCriteria,0,30,0,0,0,1,0,1,0,1
 job-service,com.smartrecruit.job.service,JobAnalysisRequested,0,12,0,0,0,1,0,1,0,1
 job-service,com.smartrecruit.job.service,RecommendationService,1,140,1,3,0,27,1,9,0,8
-job-service,com.smartrecruit.job.service,JobService,0,728,8,94,0,148,8,60,0,17
+job-service,com.smartrecruit.job.service,JobService,0,761,8,96,0,156,8,63,0,19
 job-service,com.smartrecruit.job.service,JobPatchParser,0,113,1,13,0,21,1,8,0,2
 job-service,com.smartrecruit.job.service,SavedJobService,13,224,0,10,5,38,0,20,0,15

@@ -6,6 +6,7 @@ import com.smartrecruit.application.model.ApplicationStatus;
 import com.smartrecruit.application.model.StatusHistoryEntry;
 import com.smartrecruit.application.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,21 +57,30 @@ public class InternalApplicationController {
         return counts;
     }
 
+    /** Bounds used when the dashboard asks for no period. */
+    private static final Instant NO_START = Instant.EPOCH;
+    private static final Instant NO_END = Instant.parse("9999-12-31T00:00:00Z");
+
     /**
      * Statistics over every application, or only those of {@code companyId} when given; with the decision delay
-     * and the number of upcoming interviews (EXT-DASH-01).
+     * and the number of upcoming interviews (EXT-DASH-01). {@code from}/{@code to} (inclusive days, UTC) keep only
+     * the applications made in that period; upcoming interviews are always counted from now.
      */
     @GetMapping("/stats")
     @Transactional(readOnly = true)
-    public ApplicationStatsResponse stats(@RequestParam(required = false) UUID companyId) {
+    public ApplicationStatsResponse stats(@RequestParam(required = false) UUID companyId,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         Instant now = clock.instant();
+        Instant start = from == null ? NO_START : from.atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant end = to == null ? NO_END : to.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
         if (companyId == null) {
-            return ApplicationStatsResponse.from(applications.statusAndScore(ApplicationStatus.WITHDRAWN),
-                    averageDecisionDays(applications.findByStatusIn(DECIDED)),
+            return ApplicationStatsResponse.from(applications.statusAndScore(ApplicationStatus.WITHDRAWN, start, end),
+                    averageDecisionDays(applications.decidedBetween(DECIDED, start, end)),
                     applications.countUpcomingInterviews(ApplicationStatus.INTERVIEW, now));
         }
-        return ApplicationStatsResponse.from(applications.statusAndScoreOfCompany(companyId, ApplicationStatus.WITHDRAWN),
-                averageDecisionDays(applications.findByCompanyIdAndStatusIn(companyId, DECIDED)),
+        return ApplicationStatsResponse.from(applications.statusAndScoreOfCompany(companyId, ApplicationStatus.WITHDRAWN, start, end),
+                averageDecisionDays(applications.decidedOfCompanyBetween(companyId, DECIDED, start, end)),
                 applications.countUpcomingInterviewsOfCompany(companyId, ApplicationStatus.INTERVIEW, now));
     }
 

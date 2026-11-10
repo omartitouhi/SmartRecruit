@@ -223,6 +223,21 @@ export const mockApplicationsApi: ApplicationsApi = {
     return clone(note);
   },
 
+  async updateNote(applicationId, noteId, { content, rating }) {
+    await delay();
+    const account = requireRole('RECRUITER');
+    const note = db.notes.find((n) => n.id === noteId && n.applicationId === applicationId);
+    if (!note) throw new HttpError(404, 'Note introuvable.');
+    if (note.authorId !== account.id) throw new HttpError(403, 'Seul l’auteur d’une note peut la modifier.');
+    if (!content?.trim() || content.length > NOTE_MAX) {
+      throw new HttpError(400, 'Requête invalide', { content: `La note doit contenir entre 1 et ${NOTE_MAX} caractères` });
+    }
+    note.content = content.trim();
+    note.rating = rating ?? null;
+    save();
+    return clone(note);
+  },
+
   async deleteNote(applicationId, noteId) {
     await delay();
     const account = requireRole('RECRUITER');

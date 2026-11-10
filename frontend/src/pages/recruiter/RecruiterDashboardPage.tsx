@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { applicationsApi } from '../../api/applications';
 import { candidatesApi, fullName } from '../../api/candidates';
@@ -5,6 +6,7 @@ import { dashboardApi } from '../../api/dashboard';
 import { jobsApi } from '../../api/jobs';
 import { Funnel } from '../../components/domain/Funnel';
 import { NoCompany } from '../../components/domain/NoCompany';
+import { PeriodFilter } from '../../components/domain/PeriodFilter';
 import { ButtonLink } from '../../components/ui/Button';
 import { ScoreChip } from '../../components/ui/ScoreBreakdown';
 import { EmptyState, ErrorState, PageSkeleton, Skeleton, SkeletonRows } from '../../components/ui/States';
@@ -21,6 +23,7 @@ import {
   isoDay,
   pluralize,
 } from '../../lib/format';
+import { periodOf } from '../../lib/period';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import { useMyCompany } from '../../lib/useCompany';
 import type { Application, CandidateView, Company, UpcomingInterview } from '../../types';
@@ -104,7 +107,8 @@ export function RecruiterDashboardPage() {
 }
 
 function Dashboard({ company }: { company: Company }) {
-  const stats = useAsync(() => dashboardApi.companyStats(company.id), [company.id]);
+  const [days, setDays] = useState('');
+  const stats = useAsync(() => dashboardApi.companyStats(company.id, periodOf(days)), [company.id, days]);
   const top = useAsync(loadTop, [company.id]);
   const agenda = useAsync(loadAgenda, [company.id]);
   const closing = useAsync(loadClosingSoon, [company.id]);
@@ -136,6 +140,10 @@ function Dashboard({ company }: { company: Company }) {
           <ButtonLink to="/recruiter/jobs/new">Publier une offre</ButtonLink>
         </div>
       </header>
+
+      <div className="toolbar panel">
+        <PeriodFilter value={days} onChange={setDays} />
+      </div>
 
       {stats.error ? (
         <ErrorState error={stats.error} onRetry={stats.reload} />

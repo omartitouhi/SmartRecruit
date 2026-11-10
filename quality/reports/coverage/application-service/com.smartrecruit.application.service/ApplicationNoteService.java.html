@@ -51,33 +51,45 @@ public class ApplicationNoteService {
 <span class="fc" id="L51">                .build());</span>
     }
 
+    /** Only the author edits a note (403 otherwise); unknown application or note → 404. */
+    public ApplicationNote update(UUID recruiterId, UUID applicationId, UUID noteId, NoteRequest request) {
+<span class="fc" id="L56">        ApplicationNote note = authoredNote(recruiterId, applicationId, noteId);</span>
+<span class="fc" id="L57">        note.setContent(request.content().strip());</span>
+<span class="fc" id="L58">        note.setRating(request.rating());</span>
+<span class="fc" id="L59">        return notes.save(note);</span>
+    }
+
     /** Only the author removes a note (403 otherwise); unknown application or note → 404. */
     public void delete(UUID recruiterId, UUID applicationId, UUID noteId) {
-<span class="fc" id="L56">        applications.findApplication(applicationId);</span>
-<span class="fc" id="L57">        ApplicationNote note = notes.findById(noteId)</span>
-<span class="fc" id="L58">                .filter(found -&gt; found.getApplicationId().equals(applicationId))</span>
-<span class="fc" id="L59">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Note introuvable&quot;));</span>
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (!note.getAuthorId().equals(recruiterId)) {</span>
-<span class="fc" id="L61">            throw new ApiException(HttpStatus.FORBIDDEN, &quot;Seul l'auteur peut supprimer cette note&quot;);</span>
+<span class="fc" id="L64">        notes.delete(authoredNote(recruiterId, applicationId, noteId));</span>
+<span class="fc" id="L65">    }</span>
+
+    private ApplicationNote authoredNote(UUID recruiterId, UUID applicationId, UUID noteId) {
+<span class="fc" id="L68">        applications.findApplication(applicationId);</span>
+<span class="fc" id="L69">        ApplicationNote note = notes.findById(noteId)</span>
+<span class="fc" id="L70">                .filter(found -&gt; found.getApplicationId().equals(applicationId))</span>
+<span class="fc" id="L71">                .orElseThrow(() -&gt; new ApiException(HttpStatus.NOT_FOUND, &quot;Note introuvable&quot;));</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (!note.getAuthorId().equals(recruiterId)) {</span>
+<span class="fc" id="L73">            throw new ApiException(HttpStatus.FORBIDDEN, &quot;Seul l'auteur peut modifier ou supprimer cette note&quot;);</span>
         }
-<span class="fc" id="L63">        notes.delete(note);</span>
-<span class="fc" id="L64">    }</span>
+<span class="fc" id="L75">        return note;</span>
+    }
 
     /** Count and average rating (1 decimal) per application, in one query; absent applications have no notes. */
     public Map&lt;UUID, NoteSummary&gt; summaries(Collection&lt;UUID&gt; applicationIds) {
-<span class="fc" id="L68">        Map&lt;UUID, NoteSummary&gt; summaries = new HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (applicationIds.isEmpty()) {</span>
-<span class="fc" id="L70">            return summaries;</span>
+<span class="fc" id="L80">        Map&lt;UUID, NoteSummary&gt; summaries = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (applicationIds.isEmpty()) {</span>
+<span class="fc" id="L82">            return summaries;</span>
         }
-<span class="fc bfc" id="L72" title="All 2 branches covered.">        for (Object[] row : notes.summarize(applicationIds)) {</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            Double average = row[2] == null ? null : Math.round(((Number) row[2]).doubleValue() * 10) / 10.0;</span>
-<span class="fc" id="L74">            summaries.put((UUID) row[0], new NoteSummary(((Number) row[1]).longValue(), average));</span>
-<span class="fc" id="L75">        }</span>
-<span class="fc" id="L76">        return summaries;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        for (Object[] row : notes.summarize(applicationIds)) {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">            Double average = row[2] == null ? null : Math.round(((Number) row[2]).doubleValue() * 10) / 10.0;</span>
+<span class="fc" id="L86">            summaries.put((UUID) row[0], new NoteSummary(((Number) row[1]).longValue(), average));</span>
+<span class="fc" id="L87">        }</span>
+<span class="fc" id="L88">        return summaries;</span>
     }
 
     public NoteSummary summaryOf(UUID applicationId) {
-<span class="fc" id="L80">        return summaries(List.of(applicationId)).getOrDefault(applicationId, NoteSummary.NONE);</span>
+<span class="fc" id="L92">        return summaries(List.of(applicationId)).getOrDefault(applicationId, NoteSummary.NONE);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

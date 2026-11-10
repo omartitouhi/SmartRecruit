@@ -37,6 +37,11 @@ export function setup() {
   return { candidate, recruiter, admin, jobIds: jobs.map((j) => j.id), company };
 }
 
+// Filtre de période du tableau de bord : les 30 derniers jours.
+function monthAgo() {
+  return new Date(Date.now() - 29 * 86400000).toISOString().slice(0, 10);
+}
+
 export default function (data) {
   const jobId = data.jobIds[Math.floor(Math.random() * data.jobIds.length)];
 
@@ -50,7 +55,7 @@ export default function (data) {
   });
 
   group('recruteur : tableau de bord', () => {
-    const stats = http.get(`${BASE}/dashboard/stats/company/${data.company}`, data.recruiter);
+    const stats = http.get(`${BASE}/dashboard/stats/company/${data.company}?from=${monthAgo()}`, data.recruiter);
     check(stats, { 'stats entreprise 200': (r) => r.status === 200 });
     const myJobs = http.get(`${BASE}/jobs?companyId=me`, data.recruiter);
     check(myJobs, { 'offres du recruteur 200': (r) => r.status === 200 });
@@ -65,6 +70,7 @@ export default function (data) {
 }
 
 export function handleSummary(data) {
+  delete data.setup_data; // contient les jetons JWT des comptes de démo : jamais dans le rapport versionné
   return {
     '/reports/k6-summary.json': JSON.stringify(data, null, 2),
     stdout: textSummary(data),

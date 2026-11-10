@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { dashboardApi } from '../../api/dashboard';
 import { Funnel } from '../../components/domain/Funnel';
+import { PeriodFilter } from '../../components/domain/PeriodFilter';
 import { ButtonLink } from '../../components/ui/Button';
 import { ErrorState, Skeleton } from '../../components/ui/States';
 import { formatDays, formatInt, formatScore, ROLE_LABEL } from '../../lib/format';
+import { periodOf } from '../../lib/period';
 import { useAsync, useDocumentTitle } from '../../lib/useAsync';
 import type { GlobalStats, Role } from '../../types';
 
@@ -10,7 +13,8 @@ const ROLES: Role[] = ['CANDIDATE', 'RECRUITER', 'ADMIN'];
 
 export function AdminDashboardPage() {
   useDocumentTitle('Tableau de bord');
-  const stats = useAsync(() => dashboardApi.globalStats(), []);
+  const [days, setDays] = useState('');
+  const stats = useAsync(() => dashboardApi.globalStats(periodOf(days)), [days]);
 
   return (
     <div className="page">
@@ -31,6 +35,10 @@ export function AdminDashboardPage() {
           </ButtonLink>
         </div>
       </header>
+
+      <div className="toolbar panel">
+        <PeriodFilter value={days} onChange={setDays} />
+      </div>
 
       {stats.error ? (
         <ErrorState error={stats.error} onRetry={stats.reload} />
