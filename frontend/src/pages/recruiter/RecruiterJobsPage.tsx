@@ -186,12 +186,12 @@ function Jobs({ companyName }: { companyName: string }) {
                         {job.status === 'DRAFT' ? (
                           <span className="muted">—</span>
                         ) : (
-                          <Link className="text-link" to={`/recruiter/jobs/${job.id}/candidates`}>
+                          <Link className="text-link nowrap" to={`/recruiter/jobs/${job.id}/candidates`}>
                             {pluralize(job.applicationsCount ?? 0, 'candidature')}
                           </Link>
                         )}
                       </td>
-                      <td className="muted">{formatDateShort(job.publishedAt)}</td>
+                      <td className="muted nowrap">{formatDateShort(job.publishedAt)}</td>
                       <td className="row-actions">
                         {(job.status === 'DRAFT' || job.status === 'PUBLISHED') && (
                           <ButtonLink to={`/recruiter/jobs/${job.id}/edit`} variant="ghost">
@@ -211,7 +211,7 @@ function Jobs({ companyName }: { companyName: string }) {
                         )}
                         {job.status !== 'MODERATED' && (
                           <Button
-                            variant="ghost"
+                            variant="quiet"
                             loading={busy === `copy:${job.id}`}
                             disabled={busy !== null && busy !== `copy:${job.id}`}
                             aria-label={`Dupliquer l’offre ${job.title}`}
@@ -222,7 +222,7 @@ function Jobs({ companyName }: { companyName: string }) {
                         )}
                         {job.status === 'DRAFT' && (
                           <Button
-                            variant="ghost"
+                            variant="quiet"
                             loading={busy === `delete:${job.id}`}
                             disabled={busy !== null && busy !== `delete:${job.id}`}
                             aria-label={`Supprimer le brouillon ${job.title}`}

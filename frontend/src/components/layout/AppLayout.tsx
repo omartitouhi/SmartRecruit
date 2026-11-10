@@ -72,7 +72,7 @@ export function AppLayout() {
         Aller au contenu
       </a>
       <DemoBanner />
-      <header className="bar" data-open={navOpen}>
+      <header className="bar bar--app" data-open={navOpen}>
         <div className="bar__in">
           <Brand to={HOME_BY_ROLE[account.role]} />
           <nav className="nav" id="app-nav" aria-label="Navigation de l’espace">

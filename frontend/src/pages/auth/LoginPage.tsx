@@ -27,16 +27,20 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  async function onSubmit(e: FormEvent) {
+  function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!email.trim() || !password) {
       setError('Renseignez votre email et votre mot de passe.');
       return;
     }
+    void signIn(email, password);
+  }
+
+  async function signIn(loginEmail: string, loginPassword: string) {
     setSubmitting(true);
     setError(null);
     try {
-      const account = await login(email, password);
+      const account = await login(loginEmail, loginPassword);
       navigate(safeNext(params.get('next')) ?? HOME_BY_ROLE[account.role], { replace: true });
     } catch (err) {
       const ui = toUiError(err);
@@ -101,16 +105,18 @@ export function LoginPage() {
 
         {isMocked('auth') && (
           <div className="demo-accounts">
-            <p className="muted">Comptes de démonstration</p>
+            <p className="muted">Comptes de démonstration : un clic pour se connecter</p>
             <div className="demo-accounts__list">
               {Object.entries(DEMO_ACCOUNTS).map(([role, demoEmail]) => (
                 <button
                   key={role}
                   type="button"
                   className="btn btn--ghost"
+                  disabled={submitting}
                   onClick={() => {
                     setEmail(demoEmail);
                     setPassword(DEMO_PASSWORD);
+                    void signIn(demoEmail, DEMO_PASSWORD);
                   }}
                 >
                   {role === 'candidate' ? 'Candidat·e' : role === 'recruiter' ? 'Recruteur·se' : 'Admin'}
