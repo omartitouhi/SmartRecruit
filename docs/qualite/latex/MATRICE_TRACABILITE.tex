@@ -1,0 +1,432 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[landscape,margin=1.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmonofont[Scale=0.8,BoldFont=DejaVuSansMono-Bold.ttf]{DejaVuSansMono.ttf}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{french}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Matrice de traçabilité --- exigence → test(s) → outil(s) → résultat},
+  pdflang={fr},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Matrice de traçabilité --- exigence → test(s) → outil(s) →
+résultat}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table des matières}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+Résultats issus de la campagne finale du 11/11/2026
+(\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{campagne-}\allowbreak{}\texttt{finale-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt}
+: toutes les étapes de \texttt{run-all.sh} réussies en un seul passage).
+✅ = vérifié par une exécution réelle dont la preuve est citée.
+Abréviations des preuves : \texttt{R/} = \texttt{quality/reports/}.
+
+\section{1. Exigences fonctionnelles (cahier des charges
+§4)}\label{1-exigences-fonctionnelles-cahier-des-charges-4}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0323}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1268}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.5175}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0906}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0517}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1811}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Id
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Exigence
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test(s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil(s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Résultat
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preuve
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+EF‑01 & Authentification, 3 rôles aux droits différenciés &
+\texttt{Login}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test},
+\texttt{RbacIntegrationTest} (×5 services),
+\texttt{Gateway}\allowbreak{}\texttt{Authentication}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test}
+; e2e API « Sécurité et accès » ; Playwright \texttt{auth.setup.ts}
+(connexion des 3 rôles), « accès refusé à l\textquotesingle espace
+administrateur » & JUnit/MockMvc, httpx, Playwright & ✅ &
+\texttt{R/unit/},
+\texttt{R/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt},
+\texttt{R/e2e-ui/html} \\
+EF‑02 & ≥ 4 entités liées, CRUD complet & 6 entités avec les 4
+opérations (\href{RAPPORT_CONCEPTION.pdf}{conception §3}) ; tests
+d\textquotesingle intégration des contrôleurs, dont
+\texttt{Job}\allowbreak{}\texttt{Delete}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test}
+(suppression d\textquotesingle un brouillon, 409 sinon) et
+\texttt{Notes}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{only}\allowbreak{}\texttt{The}\allowbreak{}\texttt{Author}\allowbreak{}\texttt{Edits}\allowbreak{}\texttt{ANote}
+; e2e API « suppression d\textquotesingle un brouillon », « modification
+d\textquotesingle une note » ; Vitest « deleting a draft offer », «
+editing one\textquotesingle s own note » & JUnit/MockMvc, httpx, Vitest
+& ✅ 693 + 155 & \texttt{R/unit/},
+\texttt{R/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt} \\
+EF‑03 & Workflow à statuts avec règles de transition &
+\texttt{Status}\allowbreak{}\texttt{Change}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{transition}\allowbreak{}\texttt{Table}\allowbreak{}\texttt{Is}\allowbreak{}\texttt{Enforced},
+\texttt{Job}\allowbreak{}\texttt{Status}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test}
+; fiabilité
+\texttt{test\_}\allowbreak{}\texttt{transition\_}\allowbreak{}\texttt{interdite\_}\allowbreak{}\texttt{rejetee\_}\allowbreak{}\texttt{sans\_}\allowbreak{}\texttt{modifier\_}\allowbreak{}\texttt{l\_}\allowbreak{}\texttt{etat}
+; Playwright « suivi de ses candidatures » & JUnit, pytest, Playwright &
+✅ &
+\texttt{R/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{application-}\allowbreak{}\texttt{service/}\allowbreak{},
+\texttt{R/}\allowbreak{}\texttt{reliability/}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml} \\
+EF‑04 & Tableau de bord (indicateurs agrégés, filtres) &
+\texttt{Global}\allowbreak{}\texttt{Stats}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test},
+\texttt{Company}\allowbreak{}\texttt{Stats}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{period}\allowbreak{}\texttt{Is}\allowbreak{}\texttt{Forwarded}\allowbreak{}\texttt{For}\allowbreak{}\texttt{The}\allowbreak{}\texttt{Application}\allowbreak{}\texttt{Figures}\allowbreak{}\texttt{And}\allowbreak{}\texttt{Checked},
+\texttt{Internal}\allowbreak{}\texttt{Stats}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{period}\allowbreak{}\texttt{Keeps}\allowbreak{}\texttt{Only}\allowbreak{}\texttt{The}\allowbreak{}\texttt{Applications}\allowbreak{}\texttt{Made}\allowbreak{}\texttt{In}\allowbreak{}\texttt{It}
+; e2e « filtre par periode » ; Playwright « tableau de bord filtré par
+période » ; e2e « Tableau de bord et administration », « Pilotage
+enrichi » ; Playwright « tableau de bord avec indicateurs » ; k6
+(statistiques sous charge) & JUnit, httpx, Playwright, k6 & ✅ &
+\texttt{R/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{dashboard-}\allowbreak{}\texttt{service/}\allowbreak{},
+\texttt{R/perf/} \\
+EF‑05 & Recherche / filtrage sur une entité à fort volume &
+\texttt{Job}\allowbreak{}\texttt{Search}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test},
+\texttt{Job}\allowbreak{}\texttt{Enrichment}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{search}\allowbreak{}\texttt{Filters}\allowbreak{}\texttt{On}\allowbreak{}\texttt{Work}\allowbreak{}\texttt{Mode}\allowbreak{}\texttt{And}\allowbreak{}\texttt{Minimum}\allowbreak{}\texttt{Salary},
+\texttt{Job}\allowbreak{}\texttt{Search}\allowbreak{}\texttt{Page.}\allowbreak{}\texttt{test.}\allowbreak{}\texttt{tsx}
+; Playwright « recherche d\textquotesingle offres filtrée par ville », «
+recherche dans un fort volume d\textquotesingle offres » (\textgreater{}
+1 000 résultats) ; k6 (recherche paginée sur 3 068 offres, 20
+utilisateurs) & JUnit, Vitest, Playwright, k6 & ✅ &
+\texttt{R/unit/job-service/}, \texttt{R/e2e-ui/html} \\
+EF‑06 & Journal d\textquotesingle audit des actions sensibles &
+\texttt{Admin}\allowbreak{}\texttt{Audit}\allowbreak{}\texttt{Log}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test},
+\texttt{Audit}\allowbreak{}\texttt{Ingestion}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test}
+; e2e « journal d\textquotesingle audit » (CV\_VIEWED,
+APPLICATION\_STATUS\_CHANGED, USER\_STATUS\_CHANGED, JOB\_MODERATED,
+filtre par action) ; Playwright « journal d\textquotesingle audit : qui
+a fait quoi, quand » & JUnit, httpx, Playwright & ✅ &
+\texttt{R/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{dashboard-}\allowbreak{}\texttt{service/}\allowbreak{},
+\texttt{R/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt} \\
+\end{longtable}
+
+\section{\texorpdfstring{2. Règles métier (détail dans le
+\href{RAPPORT_CONCEPTION.pdf}{rapport de conception
+§5})}{2. Règles métier (détail dans le rapport de conception §5)}}\label{2-ruxe8gles-muxe9tier-duxe9tail-dans-le-rapport-de-conception-5}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0374}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1317}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.5689}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0449}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2171}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Id
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Règle
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test(s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Résultat
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RG‑01 & Email de compte unique &
+\texttt{Register}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{register}\allowbreak{}\texttt{With}\allowbreak{}\texttt{Existing}\allowbreak{}\texttt{Email}\allowbreak{}\texttt{Returns409}
+& JUnit & ✅ \\
+RG‑02 & Un recruteur = une entreprise & e2e « seconde entreprise du meme
+recruteur refusee (409) » & httpx & ✅ \\
+RG‑03 & Transitions de candidature contrôlées &
+\texttt{Status}\allowbreak{}\texttt{Change}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{transition}\allowbreak{}\texttt{Table}\allowbreak{}\texttt{Is}\allowbreak{}\texttt{Enforced}
+;
+\texttt{test\_}\allowbreak{}\texttt{transition\_}\allowbreak{}\texttt{interdite\_}\allowbreak{}\texttt{rejetee\_}\allowbreak{}\texttt{sans\_}\allowbreak{}\texttt{modifier\_}\allowbreak{}\texttt{l\_}\allowbreak{}\texttt{etat}
+& JUnit, pytest & ✅ \\
+RG‑04 & Une candidature active par offre &
+\texttt{Apply}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{can}\allowbreak{}\texttt{Apply}\allowbreak{}\texttt{Again}\allowbreak{}\texttt{After}\allowbreak{}\texttt{Withdrawing},
+\texttt{same}\allowbreak{}\texttt{Job}\allowbreak{}\texttt{From}\allowbreak{}\texttt{Another}\allowbreak{}\texttt{Candidate}\allowbreak{}\texttt{Is}\allowbreak{}\texttt{Not}\allowbreak{}\texttt{ADuplicate}
+;
+\texttt{test\_}\allowbreak{}\texttt{double\_}\allowbreak{}\texttt{candidature\_}\allowbreak{}\texttt{rejetee\_}\allowbreak{}\texttt{pas\_}\allowbreak{}\texttt{de\_}\allowbreak{}\texttt{doublon}
+& JUnit, pytest & ✅ \\
+RG‑05 & Postuler : offre publiée, profil complet, CV &
+\texttt{Apply}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{unpublished}\allowbreak{}\texttt{Job}\allowbreak{}\texttt{Gets409},
+\texttt{incomplete}\allowbreak{}\texttt{Profile}\allowbreak{}\texttt{Gets422}
+& JUnit & ✅ \\
+RG‑06 & Anti-force brute &
+\texttt{Login}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{five}\allowbreak{}\texttt{Failures}\allowbreak{}\texttt{Within15}\allowbreak{}\texttt{Minutes}\allowbreak{}\texttt{Lock}\allowbreak{}\texttt{The}\allowbreak{}\texttt{Account},
+\texttt{Rate}\allowbreak{}\texttt{Limiting}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test}
+; 429 réel pendant la campagne & JUnit, httpx & ✅
+\texttt{R/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{rate-}\allowbreak{}\texttt{limit-}\allowbreak{}\texttt{429.}\allowbreak{}\texttt{txt} \\
+RG‑07 & Un admin ne se désactive pas lui-même &
+\texttt{Admin}\allowbreak{}\texttt{User}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{an}\allowbreak{}\texttt{Admin}\allowbreak{}\texttt{Cannot}\allowbreak{}\texttt{Disable}\allowbreak{}\texttt{Themself}
+& JUnit & ✅ \\
+RG‑08 & Salaire min ≤ max, clôture à la date limite &
+\texttt{Job}\allowbreak{}\texttt{Enrichment}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{patch}\allowbreak{}\texttt{Checks}\allowbreak{}\texttt{The}\allowbreak{}\texttt{Salary}\allowbreak{}\texttt{Range}\allowbreak{}\texttt{Against}\allowbreak{}\texttt{The}\allowbreak{}\texttt{Stored}\allowbreak{}\texttt{Bound},
+\texttt{expired}\allowbreak{}\texttt{Offers}\allowbreak{}\texttt{Are}\allowbreak{}\texttt{Closed}\allowbreak{}\texttt{And}\allowbreak{}\texttt{Cannot}\allowbreak{}\texttt{Be}\allowbreak{}\texttt{Reopened}
+& JUnit & ✅ \\
+RG‑09 & Workflow d\textquotesingle offre, offre modérée figée &
+\texttt{Job}\allowbreak{}\texttt{Status}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{forbidden}\allowbreak{}\texttt{Transitions}\allowbreak{}\texttt{Get400}\allowbreak{}\texttt{And}\allowbreak{}\texttt{Nothing}\allowbreak{}\texttt{Changes},
+\texttt{moderated}\allowbreak{}\texttt{Offer}\allowbreak{}\texttt{Is}\allowbreak{}\texttt{Out}\allowbreak{}\texttt{Of}\allowbreak{}\texttt{The}\allowbreak{}\texttt{Recruiters}\allowbreak{}\texttt{Hands},
+\texttt{Job}\allowbreak{}\texttt{Update}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{closed}\allowbreak{}\texttt{And}\allowbreak{}\texttt{Moderated}\allowbreak{}\texttt{Offers}\allowbreak{}\texttt{Get409}
+& JUnit & ✅ \\
+\end{longtable}
+
+\section{3. Exigences de qualité ISO/IEC 25010 (cahier des charges
+§6)}\label{3-exigences-de-qualituxe9-isoiec-25010-cahier-des-charges-6}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0403}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1008}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1237}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2621}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1371}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1882}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1478}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Id
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Caractéristique
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Exigence mesurable
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test(s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil(s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Résultat obtenu
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preuve
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+EQ‑01 & Aptitude fonctionnelle & §4 implémenté et exact &
+Unitaires/intégration, API, E2E & JUnit, pytest, Vitest, httpx,
+Playwright & 1 233 tests unitaires ✅ ; API 155/155 ✅ ; E2E 62/62 ✅ &
+\texttt{R/unit/}, \texttt{R/api/}, \texttt{R/e2e-ui/} \\
+EQ‑02 & Efficacité de performance & p95 \textless{} 500 ms à 20
+utilisateurs, erreurs \textless{} 1 \% &
+\texttt{quality/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{load-}\allowbreak{}\texttt{test.}\allowbreak{}\texttt{js}
+& k6 1.0.0 & p95 \textbf{349,6 ms} sur 3 068 offres, 0,00 \%
+d\textquotesingle erreurs, 4 463 requêtes ✅ &
+\texttt{R/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{k6-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt},
+\texttt{k6-summary.json} \\
+EQ‑03 & Compatibilité & ≥ 2 navigateurs ; système tiers &
+\texttt{journeys.spec.ts} sur 4 projets ; \texttt{test\_llm\_client.py}
+(API OpenRouter) & Playwright, pytest & Chromium, Edge, WebKit, Chrome
+mobile ✅ ; Firefox \textbf{non exécutable} sur le poste (documenté) &
+\texttt{R/e2e-ui/html} \\
+EQ‑04 & Facilité d\textquotesingle utilisation & Parcours validés,
+accessibilité de base & \texttt{journeys.spec.ts}, \texttt{a11y.spec.ts}
+(6 pages) & Playwright, axe-core (WCAG 2.1 A/AA) & Parcours ✅ ;
+\textbf{0 violation} d\textquotesingle accessibilité ✅ &
+\texttt{R/a11y/*.json} \\
+EQ‑05 & Fiabilité & Pas de perte de données, reprise après panne &
+\texttt{quality/}\allowbreak{}\texttt{reliability/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{reliability.}\allowbreak{}\texttt{py}
+(8 scénarios, pannes réelles) ;
+\texttt{Job}\allowbreak{}\texttt{Analysis}\allowbreak{}\texttt{Listener}\allowbreak{}\texttt{Test}
+& pytest + Docker, JUnit & 8/8 ✅ après correction de 2 défauts trouvés
+& \texttt{R/reliability/} \\
+EQ‑06a & Sécurité --- SAST & Aucune vulnérabilité dans le code & Analyse
+du code de production & Bandit, Semgrep & 0 ✅ &
+\texttt{R/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{bandit.}\allowbreak{}\texttt{txt},
+\texttt{semgrep.txt} \\
+EQ‑06b & Sécurité --- SCA & Aucune CVE connue dans les dépendances &
+Requirements, lockfile npm, 8 images & pip-audit, npm audit, Trivy & 82
+→ 0, 1 → 0, 179 → 0 ✅ & \texttt{R/security/*-avant*},
+\texttt{trivy-resume.txt} \\
+EQ‑06c & Sécurité --- DAST & Pas de faille détectable à
+l\textquotesingle exécution & Scan de l\textquotesingle interface en
+fonctionnement & OWASP ZAP baseline & 0 échec, 59 contrôles OK ✅ ; 3
+alertes moyennes acceptées & \texttt{R/security/zap/} \\
+EQ‑06d & Sécurité --- contrôle d\textquotesingle accès & 401 sans jeton,
+403 hors rôle & \texttt{RbacIntegrationTest}, e2e « Sécurité et accès »,
+Playwright \texttt{/forbidden} & JUnit, httpx, Playwright & ✅ &
+\texttt{R/unit/}, \texttt{R/api/} \\
+EQ‑07 & Maintenabilité & Couverture mesurée, complexité maîtrisée, lint
+& Couverture de toutes les suites ; analyse de complexité & JaCoCo,
+pytest-cov, Vitest v8, lizard, ruff, oxlint & Lignes : Java 95,7 \%, IA
+97,2 \%, front 92,1 \% ; CCN moyen 2,2 ; lint 0 ✅ &
+\texttt{R/coverage/}, \texttt{R/maintainability/} \\
+EQ‑08 & Portabilité & Installation reproductible ailleurs &
+\texttt{docker\ compose\ up\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{build}
+; CI Ubuntu + déploiement VM Azure + tests de fumée & Docker, GitHub
+Actions, Kubernetes & Stack reconstruite et testée ✅ ; CI de la version
+finale (\texttt{ed0779b}) : 20/20 jobs ✅ ; dernier déploiement Azure +
+fumée (\texttt{3b4cd95}) : 22/22 jobs ✅ &
+\href{https://github.com/omartitouhi/SmartRecruit/actions/runs/42859400550}{CI
+finale},
+\href{https://github.com/omartitouhi/SmartRecruit/actions/runs/42530810230/attempts/2}{déploiement} \\
+\end{longtable}
+
+\section{4. Couches de test du cahier des charges (§7) → outils
+retenus}\label{4-couches-de-test-du-cahier-des-charges-7--outils-retenus}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1711}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3276}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3178}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1834}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Couche
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil(s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Emplacement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Exécution
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Tests unitaires & JUnit 5, pytest, Vitest & \texttt{backend/*/src/test},
+\texttt{ai-service/tests},
+\texttt{frontend/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{**/}\allowbreak{}\texttt{*.}\allowbreak{}\texttt{test.}\allowbreak{}\texttt{tsx}
+& \texttt{run-all.sh\ unit} \\
+Tests d\textquotesingle intégration & Spring Test (MockMvc + H2 + faux
+services HTTP), FastAPI TestClient & idem & \texttt{run-all.sh\ unit} \\
+Tests API & httpx (équivalent Postman/RestAssured) &
+\texttt{backend/}\allowbreak{}\texttt{e2e/}\allowbreak{}\texttt{e2e\_}\allowbreak{}\texttt{full.}\allowbreak{}\texttt{py}
+& \texttt{run-all.sh\ api} \\
+Tests fonctionnels / E2E & Playwright & \texttt{quality/e2e-ui} &
+\texttt{run-all.sh\ ui} \\
+Tests de performance & k6 & \texttt{quality/perf} &
+\texttt{run-all.sh\ perf} \\
+Tests de fiabilité & pytest + pannes Docker &
+\texttt{quality/reliability} &
+\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ reliability} \\
+SAST & Bandit, Semgrep & --- & \texttt{run-all.sh\ sast} \\
+SCA & pip-audit, npm audit, Trivy & --- & \texttt{run-all.sh\ sca} \\
+DAST & OWASP ZAP & --- & \texttt{run-all.sh\ dast} \\
+Qualité / maintenabilité & JaCoCo, pytest-cov, Vitest v8, lizard, ruff,
+oxlint & --- &
+\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ unit\ maintainability} \\
+Compatibilité & Playwright (Chromium, Edge, WebKit, mobile) &
+\texttt{quality/e2e-ui} & \texttt{run-all.sh\ ui} \\
+Portabilité & Docker Compose, GitHub Actions, Kubernetes &
+\texttt{docker-compose.yml}, \texttt{.github/workflows},
+\texttt{deploy/} & \texttt{run-all.sh\ install}, CI \\
+\end{longtable}
+
+\end{document}

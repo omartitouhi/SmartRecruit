@@ -1,7 +1,7 @@
 # Diagrammes — SmartRecruit (Mermaid)
 
-Diagrammes du [rapport de conception](RAPPORT_CONCEPTION.md), au format Mermaid : GitHub les affiche directement ;
-pour une image, coller le code dans https://mermaid.live puis exporter en PNG ou SVG.
+Diagrammes du [rapport de conception](RAPPORT_CONCEPTION.md), au format Mermaid : GitHub les affiche directement.
+Versions PNG (intégrées au rapport) : [`images/`](images/), régénérées par `bash docs/qualite/latex/generer.sh`.
 
 ## 1. Cas d'utilisation par rôle
 
@@ -322,27 +322,12 @@ flowchart LR
 ## 8. Pipeline CI/CD (GitHub Actions)
 
 ```mermaid
-flowchart LR
-    P(["push / pull request"]) --> S1
-    subgraph S1["1 · Tests"]
-        B["Backend ×6<br/>JUnit + JaCoCo"]
-        F["Frontend<br/>Vitest + couverture, npm audit"]
-        I["Service IA<br/>pytest-cov, Bandit, pip-audit"]
-    end
-    subgraph S2["2 · Validation de l'infrastructure"]
-        K["Kustomize"]
-        H["Helm"]
-        TF["Terraform"]
-        AN["Ansible"]
-    end
-    subgraph S3["3 · Images"]
-        IM["8 images Docker"]
-    end
-    subgraph S4["4 · Déploiement (main uniquement)"]
-        D["VM Azure<br/>Kubernetes kind via Ansible"]
-    end
-    subgraph S5["5 · Tests de fumée"]
-        SM["Smoke tests sur la VM"]
-    end
-    S1 --> S2 --> S3 --> S4 --> S5
+flowchart TB
+    P(["push / pull request"])
+    S1["<b>1 · Tests</b><br/>Backend ×6 : JUnit + JaCoCo<br/>Frontend : Vitest + couverture, npm audit<br/>Service IA : pytest-cov, Bandit, pip-audit"]
+    S2["<b>2 · Validation de l'infrastructure</b><br/>Kustomize · Helm · Terraform · Ansible"]
+    S3["<b>3 · Images</b><br/>8 images Docker"]
+    S4["<b>4 · Déploiement</b> (main uniquement)<br/>VM Azure, Kubernetes kind via Ansible"]
+    S5["<b>5 · Tests de fumée</b><br/>smoke tests sur la VM"]
+    P --> S1 --> S2 --> S3 --> S4 --> S5
 ```

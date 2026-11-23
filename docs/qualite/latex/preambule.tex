@@ -1,0 +1,40 @@
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}

@@ -1,0 +1,386 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmonofont[Scale=0.8,BoldFont=DejaVuSansMono-Bold.ttf]{DejaVuSansMono.ttf}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{french}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Guide d\textquotesingle installation et d\textquotesingle exécution des tests --- SmartRecruit},
+  pdflang={fr},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Guide d\textquotesingle installation et
+d\textquotesingle exécution des tests --- SmartRecruit}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table des matières}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+Ce guide permet à un tiers de reproduire l\textquotesingle installation
+et \textbf{toutes les couches de test} sur sa machine. Les résultats
+sont écrits dans \texttt{quality/reports/}. Vérifié sous Windows 11 (Git
+Bash + Docker Desktop) ; la CI le reproduit sous Linux (Ubuntu, GitHub
+Actions).
+
+\section{1. Prérequis}\label{1-pruxe9requis}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1909}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2282}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.5809}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Version testée
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Usage
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Git & 2.x & récupérer le dépôt \\
+Docker + Docker Compose & Docker Desktop 4.x & toute la stack, k6,
+Trivy, Semgrep, OWASP ZAP (aucune installation locale de ces outils) \\
+Java (JDK) & 21 (25 accepté) & tests Maven (wrapper \texttt{mvnw}
+inclus) \\
+Node.js & 20+ & frontend, Playwright \\
+Python & 3.10+ (3.12 recommandé) & service IA, tests API, fiabilité,
+Bandit, pip-audit \\
+\end{longtable}
+
+Ports utilisés : 5173 (interface), 8080 (gateway), 8000 (IA), 8081-8085
+(services), 5432 (PostgreSQL).
+
+\section{2. Installation de
+l\textquotesingle application}\label{2-installation-de-lapplication}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{git}\NormalTok{ clone https://github.com/omartitouhi/SmartRecruit.git}
+\BuiltInTok{cd}\NormalTok{ SmartRecruit}
+\FunctionTok{cp}\NormalTok{ .env.example .env}
+\ExtensionTok{docker}\NormalTok{ compose up }\AttributeTok{{-}d} \AttributeTok{{-}{-}build}
+\ExtensionTok{python}\NormalTok{ backend/seed/seed\_demo.py}
+\ExtensionTok{python}\NormalTok{ backend/seed/seed\_volume.py}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Interface : http://localhost:5173 --- API : http://localhost:8080 ---
+  IA (Swagger) : http://localhost:8000/docs
+\item
+  Comptes de démonstration (mot de passe \texttt{Motdepasse123}) :
+  \texttt{candidat@smartrecruit.}\allowbreak{}\texttt{test},
+  \texttt{recruteur@smartrecruit.}\allowbreak{}\texttt{test} ;
+  administrateur : \texttt{ADMIN\_EMAIL} / \texttt{ADMIN\_PASSWORD} du
+  fichier \texttt{.env}.
+\item
+  Le script de données de démo prend environ 10 minutes (analyse de 19
+  CV) et peut être relancé sans doublon.
+\item
+  \texttt{seed\_volume.py} ajoute 3 000 offres publiées (environ 2
+  minutes ; \texttt{VOLUME=10000} pour plus) : c\textquotesingle est le
+  volume sur lequel portent la recherche et le test de charge. Lui aussi
+  peut être relancé sans doublon.
+\item
+  Repartir de zéro :
+  \texttt{docker\ compose\ down\ -}\allowbreak{}\texttt{v}.
+\end{itemize}
+
+\section{3. Exécuter les tests}\label{3-exuxe9cuter-les-tests}
+
+Toutes les couches, dans l\textquotesingle ordre (≈ 30 à 45 minutes,
+dont le téléchargement des images d\textquotesingle outils au premier
+lancement) :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh}
+\end{Highlighting}
+\end{Shaded}
+
+Une couche à la fois :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh unit}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1537}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1844}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2623}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3996}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Étape
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Couche (cahier des charges §7)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Rapport
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{install} & Portabilité & Docker Compose & console \\
+\texttt{unit} & Tests unitaires et d\textquotesingle intégration +
+couverture & JUnit 5 / Spring Test / JaCoCo, pytest / pytest-cov, Vitest
+/ v8 &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{},
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{coverage/}\allowbreak{} \\
+\texttt{api} & Tests API (contrat, codes HTTP) & script httpx
+\texttt{backend/}\allowbreak{}\texttt{e2e/}\allowbreak{}\texttt{e2e\_}\allowbreak{}\texttt{full.}\allowbreak{}\texttt{py}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt} \\
+\texttt{ui} & Tests E2E, accessibilité, multi-navigateurs & Playwright +
+axe-core &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{html/}\allowbreak{}\texttt{index.}\allowbreak{}\texttt{html},
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{a11y/}\allowbreak{} \\
+\texttt{perf} & Performance & k6 &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{perf/}\allowbreak{} \\
+\texttt{reliability} & Fiabilité (pannes réelles) & pytest + docker
+compose &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{reliability/}\allowbreak{} \\
+\texttt{sast} & Analyse statique sécurité & Bandit, Semgrep &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{} \\
+\texttt{sca} & Dépendances vulnérables & pip-audit, npm audit, Trivy &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{} \\
+\texttt{dast} & Analyse dynamique & OWASP ZAP baseline &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{zap/}\allowbreak{} \\
+\texttt{maintainability} & Complexité, lint & lizard, ruff, oxlint &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{maintainability/}\allowbreak{} \\
+\end{longtable}
+
+Les étapes \texttt{api}, \texttt{ui}, \texttt{perf},
+\texttt{reliability} et \texttt{dast} demandent la stack démarrée avec
+les données de démo (étape \texttt{install}). L\textquotesingle étape
+\texttt{reliability} \textbf{arrête et redémarre volontairement} des
+conteneurs (\texttt{ai-service}, \texttt{application-service},
+\texttt{postgres}) ; elle les remet en marche à la fin, même en cas
+d\textquotesingle échec.
+
+Commandes équivalentes sans le script (exemples) :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ backend/job{-}service }\KeywordTok{\&\&} \ExtensionTok{./mvnw}\NormalTok{ verify}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ ai{-}service }\KeywordTok{\&\&} \ExtensionTok{pip}\NormalTok{ install }\AttributeTok{{-}r}\NormalTok{ requirements{-}dev.txt }\KeywordTok{\&\&} \ExtensionTok{pytest} \AttributeTok{{-}{-}cov}\OperatorTok{=}\NormalTok{app}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ frontend }\KeywordTok{\&\&} \ExtensionTok{npm}\NormalTok{ ci }\KeywordTok{\&\&} \ExtensionTok{npm}\NormalTok{ run test:coverage}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ quality/e2e{-}ui }\KeywordTok{\&\&} \ExtensionTok{npm}\NormalTok{ ci }\KeywordTok{\&\&} \ExtensionTok{npx}\NormalTok{ playwright install chromium webkit }\KeywordTok{\&\&} \ExtensionTok{npx}\NormalTok{ playwright test}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{pytest}\NormalTok{ quality/reliability }\AttributeTok{{-}v} \AttributeTok{{-}s}
+\end{Highlighting}
+\end{Shaded}
+
+\section{4. Limites connues de l\textquotesingle environnement (règle
+d\textquotesingle or du cahier des
+charges)}\label{4-limites-connues-de-lenvironnement-ruxe8gle-dor-du-cahier-des-charges}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Firefox (Playwright)} : le binaire Firefox téléchargé par
+  Playwright ne démarre pas sur le poste Windows de
+  l\textquotesingle équipe (\texttt{spawn\ UNKNOWN} : exécutable bloqué
+  par le système). Il est désactivé par défaut ; pour
+  l\textquotesingle exécuter sur une autre machine :
+  \texttt{PW\_}\allowbreak{}\texttt{FIREFOX=1\ npx\ playwright\ test}.
+  La compatibilité est prouvée sur Chromium, Microsoft Edge, WebKit
+  (moteur de Safari) et Chrome mobile (Pixel 7).
+\item
+  \textbf{Microsoft Edge} : le projet Playwright \texttt{edge} utilise
+  l\textquotesingle Edge installé sur la machine ; sous Linux sans Edge,
+  lancer
+  \texttt{npx\ playwright\ test\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{project=chromium\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{project=webkit\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{project=mobile-}\allowbreak{}\texttt{chrome}.
+\item
+  \textbf{Réseau d\textquotesingle entreprise avec proxy TLS} :
+  \texttt{npm\ audit} peut échouer
+  (\texttt{unable\ to\ verify\ the\ first\ certificate}) ; utiliser
+  \texttt{NODE\_}\allowbreak{}\texttt{OPTIONS=-}\allowbreak{}\texttt{-}\allowbreak{}\texttt{use-}\allowbreak{}\texttt{system-}\allowbreak{}\texttt{ca\ npm\ audit\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{omit=dev}.
+\item
+  \textbf{Limitation des connexions} : la connexion et
+  l\textquotesingle inscription sont limitées à 10 requêtes / 5 min /
+  IP. Enchaîner plusieurs campagnes de tests à la suite peut donner des
+  429 ; attendre 5 minutes ou utiliser le script (qui relève la limite
+  le temps de la campagne API seulement).
+\end{itemize}
+
+\end{document}

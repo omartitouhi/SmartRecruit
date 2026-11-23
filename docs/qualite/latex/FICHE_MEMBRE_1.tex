@@ -1,0 +1,583 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmonofont[Scale=0.8,BoldFont=DejaVuSansMono-Bold.ttf]{DejaVuSansMono.ttf}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{french}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Fiche d\textquotesingle étude --- Membre 1 (lead) : présentation, logique métier et API},
+  pdflang={fr},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Fiche d\textquotesingle étude --- Membre 1 (lead) : présentation,
+logique métier et API}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table des matières}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\begin{quote}
+Pour : \emph{(à compléter)} --- le membre qui connaît le mieux le
+projet. Complète le \href{SOUTENANCE.pdf}{guide de soutenance}
+(questions-réponses) et la \href{REPARTITION_TESTS.pdf}{répartition des
+tests}.
+\end{quote}
+
+\section{0. Pourquoi cette partie revient au membre qui connaît le mieux
+le
+projet}\label{0-pourquoi-cette-partie-revient-au-membre-qui-connauxeet-le-mieux-le-projet}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Le lead présente tout} : sujet, architecture, choix
+  techniques, démo, synthèse ISO 25010. Il faut une vue
+  d\textquotesingle ensemble que les autres n\textquotesingle ont pas.
+\item
+  \textbf{La logique métier est la partie la plus difficile à apprendre
+  vite} : 6 services, 9 règles métier, un workflow, 1 233 tests. Les
+  autres blocs reposent surtout sur un outil et ses rapports (k6,
+  Playwright, ZAP\ldots), qui s\textquotesingle apprennent en quelques
+  jours ; la logique métier demande de comprendre le code.
+\item
+  \textbf{C\textquotesingle est ce que l\textquotesingle enseignant
+  vérifie en premier} (§4 et §6.1 : « toutes les fonctionnalités
+  implémentées et exactes »). Si une question dérape sur le code,
+  c\textquotesingle est toi qui dois pouvoir répondre.
+\item
+  \textbf{Tu es le filet de sécurité} : quand un membre bloque, tu
+  reprends (« en complément\ldots{} »). Tu dois donc connaître une
+  phrase-clé de chaque autre partie (section 7).
+\end{itemize}
+
+\section{1. Ta mission en soutenance}\label{1-ta-mission-en-soutenance}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Présenter le projet en ≈ 12 min (déroulé : \href{SOUTENANCE.pdf}{guide
+  de soutenance §2}).
+\item
+  Faire la démo live de l\textquotesingle application et lancer les
+  \textbf{2 couches de test en direct} (Playwright et k6).
+\item
+  Répondre sur ton bloc : \textbf{6.1 Aptitude fonctionnelle} et
+  \textbf{6.7 Maintenabilité (couverture)} ; couches unitaires,
+  intégration, API.
+\item
+  Répondre aux questions transverses (traçabilité, règle
+  d\textquotesingle or, taille du groupe).
+\end{enumerate}
+
+\section{2. Ce que tu dois apprendre
+(notions)}\label{2-ce-que-tu-dois-apprendre-notions}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3694}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6306}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Notion
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ce que tu dois savoir dire
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+ISO/IEC 25010 & Modèle de qualité du produit logiciel, \textbf{8
+caractéristiques} : aptitude fonctionnelle, efficacité de performance,
+compatibilité, facilité d\textquotesingle utilisation, fiabilité,
+sécurité, maintenabilité, portabilité. Pour chacune : une exigence
+mesurable, un test, un outil, un résultat. \\
+Traçabilité & Relier chaque exigence (EF, RG, EQ) à ses tests, son
+outil, son résultat et sa preuve : c\textquotesingle est la
+\href{MATRICE_TRACABILITE.pdf}{matrice}. \\
+Pyramide des tests & Beaucoup de tests unitaires (rapides, ciblés),
+moins d\textquotesingle intégration, peu d\textquotesingle E2E (lents,
+coûteux). Chez nous : 1 233 unitaires/intégration, 155 API, 62 E2E. \\
+Test unitaire & Une classe isolée (règle de scoring, validation), sans
+base ni réseau. \\
+Test d\textquotesingle intégration & Plusieurs couches ensemble :
+requête HTTP simulée (MockMvc) → contrôleur → service → repository →
+base H2. Les autres microservices sont remplacés par de \textbf{faux
+serveurs HTTP}. \\
+Test d\textquotesingle API (contrat) & Un vrai client HTTP contre la
+stack Docker complète : codes HTTP et structure JSON. \\
+Double de test (mock, stub, faux serveur) & Remplace une dépendance pour
+isoler ce qu\textquotesingle on teste et rendre le test
+reproductible. \\
+Test paramétré & Un même test exécuté sur une liste de cas (ex. toutes
+les paires de statuts pour RG‑03). \\
+Codes HTTP & 400 requête invalide / transition interdite ; 401 non
+authentifié ; 403 authentifié mais rôle insuffisant ; 404 introuvable ;
+409 conflit avec l\textquotesingle état (doublon, offre non publiée) ;
+422 données valides mais non traitables (profil incomplet) ; 429 trop de
+requêtes. \\
+Machine à états (workflow) & Des statuts et une table de transitions
+autorisées ; tout le reste est refusé. \\
+Couverture de code & \% de lignes (ou branches) exécutées par les tests
+; mesure ce qui est \textbf{exécuté}, pas ce qui est
+\textbf{vérifié}. \\
+Architecture en couches & \texttt{controller} (HTTP) → \texttt{service}
+(règles) → \texttt{repository} (accès base) → \texttt{model} (entités),
+plus \texttt{dto}, \texttt{exception}, \texttt{client}. \\
+Microservices & Un service par domaine, une base par service,
+communication REST ; le gateway est la seule porte
+d\textquotesingle entrée. \\
+\end{longtable}
+
+\section{3. Le projet vu de ta partie : fichiers à lire, dans
+l\textquotesingle ordre}\label{3-le-projet-vu-de-ta-partie--fichiers-uxe0-lire-dans-lordre}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0155}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.7674}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2171}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fichier
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ce que tu y cherches
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Le cahier des charges (PDF de l\textquotesingle enseignant) puis
+\href{RAPPORT_CONCEPTION.pdf}{RAPPORT\_CONCEPTION.md} & Le §4 du cahier
+et comment chaque exigence est réalisée ; les 8 figures. \\
+2 & \href{MATRICE_TRACABILITE.pdf}{MATRICE\_TRACABILITE.md} & Chaque
+ligne EF/RG/EQ : savoir la lire à voix haute. \\
+3 &
+\texttt{backend/}\allowbreak{}\texttt{application-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{main/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{com/}\allowbreak{}\texttt{smartrecruit/}\allowbreak{}\texttt{application/}\allowbreak{}\texttt{model/}\allowbreak{}\texttt{Application}\allowbreak{}\texttt{Status.}\allowbreak{}\texttt{java}
+& La table \texttt{ALLOWED\_TRANSITIONS} (RG‑03). \\
+4 &
+\texttt{…/}\allowbreak{}\texttt{application/}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{Application}\allowbreak{}\texttt{Service.}\allowbreak{}\texttt{java}
+& Postuler (RG‑04, RG‑05), changer de statut, historique, audit. \\
+5 &
+\texttt{…/}\allowbreak{}\texttt{application/}\allowbreak{}\texttt{controller/}\allowbreak{}\texttt{Application}\allowbreak{}\texttt{Controller.}\allowbreak{}\texttt{java}
+et
+\texttt{exception/}\allowbreak{}\texttt{Global}\allowbreak{}\texttt{Exception}\allowbreak{}\texttt{Handler.}\allowbreak{}\texttt{java}
+& Comment une erreur métier devient un code HTTP (400/409/422). \\
+6 &
+\texttt{…/}\allowbreak{}\texttt{application/}\allowbreak{}\texttt{client/}\allowbreak{}
+(\texttt{JobDirectoryClient},
+\texttt{Candidate}\allowbreak{}\texttt{Readiness}\allowbreak{}\texttt{Client},
+\texttt{AiMatchingClient}, \texttt{AuditClient}) & Les appels
+inter-services ; l\textquotesingle IA en « best effort ». \\
+7 &
+\texttt{backend/}\allowbreak{}\texttt{application-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{test/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{…/}\allowbreak{}\texttt{controller/}\allowbreak{}\texttt{Status}\allowbreak{}\texttt{Change}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{java}
+et
+\texttt{Apply}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{java}
+& Structure d\textquotesingle un test d\textquotesingle intégration :
+préparation, appel MockMvc, assertions. \\
+8 &
+\texttt{backend/}\allowbreak{}\texttt{auth-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{test/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{…/}\allowbreak{}\texttt{controller/}\allowbreak{}\texttt{Login}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{java}
+& RG‑06 (verrouillage après 5 échecs). \\
+9 &
+\texttt{ai-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{app/}\allowbreak{}\texttt{services/}\allowbreak{}\texttt{scoring.}\allowbreak{}\texttt{py},
+\texttt{matching\_service.py}, \texttt{rules\_match.py} +
+\texttt{ai-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{scoring.}\allowbreak{}\texttt{py}
+& Comment le score de compatibilité est calculé et testé. \\
+10 &
+\texttt{backend/}\allowbreak{}\texttt{e2e/}\allowbreak{}\texttt{e2e\_}\allowbreak{}\texttt{full.}\allowbreak{}\texttt{py}
+& Les 155 vérifications API, en passant par le gateway et nginx. \\
+11 & \texttt{quality/run-all.sh} & Les 10 étapes de la campagne
+(install, unit, api, ui, perf, reliability, sast, sca, dast,
+maintainability). \\
+\end{longtable}
+
+\section{4. Commandes à savoir lancer (et
+lire)}\label{4-commandes-uxe0-savoir-lancer-et-lire}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh unit}
+\end{Highlighting}
+\end{Shaded}
+
+Tests unitaires + intégration des 6 services Java, du service IA et du
+frontend, avec couverture. Lire : le nombre de tests et
+\texttt{BUILD\ SUCCESS} / \texttt{passed} ; rapports dans
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}
+et
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{coverage/}\allowbreak{}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ ai{-}service }\KeywordTok{\&\&} \ExtensionTok{pytest} \AttributeTok{{-}q}
+\end{Highlighting}
+\end{Shaded}
+
+Version rapide (quelques secondes, 137 tests) : ton \textbf{plan B} si
+une démo échoue.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh api}
+\end{Highlighting}
+\end{Shaded}
+
+Application démarrée. Lire la dernière ligne de
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt}
+: 155 vérifications OK.
+
+Démo de la soutenance (tu les lances, les membres 2 et 3 les expliquent
+si on leur demande) :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ quality/e2e{-}ui }\KeywordTok{\&\&} \ExtensionTok{npx}\NormalTok{ playwright test }\AttributeTok{{-}{-}project}\OperatorTok{=}\NormalTok{chromium }\AttributeTok{{-}{-}headed}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{docker}\NormalTok{ run }\AttributeTok{{-}{-}rm} \AttributeTok{{-}v} \StringTok{"}\VariableTok{$(}\BuiltInTok{pwd} \AttributeTok{{-}W} \DecValTok{2}\OperatorTok{\textgreater{}}\NormalTok{/dev/null }\KeywordTok{||} \BuiltInTok{pwd}\VariableTok{)}\StringTok{/quality/perf:/scripts:ro"} \AttributeTok{{-}v} \StringTok{"}\VariableTok{$(}\BuiltInTok{pwd} \AttributeTok{{-}W} \DecValTok{2}\OperatorTok{\textgreater{}}\NormalTok{/dev/null }\KeywordTok{||} \BuiltInTok{pwd}\VariableTok{)}\StringTok{/quality/reports/perf:/reports"}\NormalTok{ grafana/k6:1.0.0 run /scripts/load{-}test.js}
+\end{Highlighting}
+\end{Shaded}
+
+\section{5. Chiffres à connaître par
+cœur}\label{5-chiffres-uxe0-connauxeetre-par-cux153ur}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2373}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7627}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Sujet
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Valeur
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Tests unitaires + intégration & \textbf{1 233} = 693 JUnit (6 services)
++ 137 pytest (IA) + 403 Vitest (front) \\
+Tests API & \textbf{155/155} \\
+Couverture des lignes & Java \textbf{95,7 \%} (91,4 à 97,7 \% selon le
+service), IA \textbf{97,2 \%}, frontend \textbf{92,1 \%} \\
+Règles métier & \textbf{9} (RG‑01 à RG‑09), au moins un test nommé par
+règle \\
+Volume pour la recherche & \textbf{3 068} offres publiées \\
+Campagne finale & 11/11/2026, toutes les étapes réussies en un passage
+(\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{campagne-}\allowbreak{}\texttt{finale-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt}) \\
+Les autres blocs (pour la synthèse) & E2E 62/62 sur 4 navigateurs ; p95
+349,6 ms \textless{} 500 ms ; fiabilité 8/8 après 2 défauts corrigés ;
+CVE 179 → 0 ; ZAP 0 échec ; CI 20/20 jobs \\
+\end{longtable}
+
+\section{6. Preuves à savoir ouvrir}\label{6-preuves-uxe0-savoir-ouvrir}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{coverage/}\allowbreak{}\texttt{job-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{index.}\allowbreak{}\texttt{html}
+  (rapport JaCoCo : montrer une classe verte/rouge).
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{\textless{}service\textgreater{}/}\allowbreak{}
+  (résultats JUnit) et
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{ai-}\allowbreak{}\texttt{service-}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml}.
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt}.
+\item
+  \href{MATRICE_TRACABILITE.pdf}{MATRICE\_TRACABILITE.md} et
+  \href{RAPPORT_CONFORMITE_ISO25010.pdf}{RAPPORT\_CONFORMITE\_ISO25010.md}
+  : savoir aller directement à une ligne demandée.
+\end{itemize}
+
+\section{7. Le minimum à savoir sur les autres parties (filet de
+sécurité)}\label{7-le-minimum-uxe0-savoir-sur-les-autres-parties-filet-de-suxe9curituxe9}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3966}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6034}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Partie
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Une phrase
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Membre 2 --- Interface & Playwright rejoue 13 parcours réels sur
+Chromium, Edge, WebKit et Chrome mobile ; axe-core : 0 violation WCAG
+2.1 A/AA sur 6 pages ; Firefox documenté non exécutable (règle
+d\textquotesingle or). \\
+Membre 3 --- Performance, fiabilité, portabilité & k6 : 20 utilisateurs
+pendant 1 min, p95 349,6 ms ; 8 pannes réelles de conteneurs, 2 défauts
+trouvés et corrigés ; tout s\textquotesingle installe avec
+\texttt{docker\ compose\ up\ -}\allowbreak{}\texttt{d\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{build},
+CI 20/20 jobs. \\
+Membre 4 --- Sécurité, qualité de code & SAST 0 (Bandit, Semgrep), SCA
+179 → 0 CVE (Trivy), ZAP 0 échec ; JWT + RBAC + en-têtes signés HMAC ;
+CCN moyen 2,2, lint à 0. \\
+\end{longtable}
+
+\section{8. Questions pièges (au-delà du guide de
+soutenance)}\label{8-questions-piuxe8ges-au-deluxe0-du-guide-de-soutenance}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Question
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Réponse
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Pourquoi des microservices pour un projet étudiant ? & Un service par
+domaine (comptes, profils, offres, candidatures, statistiques, IA) :
+responsabilités séparées et testables isolément, et une panne
+d\textquotesingle un service n\textquotesingle arrête pas les autres
+(prouvé par les tests de fiabilité). Le prix : de la complexité,
+compensée par Docker Compose. \\
+Comment garantir la cohérence sans clés étrangères entre bases ? & Clés
+étrangères logiques + vérifications par appel inter-service avant
+d\textquotesingle écrire (ex. l\textquotesingle offre existe et est
+\texttt{PUBLISHED} avant d\textquotesingle accepter une candidature). \\
+Différence entre 409 et 422 dans votre API ? & 409 : conflit avec
+l\textquotesingle état actuel (doublon, offre non publiée). 422 : la
+requête est correcte mais le candidat ne remplit pas une condition
+(profil incomplet, pas de CV). \\
+Un test qui passe toujours, comment savoir qu\textquotesingle il teste
+quelque chose ? & Chaque règle a une assertion explicite sur le résultat
+\textbf{et} sur l\textquotesingle état (ex. RG‑03 : 400 \textbf{et}
+statut inchangé). On a vu des tests échouer avant correction (fiabilité
+5/8 au premier passage). \\
+Où est l\textquotesingle exigence « CRUD complet sur 4 entités » ? &
+Rapport de conception §3 : 6 entités avec les 4 opérations ; tests
+\texttt{Job}\allowbreak{}\texttt{Delete}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test},
+\texttt{Notes}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test}\ldots{}
+(matrice EF‑02). \\
+Que se passe-t-il si l\textquotesingle IA est en panne pendant une
+candidature ? & La candidature est enregistrée (201), le score reste
+\texttt{null} : l\textquotesingle IA est appelée en « best effort » et
+de façon asynchrone (figure 7 du rapport de conception). \\
+Votre IA est-elle testée alors qu\textquotesingle elle dépend
+d\textquotesingle un LLM externe ? & Le scoring par règles est
+déterministe et testé (pytest, 97,2 \% de couverture) ;
+l\textquotesingle appel au LLM externe est testé avec un client simulé
+(\texttt{test\_llm\_client.py}). \\
+\end{longtable}
+
+\section{9. Plan
+d\textquotesingle apprentissage}\label{9-plan-dapprentissage}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1316}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1316}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.7368}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Étape
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Durée
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Objectif
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 2 h & Relire le cahier des charges, le rapport de conception et la
+matrice : savoir raconter le projet sans notes. \\
+2 & 3 h & Lire les fichiers 3 à 8 de la section 3 ; refaire à voix haute
+le parcours « postuler » (figure 7). \\
+3 & 1 h & Lancer \texttt{unit} et \texttt{api}, ouvrir chaque preuve de
+la section 6. \\
+4 & 2 h & Répéter la présentation de 12 min avec la démo et les 2
+commandes live, chronomètre en main. \\
+5 & 1 h & Faire interroger chaque membre par un autre avec le guide de
+soutenance ; noter ce qui bloque. \\
+\end{longtable}
+
+\section{10. Auto-évaluation (tout doit être coché la
+veille)}\label{10-auto-uxe9valuation-tout-doit-uxeatre-cochuxe9-la-veille}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Je cite les 8 caractéristiques ISO 25010 et une preuve pour chacune.
+\item[$\square$]
+  Je dessine l\textquotesingle architecture de mémoire (gateway, 6
+  services Spring, IA FastAPI, une base par service).
+\item[$\square$]
+  J\textquotesingle explique RG‑03 et RG‑04 en montrant le code
+  \textbf{et} le test.
+\item[$\square$]
+  Je justifie 400 / 401 / 403 / 409 / 422 / 429 avec un exemple de notre
+  API.
+\item[$\square$]
+  Je lance \texttt{unit}, \texttt{api}, Playwright et k6 sans aide, et
+  je sais quoi lire dans leur sortie.
+\item[$\square$]
+  Je retrouve en moins de 30 s n\textquotesingle importe quelle ligne de
+  la matrice et sa preuve.
+\item[$\square$]
+  Je tiens la présentation en 12 min.
+\end{itemize}
+
+\end{document}

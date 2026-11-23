@@ -1,0 +1,414 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmonofont[Scale=0.8,BoldFont=DejaVuSansMono-Bold.ttf]{DejaVuSansMono.ttf}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{french}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Répartition des tests entre les 4 membres},
+  pdflang={fr},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Répartition des tests entre les 4 membres}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table des matières}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+Chaque membre est responsable d\textquotesingle un bloc de
+caractéristiques ISO/IEC 25010 : il \textbf{ré-exécute} ses couches de
+test, \textbf{vérifie} que les preuves de \texttt{quality/reports/} sont
+à jour et cohérentes avec la \href{MATRICE_TRACABILITE.pdf}{matrice de
+traçabilité}, et \textbf{présente} ses résultats en soutenance. Les
+commandes se lancent depuis la racine du dépôt (Git Bash sous Windows),
+application démarrée
+(\texttt{docker\ compose\ up\ -}\allowbreak{}\texttt{d\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{build})
+sauf pour \texttt{unit}, \texttt{sast} et \texttt{maintainability}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0704}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2374}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2254}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2455}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2213}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Membre 1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Membre 2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Membre 3
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Membre 4
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Nom & \emph{(à compléter)} & \emph{(à compléter)} & \emph{(à compléter)}
+& \emph{(à compléter)} \\
+Thème & Logique métier et API & Interface utilisateur & Performance,
+fiabilité, portabilité & Sécurité et qualité de code \\
+ISO 25010 (§6) & 6.1 Aptitude fonctionnelle, 6.7 Maintenabilité
+(couverture) & 6.1 (E2E), 6.3 Compatibilité, 6.4 Facilité
+d\textquotesingle utilisation & 6.2 Efficacité de performance, 6.5
+Fiabilité, 6.8 Portabilité & 6.6 Sécurité, 6.7 Maintenabilité (analyse
+statique) \\
+Couches (§7) & Unitaires, intégration, API & Fonctionnels/E2E,
+compatibilité, unitaires frontend & Performance, fiabilité, portabilité
+& SAST, SCA, DAST, qualité/maintenabilité \\
+\end{longtable}
+
+\section{Membre 1 --- Logique métier et
+API}\label{membre-1--logique-muxe9tier-et-api}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1704}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1227}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1959}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1533}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3578}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Couche
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Emplacement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Commande
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preuve
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Unitaires + intégration (backend Java, 6 services) & JUnit 5, Spring
+Test/MockMvc, JaCoCo & \texttt{backend/*/src/test} &
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ unit}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{\textless{}service\textgreater{}/}\allowbreak{},
+\texttt{coverage/\textless{}service\textgreater{}/} \\
+Unitaires + intégration (service IA) & pytest, TestClient, pytest-cov &
+\texttt{ai-service/tests} &
+\texttt{cd\ ai-}\allowbreak{}\texttt{service\ \&\&\ pytest\ -}\allowbreak{}\texttt{q}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{ai-}\allowbreak{}\texttt{service-}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml},
+\texttt{coverage/}\allowbreak{}\texttt{ai-}\allowbreak{}\texttt{service/}\allowbreak{} \\
+Tests API (contrat HTTP de bout en bout) & httpx &
+\texttt{backend/}\allowbreak{}\texttt{e2e/}\allowbreak{}\texttt{e2e\_}\allowbreak{}\texttt{full.}\allowbreak{}\texttt{py}
+&
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ api}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt}
+(155 OK) \\
+\end{longtable}
+
+À vérifier : EF‑01 à EF‑06 et \textbf{les 9 règles métier RG‑01 à RG‑09}
+(un test nommé par règle dans la matrice §2), couverture des lignes
+(Java 95,7 \%, IA 97,2 \%).
+
+\section{Membre 2 --- Interface
+utilisateur}\label{membre-2--interface-utilisateur}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1278}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1504}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2857}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1353}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3008}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Couche
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Emplacement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Commande
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preuve
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Unitaires frontend & Vitest (+ couverture v8) &
+\texttt{frontend/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{**/}\allowbreak{}\texttt{*.}\allowbreak{}\texttt{test.}\allowbreak{}\texttt{tsx}
+& \texttt{cd\ frontend\ \&\&\ npm\ test} &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{frontend-}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml},
+\texttt{coverage/frontend/} \\
+Fonctionnels / E2E (parcours des 3 rôles) & Playwright &
+\texttt{quality/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{journeys.}\allowbreak{}\texttt{spec.}\allowbreak{}\texttt{ts},
+\texttt{auth.setup.ts} &
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ ui}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{html/}\allowbreak{}\texttt{index.}\allowbreak{}\texttt{html},
+\texttt{junit.xml} \\
+Compatibilité multi-navigateurs & Playwright (Chromium, Edge, WebKit,
+Chrome mobile) &
+\texttt{quality/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{playwright.}\allowbreak{}\texttt{config.}\allowbreak{}\texttt{ts}
+& idem & 62 réussis ; Firefox documenté non exécutable \\
+Accessibilité de base & axe-core (WCAG 2.1 A/AA) &
+\texttt{quality/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{a11y.}\allowbreak{}\texttt{spec.}\allowbreak{}\texttt{ts}
+& idem &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{a11y/}\allowbreak{}\texttt{*.}\allowbreak{}\texttt{json}
+(0 violation) \\
+\end{longtable}
+
+À vérifier : recette utilisateur (parcours candidat, recruteur, admin),
+refus d\textquotesingle accès \texttt{/forbidden}.
+
+\section{Membre 3 --- Performance, fiabilité,
+portabilité}\label{membre-3--performance-fiabilituxe9-portabilituxe9}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1483}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1175}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2727}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1958}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2657}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Couche
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Emplacement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Commande
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preuve
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Performance (20 utilisateurs, p95 \textless{} 500 ms) & k6 &
+\texttt{quality/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{load-}\allowbreak{}\texttt{test.}\allowbreak{}\texttt{js}
+&
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ perf}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{k6-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt},
+\texttt{k6-summary.json} \\
+Fiabilité (pannes réelles de conteneurs, 8 scénarios) & pytest + Docker
+&
+\texttt{quality/}\allowbreak{}\texttt{reliability/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{reliability.}\allowbreak{}\texttt{py}
+&
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ reliability}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{reliability/}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml},
+\texttt{pytest-console.txt} \\
+Compatibilité système tiers (API LLM externe) & pytest &
+\texttt{ai-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{llm\_}\allowbreak{}\texttt{client.}\allowbreak{}\texttt{py}
+&
+\texttt{cd\ ai-}\allowbreak{}\texttt{service\ \&\&\ pytest\ -}\allowbreak{}\texttt{q\ tests/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{llm\_}\allowbreak{}\texttt{client.}\allowbreak{}\texttt{py}
+& idem
+\texttt{unit/}\allowbreak{}\texttt{ai-}\allowbreak{}\texttt{service-}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml} \\
+Portabilité (installation reproductible) & Docker Compose, GitHub
+Actions, Kubernetes & \texttt{docker-compose.yml},
+\texttt{.}\allowbreak{}\texttt{github/}\allowbreak{}\texttt{workflows/}\allowbreak{}\texttt{pipeline.}\allowbreak{}\texttt{yml},
+\texttt{deploy/} &
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ install}
+(idéalement sur \textbf{une autre machine} en suivant le
+\href{GUIDE_INSTALLATION.pdf}{guide}) & exécutions CI liées dans la
+matrice (EQ‑08) \\
+\end{longtable}
+
+À vérifier : seuils k6 \texttt{OK}, aucune perte de données après panne
+(8/8), installation par un tiers.
+
+\section{Membre 4 --- Sécurité et qualité de
+code}\label{membre-4--suxe9curituxe9-et-qualituxe9-de-code}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1207}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1638}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1552}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3103}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Couche
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Emplacement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Commande
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preuve
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+SAST & Bandit, Semgrep & code de production &
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ sast}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{bandit.}\allowbreak{}\texttt{txt},
+\texttt{semgrep.txt} \\
+SCA (CVE des dépendances) & pip-audit, npm audit, Trivy (8 images) &
+requirements, lockfile, images &
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ sca}
+&
+\texttt{security/}\allowbreak{}\texttt{pip-}\allowbreak{}\texttt{audit*.}\allowbreak{}\texttt{txt},
+\texttt{npm-audit*.txt}, \texttt{trivy-resume.txt} (avant/après) \\
+DAST & OWASP ZAP baseline & application en cours
+d\textquotesingle exécution &
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ dast}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{zap/}\allowbreak{} \\
+Contrôle d\textquotesingle accès, anti-force brute & JUnit
+(\texttt{RbacIntegrationTest},
+\texttt{Rate}\allowbreak{}\texttt{Limiting}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test}),
+httpx & \texttt{backend/*/src/test}, \texttt{backend/e2e} & inclus dans
+\texttt{unit} / \texttt{api} &
+\texttt{security/}\allowbreak{}\texttt{rate-}\allowbreak{}\texttt{limit-}\allowbreak{}\texttt{429.}\allowbreak{}\texttt{txt} \\
+Qualité / maintenabilité & lizard, ruff, oxlint & --- &
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ maintainability}
+&
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{maintainability/}\allowbreak{} \\
+\end{longtable}
+
+À vérifier : correspondance OWASP Top 10 (A01, A03, A05, A06, A07), 0
+vulnérabilité, CCN moyen, lint à 0.
+
+\section{Règles communes}\label{ruxe8gles-communes}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Règle d\textquotesingle or} : aucun résultat sans exécution
+  réelle ; après chaque ré-exécution, mettre à jour la ligne
+  correspondante de la matrice et du
+  \href{RAPPORT_CONFORMITE_ISO25010.pdf}{rapport de conformité}. Un
+  outil qui ne s\textquotesingle exécute pas sur le poste est documenté
+  comme tel (procédure + « résultat non disponible »).
+\item
+  Avant la soutenance, un membre lance la campagne complète
+  \texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh}
+  et archive la sortie dans
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{campagne-}\allowbreak{}\texttt{finale-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt}.
+\item
+  Chaque membre relit les tests d\textquotesingle un autre (1→2→3→4→1)
+  pour qu\textquotesingle aucune couche n\textquotesingle ait un seul
+  regard.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,502 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmonofont[Scale=0.8,BoldFont=DejaVuSansMono-Bold.ttf]{DejaVuSansMono.ttf}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{french}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Fiche d\textquotesingle étude --- Membre 2 : interface utilisateur, E2E, compatibilité, accessibilité},
+  pdflang={fr},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Fiche d\textquotesingle étude --- Membre 2 : interface
+utilisateur, E2E, compatibilité, accessibilité}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table des matières}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\begin{quote}
+Pour : \emph{(à compléter)}. Complète le \href{SOUTENANCE.pdf}{guide de
+soutenance} (questions-réponses, membre 2) et la
+\href{REPARTITION_TESTS.pdf}{répartition des tests}.
+\end{quote}
+
+\section{1. Ta mission en soutenance}\label{1-ta-mission-en-soutenance}
+
+Le lead lance Playwright en direct ; toi, tu dois pouvoir
+\textbf{expliquer ce qui s\textquotesingle exécute}, le
+\textbf{relancer} si l\textquotesingle enseignant le demande et
+\textbf{répondre} sur :
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{6.1 Aptitude fonctionnelle} (côté parcours utilisateur, tests
+  E2E) ;
+\item
+  \textbf{6.3 Compatibilité} (≥ 2 navigateurs) ;
+\item
+  \textbf{6.4 Facilité d\textquotesingle utilisation} (parcours validés,
+  accessibilité de base) ;
+\item
+  les tests unitaires du frontend (Vitest).
+\end{itemize}
+
+\section{2. Ce que tu dois apprendre
+(notions)}\label{2-ce-que-tu-dois-apprendre-notions}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3860}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6140}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Notion
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ce que tu dois savoir dire
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Test E2E (de bout en bout) & Un vrai navigateur pilote la vraie
+application (frontend + gateway + services + bases), comme un
+utilisateur. Lent mais le plus proche du réel. \\
+Test de composant (Vitest + Testing Library) & Un composant React rendu
+seul, l\textquotesingle API simulée ; rapide, vérifie
+l\textquotesingle affichage et les réactions (filtres, erreurs). \\
+Playwright & Outil E2E : un fichier de config, des \textbf{projets} (un
+par navigateur), des \textbf{tests} dans \texttt{tests/}, un rapport
+HTML. \\
+Projet \texttt{setup} et dépendances & \texttt{auth.setup.ts} se
+connecte une fois par rôle et enregistre la session ; les autres projets
+en dépendent et la réutilisent. \\
+Auto-attente & Playwright attend qu\textquotesingle un élément soit
+visible/actionnable avant d\textquotesingle agir : pas de
+\texttt{sleep}, moins de tests instables. \\
+Localisateurs accessibles & \texttt{getByRole}, \texttt{getByLabel} : on
+cible ce que voit l\textquotesingle utilisateur (rôle, libellé), pas une
+classe CSS fragile. \\
+Test instable (« flaky ») & Un test qui passe ou échoue sans changement
+de code (attentes trop courtes, données partagées). \\
+Moteurs de navigateur & Chromium (Chrome, Edge), WebKit (Safari), Gecko
+(Firefox). Tester deux moteurs différents a plus de valeur que deux
+navigateurs Chromium. \\
+Émulation mobile & Playwright simule l\textquotesingle écran, le tactile
+et l\textquotesingle agent utilisateur d\textquotesingle un Pixel 7 ; ce
+n\textquotesingle est pas un vrai téléphone. \\
+Accessibilité, WCAG 2.1 A/AA & Règles pour que
+l\textquotesingle application soit utilisable par tous (contrastes,
+libellés, clavier, structure). A = minimum, AA = niveau visé
+habituellement. \\
+axe-core & Moteur qui vérifie automatiquement une partie des règles WCAG
+sur une page ; il ne remplace pas un test manuel. \\
+Contrôle d\textquotesingle accès côté interface & \texttt{RequireRole}
+cache les pages selon le rôle ; la vraie sécurité est côté serveur (un
+appel API sans le bon rôle reçoit 403). \\
+\end{longtable}
+
+\section{3. Fichiers à lire, dans
+l\textquotesingle ordre}\label{3-fichiers-uxe0-lire-dans-lordre}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0237}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.5621}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4142}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fichier
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ce que tu y cherches
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 &
+\texttt{quality/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{playwright.}\allowbreak{}\texttt{config.}\allowbreak{}\texttt{ts}
+& Les projets : \texttt{setup}, \texttt{chromium}, \texttt{edge},
+\texttt{webkit}, \texttt{mobile-chrome}, et \texttt{firefox} seulement
+si \texttt{PW\_FIREFOX} est défini. \\
+2 &
+\texttt{quality/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{accounts.}\allowbreak{}\texttt{ts}
+et \texttt{auth.setup.ts} & Les comptes de démo et la connexion
+préalable des rôles. \\
+3 &
+\texttt{quality/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{journeys.}\allowbreak{}\texttt{spec.}\allowbreak{}\texttt{ts}
+& Les \textbf{13 parcours} : savoir les citer et expliquer ce que
+vérifie chacun. \\
+4 &
+\texttt{quality/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{a11y.}\allowbreak{}\texttt{spec.}\allowbreak{}\texttt{ts}
+& Les \textbf{6 pages} auditées par axe-core et les règles
+appliquées. \\
+5 &
+\texttt{frontend/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{App.}\allowbreak{}\texttt{tsx}
+et
+\texttt{frontend/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{auth/}\allowbreak{}\texttt{Require}\allowbreak{}\texttt{Role.}\allowbreak{}\texttt{tsx}
+& Les routes et la protection par rôle (redirection, page
+\texttt{/forbidden}). \\
+6 &
+\texttt{frontend/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{client.}\allowbreak{}\texttt{ts},
+\texttt{frontend/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{mock/}\allowbreak{}
+& Comment l\textquotesingle interface appelle l\textquotesingle API, et
+la simulation utilisée par les tests Vitest. \\
+7 & Deux tests Vitest, par ex.
+\texttt{frontend/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{auth/}\allowbreak{}\texttt{Require}\allowbreak{}\texttt{Role.}\allowbreak{}\texttt{test.}\allowbreak{}\texttt{tsx}
+et un test de page dans \texttt{frontend/src/pages/} & Structure
+d\textquotesingle un test de composant : rendu, action, assertion. \\
+8 & \href{MATRICE_TRACABILITE.pdf}{MATRICE\_TRACABILITE.md}, lignes
+EF‑01 à EF‑06, EQ‑01, EQ‑03, EQ‑04 & Où tes tests apparaissent comme
+preuve. \\
+\end{longtable}
+
+\section{4. Commandes à savoir lancer (et
+lire)}\label{4-commandes-uxe0-savoir-lancer-et-lire}
+
+Application démarrée au préalable
+(\texttt{docker\ compose\ up\ -}\allowbreak{}\texttt{d\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{build},
+données de démo chargées).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh ui}
+\end{Highlighting}
+\end{Shaded}
+
+Toute la suite (4 navigateurs + accessibilité). Lire :
+\texttt{62\ passed} (et des tests \texttt{skipped}, voir section 7).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ quality/e2e{-}ui }\KeywordTok{\&\&} \ExtensionTok{npx}\NormalTok{ playwright test }\AttributeTok{{-}{-}project}\OperatorTok{=}\NormalTok{chromium }\AttributeTok{{-}{-}headed}
+\end{Highlighting}
+\end{Shaded}
+
+Un seul navigateur, fenêtre visible : la version de la démo.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ quality/e2e{-}ui }\KeywordTok{\&\&} \ExtensionTok{npx}\NormalTok{ playwright show{-}report ../reports/e2e{-}ui/html}
+\end{Highlighting}
+\end{Shaded}
+
+Ouvre le rapport HTML : savoir montrer un test, ses étapes et sa durée.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{cd}\NormalTok{ frontend }\KeywordTok{\&\&} \ExtensionTok{npm}\NormalTok{ test}
+\end{Highlighting}
+\end{Shaded}
+
+Tests Vitest du frontend (403 tests).
+
+\section{5. Chiffres à connaître par
+cœur}\label{5-chiffres-uxe0-connauxeetre-par-cux153ur}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3171}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6829}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Sujet
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Valeur
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Parcours E2E & \textbf{13}, sur \textbf{4} navigateurs/appareils
+(Chromium, Edge, WebKit, Chrome mobile Pixel 7) \\
+Total Playwright & \textbf{62 réussis} = 13 × 4 + 6 audits
+d\textquotesingle accessibilité (Chromium) + 4 connexions de
+préparation \\
+Accessibilité & axe-core 4.10, WCAG 2.0/2.1 A et AA, \textbf{6 pages},
+\textbf{0 violation} \\
+Vitest & \textbf{403} tests, 32 fichiers, couverture frontend
+\textbf{92,1 \%} des lignes \\
+Firefox & \textbf{non exécutable} sur le poste (binaire bloqué par
+Windows, \texttt{spawn\ UNKNOWN}) : documenté, pas simulé \\
+\end{longtable}
+
+\section{6. Preuves à savoir ouvrir}\label{6-preuves-uxe0-savoir-ouvrir}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{html/}\allowbreak{}\texttt{index.}\allowbreak{}\texttt{html}
+  (rapport Playwright) et
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml}.
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{a11y/}\allowbreak{}\texttt{*.}\allowbreak{}\texttt{json}
+  : un fichier par page, tableau de violations vide.
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{frontend-}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml}
+  et
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{coverage/}\allowbreak{}\texttt{frontend/}\allowbreak{}.
+\end{itemize}
+
+\section{7. Questions pièges (au-delà du guide de
+soutenance)}\label{7-questions-piuxe8ges-au-deluxe0-du-guide-de-soutenance}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Question
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Réponse
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Pourquoi des tests « skipped » dans le rapport ? & Les audits
+d\textquotesingle accessibilité ne tournent que sur Chromium : axe
+analyse le DOM, qui est le même quel que soit le navigateur. Les répéter
+n\textquotesingle apporterait rien. \\
+Edge et Chrome, c\textquotesingle est le même moteur : est-ce vraiment 2
+navigateurs ? & Oui, deux navigateurs, mais le même moteur.
+C\textquotesingle est pour ça qu\textquotesingle on teste aussi
+\textbf{WebKit} (moteur de Safari), un moteur réellement différent. \\
+Le mobile est émulé : est-ce un vrai test de compatibilité ? &
+C\textquotesingle est une émulation (taille d\textquotesingle écran,
+tactile, agent utilisateur) : elle valide la mise en page et les
+parcours, pas les particularités d\textquotesingle un vrai appareil.
+Limite assumée. \\
+Que se passe-t-il si un test E2E échoue ? & Playwright garde une capture
+d\textquotesingle écran (toujours) et une trace complète (en cas
+d\textquotesingle échec) dans
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{artifacts}
+: la trace se rejoue pas à pas (DOM, réseau, console) pour trouver la
+cause. \\
+Pourquoi ne pas tout tester en E2E ? & Trop lent et fragile ; les
+détails (filtres, messages d\textquotesingle erreur, cas limites) sont
+testés par Vitest, l\textquotesingle E2E vérifie que les parcours
+complets marchent ensemble. \\
+Comment l\textquotesingle E2E respecte-t-il l\textquotesingle anti-force
+brute (RG‑06) ? & La connexion est faite une seule fois par rôle
+(\texttt{auth.setup.ts}) puis réutilisée : 4 connexions par exécution,
+sous la limite de 10 par 5 minutes. \\
+La facilité d\textquotesingle utilisation, c\textquotesingle est
+seulement axe ? & Non : parcours utilisateur validés de bout en bout +
+choix de conception (libellés visibles, lien « Aller au contenu »,
+navigation clavier, messages d\textquotesingle erreur clairs, mise en
+page mobile). \\
+Masquer un bouton selon le rôle, c\textquotesingle est de la sécurité ?
+& Non, c\textquotesingle est du confort. Le serveur refuse
+l\textquotesingle action (403) même si l\textquotesingle appel est forgé
+; testé côté backend et par le parcours \texttt{/forbidden}. \\
+\end{longtable}
+
+\section{8. Plan
+d\textquotesingle apprentissage}\label{8-plan-dapprentissage}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1316}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1316}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.7368}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Étape
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Durée
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Objectif
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 1 h & Utiliser l\textquotesingle application avec les 3 comptes de
+démo : refaire à la main les 13 parcours. \\
+2 & 2 h & Lire
+\texttt{playwright.}\allowbreak{}\texttt{config.}\allowbreak{}\texttt{ts},
+\texttt{auth.setup.ts}, \texttt{journeys.spec.ts} ; relier chaque test
+au parcours fait à la main. \\
+3 & 1 h & Lancer \texttt{ui}, ouvrir le rapport HTML et un fichier
+\texttt{a11y/*.json}. \\
+4 & 1 h & Lire \texttt{RequireRole.tsx} et deux tests Vitest ; lancer
+\texttt{npm\ test}. \\
+5 & 1 h & Réciter les réponses du guide de soutenance (membre 2) et de
+la section 7. \\
+\end{longtable}
+
+\section{9. Auto-évaluation}\label{9-auto-uxe9valuation}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Je cite les 13 parcours E2E et les 4 navigateurs.
+\item[$\square$]
+  J\textquotesingle explique le calcul 62 = 13 × 4 + 6 + 4, et les tests
+  « skipped ».
+\item[$\square$]
+  J\textquotesingle explique pourquoi Firefox n\textquotesingle a pas de
+  résultat, et la procédure pour l\textquotesingle exécuter ailleurs.
+\item[$\square$]
+  Je lance la suite et j\textquotesingle ouvre le rapport HTML sans
+  aide.
+\item[$\square$]
+  J\textquotesingle explique la différence entre un test Vitest et un
+  test Playwright, avec un exemple de chaque.
+\item[$\square$]
+  Je dis ce que vérifie axe-core et ce qu\textquotesingle il ne vérifie
+  pas.
+\end{itemize}
+
+\end{document}

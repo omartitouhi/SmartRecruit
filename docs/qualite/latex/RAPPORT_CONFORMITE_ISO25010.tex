@@ -1,0 +1,668 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmonofont[Scale=0.8,BoldFont=DejaVuSansMono-Bold.ttf]{DejaVuSansMono.ttf}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{french}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Rapport de conformité ISO/IEC 25010 --- SmartRecruit},
+  pdflang={fr},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Rapport de conformité ISO/IEC 25010 --- SmartRecruit}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table des matières}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\begin{quote}
+Toutes les valeurs ci-dessous viennent
+d\textquotesingle{}\textbf{exécutions réelles} du 9 au 11 novembre 2026
+(campagne finale complète du 11/11 :
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh},
+toutes étapes réussies) sur la stack Docker Compose (Windows 11, Docker
+Desktop) et de la CI GitHub Actions (Ubuntu). Chaque ligne renvoie au
+fichier de preuve dans \texttt{quality/reports/}. Reproduire :
+\texttt{bash\ quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh}
+(\href{GUIDE_INSTALLATION.pdf}{guide}).
+\end{quote}
+
+\section{Synthèse}\label{synthuxe8se}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0257}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1284}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1986}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2295}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2397}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1781}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Caractéristique
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Exigence mesurable
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil(s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Résultat
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Verdict
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+6.1 & Aptitude fonctionnelle & Fonctionnalités du §4 implémentées et
+exactes & JUnit/Spring Test, pytest, Vitest, httpx (API), Playwright & 1
+233 tests unitaires/intégration, 155/155 vérifications API, 62/62 tests
+E2E & ✅ \\
+6.2 & Efficacité de performance & p95 \textless{} 500 ms à 20
+utilisateurs simultanés, \textless{} 1 \% d\textquotesingle erreurs & k6
+& p95 = \textbf{350 ms} sur 3 068 offres, 0,00 \%
+d\textquotesingle erreurs, 72 req/s & ✅ \\
+6.3 & Compatibilité & ≥ 2 navigateurs ; coexistence avec un système
+tiers & Playwright & Chromium, Edge, WebKit (Safari), Chrome mobile ;
+API LLM externe OpenRouter interchangeable & ✅ (Firefox : non
+exécutable sur le poste, voir §6.3) \\
+6.4 & Facilité d\textquotesingle utilisation & Parcours validés,
+accessibilité de base & Playwright + axe-core (WCAG 2.1 A/AA) & 3
+parcours de rôle validés, \textbf{0 violation} WCAG sur 6 pages & ✅ \\
+6.5 & Fiabilité & Pas de perte de données, reprise correcte après panne
+& pytest + arrêt réel de conteneurs & 8/8 après correction de \textbf{2
+défauts trouvés par ces tests} & ✅ \\
+6.6 & Sécurité & Authentification robuste, RBAC, pas de faille OWASP
+connue & Bandit, Semgrep, pip-audit, npm audit, Trivy, OWASP ZAP, tests
+RBAC & SAST 0 ; SCA \textbf{179 → 0} CVE ; DAST 0 échec & ✅ \\
+6.7 & Maintenabilité & Couches, complexité maîtrisée, couverture mesurée
+& JaCoCo, pytest-cov, Vitest v8, lizard, ruff, oxlint & Couverture des
+lignes 95,7 \% (Java), 97,2 \% (IA), 92,1 \% (front) ; CCN moyen 2,2 &
+✅ \\
+6.8 & Portabilité & Installation reproductible sur une autre machine &
+Docker Compose, GitHub Actions, Kubernetes sur VM Azure & Windows (dev)
+→ Ubuntu (CI) → VM Azure (Kubernetes) avec tests de fumée verts & ✅ \\
+\end{longtable}
+
+\section{6.1 Aptitude fonctionnelle}\label{61-aptitude-fonctionnelle}
+
+\textbf{Exigence} : toutes les fonctionnalités minimales (rôles, entités
+et CRUD, workflow, tableau de bord, recherche, audit, règles métier)
+sont implémentées et produisent le résultat attendu.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2041}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1956}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1837}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0680}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3486}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Couche
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Volume
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Résultat
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preuve
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Unitaires + intégration backend (API → base H2) & JUnit 5, Spring
+MockMvc & 693 tests, 6 services & 693 réussis, 0 échec &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{\textless{}service\textgreater{}/}\allowbreak{}\texttt{TEST-}\allowbreak{}\texttt{*.}\allowbreak{}\texttt{xml} \\
+Unitaires service IA & pytest + TestClient & 137 tests & 137 réussis &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{ai-}\allowbreak{}\texttt{service-}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml} \\
+Unitaires frontend (composants, pages) & Vitest + Testing Library & 403
+tests, 32 fichiers & 403 réussis &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{unit/}\allowbreak{}\texttt{frontend-}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml} \\
+API de bout en bout (gateway + nginx, vraie base PostgreSQL) & script
+httpx
+\texttt{backend/}\allowbreak{}\texttt{e2e/}\allowbreak{}\texttt{e2e\_}\allowbreak{}\texttt{full.}\allowbreak{}\texttt{py}
+& 155 vérifications & \textbf{155 OK, 0 échec} &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt} \\
+E2E interface & Playwright & 13 parcours × 4 navigateurs + 6 audits
+d\textquotesingle accessibilité & \textbf{62 réussis, 0 échec} &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{html/}\allowbreak{}\texttt{index.}\allowbreak{}\texttt{html},
+\texttt{junit.xml} \\
+\end{longtable}
+
+Les 9 règles métier \texttt{RG‑01} à \texttt{RG‑09} ont chacune au moins
+un test automatisé (\href{MATRICE_TRACABILITE.pdf}{matrice}).
+
+\textbf{Compléments du 11/11 après relecture du cahier des charges}
+(chacun avec ses tests unitaires, API et/ou E2E) :
+
+\begin{itemize}
+\tightlist
+\item
+  CRUD complet sur 6 entités : suppression d\textquotesingle une offre
+  en brouillon (\texttt{DELETE\ /jobs/\{id\}}) et modification
+  d\textquotesingle une note par son auteur
+  (\texttt{PUT\ /}\allowbreak{}\texttt{applications/}\allowbreak{}\texttt{\{id\}/}\allowbreak{}\texttt{notes/}\allowbreak{}\texttt{\{note}\allowbreak{}\texttt{Id\}})
+  ;
+\item
+  filtre par période sur les tableaux de bord recruteur et
+  administrateur (\texttt{?from=\&to=}) ;
+\item
+  recherche sur un fort volume : 3 068 offres publiées
+  (\texttt{backend/}\allowbreak{}\texttt{seed/}\allowbreak{}\texttt{seed\_}\allowbreak{}\texttt{volume.}\allowbreak{}\texttt{py}),
+  sur lesquelles portent les tests de charge et
+  d\textquotesingle interface.
+\end{itemize}
+
+\section{6.2 Efficacité de
+performance}\label{62-efficacituxe9-de-performance}
+
+\textbf{Exigence} : temps de réponse p95 \textless{} 500 ms avec 20
+utilisateurs simultanés, taux d\textquotesingle erreur \textless{} 1 \%.
+
+\textbf{Test} :
+\texttt{quality/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{load-}\allowbreak{}\texttt{test.}\allowbreak{}\texttt{js}
+(k6 1.0.0), 20 utilisateurs virtuels pendant 1 minute, mélange réaliste
+: recherche filtrée d\textquotesingle offres, détail
+d\textquotesingle une offre, mes candidatures (candidat) ; statistiques
+d\textquotesingle entreprise et liste des offres (recruteur) ; journal
+d\textquotesingle audit paginé (admin). Les seuils sont codés dans le
+script : k6 échoue s\textquotesingle ils ne sont pas tenus.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6484}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3516}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Mesure (campagne finale, 11/11/2026, 3 068 offres publiées)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Valeur
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Requêtes & 4 463 (72,0 req/s) \\
+Durée moyenne / médiane & 104,2 ms / 55,2 ms \\
+p90 / \textbf{p95} / max & 237,5 ms / \textbf{349,6 ms} / 1 486,6 ms \\
+Taux d\textquotesingle erreur HTTP & \textbf{0,00 \%} \\
+Contrôles fonctionnels réussis & 100 \% \\
+Seuils \texttt{p(95)\textless{}500}, \texttt{rate\textless{}0.01},
+\texttt{checks\textgreater{}0.99} & \textbf{OK} \\
+\end{longtable}
+
+Première mesure (09/11, 68 offres seulement, avant corrections) : p95 =
+184,1 ms, 0,02 \% d\textquotesingle erreurs (1 délai réseau Docker sur 5
+441 requêtes). Preuve :
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{k6-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt},
+\texttt{k6-summary.json}.
+
+\section{6.3 Compatibilité}\label{63-compatibilituxe9}
+
+\textbf{Exigence} : fonctionnement sur au moins 2 navigateurs et
+coexistence avec un système tiers.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Multi-navigateurs} : la même suite Playwright tourne sur
+  \textbf{Chromium}, \textbf{Microsoft Edge 157} (installé),
+  \textbf{WebKit} (moteur de Safari) et \textbf{Chrome mobile}
+  (émulation Pixel 7, écran tactile). Résultat : 62/62 (les 6 tests
+  d\textquotesingle accessibilité ne tournent que sur Chromium). Preuve
+  :
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{e2e-}\allowbreak{}\texttt{ui/}\allowbreak{}\texttt{html/}\allowbreak{}\texttt{index.}\allowbreak{}\texttt{html}
+  (colonne projet).
+\item
+  \textbf{Firefox} : le binaire Firefox de Playwright ne démarre pas sur
+  le poste Windows de l\textquotesingle équipe
+  (\texttt{browser}\allowbreak{}\texttt{Type.}\allowbreak{}\texttt{launch:\ spawn\ }\allowbreak{}\texttt{UNKNOWN},
+  exécutable bloqué par le système). Conformément à la règle
+  d\textquotesingle or, il est \textbf{documenté comme non exécutable}
+  et non simulé ; procédure pour une autre machine :
+  \texttt{PW\_}\allowbreak{}\texttt{FIREFOX=1\ npx\ playwright\ test}.
+\item
+  \textbf{Coexistence avec un système tiers} : le service IA appelle un
+  LLM externe (OpenRouter, API compatible OpenAI) quand
+  \texttt{AI\_ENGINE=llm}, et bascule sur un moteur à règles local
+  sinon.
+  \texttt{ai-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{llm\_}\allowbreak{}\texttt{client.}\allowbreak{}\texttt{py}
+  vérifie le contrat avec l\textquotesingle API externe (réponse JSON
+  validée par schéma, réponse non conforme, échec ou délai dépassé →
+  erreur contrôlée) et \texttt{test\_skill\_gap.py} la traduction en
+  502/503 pour l\textquotesingle appelant. Le contrat
+  d\textquotesingle API REST est vérifié par les 155 vérifications API
+  (codes HTTP et structure JSON).
+\end{itemize}
+
+\section{6.4 Facilité
+d\textquotesingle utilisation}\label{64-facilituxe9-dutilisation}
+
+\textbf{Exigence} : parcours utilisateur validés, accessibilité de base.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Parcours validés automatiquement} (Playwright, 4 navigateurs)
+  : connexion par le formulaire des 3 rôles, message clair en cas de
+  mauvais mot de passe, redirection vers la connexion pour une page
+  protégée, page 404 lisible, recherche filtrée, détail
+  d\textquotesingle une offre, suivi des candidatures, tableau de bord
+  recruteur, classement des candidats, journal d\textquotesingle audit,
+  gestion des utilisateurs, refus d\textquotesingle accès
+  \texttt{/forbidden} pour un rôle non autorisé.
+\item
+  \textbf{Accessibilité} : audit \textbf{axe-core 4.10} (règles WCAG
+  2.0/2.1 niveaux A et AA) sur 6 pages (connexion, inscription,
+  recherche d\textquotesingle offres, candidatures, tableau de bord
+  recruteur, journal d\textquotesingle audit) : \textbf{0 violation,
+  toutes sévérités confondues}. Preuve :
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{a11y/}\allowbreak{}\texttt{*.}\allowbreak{}\texttt{json}
+  (tableaux vides), test \texttt{a11y.spec.ts}.
+\item
+  \textbf{Mobile} : les mêmes parcours passent en émulation Pixel 7
+  (menu repliable, mise en page étroite).
+\item
+  Conception : libellés visibles sur chaque champ (les tests
+  s\textquotesingle appuient sur \texttt{getByLabel}), lien « Aller au
+  contenu », messages d\textquotesingle erreur sans jargon.
+\end{itemize}
+
+\section{6.5 Fiabilité}\label{65-fiabilituxe9}
+
+\textbf{Exigence} : comportement stable en cas d\textquotesingle erreur
+ou de panne, sans perte de données, avec reprise correcte.
+
+\textbf{Test} :
+\texttt{quality/}\allowbreak{}\texttt{reliability/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{reliability.}\allowbreak{}\texttt{py}
+provoque de \textbf{vraies pannes}
+(\texttt{docker\ compose\ stop/}\allowbreak{}\texttt{start/}\allowbreak{}\texttt{restart}).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2188}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4312}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Scénario
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Attendu
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Résultat final
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+IA arrêtée : création d\textquotesingle offre & 201,
+l\textquotesingle offre reste valide & ✅ \\
+IA arrêtée : score de compatibilité & 502/503 propre, sans trace
+technique & ✅ \\
+IA arrêtée : candidature & 201 enregistrée, score \texttt{null} & ✅ \\
+IA redémarrée & le score de l\textquotesingle offre créée pendant la
+panne redevient disponible & ✅ reprise en 46 à 68 s (60 s lors de la
+campagne finale) \\
+Transition de statut interdite & 400, état inchangé en base & ✅ \\
+Double candidature & 409, aucun doublon & ✅ \\
+Service candidatures arrêté & erreur 5xx \textbf{en moins de 15 s}, puis
+reprise sans perte de l\textquotesingle état validé & ✅ reprise en 9 à
+17 s \\
+PostgreSQL redémarré & aucune perte (offre, candidature et son statut) &
+✅ reprise immédiate \\
+\end{longtable}
+
+\textbf{Défauts trouvés par ces tests puis corrigés} (première exécution
+: 5 réussis, 3 échecs) :
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \emph{Analyse IA perdue pendant une panne} : une offre créée pendant
+  l\textquotesingle arrêt de l\textquotesingle IA
+  n\textquotesingle était jamais analysée, donc jamais notée (503
+  permanent même après la reprise). Correction :
+  \texttt{JobAnalysisListener} (job-service) garde les analyses échouées
+  et les relance chaque minute ; test unitaire
+  \texttt{Job}\allowbreak{}\texttt{Analysis}\allowbreak{}\texttt{Listener}\allowbreak{}\texttt{Test}.
+\item
+  \emph{Gateway bloqué sur un service arrêté} : la requête restait
+  suspendue plus de 30 s (pas de délai de connexion). Correction : délai
+  de connexion de 3 s dans \texttt{GatewayConfig}
+  (\texttt{gateway.}\allowbreak{}\texttt{connect-}\allowbreak{}\texttt{timeout}).
+\item
+  Le 3e échec venait du test lui-même (il n\textquotesingle attendait
+  que l\textquotesingle un des deux services après le redémarrage de la
+  base) ; le test a été corrigé.
+\end{enumerate}
+
+Résultat final : \textbf{8/8}. Preuve :
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{reliability/}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml},
+\texttt{pytest-console.txt}.
+
+\section{6.6 Sécurité}\label{66-suxe9curituxe9}
+
+\textbf{Exigence} : authentification robuste, contrôle
+d\textquotesingle accès par rôle, absence de failles connues (OWASP Top
+10).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1762}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2682}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2682}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2874}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Couche
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Résultat
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Preuve
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+SAST Python & Bandit 1.8.6 & \textbf{0 problème} (1 612 lignes) &
+\texttt{security/bandit.txt} \\
+SAST Java / TypeScript / Python / secrets & Semgrep 1.140
+(\texttt{p/owasp-top-ten}, \texttt{p/java}, \texttt{p/typescript},
+\texttt{p/python}, \texttt{p/secrets}) & \textbf{0 finding}, 355 règles,
+498 fichiers &
+\texttt{security/}\allowbreak{}\texttt{semgrep.}\allowbreak{}\texttt{txt},
+\texttt{semgrep.json} \\
+SCA Python & pip-audit 2.9 & \textbf{82 → 0} vulnérabilités &
+\texttt{security/}\allowbreak{}\texttt{pip-}\allowbreak{}\texttt{audit-}\allowbreak{}\texttt{avant.}\allowbreak{}\texttt{txt},
+\texttt{pip-audit.txt} \\
+SCA npm & npm audit & \textbf{1 haute → 0} (follow-redirects) &
+\texttt{security/}\allowbreak{}\texttt{npm-}\allowbreak{}\texttt{audit-}\allowbreak{}\texttt{avant.}\allowbreak{}\texttt{txt},
+\texttt{npm-audit.txt} \\
+SCA images (dépendances réellement embarquées) & Trivy 0.58.1, 8 images
+& \textbf{179 → 0} (dont 24 critiques : Tomcat, Jackson, jsoup,
+starlette, pypdf\ldots) &
+\texttt{security/}\allowbreak{}\texttt{trivy-}\allowbreak{}\texttt{resume.}\allowbreak{}\texttt{txt},
+\texttt{trivy-avant/}, \texttt{trivy/} \\
+DAST & OWASP ZAP 2.16.1 baseline & \textbf{0 échec}, 59 contrôles
+réussis ; 5 alertes moyennes → 3 acceptées &
+\texttt{security/zap-avant/},
+\texttt{security/}\allowbreak{}\texttt{zap/}\allowbreak{}\texttt{zap-}\allowbreak{}\texttt{frontend.}\allowbreak{}\texttt{html} \\
+Contrôle d\textquotesingle accès & tests RBAC de chaque service, e2e
+API, Playwright & 403 pour un rôle non autorisé, 401 sans jeton,
+\texttt{/forbidden} côté interface & \texttt{RbacIntegrationTest} (×5),
+\texttt{e2e-console.txt} (section « Sécurité et accès ») \\
+Anti-force brute &
+\texttt{Login}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test},
+\texttt{Rate}\allowbreak{}\texttt{Limiting}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test}
++ exécution réelle & verrouillage après 5 échecs ; 429 après 10 requêtes
+/ 5 min / IP &
+\texttt{security/}\allowbreak{}\texttt{rate-}\allowbreak{}\texttt{limit-}\allowbreak{}\texttt{429.}\allowbreak{}\texttt{txt} \\
+\end{longtable}
+
+\textbf{Corrections apportées} : Spring Boot 4.1.1 → 4.1.2 (Tomcat
+11.0.27, Jackson 2.21.7 / 3.1.7), jsoup 1.18.3 → 1.24.1, Spring Cloud
+2025.1.4, FastAPI 0.162 / starlette 1.7, pypdf 6.21.4, python-multipart
+0.0.32, python-dotenv 1.2.4, prometheus-fastapi-instrumentator 8.1 ; pip
+retiré de l\textquotesingle image d\textquotesingle exécution IA ;
+en-têtes nginx ajoutés
+(\texttt{Content-}\allowbreak{}\texttt{Security-}\allowbreak{}\texttt{Policy},
+\texttt{X-Frame-Options},
+\texttt{X-}\allowbreak{}\texttt{Content-}\allowbreak{}\texttt{Type-}\allowbreak{}\texttt{Options},
+\texttt{Referrer-Policy}, \texttt{Permissions-Policy},
+\texttt{Cross-Origin-*}, \texttt{server\_tokens\ off}). Tous les tests
+ont été rejoués après ces mises à jour (1 233 + 155 + 62 + 8).
+
+\textbf{Alertes ZAP acceptées (risque résiduel)} :
+\texttt{style-}\allowbreak{}\texttt{src\ \textquotesingle{}unsafe-}\allowbreak{}\texttt{inline\textquotesingle{}}
+(styles en ligne de React),
+\texttt{img-}\allowbreak{}\texttt{src\ https:\ http:} (logos
+d\textquotesingle entreprise hébergés ailleurs), absence de SRI sur
+Google Fonts (feuille générée dynamiquement par Google, SRI impossible).
+Les alertes faibles restantes concernent l\textquotesingle isolation
+Spectre (COEP non activé pour garder Google Fonts).
+
+\textbf{Correspondance OWASP Top 10 (2021)} : A01 contrôle
+d\textquotesingle accès (RBAC + identité signée HMAC, tests 401/403) ;
+A02 cryptographie (BCrypt, CV chiffrés, JWT signés) ; A03 injection (JPA
+paramétré, assainissement XSS jsoup, Semgrep) ; A05 mauvaise
+configuration (ZAP, en-têtes) ; A06 composants vulnérables (pip-audit,
+npm audit, Trivy) ; A07 authentification (verrouillage, rate limiting) ;
+A09 journalisation (journal d\textquotesingle audit des actions
+sensibles).
+
+\section{6.7 Maintenabilité}\label{67-maintenabilituxe9}
+
+\textbf{Exigence} : code structuré en couches, complexité maîtrisée,
+couverture de tests mesurée.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3654}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2692}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1731}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1923}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Composant
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Lignes couvertes
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Branches couvertes
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Outil
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+api-gateway & 91,4 \% & 81,8 \% & JaCoCo 0.8.14 \\
+auth-service & 97,2 \% & 89,1 \% & JaCoCo \\
+user-service & 93,5 \% & 87,7 \% & JaCoCo \\
+job-service & 96,7 \% & 90,6 \% & JaCoCo \\
+application-service & 97,7 \% & 94,6 \% & JaCoCo \\
+dashboard-service & 96,6 \% & 86,5 \% & JaCoCo \\
+\textbf{Backend Java (total)} & \textbf{95,7 \%} & \textbf{89,0 \%} &
+JaCoCo \\
+ai-service & 97,2 \% (instructions) & 91,2 \% & pytest-cov \\
+frontend & 92,1 \% & 86,4 \% & Vitest (v8) \\
+\end{longtable}
+
+Rapports HTML :
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{coverage/}\allowbreak{}\texttt{\textless{}composant\textgreater{}/}\allowbreak{}\texttt{index.}\allowbreak{}\texttt{html}.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Complexité} (lizard 1.17, Java + Python + TypeScript, 13 709
+  lignes) : complexité cyclomatique moyenne \textbf{2,2} par fonction ;
+  5 fonctions sur 875 (0,6 \%) dépassent 15, dont 2 dans le code de
+  maquette du frontend (\texttt{api/mock}). Preuve :
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{maintainability/}\allowbreak{}\texttt{lizard-}\allowbreak{}\texttt{complexite.}\allowbreak{}\texttt{txt}.
+\item
+  \textbf{Lint} : ruff (Python) « All checks passed », oxlint
+  (TypeScript) 0 avertissement --- bloquants en CI.
+\item
+  \textbf{Structure} : couches
+  \texttt{controller/}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{repository/}\allowbreak{}\texttt{model/}\allowbreak{}\texttt{dto}
+  dans chaque service ; un service par domaine ; contrats documentés
+  (\texttt{DATA\_MODEL.md}, \texttt{API\_CONTRACTS.md}).
+\end{itemize}
+
+\section{6.8 Portabilité}\label{68-portabilituxe9}
+
+\textbf{Exigence} : installation reproductible sur une autre machine
+(script ou conteneur).
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Conteneurs} : chaque composant a son \texttt{Dockerfile} ;
+  \texttt{docker\ compose\ up\ -}\allowbreak{}\texttt{d\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{build}
+  installe toute la stack. La campagne finale a été jouée sur une stack
+  entièrement reconstruite à partir du dépôt.
+\item
+  \textbf{Autre machine, autre OS} : la CI GitHub Actions (Ubuntu)
+  rejoue tous les tests, valide les manifestes
+  Kubernetes/Helm/Terraform/Ansible, construit les 8 images,
+  \textbf{déploie sur une VM Azure} (Ubuntu, Kubernetes kind via
+  Ansible) et lance des tests de fumée. Exécution
+  \href{https://github.com/omartitouhi/SmartRecruit/actions/runs/42859400550}{42859400550}
+  sur la version finale (commit \texttt{ed0779b}, branche
+  \texttt{feat/}\allowbreak{}\texttt{iso25010-}\allowbreak{}\texttt{quality})
+  : 20 jobs sur 20 réussis (tests des 8 composants avec couverture,
+  Bandit, pip-audit et npm audit ; validation de
+  l\textquotesingle infrastructure ; construction des 8 images). Le
+  déploiement et les tests de fumée ne s\textquotesingle exécutent que
+  depuis \texttt{main} : leur dernière exécution réussie est
+  \href{https://github.com/omartitouhi/SmartRecruit/actions/runs/42530810230/attempts/2}{42530810230,
+  tentative 2} (commit \texttt{3b4cd95}, 22 jobs sur 22, dont « 4 ·
+  Déploiement VM Azure » et « 5 · Tests de fumée »).
+\item
+  \textbf{Script d\textquotesingle installation documenté} :
+  \href{GUIDE_INSTALLATION.pdf}{GUIDE\_INSTALLATION.md} et
+  \texttt{quality/}\allowbreak{}\texttt{run-}\allowbreak{}\texttt{all.}\allowbreak{}\texttt{sh\ install}.
+\end{itemize}
+
+\section{Limites et éléments non
+vérifiés}\label{limites-et-uxe9luxe9ments-non-vuxe9rifiuxe9s}
+
+\begin{itemize}
+\tightlist
+\item
+  Firefox non exécutable sur le poste de l\textquotesingle équipe (voir
+  6.3).
+\item
+  La version finale (\texttt{ed0779b}) passe toute la CI de la branche,
+  mais n\textquotesingle est pas encore déployée sur la VM Azure : le
+  déploiement et les tests de fumée ne s\textquotesingle exécutent
+  qu\textquotesingle après fusion dans \texttt{main} (dernier
+  déploiement vérifié : \texttt{3b4cd95}).
+\item
+  La tentative 3 du même run (relance du 10/11, 18:28 UTC) a échoué au
+  test de fumée Kibana : le redéploiement venait de redémarrer Kibana,
+  qui répondait encore 503, et le test ne l\textquotesingle attendait
+  que 50 s. Kibana était « available » vers 18:37, soit environ 1 min
+  après l\textquotesingle échec. Le test l\textquotesingle attend
+  désormais jusqu\textquotesingle à 15 min. Ce correctif sera vérifié au
+  prochain déploiement depuis \texttt{main}.
+\item
+  Tests de charge sur un poste de développement (toute la stack sur une
+  seule machine) : les valeurs absolues dépendent du matériel ; le seuil
+  est tenu avec une marge (350 ms contre 500 ms, sur 3 068 offres).
+\end{itemize}
+
+\end{document}

@@ -21,23 +21,11 @@ Couverture des exigences fonctionnelles minimales du cahier des charges (§4) :
 | Journal d'audit | `dashboard-service` : `AuditLogEntry (actorId, action, resourceType, resourceId, timestamp)` ; consultation de CV, changement de statut, modération, (dés)activation de compte ; filtres date / auteur / action |
 | ≥ 5 règles métier testables | 9 règles `RG-01` à `RG-09` (§5) |
 
+![Cas d'utilisation par rôle](images/diagramme-1.png)
+
 ## 2. Architecture
 
-```
-                    ┌──────────────┐
-                    │   Frontend   │  React 19 + TypeScript (Vite), servi par nginx
-                    └──────┬───────┘
-                    ┌──────▼───────┐
-                    │ API Gateway  │  Spring Cloud Gateway : JWT, rate limiting,
-                    └──────┬───────┘  en-têtes d'identité signés (HMAC)
-        ┌──────────┬───────┼───────┬───────────┬───────────┐
-        ▼          ▼       ▼       ▼           ▼           ▼
-   auth-service user-service job-service application- dashboard-  ai-service
-   (comptes,    (profils,    (offres,    service       service     (FastAPI : parsing CV,
-    JWT, RBAC)  entreprises) favoris)    (candidatures)(stats,audit) matching, recommandations)
-        └──────────┴────────┴─────────┴─────────────┴─────────────┘
-                     PostgreSQL 16 — une base logique par service
-```
+![Architecture : frontend, API Gateway, microservices et bases PostgreSQL](images/diagramme-2.png)
 
 - **6 microservices Spring Boot 4 (Java 21)** + **1 service IA FastAPI (Python 3.12)** + **SPA React**.
 - **Architecture en couches dans chaque service** : `controller/ → service/ → repository/ → model/`, plus `dto/`,
@@ -53,17 +41,13 @@ Couverture des exigences fonctionnelles minimales du cahier des charges (§4) :
 - **Déploiement** : Docker Compose (local), Kubernetes (Kustomize, Helm), Terraform, Ansible, CI/CD GitHub Actions avec
   déploiement sur une VM Azure et tests de fumée. Observabilité : Prometheus/Grafana, ELK. Détails : [DEVOPS.md](../DEVOPS.md).
 
+![Pipeline CI/CD (GitHub Actions)](images/diagramme-8.png)
+
 ## 3. Modèle de données
 
 Référence complète : [DATA_MODEL.md](../DATA_MODEL.md) et [API_CONTRACTS.md](../API_CONTRACTS.md).
 
-```
-Account 1──1 CandidateProfile 1──N Application N──1 Job N──1 Company 1──N Account(RECRUITER, membres)
-                    │                   │                      │
-                    │                   └──1──N ApplicationNote└──1──N CompanyInvitation
-                    └──N──N Job  (via SavedJob : favoris)
-Application 1──N StatusHistory          AuditLogEntry N──1 Account (actorId)
-```
+![Modèle de données](images/diagramme-3.png)
 
 | Relation | Cardinalité | Mise en œuvre |
 |---|---|---|
@@ -95,16 +79,20 @@ Entreprises : création, lecture, modification, invitations (pas de suppression 
 
 **Candidature** (`ApplicationStatus.ALLOWED_TRANSITIONS`) :
 
-```
-RECEIVED ──► IN_REVIEW ──► INTERVIEW ──► ACCEPTED
-    │            │              └──────► REJECTED
-    └────────────┴──► WITHDRAWN (candidat uniquement)
-```
+![Workflow d'une candidature (RG-03)](images/diagramme-4.png)
+
 Toute autre transition est rejetée en 400 ; chaque changement ajoute une entrée à `statusHistory` et un événement
 d'audit `APPLICATION_STATUS_CHANGED`.
 
 **Offre** : `DRAFT → PUBLISHED`, `PUBLISHED → CLOSED`, `CLOSED → PUBLISHED` ; `MODERATED` (retrait par un admin) bloque
 toute modification ; clôture automatique au lendemain de la date limite.
+
+![Workflow d'une offre (RG-08, RG-09)](images/diagramme-5.png)
+
+**Postuler à une offre** : le diagramme de séquence ci-après détaille le parcours de bout en bout (contrôle d'accès,
+vérifications RG-04 et RG-05, score IA asynchrone en « best effort »).
+
+![Séquence : postuler à une offre](images/diagramme-6.png)
 
 ## 5. Règles métier explicites et testables
 
@@ -142,3 +130,5 @@ toute modification ; clôture automatique au lendemain de la date limite.
 | Sécurité | JWT + RBAC, en-têtes internes signés, assainissement XSS, requêtes paramétrées, rate limiting, CV chiffrés, effacement RGPD |
 | Maintenabilité | Couches strictes, un service par domaine, tests à chaque couche, lint (ruff, oxlint) en CI |
 | Portabilité | Images Docker pour chaque composant, configuration par variables d'environnement, manifestes Kubernetes/Helm |
+
+![Stratégie de test : couches → outils → caractéristiques ISO/IEC 25010](images/diagramme-7.png)

@@ -1,0 +1,503 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmonofont[Scale=0.8,BoldFont=DejaVuSansMono-Bold.ttf]{DejaVuSansMono.ttf}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{french}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Fiche d\textquotesingle étude --- Membre 3 : performance, fiabilité, portabilité},
+  pdflang={fr},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Fiche d\textquotesingle étude --- Membre 3 : performance,
+fiabilité, portabilité}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table des matières}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\begin{quote}
+Pour : \emph{(à compléter)}. Complète le \href{SOUTENANCE.pdf}{guide de
+soutenance} (questions-réponses, membre 3) et la
+\href{REPARTITION_TESTS.pdf}{répartition des tests}.
+\end{quote}
+
+\section{1. Ta mission en soutenance}\label{1-ta-mission-en-soutenance}
+
+Le lead lance k6 en direct ; toi, tu dois pouvoir \textbf{lire le
+résultat à voix haute}, \textbf{relancer} tes tests et \textbf{répondre}
+sur :
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{6.2 Efficacité de performance} (temps de réponse sous charge)
+  ;
+\item
+  \textbf{6.5 Fiabilité} (comportement en cas de panne, pas de perte de
+  données) ;
+\item
+  \textbf{6.8 Portabilité} (installation reproductible, CI/CD) ;
+\item
+  la compatibilité avec un système tiers (API LLM externe).
+\end{itemize}
+
+\section{2. Ce que tu dois apprendre
+(notions)}\label{2-ce-que-tu-dois-apprendre-notions}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4309}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5691}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Notion
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ce que tu dois savoir dire
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Test de charge / stress / endurance & Charge : comportement sous un
+trafic attendu (notre cas, 20 utilisateurs). Stress : on augmente
+jusqu\textquotesingle à la rupture. Endurance : charge longue durée
+(fuites mémoire). \\
+Utilisateur virtuel (VU) & Un script qui rejoue un utilisateur en boucle
+; k6 en fait tourner 20 en parallèle. \\
+Débit & Requêtes par seconde (req/s). \\
+Latence, médiane, percentile & p95 = 95 \% des requêtes sont plus
+rapides que cette valeur. La moyenne cache les requêtes lentes ; le p95
+les fait apparaître. \\
+Seuil (threshold) & Critère d\textquotesingle acceptation codé dans le
+script (\texttt{p(95)\textless{}500}) : k6 échoue s\textquotesingle il
+n\textquotesingle est pas tenu, donc le verdict est automatique. \\
+Fiabilité, tolérance aux pannes & Le système continue de rendre service
+quand un composant tombe, et revient à l\textquotesingle état normal
+ensuite. \\
+« Best effort » & Un appel non indispensable (l\textquotesingle IA) peut
+échouer sans bloquer l\textquotesingle action principale (la candidature
+reste enregistrée, score \texttt{null}). \\
+Délai d\textquotesingle attente (timeout) & Ne pas attendre indéfiniment
+un service arrêté : le gateway abandonne après 3 s et répond une erreur
+claire. \\
+Reprise automatique (retry) & Réessayer plus tard un traitement échoué
+(relance de l\textquotesingle analyse IA des offres chaque minute). \\
+Test de chaos ciblé & Provoquer volontairement une vraie panne (arrêt
+d\textquotesingle un conteneur) et vérifier le comportement. \\
+Durabilité des données & Une transaction validée survit au redémarrage
+de la base (PostgreSQL + volume Docker). \\
+Conteneur, image, Dockerfile, Compose & Image = application +
+dépendances figées ; conteneur = image en exécution ; Compose démarre
+tous les conteneurs ensemble. \\
+CI/CD & À chaque push, GitHub Actions reconstruit et teste tout (CI),
+puis déploie (CD) sur la branche \texttt{main}. \\
+Kubernetes, kind, Helm, Kustomize, Terraform, Ansible & Kubernetes
+orchestre les conteneurs (kind = Kubernetes dans Docker) ; Helm et
+Kustomize décrivent le déploiement ; Terraform crée
+l\textquotesingle infrastructure ; Ansible configure la VM. \\
+Test de fumée (smoke test) & Vérification rapide après déploiement : les
+pages et l\textquotesingle API principales répondent. \\
+\end{longtable}
+
+\section{3. Fichiers à lire, dans
+l\textquotesingle ordre}\label{3-fichiers-uxe0-lire-dans-lordre}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0155}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.7674}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2171}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fichier
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ce que tu y cherches
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 &
+\texttt{quality/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{load-}\allowbreak{}\texttt{test.}\allowbreak{}\texttt{js}
+& Le scénario \texttt{constant-vus} (20 VU, 1 min), le mélange des 3
+rôles, le seuil \texttt{p(95)\textless{}500}, le résumé imprimé. \\
+2 &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{k6-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt}
+& La sortie réelle : requêtes, débit, médiane, p95, max, taux
+d\textquotesingle erreur, seuils \texttt{OK}. \\
+3 &
+\texttt{quality/}\allowbreak{}\texttt{reliability/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{reliability.}\allowbreak{}\texttt{py}
+& Les \textbf{8 scénarios} (noms en français, lisibles) et comment ils
+arrêtent/redémarrent les conteneurs. \\
+4 &
+\texttt{backend/}\allowbreak{}\texttt{job-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{main/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{com/}\allowbreak{}\texttt{smartrecruit/}\allowbreak{}\texttt{job/}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{Job}\allowbreak{}\texttt{Analysis}\allowbreak{}\texttt{Listener.}\allowbreak{}\texttt{java}
+& Correctif du défaut n°1 : relance automatique des analyses IA
+échouées. \\
+5 &
+\texttt{backend/}\allowbreak{}\texttt{api-}\allowbreak{}\texttt{gateway/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{main/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{com/}\allowbreak{}\texttt{smartrecruit/}\allowbreak{}\texttt{gateway/}\allowbreak{}\texttt{config/}\allowbreak{}\texttt{Gateway}\allowbreak{}\texttt{Config.}\allowbreak{}\texttt{java}
+& Correctif du défaut n°2 : délai de connexion borné à 3 s. \\
+6 &
+\texttt{backend/}\allowbreak{}\texttt{application-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{main/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{com/}\allowbreak{}\texttt{smartrecruit/}\allowbreak{}\texttt{application/}\allowbreak{}\texttt{client/}\allowbreak{}\texttt{Ai}\allowbreak{}\texttt{Matching}\allowbreak{}\texttt{Client.}\allowbreak{}\texttt{java}
+& L\textquotesingle appel à l\textquotesingle IA en « best effort ». \\
+7 & \texttt{docker-compose.yml} et le
+\href{GUIDE_INSTALLATION.pdf}{guide d\textquotesingle installation} &
+Les services, les ports, les volumes, l\textquotesingle installation par
+un tiers. \\
+8 &
+\texttt{.}\allowbreak{}\texttt{github/}\allowbreak{}\texttt{workflows/}\allowbreak{}\texttt{pipeline.}\allowbreak{}\texttt{yml}
+& Les jobs : \texttt{backend}, \texttt{frontend}, \texttt{ai-service},
+\texttt{kustomize}, \texttt{helm}, \texttt{terraform}, \texttt{ansible},
+\texttt{images}, \texttt{deploy}, \texttt{smoke-test}. \\
+9 & \texttt{deploy/} (\texttt{k8s/}, \texttt{helm/},
+\texttt{terraform/}, \texttt{ansible/}) et \texttt{docs/DEVOPS.md} &
+Survol : savoir dire à quoi sert chaque dossier. \\
+10 &
+\texttt{ai-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{tests/}\allowbreak{}\texttt{test\_}\allowbreak{}\texttt{llm\_}\allowbreak{}\texttt{client.}\allowbreak{}\texttt{py}
+& Coexistence avec un système tiers (API OpenRouter) sans dépendre du
+réseau. \\
+\end{longtable}
+
+\section{4. Commandes à savoir lancer (et
+lire)}\label{4-commandes-uxe0-savoir-lancer-et-lire}
+
+Application démarrée au préalable
+(\texttt{docker\ compose\ up\ -}\allowbreak{}\texttt{d\ -}\allowbreak{}\texttt{-}\allowbreak{}\texttt{build}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh perf}
+\end{Highlighting}
+\end{Shaded}
+
+Charge k6 (1 min). Lire : nombre de requêtes, req/s, p95,
+\texttt{http\_req\_failed}, puis \texttt{seuil\ …\ :\ OK}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh reliability}
+\end{Highlighting}
+\end{Shaded}
+
+Les 8 pannes réelles (plusieurs minutes : les conteneurs
+s\textquotesingle arrêtent et redémarrent). Lire : \texttt{8\ passed}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh install}
+\end{Highlighting}
+\end{Shaded}
+
+Reconstruit et démarre toute la stack depuis le dépôt : la preuve de
+portabilité sur le poste.
+
+\section{5. Chiffres à connaître par
+cœur}\label{5-chiffres-uxe0-connauxeetre-par-cux153ur}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2821}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7179}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Sujet
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Valeur
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Charge & \textbf{20} utilisateurs simultanés pendant \textbf{1 min}, sur
+\textbf{3 068} offres \\
+Résultat & \textbf{4 463} requêtes (\textbf{72 req/s}), p95
+\textbf{349,6 ms} (seuil 500), médiane \textbf{55 ms}, max ≈ 1,5 s,
+\textbf{0,00 \%} d\textquotesingle erreurs \\
+Fiabilité & \textbf{8} scénarios ; premier passage \textbf{5/8},
+\textbf{2 défauts} trouvés et corrigés, final \textbf{8/8} \\
+CI & \textbf{20/20} jobs sur la version finale (commit
+\texttt{ed0779b}) \\
+Déploiement & VM Azure + tests de fumée : \textbf{22/22} jobs (commit
+\texttt{3b4cd95}) \\
+Images Docker & \textbf{8} (6 services Java, service IA, frontend) \\
+\end{longtable}
+
+D\textquotesingle où viennent 20 et 22 jobs : 6 services backend +
+frontend + IA + kustomize + helm + terraform + ansible + 8 images = 20 ;
+avec \texttt{deploy} et \texttt{smoke-test} = 22.
+
+\section{6. Preuves à savoir ouvrir}\label{6-preuves-uxe0-savoir-ouvrir}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{perf/}\allowbreak{}\texttt{k6-}\allowbreak{}\texttt{console.}\allowbreak{}\texttt{txt}
+  et \texttt{k6-summary.json}.
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{reliability/}\allowbreak{}\texttt{junit.}\allowbreak{}\texttt{xml}
+  et \texttt{pytest-console.txt}.
+\item
+  Les exécutions GitHub Actions liées dans la
+  \href{MATRICE_TRACABILITE.pdf}{matrice} (ligne EQ‑08) et le
+  \href{RAPPORT_CONFORMITE_ISO25010.pdf}{rapport de conformité}.
+\end{itemize}
+
+\section{7. Questions pièges (au-delà du guide de
+soutenance)}\label{7-questions-piuxe8ges-au-deluxe0-du-guide-de-soutenance}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Question
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Réponse
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Pourquoi 20 utilisateurs et 500 ms ? & C\textquotesingle est
+l\textquotesingle exemple chiffré du cahier des charges (§6.2) ; on
+l\textquotesingle a pris comme exigence mesurable et codé comme
+seuil. \\
+Votre test de charge est-il réaliste ? & Il mélange les 3 rôles et les
+actions courantes (recherche, détail, candidatures, statistiques, audit)
+sur un fort volume. Limite : générateur de charge et application sur la
+même machine. \\
+Comment le test de charge passe-t-il l\textquotesingle anti-force brute
+(10 connexions / 5 min / IP) ? & Le script ne se connecte que \textbf{3
+fois}, dans \texttt{setup()} (un compte par rôle) ; les 20 utilisateurs
+virtuels réutilisent ces jetons. On mesure donc la charge réelle de
+l\textquotesingle application, pas celle de la connexion. \\
+Qu\textquotesingle est-ce qui prouve « pas de perte de données » ? & Le
+scénario PostgreSQL : création d\textquotesingle une offre,
+d\textquotesingle une candidature et d\textquotesingle un statut,
+redémarrage de la base, relecture : tout est identique. \\
+Et si le service candidatures tombe pendant qu\textquotesingle un
+utilisateur postule ? & Le gateway répond vite une erreur (pas
+d\textquotesingle attente de 30 s) ; après redémarrage, le service
+reprend sans perte (scénario 7). \\
+Les 2 défauts trouvés auraient-ils été vus en production ? & Oui : une
+offre créée pendant une panne de l\textquotesingle IA
+n\textquotesingle était jamais analysée, et un service arrêté bloquait
+les utilisateurs plus de 30 s. Les tests les ont révélés avant. \\
+La portabilité est-elle prouvée sur une autre machine ? & Oui par la CI
+: un runner Ubuntu neuf reconstruit tout à chaque push, et le
+déploiement part de zéro sur une VM Azure. Idéalement, faire aussi
+installer un membre sur son PC en suivant le guide. \\
+Docker ou machine virtuelle ? & Un conteneur partage le noyau de
+l\textquotesingle hôte : plus léger et plus rapide
+qu\textquotesingle une VM. On utilise les deux : conteneurs dans une VM
+Azure. \\
+\end{longtable}
+
+\section{8. Plan
+d\textquotesingle apprentissage}\label{8-plan-dapprentissage}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1316}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1316}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.7368}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Étape
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Durée
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Objectif
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 1 h & Apprendre les notions de la section 2 (vidéo ou doc k6 « load
+testing », bases Docker). \\
+2 & 1 h & Lire \texttt{load-test.js} et \texttt{k6-console.txt} ; savoir
+commenter chaque ligne du résumé. \\
+3 & 2 h & Lire \texttt{test\_reliability.py} scénario par scénario ;
+lire les 2 correctifs (fichiers 4 et 5). \\
+4 & 1 h & Lancer \texttt{perf} puis \texttt{reliability} sur ton
+poste. \\
+5 & 2 h & Lire \texttt{docker-compose.yml}, \texttt{pipeline.yml}, le
+guide d\textquotesingle installation ; installer le projet sur ton PC en
+le suivant. \\
+6 & 1 h & Réciter les réponses du guide de soutenance (membre 3) et de
+la section 7. \\
+\end{longtable}
+
+\section{9. Auto-évaluation}\label{9-auto-uxe9valuation}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  J\textquotesingle explique le p95 et pourquoi on ne regarde pas la
+  moyenne.
+\item[$\square$]
+  Je lis à voix haute un résumé k6 et je dis si le seuil est tenu.
+\item[$\square$]
+  Je cite les 8 scénarios de fiabilité et les 2 défauts corrigés (cause
+  et correctif).
+\item[$\square$]
+  J\textquotesingle explique ce qui se passe quand l\textquotesingle IA
+  est en panne pendant une candidature.
+\item[$\square$]
+  J\textquotesingle explique les étapes de la CI/CD et
+  d\textquotesingle où viennent 20 et 22 jobs.
+\item[$\square$]
+  J\textquotesingle ai installé le projet sur un autre poste avec le
+  guide.
+\end{itemize}
+
+\end{document}

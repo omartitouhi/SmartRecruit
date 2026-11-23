@@ -11,7 +11,7 @@ for doc in RAPPORT_CONCEPTION MATRICE_TRACABILITE RAPPORT_CONFORMITE_ISO25010 GU
   # Les liens entre documents pointent vers les versions Word (les ancres ne survivent pas à la conversion) ;
   # trait d'union insécable dans les identifiants (EF-01, RG-03…) pour qu'ils ne se coupent pas dans les tableaux.
   sed -E 's/\.md#[^)]*\)/.docx)/g; s/\.md\)/.docx)/g; s/\b(EF|RG|EQ|EXT)-([0-9])/\1‑\2/g' "../$doc.md" |
-    MSYS_NO_PATHCONV=1 docker run --rm -i -v "$DIR:/out" pandoc/core:3.5 \
-      -f gfm -t docx --reference-doc="/out/$modele" -o "/out/$doc.docx"
+    MSYS_NO_PATHCONV=1 docker run --rm -i -v "$DIR:/out" -v "$DIR/../images:/images:ro" pandoc/core:3.5 \
+      -f gfm -t docx --resource-path=/ --reference-doc="/out/$modele" -o "/out/$doc.docx"
   echo "docs/qualite/word/$doc.docx"
 done

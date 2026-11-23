@@ -1,0 +1,531 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmonofont[Scale=0.8,BoldFont=DejaVuSansMono-Bold.ttf]{DejaVuSansMono.ttf}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{french}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Ajouté au préambule de chaque document par generer.sh
+\usepackage{xcolor}
+\usepackage{newunicodechar}
+\newfontfamily\symbolfont{DejaVuSans.ttf}
+% Caractères absents de Latin Modern (flèches, comparateurs, cases) : repli sur DejaVu Sans
+\newunicodechar{→}{{\symbolfont →}}
+\newunicodechar{←}{{\symbolfont ←}}
+\newunicodechar{⇄}{{\symbolfont ⇄}}
+\newunicodechar{↔}{{\symbolfont ↔}}
+\newunicodechar{≥}{{\symbolfont ≥}}
+\newunicodechar{≤}{{\symbolfont ≤}}
+\newunicodechar{≠}{{\symbolfont ≠}}
+\newunicodechar{≈}{{\symbolfont ≈}}
+\newunicodechar{✓}{{\symbolfont ✓}}
+\newunicodechar{✗}{{\symbolfont ✗}}
+\newunicodechar{⚠}{{\symbolfont ⚠}}
+\newunicodechar{✅}{{\symbolfont\color[rgb]{0.1,0.55,0.2}✔}}
+\newunicodechar{‑}{\mbox{-}}
+% Retour à la ligne dans les blocs de code et les URL longues
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\AtBeginEnvironment{longtable}{\small}
+% Figures flottantes (pas de demi-pages vides), jamais plus hautes que 85 % de la page
+\usepackage{float}
+\floatplacement{figure}{htbp}
+\usepackage{adjustbox}
+\providecommand*\pandocbounded[1]{#1}% absent des documents sans image
+\renewcommand*\pandocbounded[1]{\adjustbox{max width=\linewidth,max totalheight=0.85\textheight}{#1}}
+\usepackage[font=small,labelfont=bf]{caption}
+% Contenu sur une nouvelle page après la table des matières
+\let\tdmorigine\tableofcontents
+\renewcommand{\tableofcontents}{\tdmorigine\newpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SmartRecruit — Qualité logicielle ISO/IEC 25010}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Fiche d\textquotesingle étude --- Membre 4 : sécurité et qualité de code},
+  pdflang={fr},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Fiche d\textquotesingle étude --- Membre 4 : sécurité et qualité
+de code}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table des matières}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\begin{quote}
+Pour : \emph{(à compléter)}. Complète le \href{SOUTENANCE.pdf}{guide de
+soutenance} (questions-réponses, membre 4) et la
+\href{REPARTITION_TESTS.pdf}{répartition des tests}.
+\end{quote}
+
+\section{1. Ta mission en soutenance}\label{1-ta-mission-en-soutenance}
+
+Tu dois pouvoir \textbf{expliquer} les mécanismes de sécurité,
+\textbf{relancer} les analyses, \textbf{montrer} les rapports
+avant/après et \textbf{répondre} sur :
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{6.6 Sécurité} : authentification robuste, contrôle
+  d\textquotesingle accès par rôle, absence de failles connues (OWASP
+  Top 10), avec les couches SAST, SCA et DAST ;
+\item
+  \textbf{6.7 Maintenabilité} (analyse statique) : complexité, lint,
+  structure en couches.
+\end{itemize}
+
+\section{2. Ce que tu dois apprendre
+(notions)}\label{2-ce-que-tu-dois-apprendre-notions}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6667}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Notion
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ce que tu dois savoir dire
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+SAST & Analyse statique : lit le code source sans
+l\textquotesingle exécuter pour trouver des motifs dangereux (Bandit
+pour Python, Semgrep multi-langages). \\
+SCA & Analyse des dépendances : compare les versions des bibliothèques
+aux bases de CVE (pip-audit, npm audit, Trivy sur les images Docker). \\
+DAST & Analyse dynamique : attaque l\textquotesingle application en
+cours d\textquotesingle exécution, de l\textquotesingle extérieur (OWASP
+ZAP). \\
+CVE, gravité & Identifiant public d\textquotesingle une vulnérabilité
+connue ; gravité LOW → CRITICAL (score CVSS). On a filtré HIGH et
+CRITICAL avec Trivy. \\
+Faux positif / risque accepté & Alerte non applicable, ou risque connu
+et justifié par écrit (nos 3 alertes ZAP). \\
+OWASP Top 10 (2021) & Les 10 catégories de failles web les plus
+courantes : A01 contrôle d\textquotesingle accès, A02 cryptographie, A03
+injection, A05 mauvaise configuration, A06 composants vulnérables, A07
+authentification, A09 journalisation\ldots{} \\
+JWT & Jeton signé contenant l\textquotesingle identité et le rôle, avec
+une date d\textquotesingle expiration ; le serveur vérifie la signature,
+il ne fait pas confiance au contenu sans elle. \\
+RBAC & Contrôle d\textquotesingle accès par rôle (\texttt{CANDIDATE},
+\texttt{RECRUITER}, \texttt{ADMIN}) ; chez nous \texttt{@PreAuthorize}
+sur chaque point d\textquotesingle API. \\
+HMAC & Signature d\textquotesingle un message avec une clé secrète
+partagée : le gateway signe les en-têtes d\textquotesingle identité,
+chaque service vérifie ; un appel direct sans signature reçoit 401. \\
+BCrypt & Hachage lent et salé des mots de passe : impossible de
+retrouver le mot de passe, coûteux à attaquer par force brute. \\
+XSS et assainissement & Injection de script dans une page ; on nettoie
+toutes les chaînes JSON entrantes (jsoup). \\
+Injection SQL & Requête construite avec des données utilisateur ; évitée
+par JPA/JPQL paramétré. \\
+Rate limiting, verrouillage & Limiter le nombre de requêtes (429) et
+verrouiller un compte après plusieurs échecs : contre la force brute. \\
+En-têtes de sécurité, CSP & Le navigateur applique des règles envoyées
+par le serveur (Content-Security-Policy, etc.) ; ZAP vérifie leur
+présence. \\
+Complexité cyclomatique (CCN) & Nombre de chemins indépendants dans une
+fonction ; au-delà de 15 (notre seuil lizard), elle devient difficile à
+tester et à maintenir. \\
+Lint & Outil qui signale le code suspect ou non conforme aux règles
+(ruff pour Python, oxlint pour TypeScript). \\
+\end{longtable}
+
+\section{3. Fichiers à lire, dans
+l\textquotesingle ordre}\label{3-fichiers-uxe0-lire-dans-lordre}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0115}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.7864}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2020}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fichier
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ce que tu y cherches
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 &
+\texttt{backend/}\allowbreak{}\texttt{api-}\allowbreak{}\texttt{gateway/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{main/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{com/}\allowbreak{}\texttt{smartrecruit/}\allowbreak{}\texttt{gateway/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{Jwt}\allowbreak{}\texttt{Authentication}\allowbreak{}\texttt{Gateway}\allowbreak{}\texttt{Filter.}\allowbreak{}\texttt{java}
+& Vérification du JWT à l\textquotesingle entrée (401 si absent ou
+invalide). \\
+2 &
+\texttt{…/}\allowbreak{}\texttt{gateway/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{Internal}\allowbreak{}\texttt{Identity}\allowbreak{}\texttt{Headers.}\allowbreak{}\texttt{java}
+et
+\texttt{Rate}\allowbreak{}\texttt{Limiting}\allowbreak{}\texttt{Filter.}\allowbreak{}\texttt{java}
+& Signature HMAC des en-têtes d\textquotesingle identité ; limite de 10
+requêtes / 5 min / IP (429). \\
+3 &
+\texttt{backend/}\allowbreak{}\texttt{application-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{main/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{com/}\allowbreak{}\texttt{smartrecruit/}\allowbreak{}\texttt{application/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{Internal}\allowbreak{}\texttt{Identity}\allowbreak{}\texttt{Verifier.}\allowbreak{}\texttt{java}
+et
+\texttt{config/}\allowbreak{}\texttt{Security}\allowbreak{}\texttt{Config.}\allowbreak{}\texttt{java}
+& Côté service : vérification de la signature, règles par rôle. \\
+4 &
+\texttt{…/}\allowbreak{}\texttt{application/}\allowbreak{}\texttt{config/}\allowbreak{}\texttt{Jackson}\allowbreak{}\texttt{Sanitization}\allowbreak{}\texttt{Config.}\allowbreak{}\texttt{java}
+et
+\texttt{security/}\allowbreak{}\texttt{Html}\allowbreak{}\texttt{Sanitizer.}\allowbreak{}\texttt{java}
+& Assainissement XSS de toutes les chaînes JSON entrantes. \\
+5 &
+\texttt{backend/}\allowbreak{}\texttt{auth-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{main/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{com/}\allowbreak{}\texttt{smartrecruit/}\allowbreak{}\texttt{auth/}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{Auth}\allowbreak{}\texttt{Service.}\allowbreak{}\texttt{java}
+et
+\texttt{config/}\allowbreak{}\texttt{Security}\allowbreak{}\texttt{Config.}\allowbreak{}\texttt{java}
+& Hachage BCrypt, verrouillage après 5 échecs en 15 min (RG‑06). \\
+6 &
+\texttt{backend/}\allowbreak{}\texttt{user-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{main/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{com/}\allowbreak{}\texttt{smartrecruit/}\allowbreak{}\texttt{user/}\allowbreak{}\texttt{storage/}\allowbreak{}\texttt{Cv}\allowbreak{}\texttt{Cipher.}\allowbreak{}\texttt{java}
+& Chiffrement des CV stockés. \\
+7 &
+\texttt{backend/}\allowbreak{}\texttt{*/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{test/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{…/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{Rbac}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{java}
+et
+\texttt{backend/}\allowbreak{}\texttt{api-}\allowbreak{}\texttt{gateway/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{test/}\allowbreak{}\texttt{java/}\allowbreak{}\texttt{…/}\allowbreak{}\texttt{Rate}\allowbreak{}\texttt{Limiting}\allowbreak{}\texttt{Integration}\allowbreak{}\texttt{Test.}\allowbreak{}\texttt{java}
+& Les tests 401/403 et 429. \\
+8 & \texttt{quality/run-all.sh}, étapes \texttt{sast}, \texttt{sca},
+\texttt{dast}, \texttt{maintainability} & Quels outils, quelles règles
+(Semgrep : \texttt{p/owasp-top-ten}, \texttt{p/java},
+\texttt{p/typescript}, \texttt{p/python}, \texttt{p/secrets}), quels
+fichiers exclus. \\
+9 &
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}
+: \texttt{trivy-resume.txt}, \texttt{*-avant*}, \texttt{zap/} & Comparer
+avant/après correction. \\
+\end{longtable}
+
+\section{4. Commandes à savoir lancer (et
+lire)}\label{4-commandes-uxe0-savoir-lancer-et-lire}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh sast}
+\end{Highlighting}
+\end{Shaded}
+
+Lire
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{bandit.}\allowbreak{}\texttt{txt}
+(aucun problème) et le résumé de \texttt{semgrep.txt}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh sca}
+\end{Highlighting}
+\end{Shaded}
+
+Images Docker construites au préalable. Lire \texttt{pip-audit.txt},
+\texttt{npm-audit.txt}, puis \texttt{trivy-resume.txt} (0
+HIGH/CRITICAL).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh dast}
+\end{Highlighting}
+\end{Shaded}
+
+Application démarrée. Ouvrir
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{zap/}\allowbreak{}\texttt{zap-}\allowbreak{}\texttt{frontend.}\allowbreak{}\texttt{html}
+: FAIL, WARN, PASS.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bash}\NormalTok{ quality/run{-}all.sh maintainability}
+\end{Highlighting}
+\end{Shaded}
+
+Lire les dernières lignes de
+\texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{maintainability/}\allowbreak{}\texttt{lizard-}\allowbreak{}\texttt{complexite.}\allowbreak{}\texttt{txt}
+(CCN moyen, fonctions au-dessus du seuil), puis \texttt{ruff.txt} et
+\texttt{oxlint.txt}.
+
+\section{5. Chiffres à connaître par
+cœur}\label{5-chiffres-uxe0-connauxeetre-par-cux153ur}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2632}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7368}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Sujet
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Valeur
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+SAST & \textbf{0} problème ; Semgrep : \textbf{355} règles sur
+\textbf{498} fichiers \\
+SCA images (Trivy) & \textbf{179 → 0} CVE HIGH/CRITICAL, dont
+\textbf{24} critiques, sur \textbf{8} images \\
+SCA Python / npm & \textbf{82 → 0} (pip-audit), \textbf{1 → 0} (npm
+audit) \\
+DAST (ZAP) & \textbf{0} échec, \textbf{59} contrôles réussis, \textbf{3}
+alertes moyennes acceptées \\
+Anti-force brute & verrouillage après \textbf{5} échecs en \textbf{15
+min} ; \textbf{10} requêtes / \textbf{5 min} / IP sur connexion et
+inscription, puis \textbf{429} \\
+Complexité & CCN moyen \textbf{2,2} ; \textbf{5} fonctions sur
+\textbf{875} au-dessus de 15 \\
+Lint & ruff et oxlint : \textbf{0} avertissement, bloquants en CI \\
+\end{longtable}
+
+\section{6. Preuves à savoir ouvrir}\label{6-preuves-uxe0-savoir-ouvrir}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{bandit.}\allowbreak{}\texttt{txt},
+  \texttt{semgrep.txt}.
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{pip-}\allowbreak{}\texttt{audit-}\allowbreak{}\texttt{avant.}\allowbreak{}\texttt{txt}
+  puis \texttt{pip-audit.txt} ; \texttt{trivy-avant/} puis
+  \texttt{trivy/} et \texttt{trivy-resume.txt}.
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{zap/}\allowbreak{}\texttt{zap-}\allowbreak{}\texttt{frontend.}\allowbreak{}\texttt{html}
+  (et \texttt{zap-avant/} pour comparer).
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{security/}\allowbreak{}\texttt{rate-}\allowbreak{}\texttt{limit-}\allowbreak{}\texttt{429.}\allowbreak{}\texttt{txt}
+  : preuve d\textquotesingle exécution réelle de la limite.
+\item
+  \texttt{quality/}\allowbreak{}\texttt{reports/}\allowbreak{}\texttt{maintainability/}\allowbreak{}\texttt{lizard-}\allowbreak{}\texttt{complexite.}\allowbreak{}\texttt{txt},
+  \texttt{ruff.txt}, \texttt{oxlint.txt}.
+\end{itemize}
+
+\section{7. Questions pièges (au-delà du guide de
+soutenance)}\label{7-questions-piuxe8ges-au-deluxe0-du-guide-de-soutenance}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4286}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5714}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Question
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Réponse
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Où est stocké le JWT et que se passe-t-il s\textquotesingle il est volé
+? & Dans le \texttt{localStorage} du navigateur
+(\texttt{frontend/}\allowbreak{}\texttt{src/}\allowbreak{}\texttt{api/}\allowbreak{}\texttt{client.}\allowbreak{}\texttt{ts}).
+Volé, il reste valable jusqu\textquotesingle à son expiration :
+\textbf{1 h} pour le jeton d\textquotesingle accès (7 jours pour le
+jeton de renouvellement,
+\texttt{auth-}\allowbreak{}\texttt{service/}\allowbreak{}\texttt{…/}\allowbreak{}\texttt{application.}\allowbreak{}\texttt{yml}).
+Le principal risque de vol est le XSS, d\textquotesingle où
+l\textquotesingle assainissement des entrées et la CSP. Un cookie
+\texttt{HttpOnly} serait une amélioration possible. \\
+Pourquoi des en-têtes signés en plus du JWT ? & Le JWT est vérifié une
+fois au gateway. Sans signature, n\textquotesingle importe qui accédant
+au réseau interne pourrait appeler un service en se prétendant admin. La
+signature HMAC garantit que l\textquotesingle identité vient du gateway,
+et une signature de plus de \textbf{2 minutes} est refusée
+(\texttt{Internal}\allowbreak{}\texttt{Identity}\allowbreak{}\texttt{Verifier}),
+ce qui empêche de rejouer une requête capturée. \\
+SonarQube était proposé : pourquoi ne pas l\textquotesingle utiliser ? &
+Aucun outil n\textquotesingle est imposé (§7). Semgrep (sécurité),
+lizard (complexité), ruff/oxlint (lint) et JaCoCo/pytest-cov/Vitest
+(couverture) couvrent les mêmes rôles, s\textquotesingle exécutent en
+local et en CI sans serveur à héberger. \\
+Comment avez-vous corrigé 179 CVE ? & Montées de version des dépendances
+et des images de base (Spring Boot 4.1.2, jsoup 1.24.1,
+FastAPI/starlette, pypdf\ldots), pip retiré de l\textquotesingle image
+IA, puis tous les tests rejoués pour vérifier qu\textquotesingle aucune
+régression n\textquotesingle apparaissait. \\
+0 vulnérabilité, cela veut dire que l\textquotesingle application est
+sûre ? & Non : 0 vulnérabilité \textbf{connue détectée} par ces outils.
+Ils ne trouvent pas les failles de logique métier ;
+c\textquotesingle est pourquoi les règles d\textquotesingle accès sont
+aussi testées (401/403, RBAC, \texttt{/forbidden}). \\
+Pourquoi accepter 3 alertes ZAP ? & Elles sont justifiées :
+\texttt{unsafe-inline} nécessaire pour les styles React, images
+d\textquotesingle entreprise hébergées à l\textquotesingle extérieur,
+pas de SRI possible sur Google Fonts (feuille générée dynamiquement).
+Accepter un risque documenté est une décision, pas un oubli. \\
+Les 5 fonctions complexes, un problème ? & 5 sur 875, au-dessus du seuil
+de 15 : signalées et toutes testées ; candidates à un découpage si elles
+évoluent. \\
+La sécurité des CV ? & Fichiers chiffrés au stockage
+(\texttt{CvCipher}), consultation journalisée dans
+l\textquotesingle audit (\texttt{CV\_VIEWED}), effacement RGPD
+possible. \\
+\end{longtable}
+
+\section{8. Plan
+d\textquotesingle apprentissage}\label{8-plan-dapprentissage}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1316}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1316}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.7368}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Étape
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Durée
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Objectif
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 2 h & Apprendre les notions de la section 2, en priorité
+l\textquotesingle OWASP Top 10 2021 (page officielle) et le
+fonctionnement d\textquotesingle un JWT. \\
+2 & 2 h & Lire les fichiers 1 à 7 de la section 3 ; suivre une requête
+du navigateur au service (figure 7 du rapport de conception). \\
+3 & 1 h & Lancer \texttt{sast}, \texttt{sca}, \texttt{maintainability} ;
+ouvrir chaque preuve de la section 6. \\
+4 & 1 h & Lancer \texttt{dast} (application démarrée) et parcourir le
+rapport ZAP ; comparer avec \texttt{zap-avant/}. \\
+5 & 1 h & Réciter les réponses du guide de soutenance (membre 4) et de
+la section 7. \\
+\end{longtable}
+
+\section{9. Auto-évaluation}\label{9-auto-uxe9valuation}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  J\textquotesingle explique SAST, SCA et DAST avec
+  l\textquotesingle outil que nous utilisons pour chacun.
+\item[$\square$]
+  Je suis le chemin d\textquotesingle une requête : JWT au gateway →
+  en-têtes HMAC → vérification dans le service → \texttt{@PreAuthorize}.
+\item[$\square$]
+  Je relie au moins 6 catégories OWASP Top 10 à un mécanisme et à un
+  test du projet.
+\item[$\square$]
+  Je montre un rapport avant/après (Trivy ou pip-audit) et
+  j\textquotesingle explique la correction.
+\item[$\square$]
+  Je justifie les 3 alertes ZAP acceptées.
+\item[$\square$]
+  J\textquotesingle explique la complexité cyclomatique et je lis la fin
+  du rapport lizard.
+\end{itemize}
+
+\end{document}
