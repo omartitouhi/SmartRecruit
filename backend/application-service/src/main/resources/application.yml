@@ -2,6 +2,9 @@ server:
   port: ${SERVER_PORT:8084}
 
 spring:
+  # Auth is JWT + internal headers: no default in-memory user (and no generated password in the logs).
+  autoconfigure:
+    exclude: org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
   application:
     name: application-service
   datasource:
@@ -9,6 +12,8 @@ spring:
     username: ${DB_USER:smartrecruit}
     password: ${DB_PASSWORD:smartrecruit}
   jpa:
+    # Kept on (lazy @ElementCollection read in controllers); set explicitly to silence the startup warning.
+    open-in-view: true
     hibernate:
       ddl-auto: update
     show-sql: false

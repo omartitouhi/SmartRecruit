@@ -154,6 +154,8 @@ services:
 
   frontend:
     build: ./frontend
+    # nginx exits if api-gateway is not resolvable yet: retry instead of staying down.
+    restart: unless-stopped
     ports:
       - "${FRONTEND_HOST_PORT:-5173}:80"
     depends_on:
