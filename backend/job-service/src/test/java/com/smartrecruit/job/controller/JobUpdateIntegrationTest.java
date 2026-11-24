@@ -157,7 +157,8 @@ class JobUpdateIntegrationTest extends JobApiTest {
         patchJob(job.getId(), "{\"title\": \"Piraté\"}", otherRecruiter, "RECRUITER").andExpect(status().isForbidden());
 
         assertThat(reload().getTitle()).isEqualTo("Développeur Java");
-        assertThat(BACKENDS.callsTo(ANALYZE)).isEmpty();
+        // A late async analysis from a previous test may also arrive: only this offer's calls count.
+        assertThat(BACKENDS.callsTo(ANALYZE)).noneMatch(call -> call.body().contains(job.getId().toString()));
     }
 
     @Test
