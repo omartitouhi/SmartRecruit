@@ -8,7 +8,7 @@ kubeconfig_path = "~/.kube/config"
 kube_context    = "smartrecruit-prod"
 
 image_registry    = "ghcr.io/omartitouhi/smartrecruit"
-image_tag         = "latest" # à remplacer par le SHA publié (images immuables)
+image_tag         = "1.0.0" # version publiée (tag v1.0.0) ou SHA du commit ; jamais latest
 load_local_images = false
 
 # Sur un cluster managé, ingress-nginx crée un Service LoadBalancer ; metrics-server est souvent déjà présent.

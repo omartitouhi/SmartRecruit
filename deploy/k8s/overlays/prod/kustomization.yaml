@@ -12,21 +12,21 @@ resources:
   - networkpolicies.yaml
 images:
   - name: ghcr.io/omartitouhi/smartrecruit/auth-service
-    newTag: latest
+    newTag: "1.0.0"
   - name: ghcr.io/omartitouhi/smartrecruit/user-service
-    newTag: latest
+    newTag: "1.0.0"
   - name: ghcr.io/omartitouhi/smartrecruit/job-service
-    newTag: latest
+    newTag: "1.0.0"
   - name: ghcr.io/omartitouhi/smartrecruit/application-service
-    newTag: latest
+    newTag: "1.0.0"
   - name: ghcr.io/omartitouhi/smartrecruit/dashboard-service
-    newTag: latest
+    newTag: "1.0.0"
   - name: ghcr.io/omartitouhi/smartrecruit/api-gateway
-    newTag: latest
+    newTag: "1.0.0"
   - name: ghcr.io/omartitouhi/smartrecruit/ai-service
-    newTag: latest
+    newTag: "1.0.0"
   - name: ghcr.io/omartitouhi/smartrecruit/frontend
-    newTag: latest
+    newTag: "1.0.0"
 replicas:
   - name: auth-service
     count: 2

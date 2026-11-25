@@ -7,8 +7,8 @@
 
 images:
   registry: ghcr.io/omartitouhi/smartrecruit
-  # Figer une version (SHA du commit publié par l'étape « 3 · Images Docker » du pipeline) plutôt que latest.
-  tag: latest
+  # Vide => appVersion du Chart (version publiée, ex. 1.0.0) ; surcharger avec --set images.tag=<sha>. Jamais latest.
+  tag: ""
   pullPolicy: IfNotPresent
   # pullSecrets: [ghcr-pull]
 

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.smartrecruit</groupId>
 	<artifactId>job-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>job-service</name>
 	<description/>
 	<url/>

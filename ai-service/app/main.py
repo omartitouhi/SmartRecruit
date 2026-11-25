@@ -22,7 +22,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="SmartRecruit AI Service",
     description="CV Parsing, Job Analysis, Matching, Recommendation, Skill Gap (IA-01 à IA-05).",
-    version="0.1.0",
+    version="1.0.0",
     lifespan=lifespan,
 )
 

@@ -5,7 +5,7 @@ type: application
 # Version du chart : à incrémenter à chaque changement des templates (helm upgrade / rollback s'appuient dessus).
 version: 0.1.0
 # Version de l'application déployée (tag d'image par défaut si images.tag est vide).
-appVersion: "latest"
+appVersion: "1.0.0"
 keywords:
   - recrutement
   - spring-boot
