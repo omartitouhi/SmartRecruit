@@ -15,7 +15,7 @@ RUN --mount=type=cache,id=smartrecruit-m2,target=/root/.m2,sharing=locked \
       echo "Maven a échoué (essai $i/5), nouvelle tentative..."; sleep 10; \
     done; exit 1
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 # Sans privilèges, UID fixe (requis par runAsNonRoot sous Kubernetes).
 RUN addgroup -S -g 10001 app && adduser -S -u 10001 -G app app
