@@ -10,4 +10,4 @@ python-dotenv==1.2.4
 httpx==0.27.2                   # appels OpenRouter (LLM)
 prometheus-fastapi-instrumentator==8.1.0  # métriques Prometheus sur /metrics
 
-pypdf==6.21.4                    # extraction de texte des CV PDF (AI-CV-01)
+pypdf==7.1.1                    # extraction de texte des CV PDF (AI-CV-01)
