@@ -215,6 +215,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -251,10 +252,29 @@ jobs:
         with:
           context: ./${{ matrix.context }}
           push: ${{ env.PUBLISH == 'true' }}
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,scope=${{ matrix.name }},mode=max
+      # Trivy via son image Docker figée (0.69.3 : dernière version saine avant la compromission de mars 2026 ;
+      # ne pas passer à trivy-action ni à un tag flottant).
+      - name: Trivy — rapport HIGH/CRITICAL (SARIF)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/out" aquasec/trivy:0.69.3 \
+            image --quiet --severity HIGH,CRITICAL --format sarif -o /out/trivy.sarif \
+            "ghcr.io/${{ github.repository_owner }}/smartrecruit/${{ matrix.name }}:sha-${{ github.sha }}"
+      - name: Publication dans l'onglet Security
+        if: always() && hashFiles('trivy.sarif') != '' && github.event.pull_request.head.repo.fork != true
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy.sarif
+          category: trivy-${{ matrix.name }}
+      - name: Trivy — échec sur CRITICAL corrigeable
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 \
+            image --quiet --severity CRITICAL --ignore-unfixed --exit-code 1 \
+            "ghcr.io/${{ github.repository_owner }}/smartrecruit/${{ matrix.name }}:sha-${{ github.sha }}"
 
   release:
     name: "3 · Release GitHub"

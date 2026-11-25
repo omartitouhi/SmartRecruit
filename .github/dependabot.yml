@@ -1,0 +1,24 @@
+# BE-OPS-07 : PR de mise à jour hebdomadaires pour Maven, npm, pip, Docker et GitHub Actions.
+version: 2
+updates:
+  - package-ecosystem: maven
+    directories: ["/backend/*"]
+    schedule: { interval: weekly }
+    groups:
+      maven: { patterns: ["*"], update-types: [minor, patch] }
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule: { interval: weekly }
+    groups:
+      npm: { patterns: ["*"], update-types: [minor, patch] }
+  - package-ecosystem: pip
+    directory: /ai-service
+    schedule: { interval: weekly }
+    groups:
+      pip: { patterns: ["*"], update-types: [minor, patch] }
+  - package-ecosystem: docker
+    directories: ["/backend/*", "/frontend", "/ai-service"]
+    schedule: { interval: weekly }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
