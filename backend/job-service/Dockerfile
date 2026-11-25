@@ -1,4 +1,4 @@
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.9-eclipse-temurin-26 AS build
 WORKDIR /app
 
 # Réseau lent ou instable : timeouts longs et réessais Maven, plus un cache ~/.m2 partagé entre
